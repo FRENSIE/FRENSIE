@@ -65,47 +65,57 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
     def testPhotonData(self):
         "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer photon data methods"
         data = self.native_data.getAdjointPhotonEnergyGrid()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 1e-3 )
         self.assertEqual( data[len(data)-1], 20.0 )
 
         data = self.native_data.getAdjointWallerHartreeIncoherentCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
         self.assertEqual( len(data[len(data)-1]), 3 )
 
         data = self.native_data.getAdjointImpulseApproxIncoherentCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 12 )
+        self.assertEqual( len(data[len(data)-1]), 12 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 12 )
         self.assertEqual( len(data[len(data)-1]), 12 )
 
         data = self.native_data.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[len(data)-1]), 3 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(1)
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
         self.assertEqual( len(data[len(data)-1]), 3 )
 
         data = self.native_data.getAdjointWallerHartreeCoherentCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 2.45600299049398139e+01 )
         self.assertEqual( data[len(data)-1], 1.92198769740615498e-06 )
 
         data = self.native_data.getAdjointWallerHartreeTotalCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
         self.assertEqual( len(data[len(data)-1]), 3 )
 
         data = self.native_data.getAdjointImpulseApproxTotalCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 12 )
         self.assertEqual( len(data[len(data)-1]), 12 )
 
         data = self.native_data.getWallerHartreeTotalCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 4.40594690580228344e+04 )
         self.assertEqual( data[len(data)-1], 3.13338538552983381e-01 )
 
         data = self.native_data.getImpulseApproxTotalCrossSection()
-        self.assertEqual( len(data), 916 )
+        self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 4.40594858435388887e+04 )
         self.assertEqual( data[len(data)-1], 3.13351508326949857e-01 )
 

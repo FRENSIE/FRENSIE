@@ -78,6 +78,12 @@ public:
   //! Get the default photon grid distance tolerance
   double getDefaultPhotonGridDistanceTolerance() const;
 
+  //! Set the photon threshold energy nudge factor
+  void setPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
+
+  //! Get the photon threshold energy nudge factor
+  double getPhotonThresholdEnergyNudgeFactor() const;
+
   //! Set the adjoint pair production energy dist. norm const. evaluation tol.
   void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
                                                  const double evaluation_tol );

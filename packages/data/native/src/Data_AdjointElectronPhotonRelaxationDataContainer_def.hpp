@@ -41,7 +41,8 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_distance_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, photon_tabular_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_threshold_energy_nudge_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
@@ -94,13 +95,23 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_max_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_max_energy_grids );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_cross_sections );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_cross_section_threshold_indices );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_max_energy_grids );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_section_threshold_indices );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hatree_total_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hatree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_total_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_total_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_total_max_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_distribution_grid );
@@ -171,7 +182,8 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_grid_distance_tol );
-  DATA_MAKE_NVP_DEFAULT( ar, photon_tabular_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_threshold_energy_nudge_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_dist_norm_constant_nudge_value );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_triplet_production_energy_dist_norm_constant_evaluation_tol );
@@ -224,13 +236,23 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hartree_incoherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_incoherent_cross_section_threshold_index );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_max_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_incoherent_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_max_energy_grids );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_cross_sections );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_subshell_incoherent_cross_section_threshold_indices );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_max_energy_grids );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_section_threshold_indices );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_coherent_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hatree_total_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_waller_hatree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_total_max_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_impulse_approx_total_cross_section );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_total_max_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, adjoint_doppler_broadened_impulse_approx_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_pair_production_energy_distribution_grid );
@@ -246,7 +268,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
-
+  
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );

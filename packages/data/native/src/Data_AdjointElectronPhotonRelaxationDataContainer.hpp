@@ -90,8 +90,11 @@ public:
   //! Return the adjoint photon grid distance tolerance
   double getAdjointPhotonGridDistanceTolerance() const;
 
+  //! Return the adjoint photon threshold energy nudge factor
+  double getAdjointPhotonThresholdEnergyNudgeFactor() const;
+
   //! Return the photon FullyTabularTwoDDistribution evaluation tolerance
-  double getPhotonTabularEvaluationTolerance() const;
+  double getAdjointPhotonTabularEvaluationTolerance() const;
 
   //! Return the adjoint pair production energy dist norm constant evaluation tol
   double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
@@ -256,6 +259,20 @@ public:
   const std::vector<std::vector<double> >&
   getAdjointImpulseApproxIncoherentCrossSection() const;
 
+  //! Return the adjoint impulse approx. (IA) incoherent photon cross section threshold energy bin index
+  unsigned getAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const;
+
+  //! Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid() const;
+
+  //! Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection() const;
+
+  //! Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section threshold energy index
+  unsigned getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const;
+
   //! Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
   const std::vector<std::vector<double> >&
   getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
@@ -265,6 +282,22 @@ public:
   const std::vector<std::vector<double> >&
   getAdjointImpulseApproxSubshellIncoherentCrossSection(
                                                const unsigned subshell ) const;
+
+  //! Return the subshell adjoint impulse approx. (IA) incoherent cross section threshod energy bin index
+  unsigned getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( const unsigned subshell ) const;
+
+  //! Return the subshell adjoint Doppler broadened impulse approx. (IA) incoh. max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                               const unsigned subshell ) const;
+
+  //! Return the subshell adjoint Doppler broadened impulse approx. (IA) incoherent photon cs
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(
+                                               const unsigned subshell ) const;
+
+  //! Return the subshell adjoint Doppler broadened impulse approx. (IA) incoherent cross section threshod energy bin index
+  unsigned getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( const unsigned subshell ) const;
 
   //! Return the adjoint Waller-Hartree coherent cross section
   const std::vector<double>&
@@ -285,6 +318,14 @@ public:
   //! Return the adjoint impulse approx. (IA) total cross section
   const std::vector<std::vector<double> >&
   getAdjointImpulseApproxTotalCrossSection() const;
+
+  //! Return the adjoint Doppler broadened impulse approx. (IA) total max energy grid
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid() const;
+
+  //! Return the adjoint Doppler broadened impulse approx. (IA) total cross section
+  const std::vector<std::vector<double> >&
+  getAdjointDopplerBroadenedImpulseApproxTotalCrossSection() const;
 
   //! Return the (forward) Waller-Hartree total cross section
   const std::vector<double>& getWallerHartreeTotalCrossSection() const;
@@ -529,8 +570,11 @@ protected:
   //! Set the adjoint photon grid distance tolerance
   void setAdjointPhotonGridDistanceTolerance( const double grid_distance_tol );
 
+  //! Set the adjoint photon threshold energy nudge factor
+  void setAdjointPhotonThresholdEnergyNudgeFactor( const double nudge_factor );
+
   //! Set the photon FullyTabularTwoDDistribution evaluation tolerance
-  void setPhotonTabularEvaluationTolerance( const double evaluation_tol );
+  void setAdjointPhotonTabularEvaluationTolerance( const double evaluation_tol );
 
   //! Set the adjoint pair production energy dist norm constant evaluation tol
   void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
@@ -724,6 +768,24 @@ protected:
                                        const std::vector<std::vector<double> >&
                                        adjoint_incoherent_cross_section );
 
+  //! Set the adjoint impulse approx. (IA) incoherent photon cross section threshold energy bin index
+  void setAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+                                                        const unsigned index );
+
+  //! Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon max energy grid
+  void setAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid );
+
+  //! Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section
+  void setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section );
+
+  //! Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section threshold energy bin index
+  void setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+                                                        const unsigned index );
+
   //! Set the subshell adjoint IA incoherent photon max energy grid
   void setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
                                        const unsigned subshell,
@@ -735,6 +797,28 @@ protected:
                                        const unsigned subshell,
                                        const std::vector<std::vector<double> >&
                                        adjoint_incoherent_cross_section );
+
+  //! Set the subshell adjoint IA incoherent photon cross section threshold energy bin index
+  void setAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                       const unsigned subshell,
+                                                       const unsigned index );
+
+  //! Set the subshell adjoint Doppler broadened IA incoherent photon max energy grid
+  void setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid );
+
+  //! Set the subshell adjoint Doppler broadened IA incoherent photon cross section
+  void setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section );
+
+  //! Set the subshell adjoint Doppler broadened IA incoherent photon cross section threshold energy bin index
+  void setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                       const unsigned subshell,
+                                                       const unsigned index );
 
   //! Set the adjoint Waller-Hartree coherent cross section
   void setAdjointWallerHartreeCoherentCrossSection(
@@ -757,6 +841,16 @@ protected:
 
   //! Set the adjoint impulse approx. (IA) total cross section
   void setAdjointImpulseApproxTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section );
+
+  //! Set the adjoint Doppler broadened impulse approx. (IA) total max energy grid
+  void setAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid );
+
+  //! Set the adjoint Doppler broadened impulse approx. (IA) total cross section
+  void setAdjointDopplerBroadenedImpulseApproxTotalCrossSection(
                                        const std::vector<std::vector<double> >&
                                        adjoint_total_cross_section );
 
@@ -1072,8 +1166,11 @@ private:
   // The adjoint photon grid distance tolerance
   double d_adjoint_photon_grid_distance_tol;
 
-  // The photon FullyTabularTwoDDistribution evaluation tolerance
-  double d_photon_tabular_evaluation_tol;
+  // The adjoint photon threshold energy nudge factor
+  double d_adjoint_photon_threshold_energy_nudge_factor;
+
+  // The adjoint photon FullyTabularTwoDDistribution evaluation tolerance
+  double d_adjoint_photon_tabular_evaluation_tol;
 
   // The adjoint pair production energy dist norm constant evaluation tol
   double d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
@@ -1086,7 +1183,7 @@ private:
 
   // The adjoint triplet production energy dist norm constant nudge value
   double d_adjoint_triplet_production_energy_dist_norm_constant_nudge_value;
-
+  
   // The adjoint incoherent max energy nudge value
   double d_adjoint_incoherent_max_energy_nudge_value;
 
@@ -1231,6 +1328,20 @@ private:
   std::vector<std::vector<double> >
   d_adjoint_impulse_approx_incoherent_cross_section;
 
+  // The impulse approx. incoherent adjoint photon cross section threshold energy bin index
+  unsigned d_adjoint_impulse_approx_incoherent_cross_section_threshold_index;
+
+  // The Doppler broadened impulse approx. incoherent adjoint photon max energy grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_doppler_broadened_impulse_approx_incoherent_max_energy_grid;
+
+  // The Doppler broadened impulse approx. incoherent adjoint photon cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section;
+
+  // The Doppler broadened impulse approx. incoherent adjoint photon cross section threshold energy bin index
+  unsigned d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section_threshold_index;
+
   // The impulse approx. subshell incoh. adjoint photon max energy grid (MeV)
   std::map<unsigned,std::vector<std::vector<double> > >
   d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids;
@@ -1238,6 +1349,20 @@ private:
   // The impulse approx. subshell incoherent adjoint photon cross section (b)
   std::map<unsigned,std::vector<std::vector<double> > >
   d_adjoint_impulse_approx_subshell_incoherent_cross_sections;
+
+  // The impulse approx. subshell incoherent adjoint photon cross section threshold energy bin indices
+  std::map<unsigned,unsigned> d_adjoint_impulse_approx_subshell_incoherent_cross_section_threshold_indices;
+
+  // The Doppler broadened impulse approx. subshell incoh. adjoint photon max energy grid (MeV)
+  std::map<unsigned,std::vector<std::vector<double> > >
+  d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_max_energy_grids;
+
+  // The Doppler broadened impulse approx. subshell incoherent adjoint photon cross section (b)
+  std::map<unsigned,std::vector<std::vector<double> > >
+  d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections;
+
+  // The Doppler broadened impulse approx. subshell incoherent adjoint photon cross section threshold energy bin indices
+  std::map<unsigned,unsigned> d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_section_threshold_indices;
 
   // The Waller-Hartree coherent cross section (b)
   std::vector<double> d_waller_hartree_coherent_cross_section;
@@ -1257,6 +1382,14 @@ private:
   // The adjoint impulse approx. total cross section (b)
   std::vector<std::vector<double> >
   d_adjoint_impulse_approx_total_cross_section;
+
+  // The adjoint Doppler broadened impulse approx. total max energy grid (MeV)
+  std::vector<std::vector<double> >
+  d_adjoint_doppler_broadened_impulse_approx_total_max_energy_grid;
+
+  // The adjoint impulse approx. total cross section (b)
+  std::vector<std::vector<double> >
+  d_adjoint_doppler_broadened_impulse_approx_total_cross_section;
 
   // The forward Waller-Hartree total cross section (b)
   std::vector<double> d_waller_hartree_total_cross_section;

@@ -48,6 +48,7 @@ AdjointElectronPhotonRelaxationDataGenerator::AdjointElectronPhotonRelaxationDat
   d_data_container->setAdjointPhotonGridConvergenceTolerance( d_default_photon_grid_generator->getConvergenceTolerance() );
   d_data_container->setAdjointPhotonGridAbsoluteDifferenceTolerance( d_default_photon_grid_generator->getAbsoluteDifferenceTolerance() );
   d_data_container->setAdjointPhotonGridDistanceTolerance( d_default_photon_grid_generator->getDistanceTolerance() );
+  d_data_container->setAdjointPhotonThresholdEnergyNudgeFactor( 1.0001 );
 
   d_data_container->setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 );
   d_data_container->setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 );
@@ -233,6 +234,21 @@ void AdjointElectronPhotonRelaxationDataGenerator::setDefaultPhotonGridDistanceT
 double AdjointElectronPhotonRelaxationDataGenerator::getDefaultPhotonGridDistanceTolerance() const
 {
   return d_default_photon_grid_generator->getDistanceTolerance();
+}
+
+// Set the photon threshold energy nudge factor
+void AdjointElectronPhotonRelaxationDataGenerator::setPhotonThresholdEnergyNudgeFactor( const double nudge_factor )
+{
+  // Make sure that the nudge factor is valid
+  testPrecondition( nudge_factor > 1.0 );
+  
+  d_data_container->setAdjointPhotonThresholdEnergyNudgeFactor( nudge_factor );
+}
+
+// Get the photon threshold energy nudge factor
+double AdjointElectronPhotonRelaxationDataGenerator::getPhotonThresholdEnergyNudgeFactor() const
+{
+  return d_data_container->getAdjointPhotonThresholdEnergyNudgeFactor();
 }
 
 // Set the adjoint pair production energy dist. norm const. evaluation tol.

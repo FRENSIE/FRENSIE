@@ -154,10 +154,16 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointPhotonGridDistanc
   return d_adjoint_photon_grid_distance_tol;
 }
 
-// Return the photon FullyTabularTwoDDistribution evaluation tolerance
-double AdjointElectronPhotonRelaxationDataContainer::getPhotonTabularEvaluationTolerance() const
+//! Return the adjoint photon threshold energy nudge factor
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointPhotonThresholdEnergyNudgeFactor() const
 {
-  return d_photon_tabular_evaluation_tol;
+  return d_adjoint_photon_threshold_energy_nudge_factor;
+}
+
+// Return the photon FullyTabularTwoDDistribution evaluation tolerance
+double AdjointElectronPhotonRelaxationDataContainer::getAdjointPhotonTabularEvaluationTolerance() const
+{
+  return d_adjoint_photon_tabular_evaluation_tol;
 }
 
 // Return the adjoint pair production energy dist norm constant evaluation tol
@@ -488,7 +494,7 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointWallerHartreeIncoherentC
   return d_adjoint_waller_hartree_incoherent_cross_section;
 }
 
-// the adjoint impulse approx. (IA) incoherent photon max energy grid
+// Return the adjoint impulse approx. (IA) incoherent photon max energy grid
 const std::vector<std::vector<double> >&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxIncoherentMaxEnergyGrid() const
 {
@@ -500,6 +506,32 @@ const std::vector<std::vector<double> >&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxIncoherentCrossSection() const
 {
   return d_adjoint_impulse_approx_incoherent_cross_section;
+}
+
+// Return the adjoint impulse approx. (IA) incoherent photon cross section threshold energy bin index
+unsigned AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const
+{
+  return d_adjoint_impulse_approx_incoherent_cross_section_threshold_index;
+}
+
+// Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid() const
+{
+  return d_adjoint_doppler_broadened_impulse_approx_incoherent_max_energy_grid;
+}
+
+// Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection() const
+{
+  return d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section;
+}
+
+// Return the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section threshold energy bin index
+unsigned AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const
+{
+  return d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section_threshold_index;
 }
 
 // Return the subshell adjoint impulse approx. (IA) incoh. max energy grid
@@ -524,6 +556,52 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellInc
                     d_subshells.end() );
 
   return d_adjoint_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second;
+}
+
+// Return the subshell adjoint impulse approx. (IA) incoherent photon cs
+unsigned AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_impulse_approx_subshell_incoherent_cross_section_threshold_indices.find( subshell )->second;
+}
+
+// Return the subshell adjoint Doppler broadened impulse approx. (IA) incoh. max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_max_energy_grids.find( subshell )->second;
+}
+
+// Return the subshell adjoint Doppler broadened impulse approx. (IA) incoherent photon cs
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second;
+}
+
+// Return the subshell adjoint Doppler broadened impulse approx. (IA) incoherent photon cs
+unsigned AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+                    d_subshells.end() );
+
+  return d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_section_threshold_indices.find( subshell )->second;
 }
 
 // Return the adjoint Waller-Hartree coherent cross section
@@ -559,6 +637,20 @@ const std::vector<std::vector<double> >&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointImpulseApproxTotalCrossSection() const
 {
   return d_adjoint_impulse_approx_total_cross_section;
+}
+
+// Return the adjoint Doppler broadened impulse approx. (IA) total max energy grid
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid() const
+{
+  return d_adjoint_doppler_broadened_impulse_approx_total_max_energy_grid;
+}
+
+// Return the adjoint Doppler broadened impulse approx. (IA) total cross section
+const std::vector<std::vector<double> >&
+AdjointElectronPhotonRelaxationDataContainer::getAdjointDopplerBroadenedImpulseApproxTotalCrossSection() const
+{
+  return d_adjoint_doppler_broadened_impulse_approx_total_cross_section;
 }
 
 // Return the (forward) Waller-Hartree total cross section
@@ -1148,16 +1240,24 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonGridDistanceT
   d_adjoint_photon_grid_distance_tol = grid_distance_tol;
 }
 
+// Set the adjoint photon threshold energy nudge factor
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonThresholdEnergyNudgeFactor( const double nudge_factor )
+{
+  // Make sure that the nudge value is valid
+  testPrecondition( nudge_factor > 1.0 );
 
-// Set the photon FullyTabularTwoDDistribution evaluation tolerance
-void AdjointElectronPhotonRelaxationDataContainer::setPhotonTabularEvaluationTolerance(
+  d_adjoint_photon_threshold_energy_nudge_factor = nudge_factor;
+}
+
+// Set the adjoint photon FullyTabularTwoDDistribution evaluation tolerance
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointPhotonTabularEvaluationTolerance(
     const double tabular_evaluation_tol )
 {
   // Make sure the tolerance is valid
   testPrecondition( tabular_evaluation_tol < 1.0 );
   testPrecondition( tabular_evaluation_tol > 0.0 );
 
-  d_photon_tabular_evaluation_tol = tabular_evaluation_tol;
+  d_adjoint_photon_tabular_evaluation_tol = tabular_evaluation_tol;
 }
 
 // Set the adjoint pair production energy dist norm constant evaluation tol
@@ -1702,7 +1802,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxIncohe
                                        adjoint_incoherent_max_energy_grid )
 {
   // Make sure the max energy grid is valid
-  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() <=
                     d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_incoherent_max_energy_grid =
@@ -1715,11 +1815,59 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxIncohe
                                        adjoint_incoherent_cross_section )
 {
   // Make sure the cross section is valid
-  testPrecondition( adjoint_incoherent_cross_section.size() ==
+  testPrecondition( adjoint_incoherent_cross_section.size() <=
                     d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_incoherent_cross_section =
     adjoint_incoherent_cross_section;
+}
+
+// Set the adjoint impulse approx. (IA) incoherent photon cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+                                                         const unsigned index )
+{
+  // Make sure that the threshold index is valid
+  testPrecondition( d_adjoint_impulse_approx_incoherent_cross_section.size() +
+                    index == d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_incoherent_cross_section_threshold_index = index;
+}
+
+// Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() <=
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_incoherent_max_energy_grid =
+    adjoint_incoherent_max_energy_grid;
+}
+
+// Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() <=
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section =
+    adjoint_incoherent_cross_section;
+}
+
+// Set the adjoint Doppler broadened impulse approx. (IA) incoherent photon cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+                                                         const unsigned index )
+{
+  // Make sure that the threshold index is valid
+  testPrecondition( d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section.size() +
+                    index == d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_incoherent_cross_section_threshold_index = index;
 }
 
 // Set the subshell adjoint IA incoherent photon max energy grid
@@ -1731,7 +1879,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the max energy grid is valid
-  testPrecondition( adjoint_incoherent_max_energy_grid.size() ==
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() <=
                     d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_subshell_incoherent_max_energy_grids[subshell] =
@@ -1747,11 +1895,75 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshe
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the cross section is valid
-  testPrecondition( adjoint_incoherent_cross_section.size() ==
+  testPrecondition( adjoint_incoherent_cross_section.size() <=
                     d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_subshell_incoherent_cross_sections[subshell] =
     adjoint_incoherent_cross_section;
+}
+
+// Set the subshell adjoint IA incoherent photon cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                       const unsigned subshell,
+                                                       const unsigned index )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  testPrecondition( d_adjoint_impulse_approx_subshell_incoherent_cross_sections.find( subshell ) !=
+                    d_adjoint_impulse_approx_subshell_incoherent_cross_sections.end() );
+  remember( const std::vector<std::vector<double> >& adjoint_incoherent_cs =
+            d_adjoint_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second );
+  testPrecondition( adjoint_incoherent_cs.size() + index == d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_impulse_approx_subshell_incoherent_cross_section_threshold_indices[subshell] = index;
+}
+
+// Set the subshell adjoint Doppler broadened IA incoherent photon max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_max_energy_grid )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_incoherent_max_energy_grid.size() <=
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_max_energy_grids[subshell] =
+    adjoint_incoherent_max_energy_grid;
+}
+
+// Set the subshell adjoint Doppler broadened IA incoherent photon cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(
+                                       const unsigned subshell,
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_incoherent_cross_section )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_incoherent_cross_section.size() <=
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections[subshell] =
+    adjoint_incoherent_cross_section;
+}
+
+// Set the subshell adjoint Doppler broadened IA incoherent photon cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                                                       const unsigned subshell,
+                                                       const unsigned index )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  testPrecondition( d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections.find( subshell ) !=
+                    d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections.end() );
+  remember( const std::vector<std::vector<double> >& adjoint_incoherent_cs =
+            d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second );
+  testPrecondition( adjoint_incoherent_cs.size() + index == d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_subshell_incoherent_cross_section_threshold_indices[subshell] = index;
 }
 
 // Set the adjoint Waller-Hartree coherent cross section
@@ -1815,6 +2027,32 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointImpulseApproxTotalC
                     d_adjoint_photon_energy_grid.size() );
 
   d_adjoint_impulse_approx_total_cross_section =
+    adjoint_total_cross_section;
+}
+
+// Set the adjoint Doppler broadened impulse approx. (IA) total max energy grid
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_max_energy_grid )
+{
+  // Make sure the max energy grid is valid
+  testPrecondition( adjoint_total_max_energy_grid.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_total_max_energy_grid =
+    adjoint_total_max_energy_grid;
+}
+
+// Set the adjoint Doppler broadened impulse approx. (IA) total cross section
+void AdjointElectronPhotonRelaxationDataContainer::setAdjointDopplerBroadenedImpulseApproxTotalCrossSection(
+                                       const std::vector<std::vector<double> >&
+                                       adjoint_total_cross_section )
+{
+  // Make sure the cross section is valid
+  testPrecondition( adjoint_total_cross_section.size() ==
+                    d_adjoint_photon_energy_grid.size() );
+
+  d_adjoint_doppler_broadened_impulse_approx_total_cross_section =
     adjoint_total_cross_section;
 }
 
@@ -2511,7 +2749,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungElect
         d_adjoint_bremsstrahlung_electron_cross_section.size() + index ==
         d_adjoint_electron_energy_grid.size() );
 
- d_adjoint_bremsstrahlung_electron_cross_section_threshold_index = index;
+  d_adjoint_bremsstrahlung_electron_cross_section_threshold_index = index;
 }
 
 // Set the atomic excitation electron cross section

@@ -26,6 +26,8 @@
 #include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -368,6 +370,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
                              impulse_approx_incoherent_adjoint_cs_evaluators );
 
+  // Create the doppler broadened impulse approx. incoherent adjoint cross
+  // section evaluators
+  std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution> > >
+    doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators;
+
+  this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
+           doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators );
+
   // Create the union energy grid
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Creating " <<
                                     Utility::Italicized( "union energy grid " ) );
@@ -383,6 +393,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
 
   this->updateAdjointPhotonUnionEnergyGrid(
           union_energy_grid, impulse_approx_incoherent_adjoint_cs_evaluators );
+
+  this->updateAdjointPhotonUnionEnergyGrid(
+          union_energy_grid, doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators );
 
   this->updateAdjointPhotonUnionEnergyGrid(
                                union_energy_grid, waller_hartree_coherent_cs );
@@ -435,11 +448,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                                         << "cross section ... " );
       FRENSIE_FLUSH_ALL_LOGS();
 
+      unsigned threshold_index = 0;
+      
       this->createCrossSectionOnUnionEnergyGrid(
                      union_energy_grid,
                      impulse_approx_incoherent_adjoint_cs_evaluators[i].second,
                      max_energy_grid,
-                     cross_section );
+                     cross_section,
+                     threshold_index );
 
       data_container.setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(
                       impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
@@ -447,6 +463,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
       data_container.setAdjointImpulseApproxSubshellIncoherentCrossSection(
                       impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
                       cross_section );
+      data_container.setAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                      impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
+                      threshold_index );
 
       FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
     }
@@ -454,13 +473,51 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     FRENSIE_LOG_NOTIFICATION( "   Setting the " <<
                               Utility::Italicized( "impulse approx total incoherent adjoint" )
                               << " cross section ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
 
     this->calculateAdjointImpulseApproxTotalIncoherentCrossSection();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
 
+    for( unsigned i = 0u; i < doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators.size(); ++i )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting " <<
+                                        Utility::Italicized( "subshell " ) <<
+                                        Utility::Italicized( Data::convertENDFDesignatorToSubshellEnum( doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators[i].first ) )
+                                        << Utility::Italicized(" doppler broadened impulse approx incoherent adjoint ")
+                                        << "cross section ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
+
+      this->createCrossSectionOnUnionEnergyGrid(
+                     union_energy_grid,
+                     doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators[i].second,
+                     max_energy_grid,
+                     cross_section );
+
+      data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid(
+                      doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
+                      max_energy_grid );
+      data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(
+                      doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
+                      cross_section );
+      data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+                      doppler_broadened_impulse_approx_incoherent_adjoint_cs_evaluators[i].first,
+                      0 );
+
+      FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    }
+
+    FRENSIE_LOG_NOTIFICATION( "   Setting the " <<
+                              Utility::Italicized( "doppler broadened impulse approx total incoherent adjoint" )
+                              << " cross section ... " );
+
+    this->calculateAdjointDopplerBroadenedImpulseApproxTotalIncoherentCrossSection();
+
+    FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
+
+  
 
   // Create and set the 1-D cross sections
   {
@@ -469,7 +526,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "Waller-Hartree coherent adjoint" )
                                       << " cross section ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
 
     this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                                waller_hartree_coherent_cs,
@@ -478,6 +534,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     data_container.setAdjointWallerHartreeCoherentCrossSection( cross_section );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
 
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "forward Waller-Hartree total" )
@@ -495,7 +552,6 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "forward impulse approx. total" )
                                       << " cross section ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
 
     this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
                                                impulse_approx_total_forward_cs,
@@ -504,26 +560,36 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     data_container.setImpulseApproxTotalCrossSection( cross_section );
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
 
   // Set the total adjoint cross sections
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                     Utility::Italicized( "adjoint Waller-Hartree total" )
                                     << " cross section ... " );
-  FRENSIE_FLUSH_ALL_LOGS();
 
-  this->calculateAdjointPhotonTotalCrossSection( true );
+  this->calculateAdjointPhotonTotalCrossSection( true, true );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                     Utility::Italicized( "adjoint impulse approx total" )
                                     << " cross section ... " );
-  FRENSIE_FLUSH_ALL_LOGS();
 
-  this->calculateAdjointPhotonTotalCrossSection( false );
+  this->calculateAdjointPhotonTotalCrossSection( false, false );
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
+                                    Utility::Italicized( "adjoint doppler broadened impulse approx total" )
+                                    << " cross section ... " );
+
+  this->calculateAdjointPhotonTotalCrossSection( false, true );
+
+  FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Set the adjoint pair/triplet production energy distributions
   FRENSIE_LOG_NOTIFICATION( " Setting the adjoint pair/triplet production "
@@ -534,21 +600,21 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "adjoint pair production" )
                                       << " energy distribution data ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
 
     this->setAdjointPairProductionEnergyDistribution();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
 
     // Set the adjoint triplet production energy distribution
     FRENSIE_LOG_PARTIAL_NOTIFICATION( "   Setting the " <<
                                       Utility::Italicized( "adjoint triplet production" )
                                       << " energy distribution data ... " );
-    FRENSIE_FLUSH_ALL_LOGS();
 
     this->setAdjointTripletProductionEnergyDistribution();
 
     FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
+    FRENSIE_FLUSH_ALL_LOGS();
   }
 }
 
@@ -720,8 +786,33 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
     cs_evaluators[i].first = subshell;
 
     this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
-                                                    cs_evaluators[i].first,
-                                                    cs_evaluators[i].second );
+                                                     cs_evaluators[i].first,
+                                                     cs_evaluators[i].second );
+
+    ++i;
+  }
+}
+
+// Create the subshell impulse approx incoherent adjoint cs evaluators
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
+          std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          cs_evaluators ) const
+{
+  // Get the subshells
+  const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
+
+  // Resize the cs_evaluators
+  cs_evaluators.resize( subshells.size() );
+
+  int i = 0;
+
+  for( auto&& subshell : subshells )
+  {
+    cs_evaluators[i].first = subshell;
+
+    this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
+                                                     cs_evaluators[i].first,
+                                                     cs_evaluators[i].second );
 
     ++i;
   }
@@ -749,6 +840,41 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
                       d_forward_epr_data->getSubshellOccupancy( subshell ),
                       d_forward_epr_data->getSubshellBindingEnergy( subshell ),
                       occupation_number ) );
+}
+
+// Create a subshell impulse approx incoherent adjoint cs evaluator
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
+         const unsigned subshell,
+         std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const
+{
+  // Create the occupation number
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,void>(
+               d_forward_epr_data->getOccupationNumberMomentumGrid( subshell ),
+               d_forward_epr_data->getOccupationNumber( subshell ) ) );
+
+  std::shared_ptr<MonteCarlo::OccupationNumber> occupation_number(
+         new MonteCarlo::StandardOccupationNumber<Utility::Units::MeCMomentum>(
+                                                     raw_occupation_number ) );
+
+  // Create the Compton profile
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
+                 d_forward_epr_data->getComptonProfileMomentumGrid( subshell ),
+                 d_forward_epr_data->getComptonProfile( subshell ) ) );
+
+  std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
+                                                       raw_compton_profile ) );
+
+  cs_evaluator.reset(
+        new MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
+                      this->getMaxPhotonEnergy(),
+                      Data::convertENDFDesignatorToSubshellEnum( subshell ),
+                      d_forward_epr_data->getSubshellOccupancy( subshell ),
+                      d_forward_epr_data->getSubshellBindingEnergy( subshell ),
+                      occupation_number,
+                      compton_profile ) );
 }
 
 // Initialize the adjoint photon union energy grid
@@ -781,6 +907,73 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::initializeAdjointPhot
   // Check if the last grid point is correct
   if( union_energy_grid.back() != this->getMaxPhotonEnergy() )
     union_energy_grid.push_back( this->getMaxPhotonEnergy() );
+
+  // Add the binding energies
+  this->addBindingEnergyThresholdsToUnionEnergyGrid(
+                                                    this->getMinPhotonEnergy(),
+                                                    this->getMaxPhotonEnergy(),
+                                                    true,
+                                                    union_energy_grid );
+
+  // Sort the union energy grid
+  union_energy_grid.sort();
+}
+
+// Calculate the binding energy threshold
+double StandardAdjointElectronPhotonRelaxationDataGenerator::calculateBindingEnergyThreshold(
+                                                 const double binding_energy,
+                                                 const bool nudge_value ) const
+{
+  // Note: this is what will be added to the grid as it corresponds to the
+  //       actual energy where the adjoint cross section becomes zero
+  const double threshold_energy =
+    MonteCarlo::calculateComptonLineEnergy( binding_energy, -1.0 );
+
+  if( nudge_value )
+    return threshold_energy*this->getPhotonThresholdEnergyNudgeFactor();
+  else
+    return threshold_energy;
+}
+
+// Add binding energies to union energy grid
+void StandardAdjointElectronPhotonRelaxationDataGenerator::addBindingEnergyThresholdsToUnionEnergyGrid(
+                                   const double min_energy,
+                                   const double max_energy,
+                                   const bool add_nudged_values,
+                                   std::list<double>& union_energy_grid ) const
+{
+  const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
+
+  for( auto&& subshell : subshells )
+  {
+    const double binding_energy =
+      d_forward_epr_data->getSubshellBindingEnergy( subshell );
+
+    // Calculate the incoherent impulse approximation threshold energy
+    // Note: this is what will be added to the grid as it corresponds to the
+    //       actual energy where the adjoint cross section becomes zero
+    const double threshold_energy =
+      this->calculateBindingEnergyThreshold( binding_energy, false );
+
+    if( threshold_energy > min_energy &&
+        threshold_energy < max_energy )
+      union_energy_grid.push_back( threshold_energy );
+
+    // Since the subshell incoherent impulse approx cross sections go to
+    // zero at the binding energy threshold energy we will add another grid
+    // point, which is the binding energy threshold plus a small shift value.
+    // Avoiding the zero value of the cross section has been shown to improve
+    // grid generation times.
+    if( add_nudged_values )
+    {
+      const double nudged_threshold_energy =
+        this->calculateBindingEnergyThreshold( binding_energy, true );
+
+      if( nudged_threshold_energy > this->getMinPhotonEnergy() &&
+          nudged_threshold_energy < this->getMaxPhotonEnergy() )
+        union_energy_grid.push_back( nudged_threshold_energy );
+    }
+  }
 }
 
 // Update the adjoint photon union energy grid
@@ -829,6 +1022,70 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
                                                       cs_evaluators[i].first );
 
     const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator =
+      cs_evaluators[i].second;
+
+    // Create an adjoint incoherent grid generator
+    AdjointIncoherentGridGenerator<Utility::LinLinLin>
+      grid_generator( this->getMaxPhotonEnergy(),
+                      cs_evaluator->getSubshellBindingEnergy()+
+                        this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                      cs_evaluator->getSubshellBindingEnergy()+
+                        this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                      this->getAdjointIncoherentGridConvergenceTolerance(),
+                      this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                      this->getAdjointIncoherentGridDistanceTolerance() );
+
+    // Throw an exception if dirty convergence occurs
+    grid_generator.throwExceptionOnDirtyConvergence();
+
+    std::function<double(double,double)> cs_evaluation_wrapper =
+      grid_generator.createCrossSectionEvaluator(
+                cs_evaluator,  this->getAdjointIncoherentEvaluationTolerance() );
+
+    // Due to the threshold energy, which the grid generator has not been
+    // designed to handle, we wll have to create a copy of the union energy
+    // grid at and above the threshold energy, generate the grid on the copy,
+    // then merge the copy with the original union energy grid
+    const double nudged_threshold_energy =
+      this->calculateBindingEnergyThreshold( cs_evaluator->getSubshellBindingEnergy(), false );
+    
+    std::list<double>::const_iterator start =
+      std::find_if( union_energy_grid.begin(),
+                    union_energy_grid.end(),
+                    [nudged_threshold_energy](const double grid_value){return grid_value >= nudged_threshold_energy;} );
+
+    std::list<double> local_union_energy_grid( start, union_energy_grid.cend() );
+
+    try{
+      grid_generator.generateInPlace( local_union_energy_grid, cs_evaluation_wrapper );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: Unable to generate the energy grid for "
+                             "the " << subshell << " subshell impulse approx. "
+                             " incoherent adjoint cross section "
+                             "with the provided adjoint incoherent "
+                             "tolerances!" );
+
+    union_energy_grid.merge( local_union_energy_grid );
+    union_energy_grid.unique();
+    
+    FRENSIE_LOG_PARTIAL_NOTIFICATION( "." );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+}
+
+// Update the adjoint photon union energy grid
+void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUnionEnergyGrid(
+         std::list<double>& union_energy_grid,
+         const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         cs_evaluators ) const
+{
+  for( unsigned i = 0u; i < cs_evaluators.size(); ++i )
+  {
+    Data::SubshellType subshell = Data::convertENDFDesignatorToSubshellEnum(
+                                                      cs_evaluators[i].first );
+
+    const std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator =
       cs_evaluators[i].second;
 
     // Create an adjoint incoherent grid generator
@@ -956,6 +1213,82 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
+          std::vector<std::vector<double> >& cross_section,
+          unsigned& threshold_index ) const
+{
+  // Find the grid point that corresponds to the threshold energy
+  const double threshold_energy =
+    this->calculateBindingEnergyThreshold( cs_evaluator->getSubshellBindingEnergy(), false );
+
+  std::list<double>::const_iterator start =
+    std::find_if( union_energy_grid.begin(),
+                  union_energy_grid.end(),
+                  [threshold_energy](const double grid_value){return grid_value >= threshold_energy;} );
+
+  threshold_index = std::distance( union_energy_grid.begin(), start );
+    
+  // Resize the max energy grid and cross section arrays
+  max_energy_grid.resize( union_energy_grid.size() - threshold_index );
+  cross_section.resize( union_energy_grid.size() - threshold_index );
+
+  // Create a grid generator
+  AdjointIncoherentGridGenerator<Utility::LinLinLin>
+    grid_generator( this->getMaxPhotonEnergy(),
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentMaxEnergyNudgeValue(),
+                    cs_evaluator->getSubshellBindingEnergy()+ this->getAdjointIncoherentEnergyToMaxEnergyNudgeValue(),
+                    this->getAdjointIncoherentGridConvergenceTolerance(),
+                    this->getAdjointIncoherentGridAbsoluteDifferenceTolerance(),
+                    this->getAdjointIncoherentGridDistanceTolerance() );
+
+  // Throw an exception if dirty convergence occurs
+  grid_generator.throwExceptionOnDirtyConvergence();
+
+  std::function<double(double,double)> cs_evaluation_wrapper =
+    grid_generator.createCrossSectionEvaluator(
+                  cs_evaluator, this->getAdjointIncoherentEvaluationTolerance() );
+
+  // Evaluate the cross section at every energy grid point at or above the
+  // threshold energy
+  std::list<double>::const_iterator energy_grid_it = start;
+
+  std::vector<std::vector<double> >::iterator max_energy_grid_it =
+    max_energy_grid.begin();
+
+  std::vector<std::vector<double> >::iterator cross_section_it =
+    cross_section.begin();
+
+  while( energy_grid_it != union_energy_grid.end() )
+  {
+    grid_generator.generateAndEvaluateSecondaryInPlace(*max_energy_grid_it,
+                                                       *cross_section_it,
+                                                       *energy_grid_it,
+                                                       cs_evaluation_wrapper );
+
+    // Check if the first max energy grid point is valid. The energy to
+    // max energy nudge value is used to improve convergence time by ignoring
+    // the secondary grid point where the cross section is zero
+    // (energy = max energy). We must add it back in for the grid to be usable.
+    if( max_energy_grid_it->front() >
+        *energy_grid_it + cs_evaluator->getSubshellBindingEnergy() )
+    {
+      // This operation is inefficient with vectors!!!
+      max_energy_grid_it->insert(
+                  max_energy_grid_it->begin(),
+                  *energy_grid_it + cs_evaluator->getSubshellBindingEnergy() );
+      cross_section_it->insert( cross_section_it->begin(), 0.0 );
+    }
+
+    ++energy_grid_it;
+    ++max_energy_grid_it;
+    ++cross_section_it;
+  }
+}
+
+// Create the cross section on the union energy grid
+void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
+          std::vector<std::vector<double> >& max_energy_grid,
           std::vector<std::vector<double> >& cross_section ) const
 {
   // Resize the max energy grid and cross section arrays
@@ -1068,10 +1401,94 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
 
     while( subshell != subshells.end() )
     {
+      unsigned threshold_index = data_container.getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( *subshell );
+
+      if( i >= threshold_index )
+      {
+        local_max_energy_grid.insert(
+          local_max_energy_grid.end(),
+          data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i-threshold_index].begin(),
+          data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i-threshold_index].end() );
+      }
+
+      ++subshell;
+    }
+
+    // Sort the local max energy grid
+    local_max_energy_grid.sort();
+
+    // Remove duplicate grid points from the local max energy grid
+    local_max_energy_grid.unique();
+
+    // Assign the max energy grid at this energy
+    max_energy_grid[i].assign( local_max_energy_grid.begin(),
+                               local_max_energy_grid.end() );
+    cross_section[i].resize( max_energy_grid[i].size(), 0 );
+
+    // Evaluate the cross section on the max energy grid at this energy
+    subshell = subshells.begin();
+
+    while( subshell != subshells.end() )
+    {
+      unsigned threshold_index = data_container.getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( *subshell );
+
+      if( i >= threshold_index )
+      {
+        Utility::TabularDistribution<Utility::LinLin> subshell_cs(
+          data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i-threshold_index],
+          data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell )[i-threshold_index] );
+
+        for( unsigned j = 0u; j < max_energy_grid[i].size(); ++j )
+          cross_section[i][j] += subshell_cs.evaluate( max_energy_grid[i][j] );
+      }
+
+      ++subshell;
+    }
+  }
+
+  // Set the adjoint impulse approx total incoherent cross section
+  data_container.setAdjointImpulseApproxIncoherentMaxEnergyGrid(
+                                                             max_energy_grid );
+  data_container.setAdjointImpulseApproxIncoherentCrossSection(cross_section );
+
+  // This needs to be calculated to be safe, but as long as the min energy
+  // doesn't go below 1e-4, this shouldn't be an issue
+  data_container.setAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex( 0 );
+}
+
+// Calculate the total incoherent adjoint cross section
+void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointDopplerBroadenedImpulseApproxTotalIncoherentCrossSection()
+{
+  Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
+  // Get the union energy grid
+  const std::vector<double>& energy_grid =
+    data_container.getAdjointPhotonEnergyGrid();
+
+  // Initialize the max energy grid
+  std::vector<std::vector<double> > max_energy_grid( energy_grid.size() );
+  std::vector<std::vector<double> > cross_section( energy_grid.size() );
+
+  // The max_energy_grid at an energy
+  std::list<double> local_max_energy_grid;
+
+  // Get the subshells
+  const std::set<unsigned>& subshells = data_container.getSubshells();
+
+  // Generate the max energy grid at each energy grid point
+  for( unsigned i = 0u; i < energy_grid.size(); ++i )
+  {
+    local_max_energy_grid.clear();
+
+    std::set<unsigned>::const_iterator subshell = subshells.begin();
+
+    while( subshell != subshells.end() )
+    {
       local_max_energy_grid.insert(
         local_max_energy_grid.end(),
-        data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].begin(),
-        data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].end() );
+        data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].begin(),
+        data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].end() );
 
       ++subshell;
     }
@@ -1093,8 +1510,8 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
     while( subshell != subshells.end() )
     {
       Utility::TabularDistribution<Utility::LinLin> subshell_cs(
-        data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i],
-        data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell )[i] );
+        data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i],
+        data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( *subshell )[i] );
 
       for( unsigned j = 0u; j < max_energy_grid[i].size(); ++j )
         cross_section[i][j] += subshell_cs.evaluate( max_energy_grid[i][j] );
@@ -1103,15 +1520,17 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
     }
   }
 
-  // Set the adjoint impulse approx total incoherent cross section
-  data_container.setAdjointImpulseApproxIncoherentMaxEnergyGrid(
+  // Set the adjoint Doppler broadened impulse approx total incoherent cross section
+  data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid(
                                                              max_energy_grid );
-  data_container.setAdjointImpulseApproxIncoherentCrossSection(cross_section );
+  data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection(cross_section );
+  data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex( 0 );
 }
 
 // Calculate the adjoint photon total cross section
 void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhotonTotalCrossSection(
-    const bool use_waller_hartree_adjoint_incoherent_cs )
+           const bool use_waller_hartree_adjoint_incoherent_cs,
+           const bool else_use_doppler_broadened_impulse_approx_incoherent_cs )
 {
   Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container =
     this->getVolatileDataContainer();
@@ -1136,6 +1555,14 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhoto
     total_cross_section =
       data_container.getAdjointWallerHartreeIncoherentCrossSection();
   }
+  else if( else_use_doppler_broadened_impulse_approx_incoherent_cs )
+  {
+    max_energy_grid =
+      data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid();
+
+    total_cross_section =
+      data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection();
+  }
   else
   {
     max_energy_grid =
@@ -1159,6 +1586,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhoto
     data_container.setAdjointWallerHartreeTotalCrossSection(
                                                          total_cross_section );
   }
+  else if( else_use_doppler_broadened_impulse_approx_incoherent_cs )
+  {
+    data_container.setAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid(max_energy_grid );
+    data_container.setAdjointDopplerBroadenedImpulseApproxTotalCrossSection(
+                                                         total_cross_section );
+  }
   else
   {
     data_container.setAdjointImpulseApproxTotalMaxEnergyGrid(max_energy_grid );
@@ -1172,9 +1605,7 @@ double StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointPhot
           const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
           cross_sections,
           const double max_energy ) const
-{
-
-}
+{ /* ... */ }
 
 // Set the adjoint electron data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronData()

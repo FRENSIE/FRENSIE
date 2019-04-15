@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getGridSearcher )
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
 
-  FRENSIE_CHECK_EQUAL( grid_index, 1166 );
+  FRENSIE_CHECK_EQUAL( grid_index, 1261 );
 }
 
 //---------------------------------------------------------------------------//

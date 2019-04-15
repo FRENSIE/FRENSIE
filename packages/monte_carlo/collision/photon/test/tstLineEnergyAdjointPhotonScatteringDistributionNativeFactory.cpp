@@ -67,7 +67,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
   FRENSIE_CHECK_EQUAL( distribution->getMinOutgoingEnergy(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( distribution->getMaxOutgoingEnergy(), 1.03 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 4.815451815420467e-10, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 4.709293491094194530e-10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

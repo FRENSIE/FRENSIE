@@ -194,7 +194,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomNativeFactory,
   std::shared_ptr<const MonteCarlo::AdjointPhotoatomicReaction> reaction =
     scattering_reactions.find( MonteCarlo::K_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION )->second;
 
-  FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( reaction->getThresholdEnergy(),
+                                   1.815507193800007350e-03,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( reaction->getMaxEnergy(), 20.0 );
 
   std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> > incoherent_reaction =
