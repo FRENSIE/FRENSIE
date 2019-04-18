@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_DesignByContract.hpp"
 
@@ -82,12 +83,17 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
 
   double cross_section;
 
-  if( incoming_energy < max_energy - d_binding_energy )
+  
+
+  if( this->isCrossSectionNonZero( incoming_energy,
+                                   max_energy,
+                                   scattering_angle_cosine ) )
   {
     const double adjoint_occupation_number =
-      this->evaluateAdjointOccupationNumber(
-                        incoming_energy, max_energy, scattering_angle_cosine );
-
+      this->evaluateAdjointOccupationNumber( incoming_energy,
+                                             max_energy,
+                                             scattering_angle_cosine );
+    
     const double diff_kn_cross_section =
       this->evaluateAdjointKleinNishinaDist( incoming_energy,
                                              max_energy,
@@ -100,33 +106,6 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluate(
     cross_section = 0.0;
 
   return cross_section;
-}
-
-// Evaluate the pdf
-/*! \details This method is only provided to correct for an anomalous factor
- * of 0.5 that arises in simulation results. Multiplying the true PDF value
- * by a factor of 2.0 appears to correct these results. No mathematical
- * or physical justification for this factor of 2.0 has been identified. Any
- * help in better understanding this anomalous factor would be greatly
- * appreciated.
- */
-double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
-                                   const double incoming_energy,
-                                   const double max_energy,
-                                   const double scattering_angle_cosine ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >=
-                    calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  return 2.0*IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
-                                                     incoming_energy,
-                                                     max_energy,
-                                                     scattering_angle_cosine );
 }
 
 // Evaluate the integrated cross section (b)
@@ -152,7 +131,8 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateIntegrated
   Utility::GaussKronrodIntegrator<double> quadrature_gkq_int( precision );
 
   const double min_scattering_angle_cosine =
-    calculateMinScatteringAngleCosine( incoming_energy, max_energy );
+    MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
+                                                   max_energy );
 
   quadrature_gkq_int.integrateAdaptively<15>( diff_cs_wrapper,
                                               min_scattering_angle_cosine,
@@ -197,6 +177,10 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrial
   remember( double min_scattering_angle_cosine =
             calculateMinScatteringAngleCosine( incoming_energy, this->getMaxEnergy() ) );
 
+  const double max_adjoint_occupation_number =
+    this->evaluateMaxAdjointOccupationNumber( incoming_energy,
+                                              this->getMaxEnergy() );
+  
   while( true )
   {
     this->sampleAndRecordTrialsAdjointKleinNishina( incoming_energy,
@@ -209,10 +193,10 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrial
                                              this->getMaxEnergy(),
                                              scattering_angle_cosine );
 
-    const double random_number = 
+    const double scaled_random_number = max_adjoint_occupation_number*
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    if( random_number <= adjoint_occupation_number )
+    if( scaled_random_number <= adjoint_occupation_number )
       break;
   }
 
@@ -267,42 +251,29 @@ bool SubshellIncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatter
   return initial_energy > energy_of_interest - d_binding_energy;
 }
 
-// Calculate the occupation number arguments
-double SubshellIncoherentAdjointPhotonScatteringDistribution::calculateOccupationNumberArguments(
-                                          const double incoming_energy,
-                                          const double max_energy,
-                                          const double scattering_angle_cosine,
-                                          double& pz_min,
-                                          double& pz_max ) const
+// Check if the cross section is non-zero
+bool SubshellIncoherentAdjointPhotonScatteringDistribution::isCrossSectionNonZero(
+                                   const double incoming_energy,
+                                   const double max_energy,
+                                   const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >=
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  const double outgoing_energy =
+    MonteCarlo::calculateAdjointComptonLineEnergy( incoming_energy,
+                                                   scattering_angle_cosine );
+  
+  return (incoming_energy < max_energy - d_binding_energy) &&
+    (outgoing_energy > d_binding_energy);
+}    
 
-  pz_max = calculateMaxElectronMomentumProjectionAdjoint(
-                                                     incoming_energy,
-                                                     d_binding_energy,
-                                                     scattering_angle_cosine );
-
-  pz_min = calculateMinElectronMomentumProjectionAdjoint(
-                                                     incoming_energy,
-                                                     max_energy,
-                                                     scattering_angle_cosine );
-
-  // Note: pz_max has no bound. We therefore limit it to the maximum pz
-  // stored in the occupation number grid. If pz_max is very large, pz_min
-  // can also be very large (especially at small scattering angles) but can
-  // never be larger than pz_max. Because we are limiting pz_max we must
-  // also limit pz_min.
-  if( pz_min > pz_max )
-    pz_min = pz_max;
-}
-
-// Evaluate the occupation number
+// Evaluate the adjoint occupation number
 double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOccupationNumber(
                                    const double incoming_energy,
                                    const double max_energy,
@@ -316,38 +287,34 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // Evaluate the occupation number at pz_max and pz_min
-  double pz_min, pz_max;
-
-  this->calculateOccupationNumberArguments( incoming_energy,
-                                            max_energy,
-                                            scattering_angle_cosine,
-                                            pz_min,
-                                            pz_max );
+  const double final_energy =
+    MonteCarlo::calculateAdjointComptonLineEnergy( incoming_energy,
+                                                   scattering_angle_cosine );
   
-  const double upper_occupation_number_value =
-    this->evaluateOccupationNumber( pz_max );
+  const double pz_max =
+    MonteCarlo::calculateMaxElectronMomentumProjection( final_energy,
+                                                        d_binding_energy,
+                                                        scattering_angle_cosine );
+  
+  return this->evaluateOccupationNumber( pz_max );
+}
 
-  const double lower_occupation_number_value =
-    this->evaluateOccupationNumber( pz_min );
+// Evaluate the max adjoint occupation number
+double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateMaxAdjointOccupationNumber(
+                                                const double incoming_energy,
+                                                const double max_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
 
-  // Evaluate the adjoint occupation number
-  double adjoint_occupation_number =
-    upper_occupation_number_value - lower_occupation_number_value;
+  const double min_scattering_angle_cosine = 
+    MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
+                                                   max_energy );
 
-  // Due to floating-point roundoff, it is possible for the adjoint
-  // occupation number to be slightly outside of [0,1]. When this occurs,
-  // manually set to 0 or 1.
-  if( adjoint_occupation_number < 0.0 )
-    adjoint_occupation_number = 0.0;
-  else if( adjoint_occupation_number > 1.0 )
-    adjoint_occupation_number = 1.0;
-
-  // Make sure the adjoint occupation number is valid
-  testPrecondition( adjoint_occupation_number >= 0.0 );
-  testPrecondition( adjoint_occupation_number <= 1.0 );
-
-  return adjoint_occupation_number;
+  return this->evaluateAdjointOccupationNumber( incoming_energy,
+                                                max_energy,
+                                                min_scattering_angle_cosine );
 }
   
 } // end MonteCarlo namespace

@@ -77,9 +77,19 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
         data = self.native_data.getAdjointImpulseApproxIncoherentCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 12 )
+        self.assertEqual( len(data[len(data)-1]), 12 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 12 )
         self.assertEqual( len(data[-1]), 12 )
 
         data = self.native_data.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[len(data)-1]), 3 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(1)
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
         self.assertEqual( len(data[-1]), 3 )

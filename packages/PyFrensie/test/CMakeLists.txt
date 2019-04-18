@@ -360,37 +360,37 @@ ADD_TEST(PyFrensie.MonteCarlo.Photon.PhotonKinematics_test ${PYTHON_EXECUTABLE} 
 # Add the MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory)
-ADD_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
 
 # Add the MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory)
-ADD_TEST(tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.DopplerBroadenedPhotonEnergyDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 # Add the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory)
-ADD_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
 
 # Add the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory)
-ADD_TEST(tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 # Add the MonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory)
-ADD_TEST(tstMonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.IncoherentAdjointPhotonScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
 # Add the MonteCarlo.Photon.CoherentScatteringDistributionACEFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory)
-ADD_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.CoherentScatteringDistributionACEFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionACEFactory.py --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --test_ace_table=82000.12p)
 
 # Add the MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory
 # unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory)
-ADD_TEST(tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml --test_adjoint_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+ADD_TEST(PyFrensie.MonteCarlo.Photon.CoherentScatteringDistributionNativeFactory_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Photon.CoherentScatteringDistributionNativeFactory.py --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml --test_adjoint_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
 # Add the MonteCarlo.Electron.ElectronScatteringNativeDistribution unit tests
 PyFrensie_MAKE_TEST(tstMonteCarlo.Electron.ElectronScatteringNativeDistribution)

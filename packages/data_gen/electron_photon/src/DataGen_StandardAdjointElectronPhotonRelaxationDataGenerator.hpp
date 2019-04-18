@@ -22,6 +22,7 @@
 #include "Utility_UnivariateDistribution.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
@@ -149,13 +150,35 @@ private:
           std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
           cs_evaluators ) const;
 
+  // Create the subshell impulse approx incoherent adjoint cs evaluators
+  void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
+          std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+          cs_evaluators ) const;
+
   // Create a subshell impulse approx incoherent adjoint cs evaluators
   void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
           const unsigned subshell,
           std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
 
+  // Create a subshell impulse approx incoherent adjoint cs evaluators
+  void createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
+          const unsigned subshell,
+          std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator ) const;
+
+
   // Initialize the adjoint photon union energy grid
   void initializeAdjointPhotonUnionEnergyGrid(
+                                  std::list<double>& union_energy_grid ) const;
+
+  // Calculate the binding energy threshold
+  double calculateBindingEnergyThreshold( const double binding_energy,
+                                          const bool nudge_value ) const;
+
+  // Add binding energies to union energy grid
+  void addBindingEnergyThresholdsToUnionEnergyGrid(
+                                  const double min_energy,
+                                  const double max_energy,
+                                  const bool add_nudged_values,
                                   std::list<double>& union_energy_grid ) const;
 
   // Update the adjoint photon union energy grid
@@ -167,6 +190,12 @@ private:
   void updateAdjointPhotonUnionEnergyGrid(
          std::list<double>& union_energy_grid,
          const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >&
+         cs_evaluators ) const;
+
+  // Update the adjoint photon union energy grid
+  void updateAdjointPhotonUnionEnergyGrid(
+         std::list<double>& union_energy_grid,
+         const std::vector<std::pair<unsigned,std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution> > >&
          cs_evaluators ) const;
 
   // Update the adjoint photon union energy grid
@@ -187,14 +216,26 @@ private:
           const std::list<double>& union_energy_grid,
           const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
           std::vector<std::vector<double> >& max_energy_grid,
+          std::vector<std::vector<double> >& cross_section,
+          unsigned& threshold_index ) const;
+
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+          const std::list<double>& union_energy_grid,
+          const std::shared_ptr<const MonteCarlo::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator,
+          std::vector<std::vector<double> >& max_energy_grid,
           std::vector<std::vector<double> >& cross_section ) const;
 
   // Calculate the impulse approx total incoherent adjoint cross section
   void calculateAdjointImpulseApproxTotalIncoherentCrossSection();
 
+  // Calculate the impulse approx total incoherent adjoint cross section
+  void calculateAdjointDopplerBroadenedImpulseApproxTotalIncoherentCrossSection();
+
   // Calculate the adjoint photon total cross section
   void calculateAdjointPhotonTotalCrossSection(
-    const bool use_waller_hartree_adjoint_incoherent_cs );
+          const bool use_waller_hartree_adjoint_incoherent_cs,
+          const bool else_use_doppler_broadened_impulse_approx_incoherent_cs );
 
   // Evaluate the total cross section at an energy and max energy
   double evaluateAdjointPhotonTotalCrossSection(

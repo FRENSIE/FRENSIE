@@ -152,11 +152,11 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_SMALL( full_distribution->evaluateEnergyPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 2*Utility::PhysicalConstants::electron_rest_mass_energy ),
                                1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateEnergyPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0 ),
-                          2.929028890134433363e-02,
-                          1e-15 );
+                                   0.02929028890134433363,
+                                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateEnergyPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0 ),
-                          8.572937984762869779e-02,
-                          1e-15 );
+                                   0.08572937984762869779,
+                                   1e-15 );
 
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateEnergyPDF( 0.52, 1.03 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateEnergyPDF( 0.52, 20.0 ), 0.0 );
@@ -183,24 +183,24 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
                                1e-15 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0, -1.0 ),
-                          1.464514445067216682e-02,
-                          1e-15 );
+                                   0.01464514445067216682,
+                                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0, 0.0 ),
-                          1.464514445067216682e-02,
-                          1e-15 );
+                                   0.01464514445067216682,
+                                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0, 1.0 ),
-                          1.464514445067216682e-02,
-                          1e-15 );
+                                   0.01464514445067216682,
+                                   1e-15 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
-                          4.286468992381434889e-02,
-                          1e-15 );
+                                   0.04286468992381434889,
+                                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
-                          4.286468992381434889e-02,
-                          1e-15 );
+                                   0.04286468992381434889,
+                                   1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
-                          4.286468992381434889e-02,
-                          1e-15 );
+                                   0.04286468992381434889,
+                                   1e-15 );
 
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 1.03, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 1.03, 0.0 ), 0.0 );

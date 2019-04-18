@@ -65,10 +65,36 @@ protected:
   bool isEnergyBelowScatteringWindow( const double energy_of_interest,
                                       const double initial_energy ) const override;
 
+  //! Check if the cross section is non-zero
+  bool isCrossSectionNonZero( const double incoming_energy,
+                              const double max_energy,
+                              const double scattering_angle_cosine ) const override;
+
   //! Create a probe particle
   void createProbeParticle( const double energy_of_interest, 
                             const AdjointPhotonState& adjoint_photon,
                             ParticleBank& bank ) const override;
+
+  //! Evaluate the adjoint occupation number
+  double evaluateAdjointOccupationNumber(
+                   const double incoming_energy,
+                   const double max_energy,
+                   const double scattering_angle_cosine ) const final override;
+
+  //! Evaluate the max adjoint occupation number
+  double evaluateMaxAdjointOccupationNumber(
+                                const double incoming_energy,
+                                const double max_energy ) const final override;
+
+private:
+
+  // Calculate the occupation number arguments
+  double calculateOccupationNumberArguments(
+                                  const double incoming_energy,
+                                  const double max_energy,
+                                  const double scattering_angle_cosine,
+                                  double& pz_min,
+                                  double& pz_max ) const;
 
   // The Compton profile
   std::shared_ptr<const ComptonProfile> d_compton_profile;

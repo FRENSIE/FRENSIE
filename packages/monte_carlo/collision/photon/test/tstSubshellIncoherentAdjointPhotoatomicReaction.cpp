@@ -59,8 +59,9 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getThresholdEnergy )
 {
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getThresholdEnergy(),
-                       1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( incoherent_adjoint_reaction->getThresholdEnergy(),
+                                   0.0018155071938000074,
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -91,7 +92,7 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 {
   FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 9e-4 ),
                        0u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 0.00181551 ),
                        1u );
   FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 20.0 ),
                        1u );
@@ -137,10 +138,10 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getCrossSection )
 {
   double cross_section = incoherent_adjoint_reaction->getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = incoherent_adjoint_reaction->getCrossSection( 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.720525445117274344, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.7848264280276896487, 1e-12 );
 
   // The cross section must go to zero at E_max - E_b
   cross_section =
@@ -159,15 +160,15 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
   double cross_section = 
     incoherent_adjoint_reaction->getCrossSection( 1e-3, 0u );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section =
-    incoherent_adjoint_reaction->getCrossSection( 20.0 - 1.8285e-3, 1166u );
+    incoherent_adjoint_reaction->getCrossSection( 20.0 - 1.8285e-3, 1261 );
 
   FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 
   cross_section =
-    incoherent_adjoint_reaction->getCrossSection( 20.0, 1166u );
+    incoherent_adjoint_reaction->getCrossSection( 20.0, 1261u );
   
   FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 }
@@ -222,20 +223,16 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
   FRENSIE_CHECK_EQUAL( bank.size(), 2 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  // Due to the coarseness of the 2d test grid the weight will not be
-  // exactly what it should theoretically be
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-                          0.471349591314760286,
-                          5e-3 );
+                                   0.4039891155897157304,
+                                   1e-15 );
   
   bank.pop();
 
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
-  // Due to the coarseness of the 2d test grid the weight will not be
-  // exactly what it should theoretically be
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.237508288495414555,
-			  5e-3 );
+                                   0.2043705800099769043,
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -262,24 +259,29 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<std::vector<double> > incoming_energy_grid(
       new std::vector<double>( data_container.getAdjointPhotonEnergyGrid() ) );
 
+  unsigned threshold_index = data_container.getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( Data::K_SUBSHELL );
+
   // Evaluate the cross section at the energy of interest
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> two_d_cross_section;
   
   {
-  two_d_cross_section.reset(
-    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
-      data_container.getAdjointPhotonEnergyGrid(),
+    std::vector<double> cut_energy_grid( data_container.getAdjointPhotonEnergyGrid().begin()+threshold_index,
+                                         data_container.getAdjointPhotonEnergyGrid().end() );
+    
+    two_d_cross_section.reset(
+     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
+      cut_energy_grid,
       data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( Data::K_SUBSHELL ),
       data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( Data::K_SUBSHELL ) ) );
   }
 
   std::shared_ptr<std::vector<double> > cross_section(
-                     new std::vector<double>( incoming_energy_grid->size() ) );
+   new std::vector<double>( incoming_energy_grid->size() - threshold_index ) );
   
-  for( size_t i = 0; i < incoming_energy_grid->size(); ++i )
+  for( size_t i = 0; i < cross_section->size(); ++i )
   {
     (*cross_section)[i] =
-      two_d_cross_section->evaluate( (*incoming_energy_grid)[i], 20.0 );
+      two_d_cross_section->evaluate( (*incoming_energy_grid)[i+threshold_index], 20.0 );
   }
 
   // Create the scattering distribution
@@ -299,7 +301,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
    new MonteCarlo::SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,false>(
                                                    incoming_energy_grid,
                                                    cross_section,
-                                                   0u,
+                                                   threshold_index,
                                                    scattering_distribution ) );
 
   // Set the critical line energies

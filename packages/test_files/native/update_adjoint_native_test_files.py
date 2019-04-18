@@ -43,6 +43,7 @@ generator_h.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
 generator_h.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_h.setDefaultPhotonGridDistanceTolerance( 1e-16 )
 
+generator_h.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
 generator_h.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
 generator_h.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
 generator_h.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
@@ -81,7 +82,7 @@ generator_h.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
 generator_h.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 generator_h.setAdjointElectroionizationDistanceTolerance( 1e-9 )
 
-# Set the nots
+# Set the notes
 generator_h.setNotes( notes )
 
 # Generate the data
@@ -110,6 +111,7 @@ generator_c.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
 generator_c.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_c.setDefaultPhotonGridDistanceTolerance( 1e-16 )
 
+generator_c.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
 generator_c.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
 generator_c.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
 generator_c.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
@@ -148,7 +150,7 @@ generator_c.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
 generator_c.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 generator_c.setAdjointElectroionizationDistanceTolerance( 1e-9 )
 
-# Set the nots
+# Set the notes
 generator_c.setNotes( notes )
 
 # Generate the data
@@ -177,6 +179,7 @@ generator_al.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
 generator_al.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_al.setDefaultPhotonGridDistanceTolerance( 1e-16 )
 
+generator_al.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
 generator_al.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
 generator_al.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
 generator_al.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
@@ -215,7 +218,7 @@ generator_al.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
 generator_al.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 generator_al.setAdjointElectroionizationDistanceTolerance( 1e-9 )
 
-# Set the nots
+# Set the notes
 generator_al.setNotes( notes )
 
 # Generate the data
@@ -244,6 +247,7 @@ generator_si.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
 generator_si.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
 generator_si.setDefaultPhotonGridDistanceTolerance( 1e-16 )
 
+generator_si.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
 generator_si.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
 generator_si.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
 generator_si.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
@@ -282,7 +286,7 @@ generator_si.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
 generator_si.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 generator_si.setAdjointElectroionizationDistanceTolerance( 1e-9 )
 
-# Set the nots
+# Set the notes
 generator_si.setNotes( notes )
 
 # Generate the data
@@ -313,6 +317,7 @@ si_data_container.saveToFile( "test_aepr_14_native.xml", True)
 # generator_pb.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
 # generator_pb.setDefaultPhotonGridDistanceTolerance( 1e-16 )
 
+# generator_pb.setPhotonThresholdEnergyNudgeFactor( 1.0001 )
 # generator_pb.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
 # generator_pb.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
 # generator_pb.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
@@ -351,7 +356,7 @@ si_data_container.saveToFile( "test_aepr_14_native.xml", True)
 # generator_pb.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-16 )
 # generator_pb.setAdjointElectroionizationDistanceTolerance( 1e-9 )
 
-# # Set the nots
+# # Set the notes
 # generator_pb.setNotes( notes )
 
 # # Generate the data

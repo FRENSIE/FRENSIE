@@ -131,6 +131,88 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     incoherent_adjoint_reactions[0] = incoherent_adjoint_reaction;
   }
   // Create the subshell reactions using the impulse approx.
+  else if( model_name.find( "Doppler" ) >= model_name.size() )
+  {
+    incoherent_adjoint_reactions.clear();
+
+    std::shared_ptr<IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> >
+      subshell_incoherent_adjoint_reaction;
+
+    std::set<unsigned>::const_iterator subshell_it =
+      raw_adjoint_photoatom_data.getSubshells().begin();
+
+    while( subshell_it != raw_adjoint_photoatom_data.getSubshells().end() )
+    {
+      unsigned threshold_index =
+        raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( *subshell_it );
+
+      if( threshold_index < energy_grid->size() )
+      {
+        // Extract the cross section and slice based on max energy
+        std::unique_ptr<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> > > two_d_cross_section;
+
+        if( threshold_index == 0 )
+        {
+          two_d_cross_section.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
+                       raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
+                       raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
+                       raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) ) );
+        }
+        else
+        {
+          std::vector<double> cut_energy_grid( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid().begin()+threshold_index,
+                                             raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid().end() );
+
+          two_d_cross_section.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
+                       cut_energy_grid,
+                       raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
+                       raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) ) );
+        }
+
+        std::shared_ptr<std::vector<double> >
+          cross_section( new std::vector<double> );
+        
+        ThisType::reduceTwoDCrossSection( *two_d_cross_section,
+                                          *energy_grid,
+                                          *cross_section,
+                                          threshold_index );
+
+        // Create the subshell incoherent distribution
+        std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>
+          distribution;
+      
+        IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+                                                    raw_adjoint_photoatom_data,
+                                                    distribution,
+                                                    incoherent_adjoint_model,
+                                                    adjoint_kn_sampling,
+                                                    energy_grid->back(),
+                                                    *subshell_it );
+
+        // Create the subshell incoherent adjoint reaction
+        subshell_incoherent_adjoint_reaction.reset(
+           new SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,false>(
+                                                              energy_grid,
+                                                              cross_section,
+                                                              threshold_index,
+                                                              grid_searcher,
+                                                              distribution ) );
+        // Assign the critical line energies
+        if( critical_line_energies->size() > 0 )
+        {
+          subshell_incoherent_adjoint_reaction->setCriticalLineEnergies(
+                                                      critical_line_energies );
+        }
+
+        incoherent_adjoint_reactions.push_back(
+                                        subshell_incoherent_adjoint_reaction );
+
+      }
+      
+      ++subshell_it;
+    }
+  }
+  // Create the subshell reactions using the Doppler broadened impulse approx.
   else
   {
     incoherent_adjoint_reactions.clear();
@@ -146,8 +228,8 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
       // Extract the cross section and slice based on max energy
       Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >
       two_d_cross_section( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
-                           raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
-                           raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) );
+                           raw_adjoint_photoatom_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
+                           raw_adjoint_photoatom_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) );
 
       std::shared_ptr<std::vector<double> >
         cross_section( new std::vector<double> );
@@ -374,28 +456,35 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
 void AdjointPhotoatomicReactionNativeFactory::reduceTwoDCrossSection(
               const Utility::FullyTabularBasicBivariateDistribution& two_d_cross_section,
               const std::vector<double>& energy_grid,
-              std::vector<double>& cross_section )
+              std::vector<double>& cross_section,
+              const unsigned threshold_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( two_d_cross_section.getUpperBoundOfPrimaryIndepVar() >=
                     energy_grid.back() );
   testPrecondition( two_d_cross_section.getLowerBoundOfPrimaryIndepVar() <=
                     energy_grid.back() );
+  testPrecondition( threshold_index < energy_grid.size() );
 
   // Resize the cross section
-  cross_section.resize( energy_grid.size() );
+  cross_section.resize( energy_grid.size() - threshold_index );
 
   // Assume that the max energy is the final energy in the grid
   const double max_energy = energy_grid.back();
 
-  for( size_t i = 0; i < energy_grid.size(); ++i )
+  for( size_t i = 0; i < cross_section.size(); ++i )
   {
     cross_section[i] =
-      two_d_cross_section.evaluate( energy_grid[i], max_energy );
+      two_d_cross_section.evaluate( energy_grid[i+threshold_index], max_energy );
   }
 
+  // Make sure that the first cross section value is 0.0 if the threshold index
+  // is greater then 0 (i.e. there is a threshold energy)
+  if( threshold_index > 0u )
+    cross_section.front() = 0.0;
+
   // Make sure the last cross section value is 0.0
-  cross_section[cross_section.size()-1] = 0.0;
+  cross_section.back() = 0.0;
 
   // Make sure the cross section was constructed successfully
   testPostcondition( cross_section.size() > 0 );

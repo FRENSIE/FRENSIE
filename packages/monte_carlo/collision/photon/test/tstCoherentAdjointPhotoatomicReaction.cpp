@@ -138,7 +138,7 @@ FRENSIE_UNIT_TEST( CoherentAdjointPhotoatomicReaction,
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 99.9639104922271571, 1e-12 );
 
   cross_section =
-    adjoint_coherent_reaction->getCrossSection( 20.0, 1259 );
+    adjoint_coherent_reaction->getCrossSection( 20.0, 1261 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.96243862843467646e-05, 1e-12 );
 }

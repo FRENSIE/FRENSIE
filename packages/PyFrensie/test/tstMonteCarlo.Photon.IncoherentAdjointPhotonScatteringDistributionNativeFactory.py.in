@@ -210,17 +210,17 @@ class IncoherentAdjointPhotonScatteringDistributionNativeFactoryTestCase(unittes
         self.assertAlmostEqual( dist.getSubshellBindingEnergy(), 0.0018285, delta=1e-12 )
 
         # Evaluate the distribution
-        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 1.1184853883937307, delta=1e-15 )
-        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 0.5129591617442162, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, -1.0 ), 1.1222801538122253, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.1, 0.0 ), 0.5182774156839093, delta=1e-15 )
         self.assertAlmostEqual( dist.evaluate( 0.1, 1.0 ), 0.0, delta=1e-15 )
 
         # Evaluate the pdf
-        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.8869973414308601, delta=1e-15 )
-        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.40679423929099634, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, -1.0 ), 0.8817026477980413, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.1, 0.0 ), 0.4071769140264833, delta=1e-15 )
         self.assertAlmostEqual( dist.evaluatePDF( 0.1, 1.0 ), 0.0, delta=1e-15 )
 
         # Check that the integrated cross section can be evaluated
-        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-4 ), 1.260996906296187, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-4 ), 1.27285307184481, delta=1e-15 )
 
         # Check that the distribution can be sampled from
         Prng.RandomNumberGenerator.setFakeStream( [0.15, # branch 1

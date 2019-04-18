@@ -131,13 +131,24 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the photon tabular tol can be set
+// Check that the threshold energy nudge value can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setPhotonTabularEvaluationTolerance )
+                   setAdjointPhotonThresholdEnergyNudgeFactor )
 {
-  epr_data_container.setPhotonTabularEvaluationTolerance( 1e-3 );
+  epr_data_container.setAdjointPhotonThresholdEnergyNudgeFactor( 1.01 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonTabularEvaluationTolerance(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointPhotonThresholdEnergyNudgeFactor(),
+                       1.01 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint photon tabular tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointPhotonTabularEvaluationTolerance )
+{
+  epr_data_container.setAdjointPhotonTabularEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointPhotonTabularEvaluationTolerance(),
                        1e-3 );
 }
 
@@ -823,6 +834,92 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex( 0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
+                       0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent max energy grid can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.8e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.3;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.1;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid( max_energy_grid );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 1e-5;
+  cross_section[0][1] = 0.7;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 1e-4;
+  cross_section[1][1] = 1.7;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection( cross_section );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection().size(),
+                       cross_section.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()[0],
+                       cross_section[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()[1],
+                       cross_section[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex( 0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
+                       0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the subshell adjoint incoherent max energy grid can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid )
@@ -884,6 +981,92 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                        cross_section[1] );
   FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( 1 )[2],
                        cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1, 0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ),
+                       0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent max energy grid can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.5e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.01;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.1;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( 1, max_energy_grid );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 ).size(),
+                       max_energy_grid.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[0],
+                       max_energy_grid[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[1],
+                       max_energy_grid[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentMaxEnergyGrid( 1 )[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 1e-6;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 1e-6;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( 1, cross_section );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( 1 ).size(),
+                       cross_section.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( 1 )[0],
+                       cross_section[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( 1 )[1],
+                       cross_section[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection( 1 )[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell adjoint incoherent cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1, 0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ),
+                       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1027,6 +1210,70 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointImpulseApproxTotalCrossSection()[1],
                        cross_section[1] );
   FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointImpulseApproxTotalCrossSection()[2],
+                       cross_section[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint total max energy grid can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid )
+{
+  std::vector<std::vector<double> > max_energy_grid( 3 );
+  max_energy_grid[0].resize( 3 );
+  max_energy_grid[0][0] = 1.0e-3;
+  max_energy_grid[0][1] = 2.0;
+  max_energy_grid[0][2] = 20.2;
+
+  max_energy_grid[1].resize( 3 );
+  max_energy_grid[1][0] = 1.0;
+  max_energy_grid[1][1] = 5.0;
+  max_energy_grid[1][2] = 20.2;
+
+  max_energy_grid[2].resize( 2 );
+  max_energy_grid[2][0] = 20.0;
+  max_energy_grid[2][0] = 20.2;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid( max_energy_grid );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid().size(),
+                       max_energy_grid.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid()[0],
+                       max_energy_grid[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid()[1],
+                       max_energy_grid[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalMaxEnergyGrid()[2],
+                       max_energy_grid[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint total cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointDopplerBroadenedImpulseApproxTotalCrossSection )
+{
+  std::vector<std::vector<double> > cross_section( 3 );
+  cross_section[0].resize( 3 );
+  cross_section[0][0] = 0.0;
+  cross_section[0][1] = 0.5;
+  cross_section[0][2] = 2.5;
+
+  cross_section[1].resize( 3 );
+  cross_section[1][0] = 0.0;
+  cross_section[1][1] = 1.5;
+  cross_section[1][2] = 5.0;
+
+  cross_section[2].resize( 2 );
+  cross_section[2][0] = 0.0;
+  cross_section[2][0] = 1e-6;
+
+  epr_data_container.setAdjointDopplerBroadenedImpulseApproxTotalCrossSection( cross_section );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalCrossSection().size(),
+                       cross_section.size() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalCrossSection()[0],
+                       cross_section[0] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalCrossSection()[1],
+                       cross_section[1] );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointDopplerBroadenedImpulseApproxTotalCrossSection()[2],
                        cross_section[2] );
 }
 

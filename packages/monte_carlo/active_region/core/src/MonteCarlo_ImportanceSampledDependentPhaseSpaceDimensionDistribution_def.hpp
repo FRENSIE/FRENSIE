@@ -125,6 +125,8 @@ double ImportanceSampledDependentPhaseSpaceDimensionDistribution<parent_dimensio
   // Make sure that the weight is valid
   testPostcondition( !Utility::QuantityTraits<double>::isnaninf( weight ) );
   testPostcondition( weight > 0.0 );
+
+  return weight;
 }
 
 // Save the data to an archive

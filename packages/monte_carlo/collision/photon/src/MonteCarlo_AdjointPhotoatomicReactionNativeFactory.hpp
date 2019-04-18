@@ -107,7 +107,8 @@ private:
   static void reduceTwoDCrossSection(
     const Utility::FullyTabularBasicBivariateDistribution& two_d_cross_section,
     const std::vector<double>& energy_grid,
-    std::vector<double>& cross_section );
+    std::vector<double>& cross_section,
+    const unsigned threshold_index = 0u );
 
   // Slice the cross section based on the max energy
   static void sliceCrossSection( const std::vector<double>& full_energy_grid,

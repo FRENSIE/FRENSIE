@@ -72,11 +72,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 0.1 MeV
   double dist_value = base_distribution_s1->evaluate( 0.1, -1.0 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.435636374191108011, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.3416807426667849978, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 0.1, 0.0 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.111659296287109813, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.0236290346246597581, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 0.1, 1.0 );
 
@@ -85,11 +85,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 1.0 MeV
   dist_value = base_distribution_s1->evaluate( 1.0, 0.5145510353765 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.76593248990849983, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 9.636799671077708851, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 1.0, 0.9 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.715826479226024492, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.7917329021305478109, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 1.0, 1.0 );
 
@@ -98,11 +98,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 10.0 MeV
   dist_value = base_distribution_s1->evaluate( 10.0, 0.9744500544935 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.6110831116178992, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 1.222166223235801708, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 10.0, 0.99 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.961827451781265497, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 1.011696534734110253, 1e-15 );
 
   dist_value = base_distribution_s1->evaluate( 10.0, 1.0 );
 
@@ -117,11 +117,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 0.1 MeV
   double pdf = base_distribution_s1->evaluatePDF( 0.1, -1.0 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.48221359227104532, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.664593383508339297, 1e-6 );
 
   pdf = base_distribution_s1->evaluatePDF( 0.1, 0.0 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 0.37991071559963463, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 0.1842707576322486218, 1e-6 );
 
   pdf = base_distribution_s1->evaluatePDF( 0.1, 1.0 );
   
@@ -130,11 +130,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 1.0 MeV
   pdf = base_distribution_s1->evaluatePDF( 1.0, 0.5145510353765 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.01494627618673583, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 13.01077458848450163, 1e-6 );
 
   pdf = base_distribution_s1->evaluatePDF( 1.0, 0.9 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.35401356753553248, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.068929382730981148, 1e-6 );
 
   pdf = base_distribution_s1->evaluatePDF( 1.0, 1.0 );
 
@@ -143,11 +143,11 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   // Incoming energy = 10.0 MeV
   pdf = base_distribution_s1->evaluatePDF( 10.0, 0.9744500544935 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 27.5843925213305425, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 46.67465735331039411, 1e-5 );
 
   pdf = base_distribution_s1->evaluatePDF( 10.0, 0.99 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 43.4170499287423368, 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 38.63679768470860409, 1e-5 );
 
   pdf = base_distribution_s1->evaluatePDF( 10.0, 1.0 );
 
@@ -162,15 +162,15 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   double cross_section =
     base_distribution_s1->evaluateIntegratedCrossSection( 0.1, 1e-4 );
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.2939140614458845, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.1282343559717937231, 1e-12 );
   
   cross_section = base_distribution_s1->evaluateIntegratedCrossSection(1.0, 1e-4);
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.528671095223852916, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.7406883590871198297, 1e-12 );
 
   cross_section = base_distribution_s1->evaluateIntegratedCrossSection(10.0, 1e-4);
   
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0221532279926182352, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.02618486950266800395, 1e-12 );
 
   cross_section = base_distribution_s1->evaluateIntegratedCrossSection(20.0-0.08829, 1e-4);
   
@@ -197,25 +197,25 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   fake_stream[3] = 0.15; // branch 1
   fake_stream[4] = 0.22986680137273696; // select x = 0.95
   fake_stream[5] = 0.245; // accept x
-  fake_stream[6] = 0.32; // reject mu
+  fake_stream[6] = 0.33; // reject mu
   fake_stream[7] = 0.15; // branch 1
   fake_stream[8] = 0.22986680137273696; // select x = 0.95
   fake_stream[9] = 0.245; // accept x
-  fake_stream[10] = 0.31; // accept mu
+  fake_stream[10] = 0.32; // accept mu
   // Sample 2
   fake_stream[11] = 0.77; // branch 2
   fake_stream[12] = 0.5; // select x = 0.8124038404635961
-  fake_stream[13] = 0.67; // reject mu
+  fake_stream[13] = 0.76; // reject mu
   fake_stream[14] = 0.77; // branch 2
   fake_stream[15] = 0.5; // select x = 0.8124038404635961
-  fake_stream[16] = 0.66; // accept mu
+  fake_stream[16] = 0.75; // accept mu
   // Sample 3
   fake_stream[17] = 0.78; // branch 3
   fake_stream[18] = 0.1; // select x = 0.8071682233277445
-  fake_stream[19] = 0.89; // reject mu
+  fake_stream[19] = 0.996; // reject mu
   fake_stream[20] = 0.78; // branch 3
   fake_stream[21] = 0.1; // select x = 0.8071682233277445
-  fake_stream[22] = 0.88; // accept mu
+  fake_stream[22] = 0.994; // accept mu
   // Sample 4
   fake_stream[23] = 0.99; // branch 3
   fake_stream[24] = 0.5; // select x = 0.9000009536743164
@@ -277,25 +277,25 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   fake_stream[3] = 0.15; // branch 1
   fake_stream[4] = 0.22986680137273696; // select x = 0.95
   fake_stream[5] = 0.245; // accept x
-  fake_stream[6] = 0.32; // reject mu
+  fake_stream[6] = 0.33; // reject mu
   fake_stream[7] = 0.15; // branch 1
   fake_stream[8] = 0.22986680137273696; // select x = 0.95
   fake_stream[9] = 0.245; // accept x
-  fake_stream[10] = 0.31; // accept mu
+  fake_stream[10] = 0.32; // accept mu
   // Sample 2
   fake_stream[11] = 0.77; // branch 2
   fake_stream[12] = 0.5; // select x = 0.8124038404635961
-  fake_stream[13] = 0.67; // reject mu
+  fake_stream[13] = 0.76; // reject mu
   fake_stream[14] = 0.77; // branch 2
   fake_stream[15] = 0.5; // select x = 0.8124038404635961
-  fake_stream[16] = 0.66; // accept mu
+  fake_stream[16] = 0.75; // accept mu
   // Sample 3
   fake_stream[17] = 0.78; // branch 3
   fake_stream[18] = 0.1; // select x = 0.8071682233277445
-  fake_stream[19] = 0.89; // reject mu
+  fake_stream[19] = 0.996; // reject mu
   fake_stream[20] = 0.78; // branch 3
   fake_stream[21] = 0.1; // select x = 0.8071682233277445
-  fake_stream[22] = 0.88; // accept mu
+  fake_stream[22] = 0.994; // accept mu
   // Sample 4
   fake_stream[23] = 0.99; // branch 3
   fake_stream[24] = 0.5; // select x = 0.9000009536743164
@@ -399,8 +399,8 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), 
-			  36.652825479485756,
-			  1e-14 );
+                                   36.77801005256851852,
+                                   1e-14 );
 
   bank.pop();
 
@@ -416,8 +416,8 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  1.44485870585632448,
-			  1e-15 );
+                                   1.447965681473318611,
+                                   1e-15 );
 
   bank.pop();
 
@@ -433,15 +433,15 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.471349591314760286,
-			  1e-15 );
+                                   0.4015945132642735893,
+                                   1e-15 );
   
   bank.pop();
 
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.237508288495414555,
-			  1e-15 );
+                                   0.2038785161072690089,
+                                   1e-15 );
 
   bank.pop();
 
