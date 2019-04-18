@@ -58,6 +58,18 @@ double BremsstrahlungAdjointElectronScatteringDistribution::getMaxEnergy() const
   return d_adjoint_brem_scatter_dist->getUpperBoundOfPrimaryIndepVar();
 }
 
+// Return the max outgoing energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMinEnergy( const double incoming_energy ) const
+{
+  return incoming_energy + d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
+// Return the max outgoing energy
+double BremsstrahlungAdjointElectronScatteringDistribution::getOutgoingMaxEnergy( const double incoming_energy ) const
+{
+  return incoming_energy + d_adjoint_brem_scatter_dist->getUpperBoundOfSecondaryConditionalIndepVar( incoming_energy );
+}
+
 // Evaluate the distribution
 double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
         const double incoming_energy,
@@ -67,9 +79,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluate(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the distribution
   return d_adjoint_brem_scatter_dist->evaluate( incoming_energy,
-                                                outgoing_energy );
+                                                energy_gain );
 }
 
 // Evaluate the PDF
@@ -81,9 +95,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the pdf
   return d_adjoint_brem_scatter_dist->evaluateSecondaryConditionalPDF(
-            incoming_energy, outgoing_energy );
+            incoming_energy, energy_gain );
 }
 
 // Evaluate the PDF
@@ -95,9 +111,11 @@ double BremsstrahlungAdjointElectronScatteringDistribution::evaluateCDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( outgoing_energy > incoming_energy );
 
+  double energy_gain = outgoing_energy - incoming_energy;
+
   // evaluate the cdf
   return d_adjoint_brem_scatter_dist->evaluateSecondaryConditionalCDF(
-            incoming_energy, outgoing_energy );
+            incoming_energy, energy_gain );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -115,8 +133,10 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy =
+  double energy_gain =
     d_adjoint_brem_scatter_dist->sampleSecondaryConditional( incoming_energy );
+
+  outgoing_energy = incoming_energy + energy_gain;
 
   testPostcondition( outgoing_energy > incoming_energy );
 }
@@ -167,7 +187,7 @@ bool BremsstrahlungAdjointElectronScatteringDistribution::isEnergyInScatteringWi
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  if( energy_of_interest > this->getMaxEnergy() )
+  if( energy_of_interest > this->getOutgoingMaxEnergy( initial_energy ) )
     return false;
   else
   {
@@ -190,8 +210,7 @@ bool BremsstrahlungAdjointElectronScatteringDistribution::isEnergyAboveScatterin
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
 
-  double min_outgoing_energy =
-    d_adjoint_brem_scatter_dist->getLowerBoundOfSecondaryConditionalIndepVar( initial_energy );
+  double min_outgoing_energy = this->getOutgoingMinEnergy( initial_energy );
 
   return min_outgoing_energy > energy_of_interest;
 }
@@ -208,7 +227,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
 {
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
-  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
+  testPrecondition( energy_of_interest <= this->getOutgoingMaxEnergy( adjoint_electron.getEnergy() ) );
   // Make sure the adjoint electron energy is valid
   testPrecondition( adjoint_electron.getEnergy() <= this->getMaxEnergy() );
   // Make sure the energy of interest is in the scattering window
@@ -222,6 +241,9 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
   {
     const double weight_mult =
       this->evaluate( adjoint_electron.getEnergy(), energy_of_interest );
+
+    // make sure the weight multiplier is valid
+    testPrecondition( weight_mult > 0.0 );
 
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointElectronProbeState> probe(
@@ -237,9 +259,6 @@ void BremsstrahlungAdjointElectronScatteringDistribution::createProbeParticle(
 
     // Add the probe to the bank
     bank.push( probe );
-
-    // make sure the weight multiplier is valid
-    testPostcondition( weight_mult );
   }
 }
 

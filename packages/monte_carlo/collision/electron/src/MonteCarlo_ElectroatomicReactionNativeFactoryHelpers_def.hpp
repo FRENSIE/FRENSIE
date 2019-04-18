@@ -208,6 +208,8 @@ createSubshellElectroionizationReaction(
                               energy_grid,
                               energy_grid->size()/10 ) );
 
+  ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
+
   // Create the reaction
   std::shared_ptr<const ElectroatomicReaction> reaction;
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDGridPolicy>(
@@ -216,6 +218,7 @@ createSubshellElectroionizationReaction(
       grid_searcher,
       subshell,
       reaction,
+      sampling_type,
       evaluation_tol );
 
   // Make sure the reaction was created correctly
@@ -242,6 +245,9 @@ createSubshellElectroionizationReactions(
                               energy_grid,
                               energy_grid->size()/10 ) );
 
+
+  ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
+
   // Create the reaction
   std::vector<std::shared_ptr<const ElectroatomicReaction> > reactions;
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy,TwoDGridPolicy>(
@@ -249,6 +255,7 @@ createSubshellElectroionizationReactions(
       energy_grid,
       grid_searcher,
       reactions,
+      sampling_type,
       evaluation_tol );
 
   return reactions;

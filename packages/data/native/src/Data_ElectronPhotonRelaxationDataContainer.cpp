@@ -202,6 +202,54 @@ double ElectronPhotonRelaxationDataContainer::getElectronGridDistanceTolerance()
   return d_electron_grid_distance_tol;
 }
 
+// Return the bremsstrahlung cross section evaluation tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungEvaluationTolerance() const
+{
+  return d_bremsstrahlung_evaluation_tolerance;
+}
+
+// Return the bremsstrahlung grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungGridConvergenceTolerance() const
+{
+  return d_bremsstrahlung_convergence_tolerance;
+}
+
+// Return the bremsstrahlung absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungAbsoluteDifferenceTolerance() const
+{
+  return d_bremsstrahlung_absolute_diff_tol;
+}
+
+// Return the bremsstrahlung distance tolerance
+double ElectronPhotonRelaxationDataContainer::getBremsstrahlungDistanceTolerance() const
+{
+  return d_bremsstrahlung_distance_tol;
+}
+
+// Return the electroionization cross section evaluation tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationEvaluationTolerance() const
+{
+  return d_electroionization_evaluation_tol;
+}
+
+// Return the electroionization grid convergence tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationGridConvergenceTolerance() const
+{
+  return d_electroionization_convergence_tol;
+}
+
+// Return the electroionization absolute difference tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationAbsoluteDifferenceTolerance() const
+{
+  return d_electroionization_absolute_diff_tol;
+}
+
+// Return the electroionization distance tolerance
+double ElectronPhotonRelaxationDataContainer::getElectroionizationDistanceTolerance() const
+{
+  return d_electroionization_distance_tol;
+}
+
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -710,9 +758,20 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid(
 
 // Return the electroionization recoil interpolation policy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilInterpPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectroionizationInterpPolicy() const
 {
-  return d_electroionization_recoil_interp;
+  return d_electroionization_interp;
+}
+
+// Return the electroionization recoil energy for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_energy.find( subshell )->second;
 }
 
 // Return the electroionization recoil energy for a subshell and energy bin
@@ -734,6 +793,17 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilEnergy(
   return d_electroionization_recoil_energy.find( subshell )->second.find( incoming_energy )->second;
 }
 
+// Return the electroionization recoil energy pdf for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_pdf.find( subshell )->second;
+}
+
 // Return the electroionization recoil energy pdf for a subshell and energy bin
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
@@ -753,6 +823,78 @@ ElectronPhotonRelaxationDataContainer::getElectroionizationRecoilPDF(
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
 }
 
+// Return if there is electroionization outgoing energy data
+bool ElectronPhotonRelaxationDataContainer::hasElectroionizationOutgoingEnergyData() const
+{
+  return d_electroionization_outgoing_energy.size() > 0;
+}
+
+// Return the electroionization outgoing energy for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationOutgoingEnergy(
+                           const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_outgoing_energy.find( subshell )->second;
+}
+
+// Return the electroionization outgoing energy for a subshell and energy bin
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationOutgoingEnergy(
+                           const unsigned subshell,
+                           const double incoming_energy ) const
+{
+  // Make sure there is outgoing energy data
+  testPrecondition( this->hasElectroionizationOutgoingEnergyData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  return d_electroionization_outgoing_energy.find( subshell )->second.find( incoming_energy )->second;
+}
+
+// Return the electroionization outgoing energy pdf for a subshell
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getElectroionizationOutgoingPDF(
+                           const unsigned subshell ) const
+{
+  // Make sure there is outgoing energy data
+  testPrecondition( this->hasElectroionizationOutgoingEnergyData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_outgoing_pdf.find( subshell )->second;
+}
+
+// Return the electroionization outgoing energy pdf for a subshell and energy bin
+const std::vector<double>&
+ElectronPhotonRelaxationDataContainer::getElectroionizationOutgoingPDF(
+                           const unsigned subshell,
+                           const double incoming_energy ) const
+{
+  // Make sure there is outgoing energy data
+  testPrecondition( this->hasElectroionizationOutgoingEnergyData() );
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  return d_electroionization_outgoing_pdf.find( subshell )->second.find( incoming_energy )->second;
+}
+
 // Return the bremsstrahlung energy grid
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungEnergyGrid() const
@@ -767,6 +909,13 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonInterpPolicy() con
   return d_bremsstrahlung_photon_interp;
 }
 
+// Return the bremsstrahlung photon energy
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy() const
+{
+  return d_bremsstrahlung_photon_energy;
+}
+
 // Return the bremsstrahlung photon energy for an incoming energy
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
@@ -777,6 +926,13 @@ ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonEnergy(
   testPrecondition( incoming_energy <= d_bremsstrahlung_energy_grid.back() );
 
   return d_bremsstrahlung_photon_energy.find( incoming_energy )->second;
+}
+
+// Return the bremsstrahlung photon pdf
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getBremsstrahlungPhotonPDF() const
+{
+  return d_bremsstrahlung_photon_pdf;
 }
 
 // Return the bremsstrahlung photon pdf for an incoming energy
@@ -1115,6 +1271,86 @@ void ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance(
   testPrecondition( grid_distance_tol >= 0.0 );
 
   d_electron_grid_distance_tol = grid_distance_tol;
+}
+
+// Set the bremsstrahlung cross section evaluation tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungEvaluationTolerance(
+    const double evaluation_tolerance )
+{
+  // Make sure the evaluation_tolerance is valid
+  testPrecondition( evaluation_tolerance > 0.0 );
+
+  d_bremsstrahlung_evaluation_tolerance = evaluation_tolerance;
+}
+
+// Set the bremsstrahlung grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungGridConvergenceTolerance(
+    const double convergence_tolerance )
+{
+  // Make sure the convergence_tolerance is valid
+  testPrecondition( convergence_tolerance > 0.0 );
+
+  d_bremsstrahlung_convergence_tolerance = convergence_tolerance;
+}
+
+// Set the bremsstrahlung absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol )
+{
+  // Make sure the absolute_diff_tol is valid
+  testPrecondition( absolute_diff_tol > 0.0 );
+
+  d_bremsstrahlung_absolute_diff_tol = absolute_diff_tol;
+}
+
+// Set the bremsstrahlung distance tolerance
+void ElectronPhotonRelaxationDataContainer::setBremsstrahlungDistanceTolerance(
+    const double distance_tol )
+{
+  // Make sure the distance_tol is valid
+  testPrecondition( distance_tol > 0.0 );
+
+  d_bremsstrahlung_distance_tol = distance_tol;
+}
+
+// Set the electroionization cross section evaluation tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationEvaluationTolerance(
+    const double evaluation_tol )
+{
+  // Make sure the evaluation_tol is valid
+  testPrecondition( evaluation_tol > 0.0 );
+
+  d_electroionization_evaluation_tol = evaluation_tol;
+}
+
+// Set the electroionization grid convergence tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationGridConvergenceTolerance(
+    const double convergence_tol )
+{
+  // Make sure the convergence_tol is valid
+  testPrecondition( convergence_tol > 0.0 );
+
+  d_electroionization_convergence_tol = convergence_tol;
+}
+
+// Set the electroionization absolute difference tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationAbsoluteDifferenceTolerance(
+    const double absolute_diff_tol )
+{
+  // Make sure the absolute_diff_tol is valid
+  testPrecondition( absolute_diff_tol > 0.0 );
+
+  d_electroionization_absolute_diff_tol = absolute_diff_tol;
+}
+
+// Set the electroionization distance tolerance
+void ElectronPhotonRelaxationDataContainer::setElectroionizationDistanceTolerance(
+    const double distance_tol )
+{
+  // Make sure the distance_tol is valid
+  testPrecondition( distance_tol > 0.0 );
+
+  d_electroionization_distance_tol = distance_tol;
 }
 
 //---------------------------------------------------------------------------//
@@ -1823,14 +2059,14 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
   d_electroionization_energy_grid[subshell]=electroionization_energy_grid;
 }
 
-// Set the electroionization recoil InterpPolicy
-void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilInterpPolicy(
-    const std::string& electroionization_recoil_interp )
+// Set the electroionization InterpPolicy
+void ElectronPhotonRelaxationDataContainer::setElectroionizationInterpPolicy(
+    const std::string& electroionization_interp )
 {
   // Make sure the string is valid
-  testPrecondition( isInterpPolicyValid( electroionization_recoil_interp ) );
+  testPrecondition( isInterpPolicyValid( electroionization_interp ) );
 
-  d_electroionization_recoil_interp = electroionization_recoil_interp;
+  d_electroionization_interp = electroionization_interp;
 }
 
 // Set the electroionization recoil energy for a subshell and energy bin
@@ -1891,6 +2127,75 @@ void ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF(
 
   d_electroionization_recoil_pdf[subshell] =
     electroionization_recoil_pdf;
+}
+
+// Set the electroionization outgoing energy for a subshell and energy bin
+void ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingEnergyAtIncomingEnergy(
+            const unsigned subshell,
+            const double incoming_energy,
+            const std::vector<double>& electroionization_outgoing_energy )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+
+  // Make sure the electroionization outgoing energy is valid
+  testPrecondition( Data::valuesGreaterThanZero( electroionization_outgoing_energy ) );
+
+  d_electroionization_outgoing_energy[subshell][ incoming_energy] =
+    electroionization_outgoing_energy;
+}
+
+// Set the electroionization outgoing energy pdf for a subshell and energy bin
+void ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingPDFAtIncomingEnergy(
+            const unsigned subshell,
+            const double incoming_energy,
+            const std::vector<double>& electroionization_outgoing_pdf )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the incoming energy is valid
+  testPrecondition(
+            incoming_energy >=
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition(
+            incoming_energy <=
+            d_electroionization_energy_grid.find( subshell )->second.back() );
+  // Make sure the electroionization recoil pdf is valid
+  testPrecondition( Data::valuesGreaterThanZero( electroionization_outgoing_pdf ) );
+
+  d_electroionization_outgoing_pdf[subshell][ incoming_energy] =
+    electroionization_outgoing_pdf;
+}
+
+// Set electroionization outgoing energy for all incoming energies in a subshell
+void ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingEnergy(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_outgoing_energy )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_outgoing_energy[subshell] =
+    electroionization_outgoing_energy;
+}
+
+// Set electroionization outgoing energy pdf for all incoming energies in a subshell
+void ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingPDF(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_outgoing_pdf )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_outgoing_pdf[subshell] =
+    electroionization_outgoing_pdf;
 }
 
 // Set the bremsstrahlung energy grid

@@ -104,6 +104,7 @@ def setGeneratorOptions( generator,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
                          notes ):
 
     # Set the generator options
@@ -167,15 +168,22 @@ def setGeneratorOptions( generator,
     if not electron_two_d_grid_policy is None:
         if electron_two_d_grid_policy == "CorrelatedGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
         elif electron_two_d_grid_policy == "UnitBaseCorrelatedGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
         elif electron_two_d_grid_policy == "DirectGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
         elif electron_two_d_grid_policy == "UnitBaseGrid":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
         else:
-            print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
+
+    if electron_secondary_grid_refinement is True:
+      generator.setRefineSecondaryElectronGridsModeOn()
 
     if not notes is None:
         generator.setNotes( notes )
@@ -203,6 +211,7 @@ def generateData( endl_file_name,
                   cutoff_angle_cosine = None,
                   num_moment_preserving_angles = None,
                   tabular_evaluation_tol = None,
+                  electron_secondary_grid_refinement = False,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None ):
 
@@ -237,6 +246,7 @@ def generateData( endl_file_name,
                          tabular_evaluation_tol,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
                          notes )
 
     # Populate the data
@@ -255,7 +265,8 @@ def addToDatabase( path_to_data_file,
                    atomic_number,
                    atomic_weight,
                    force_update,
-                   database_save_required ):
+                   database_save_required,
+                   version = 0 ):
 
     zaid = Data.ZAID(atomic_number*1000)
 
@@ -269,29 +280,29 @@ def addToDatabase( path_to_data_file,
     photoatomic_data_properties = \
                 Native.NativeEPRPhotoatomicDataProperties( atomic_weight,
                                                            relative_path,
-                                                           0,
+                                                           version,
                                                            zaid.atom() )
 
     electroatomic_data_properties = \
                 Native.NativeEPRElectroatomicDataProperties( atomic_weight,
                                                              relative_path,
-                                                             0,
+                                                             version,
                                                              zaid.atom() )
 
     # Check if the native file data has been added to the database
-    if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ):
+    if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
-            print "Warning: native photoatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
+            print "Warning: native photoatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
             atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
             database_save_required = True
     else:
         atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
         database_save_required = True
-        
+
     # Check if the native file exists
-    if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ):
+    if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, version ):
         if force_update:
-            print "Warning: native electroatomic data properties for atomic number", atomic_number, "already exist! They will be overwritten."
+            print "Warning: native electroatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
             atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
             database_save_required = True
     else:
@@ -313,6 +324,8 @@ if __name__ == "__main__":
                       help="the database name (with extension)")
     parser.add_option("-o", "--output_file_name", type="string", dest="output_file_name",
                       help="the output file name (with extension)")
+    parser.add_option("--version", type="int", dest="version",
+                      help="the output file version", default=0)
     parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
                       help="Overwrite an existing output file")
     parser.add_option("--add_to_db", action="store_true", dest="add_to_db", default=False,
@@ -351,10 +364,12 @@ if __name__ == "__main__":
                       help="The number of moment preserving angles for electrons")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
+    parser.add_option("--refine_electron_secondary_grid", action="store_true", dest="electron_secondary_grid_refinement", default=False,
+                      help="Refine the electron secondary grids")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
-                      help="The electron 2D grid policy")
+                      help="The electron bivariate grid policy")
     options,args = parser.parse_args()
 
     # The endl file name and the output file name must be specified
@@ -389,6 +404,7 @@ if __name__ == "__main__":
                   options.cutoff_angle_cosine,
                   options.num_moment_preserving_angles,
                   options.tabular_evaluation_tol,
+                  options.electron_secondary_grid_refinement,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy )
 
@@ -406,7 +422,8 @@ if __name__ == "__main__":
                        data_container.getAtomicNumber(),
                        data_container.getAtomicWeight(),
                        True,
-                       True )
+                       True,
+                       options.version )
 
         database.saveToFile( options.db_name, True )
 

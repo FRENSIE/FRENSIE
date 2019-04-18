@@ -1708,49 +1708,49 @@ inline const std::string LogLogLog::name()
 // The name of the policy
 inline const std::string LinLogCosLin::name()
 {
-  return "LinLogCosLin";
+  return Utility::typeName<LinLogCosLin>();
 }
 
 // The name of the policy
 inline const std::string LinNudgedLogCosLin::name()
 {
-  return "LinNudgedLogCosLin";
+  return Utility::typeName<LinNudgedLogCosLin>();
 }
 
 // The name of the policy
 inline const std::string LinLogCosLog::name()
 {
-  return "LinLogCosLog";
+  return Utility::typeName<LinLogCosLog>();
 }
 
 // The name of the policy
 inline const std::string LinNudgedLogCosLog::name()
 {
-  return "LinNudgedLogCosLog";
+  return Utility::typeName<LinNudgedLogCosLog>();
 }
 
 // The name of the policy
 inline const std::string LogLogCosLin::name()
 {
-  return "LogLogCosLin";
+  return Utility::typeName<LogLogCosLin>();
 }
 
 // The name of the policy
 inline const std::string LogNudgedLogCosLin::name()
 {
-  return "LogNudgedLogCosLin";
+  return Utility::typeName<LogNudgedLogCosLin>();
 }
 
 // The name of the policy
 inline const std::string LogLogCosLog::name()
 {
-  return "LogLogCosLog";
+  return Utility::typeName<LogLogCosLog>();
 }
 
 // The name of the policy
 inline const std::string LogNudgedLogCosLog::name()
 {
-  return "LogNudgedLogCosLog";
+  return Utility::typeName<LogNudgedLogCosLog>();
 }
 
 } // end Utility namespace

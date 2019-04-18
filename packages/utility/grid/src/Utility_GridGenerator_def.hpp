@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
-#define UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
+#ifndef UTILITY_GRID_GENERATOR_DEF_HPP
+#define UTILITY_GRID_GENERATOR_DEF_HPP
 
 // Std Lib Includes
 #include <deque>
@@ -29,8 +29,8 @@ namespace Utility{
 // Constructor
 template<typename InterpPolicy>
 GridGenerator<InterpPolicy>::GridGenerator( const double convergence_tol,
-					    const double absolute_diff_tol,
-					    const double distance_tol )
+                                            const double absolute_diff_tol,
+                                            const double distance_tol )
   : d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
     d_distance_tol( distance_tol ),
@@ -81,7 +81,7 @@ bool GridGenerator<InterpPolicy>::isExceptionThrownOnDirtyConvergence() const
 // Set the convergence tolerance
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::setConvergenceTolerance(
-						 const double convergence_tol )
+                                                 const double convergence_tol )
 {
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol <= 1.0 );
@@ -100,7 +100,7 @@ double GridGenerator<InterpPolicy>::getConvergenceTolerance() const
 // Set the absolute difference tolerance
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::setAbsoluteDifferenceTolerance(
-					       const double absolute_diff_tol )
+                                               const double absolute_diff_tol )
 {
   // Make sure the absolute difference tolerance is valid
   testPrecondition( absolute_diff_tol <= 1.0 );
@@ -119,7 +119,7 @@ double GridGenerator<InterpPolicy>::getAbsoluteDifferenceTolerance() const
 // Set the distance tolerance
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::setDistanceTolerance(
-						    const double distance_tol )
+                                                    const double distance_tol )
 {
   // Make sure the distance tolerance is valid
   testPrecondition( distance_tol <= 1.0 );
@@ -197,8 +197,8 @@ double GridGenerator<InterpPolicy>::getDistanceTolerance() const
 template<typename InterpPolicy>
 template<typename STLCompliantContainer, typename Functor>
 void GridGenerator<InterpPolicy>::generateInPlace(
-						STLCompliantContainer& grid,
-						const Functor& function ) const
+                                                STLCompliantContainer& grid,
+                                                const Functor& function ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainer::value_type>::value) );
@@ -229,8 +229,8 @@ void GridGenerator<InterpPolicy>::generateInPlace(
  */
 template<typename InterpPolicy>
 template<typename STLCompliantContainerA,
-	 typename STLCompliantContainerB,
-	 typename Functor>
+         typename STLCompliantContainerB,
+         typename Functor>
 void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
         STLCompliantContainerA& grid,
         STLCompliantContainerB& evaluated_function,
@@ -311,8 +311,8 @@ void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
     x1 = grid_queue.front();
 
     x_mid = InterpPolicy::recoverProcessedIndepVar(
-				     0.5*(InterpPolicy::processIndepVar(x0) +
-					  InterpPolicy::processIndepVar(x1)) );
+                                     0.5*(InterpPolicy::processIndepVar(x0) +
+                                          InterpPolicy::processIndepVar(x1)) );
 
     y1 = function( x1 );
     y_mid_exact = function( x_mid );
@@ -378,12 +378,12 @@ void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
  */
 template<typename InterpPolicy>
 template<typename STLCompliantContainerA,
-	 typename STLCompliantContainerB,
-	 typename Functor>
+         typename STLCompliantContainerB,
+         typename Functor>
 void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
-				    STLCompliantContainerA& grid,
-				    STLCompliantContainerB& evaluated_function,
-				    const Functor& function ) const
+            STLCompliantContainerA& grid,
+            STLCompliantContainerB& evaluated_function,
+            const Functor& function ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
@@ -401,6 +401,51 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
             grid.back() );
 }
 
+// Generate the grid in place between an min and max value (return evaluated function on grid)
+/*! \details There must be at least two initial grid points given (the lower
+ * grid boundary and the upper grid boundary). New grid points will only be
+ * generate between the min_value and max_value. If there are discontinuities in
+ * the function, the grid points just below and just above the discontinuity
+ * should also be given to speed up the algorithm. The convergence tolerance
+ * is used to determine if two consecutive grid points are acceptable - if
+ * the relative error between the estimated value of the function (from
+ * desired interpolation) at the midpoint between two grid points end the
+ * actual value of the function at the midpoint is less that or equal to the
+ * convergence tolerance, the two grid points are kept. Otherwise the midpoint
+ * is inserted into the grid and the process is repeated. Do not process
+ * the grid points before passing them into this function.
+ */
+template<typename InterpPolicy>
+template<typename STLCompliantContainerA,
+         typename STLCompliantContainerB,
+         typename Functor>
+void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
+            STLCompliantContainerA& grid,
+            STLCompliantContainerB& evaluated_function,
+            const Functor& function,
+            const double min_value,
+            const double max_value ) const
+{
+  // Make sure the container value type is a floating point type
+  testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
+  testStaticPrecondition( (boost::is_float<typename STLCompliantContainerB::value_type>::value) );
+  // Make sure at least 2 initial grid points have been given
+  testPrecondition( grid.size() >= 2 );
+  // Make sure the initial grid points are sorted
+  testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+  // Make sure the min_value and max_value are valid
+  testPrecondition( min_value < max_value );
+  testPrecondition( min_value >= grid.front() );
+  testPrecondition( max_value <= grid.back() );
+
+  this->refineAndEvaluateInPlace<STLCompliantContainerA,STLCompliantContainerB,Functor>(
+            grid,
+            evaluated_function,
+            function,
+            min_value,
+            max_value );
+}
+
 // Generate the linearized grid
 /*! \details There must be at least two initial grid points given (the lower
  * grid boundary and the upper grid boundary). If there are discontinuities in
@@ -416,12 +461,12 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
  */
 template<typename InterpPolicy>
 template<typename STLCompliantContainerA,
-	 typename STLCompliantContainerB,
-	 typename Functor>
+         typename STLCompliantContainerB,
+         typename Functor>
 void GridGenerator<InterpPolicy>::generate(
-			     STLCompliantContainerA& grid,
-			     const STLCompliantContainerB& initial_grid_points,
-			     const Functor& function ) const
+                             STLCompliantContainerA& grid,
+                             const STLCompliantContainerB& initial_grid_points,
+                             const Functor& function ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
@@ -430,8 +475,8 @@ void GridGenerator<InterpPolicy>::generate(
   testPrecondition( initial_grid_points.size() >= 2 );
   // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
-					     initial_grid_points.end(),
-					     true ) );
+                                             initial_grid_points.end(),
+                                             true ) );
 
   grid.assign( initial_grid_points.begin(), initial_grid_points.end() );
 
@@ -455,14 +500,14 @@ void GridGenerator<InterpPolicy>::generate(
  */
 template<typename InterpPolicy>
 template<typename STLCompliantContainerA,
-	 typename STLCompliantContainerB,
-	 typename STLCompliantContainerC,
-	 typename Functor>
+         typename STLCompliantContainerB,
+         typename STLCompliantContainerC,
+         typename Functor>
 void GridGenerator<InterpPolicy>::generateAndEvaluate(
-			     STLCompliantContainerA& grid,
-			     STLCompliantContainerB& evaluated_function,
-			     const STLCompliantContainerC& initial_grid_points,
-			     const Functor& function ) const
+                             STLCompliantContainerA& grid,
+                             STLCompliantContainerB& evaluated_function,
+                             const STLCompliantContainerC& initial_grid_points,
+                             const Functor& function ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerA::value_type>::value) );
@@ -472,7 +517,7 @@ void GridGenerator<InterpPolicy>::generateAndEvaluate(
   testPrecondition( initial_grid_points.size() >= 2 );
   // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
-					     initial_grid_points.end() ) );
+                                             initial_grid_points.end() ) );
 
   grid.assign( initial_grid_points.begin(), initial_grid_points.end() );
 
@@ -541,7 +586,7 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
     else
     {
       converged = true;
-      
+
       FRENSIE_LOG_TAGGED_WARNING( "Grid Generator", oss.str() );
     }
   }
@@ -560,8 +605,8 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LogLog> );
 
 } // end Utility namespace
 
-#endif // end UTILITY_LINEAR_GRID_GENERATOR_DEF_HPP
+#endif // end UTILITY_GRID_GENERATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_LinearGridGenerator_def.hpp
+// end Utility_GridGenerator_def.hpp
 //---------------------------------------------------------------------------//

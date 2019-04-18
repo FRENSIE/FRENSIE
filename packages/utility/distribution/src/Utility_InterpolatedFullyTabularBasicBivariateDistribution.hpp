@@ -68,21 +68,23 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
-     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions,
-     const double fuzzy_boundary_tol = 1e-3,
-     const double evaluate_relative_error_tol = 1e-7,
-     const double evaluate_error_tol = 1e-16 );
+    const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+    const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+    secondary_distributions,
+    const double fuzzy_boundary_tol = 1e-3,
+    const double evaluate_relative_error_tol = 1e-7,
+    const double evaluate_error_tol = 1e-16,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Grid constructor
   UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
-              const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-              const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
-              const std::vector<std::vector<DepQuantity> >& dependent_values,
-              const double fuzzy_boundary_tol = 1e-3,
-              const double evaluate_relative_error_tol = 1e-7,
-              const double evaluate_error_tol = 1e-16 );
+    const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+    const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
+    const std::vector<std::vector<DepQuantity> >& dependent_values,
+    const double fuzzy_boundary_tol = 1e-3,
+    const double evaluate_relative_error_tol = 1e-7,
+    const double evaluate_error_tol = 1e-16,
+    const unsigned max_number_of_iterations = 500 );
 
   //! Destructor
   virtual ~UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()

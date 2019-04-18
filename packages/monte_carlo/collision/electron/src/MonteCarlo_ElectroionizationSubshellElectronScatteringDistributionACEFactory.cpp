@@ -87,6 +87,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
+        KNOCK_ON_SAMPLING,
         binding_energies[shell_index],
         true,
         false ) );
@@ -119,6 +120,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
+        KNOCK_ON_SAMPLING,
         binding_energy,
         true,
         false ) );

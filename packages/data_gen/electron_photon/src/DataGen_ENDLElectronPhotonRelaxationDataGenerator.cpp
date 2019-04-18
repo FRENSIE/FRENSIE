@@ -20,7 +20,9 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_SubshellType.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
@@ -31,6 +33,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
+#include "Utility_DataProcessor.hpp"
 
 namespace DataGen{
 
@@ -291,19 +294,19 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
                           std::runtime_error,
                           "There are radiative transitions and not "
                           "non-radiative transitions!" );
-      
+
       const std::map<unsigned,double>& radiative_transition_probs =
         d_endl_data_container->getRadiativeTransitionProbability( subshell );
-      
+
       const std::map<unsigned,double>& radiative_transition_energies =
         d_endl_data_container->getRadiativeTransitionEnergy( subshell );
-      
+
       const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_probs =
         d_endl_data_container->getNonRadiativeTransitionProbability( subshell );
-      
+
       const std::map<unsigned,std::map<unsigned,double> >& non_radiative_transition_energies =
         d_endl_data_container->getNonRadiativeTransitionEnergy( subshell );
-      
+
       std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies;
       std::vector<double> relaxation_particle_energies, relaxation_probabilities;
 
@@ -313,7 +316,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
         relaxation_probabilities.push_back( radiative_transition_probs_data.second );
         relaxation_particle_energies.push_back( radiative_transition_energies.find( radiative_transition_probs_data.first )->second );
       }
-      
+
       for( auto&& non_radiative_transition_probs_data : non_radiative_transition_probs )
       {
         TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first ) == non_radiative_transition_energies.end(),
@@ -322,25 +325,25 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
                             "for vacancy " << subshell << " transitioning to "
                             << non_radiative_transition_probs_data.first <<
                             "!" );
-      
+
         std::map<unsigned,double>::const_iterator data_it =
           non_radiative_transition_probs_data.second.begin();
-        
+
         std::map<unsigned,double>::const_iterator data_end =
           non_radiative_transition_probs_data.second.end();
-        
+
         while( data_it != data_end )
         {
           relaxation_vacancies.push_back( std::make_pair( non_radiative_transition_probs_data.first, data_it->first ) );
           relaxation_probabilities.push_back( data_it->second );
-          
+
           TEST_FOR_EXCEPTION( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first ) == non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.end(),
                               std::runtime_error,
                               "There are no non-radiative transition energies "
                               "for vacancy " << subshell << " transitioning to "
                               << non_radiative_transition_probs_data.first <<
                               " and " << data_it->first << "!" );
-        
+
           relaxation_particle_energies.push_back( non_radiative_transition_energies.find( non_radiative_transition_probs_data.first )->second.find( data_it->first )->second );
 
           ++data_it;
@@ -348,7 +351,7 @@ void ENDLElectronPhotonRelaxationDataGenerator::setRelaxationData()
       }
 
       data_container.setSubshellRelaxationTransitions( subshell, relaxation_vacancies.size() );
-      
+
       data_container.setSubshellRelaxationVacancies( subshell, relaxation_vacancies );
       data_container.setSubshellRelaxationParticleEnergies( subshell, relaxation_particle_energies );
       data_container.setSubshellRelaxationProbabilities( subshell, relaxation_probabilities );
@@ -1195,6 +1198,28 @@ void ENDLElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoh
 void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
 {
 //---------------------------------------------------------------------------//
+// Set Electron Cross Section Data Data
+//---------------------------------------------------------------------------//
+
+  FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  // Create the electron elastic data evaluator
+  ElectronElasticDataEvaluator elastic_evaluator(
+                                      d_endl_data_container,
+                                      this->getMinElectronEnergy(),
+                                      this->getMaxElectronEnergy(),
+                                      this->getCutoffAngleCosine(),
+                                      this->getNumberOfMomentPreservingAngles(),
+                                      this->getTabularEvaluationTolerance(),
+                                      this->getElectronTwoDGridPolicy(),
+                                      this->getElectronTwoDInterpPolicy(),
+                                      this->getElectronElasticSamplingMethod(),
+                                      true );
+
+  this->setElectronCrossSectionsData( elastic_evaluator );
+
+//---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -1208,19 +1233,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   // Set the cutoff elastic scattering interpolation policy
   data_container.setCutoffElasticInterpPolicy( "Lin-Lin" );
 
-  // Create the electron elastic data evaluator
-  ElectronElasticDataEvaluator elastic_evaluator(
-                                      d_endl_data_container,
-                                      this->getMinElectronEnergy(),
-                                      this->getMaxElectronEnergy(),
-                                      this->getCutoffAngleCosine(),
-                                      this->getNumberOfMomentPreservingAngles(),
-                                      this->getTabularEvaluationTolerance(),
-                                      this->getElectronTwoDGridPolicy(),
-                                      this->getElectronTwoDInterpPolicy(),
-                                      MonteCarlo::MODIFIED_TWO_D_UNION,
-                                      false );
-
   // Set elastic angular distribution
   std::vector<double> angular_energy_grid;
   std::map<double,std::vector<double> > elastic_angle, elastic_pdf;
@@ -1229,13 +1241,19 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   std::vector<double> moment_preserving_cross_section_reduction;
   std::map<double,std::vector<double> > moment_preserving_angles, moment_preserving_weights;
 
+  if( this->isRefineSecondaryElectronGridsModeOn() )
+    angular_energy_grid = data_container.getElectronEnergyGrid();
+
   elastic_evaluator.evaluateElasticSecondaryDistribution(
                           angular_energy_grid,
                           elastic_angle,
                           elastic_pdf,
                           moment_preserving_cross_section_reduction,
                           moment_preserving_angles,
-                          moment_preserving_weights );
+                          moment_preserving_weights,
+                          this->getDefaultElectronGridConvergenceTolerance(),
+                          this->getDefaultElectronGridAbsoluteDifferenceTolerance(),
+                          this->getDefaultElectronGridDistanceTolerance() );
 
   // Set the elastic cutoff data
   data_container.setElasticAngularEnergyGrid( angular_energy_grid );
@@ -1260,15 +1278,6 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   }
 
 //---------------------------------------------------------------------------//
-// Set Electron Cross Section Data Data
-//---------------------------------------------------------------------------//
-
-  FRENSIE_LOG_NOTIFICATION( " Setting the electron cross section data:" );
-  FRENSIE_FLUSH_ALL_LOGS();
-
-  this->setElectronCrossSectionsData( elastic_evaluator );
-
-//---------------------------------------------------------------------------//
 // Set Electroionization Data
 //---------------------------------------------------------------------------//
   FRENSIE_LOG_PARTIAL_NOTIFICATION( " Setting the " <<
@@ -1279,22 +1288,32 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
 
   // Set the interpolation policy
-  data_container.setElectroionizationRecoilInterpPolicy( "Lin-Lin" );
+  data_container.setElectroionizationInterpPolicy( "Lin-Lin" );
 
-  // Loop through electroionization data for every subshell
-  for ( shell; shell != data_container.getSubshells().end(); ++shell )
+  if( this->isRefineSecondaryElectronGridsModeOn() )
   {
-    data_container.setElectroionizationEnergyGrid(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilEnergyGrid( *shell ) );
+    this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::KNOCK_ON_SAMPLING );
 
-    data_container.setElectroionizationRecoilEnergy(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilEnergy( *shell ) );
+    this->setRefinedElectroionizationSubshellDistributionData( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
+  }
+  else
+  {
+    // Loop through electroionization data for every subshell
+    for ( auto&& shell : data_container.getSubshells() )
+    {
+      // Set the knock-on distribution
+      data_container.setElectroionizationEnergyGrid(
+          shell,
+          d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ) );
 
-    data_container.setElectroionizationRecoilPDF(
-        *shell,
-        d_endl_data_container->getElectroionizationRecoilPDF( *shell ) );
+      data_container.setElectroionizationRecoilEnergy(
+          shell,
+          d_endl_data_container->getElectroionizationRecoilEnergy( shell ) );
+
+      data_container.setElectroionizationRecoilPDF(
+          shell,
+          d_endl_data_container->getElectroionizationRecoilPDF( shell ) );
+    }
   }
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
@@ -1310,14 +1329,20 @@ void ENDLElectronPhotonRelaxationDataGenerator::setElectronData()
   // Set the interpolation policy
   data_container.setBremsstrahlungPhotonInterpPolicy( "Lin-Lin" );
 
-  data_container.setBremsstrahlungEnergyGrid(
-    d_endl_data_container->getBremsstrahlungPhotonEnergyGrid() );
+  if( this->isRefineSecondaryElectronGridsModeOn() )
+    this->setRefinedBremsstrahlungDistributionData();
 
-  data_container.setBremsstrahlungPhotonEnergy(
-    d_endl_data_container->getBremsstrahlungPhotonEnergy() );
+  else
+  {
+    data_container.setBremsstrahlungEnergyGrid(
+      d_endl_data_container->getBremsstrahlungPhotonEnergyGrid() );
 
-  data_container.setBremsstrahlungPhotonPDF(
-    d_endl_data_container->getBremsstrahlungPhotonPDF() );
+    data_container.setBremsstrahlungPhotonEnergy(
+      d_endl_data_container->getBremsstrahlungPhotonEnergy() );
+
+    data_container.setBremsstrahlungPhotonPDF(
+      d_endl_data_container->getBremsstrahlungPhotonPDF() );
+  }
 
   FRENSIE_LOG_NOTIFICATION( Utility::BoldGreen( "done." ) );
 
@@ -2216,6 +2241,386 @@ void ENDLElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossSecti
 
   for( unsigned i = 0; i < cross_section.size(); ++i )
     total_cross_section[start_index+i] += cross_section[i];
+}
+
+// Evaluate the bremsstrahlung secondary grid
+void ENDLElectronPhotonRelaxationDataGenerator::setRefinedBremsstrahlungDistributionData()
+{
+  // Create a grid generator
+  Utility::GridGenerator<Utility::LinLin>
+    grid_generator( this->getBremsstrahlungGridConvergenceTolerance(),
+                    this->getBremsstrahlungAbsoluteDifferenceTolerance(),
+                    this->getBremsstrahlungDistanceTolerance() );
+
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
+    // Create a bremsstrahlung distribution
+    std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+          distribution;
+
+    unsigned max_number_of_iterations = 1000;
+    if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+    {
+      if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Correlated>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::UnitBase>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+    }
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    {
+      if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+      {
+        MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBase>(
+            d_endl_data_container->getBremsstrahlungPhotonEnergy(),
+            d_endl_data_container->getBremsstrahlungPhotonPDF(),
+            d_endl_data_container->getBremsstrahlungPhotonEnergyGrid(),
+            distribution,
+            this->getBremsstrahlungEvaluationTolerance(),
+            max_number_of_iterations );
+      }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                      "Error: the TwoDInterpPolicy " <<
+                      this->getElectronTwoDInterpPolicy() <<
+                      " is invalid or currently not supported!" );
+    }
+
+    std::vector<double>::const_iterator start_it = data_container.getElectronEnergyGrid().begin();
+    std::advance( start_it, data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex() );
+
+    double min_grid_energy =
+      std::max( distribution->getMinEnergy(), this->getMinElectronEnergy() );
+
+    // Skip all energies before the secondary energy grid's min energy
+    while( *start_it < min_grid_energy )
+      ++start_it;
+
+    // Set the energy grid
+    std::vector<double> energy_grid( start_it, data_container.getElectronEnergyGrid().end() );
+
+    std::map<double,std::vector<double> > evaluated_grid, evaluated_pdf;
+
+    std::vector<double> endl_energy_grid =
+      d_endl_data_container->getBremsstrahlungPhotonEnergyGrid();
+
+    // Generate the distribution at all incoming energies
+    for( auto&& energy : energy_grid )
+    {
+      // Construct the evaluator functor
+      auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
+        return distribution->evaluatePDF( energy, outgoing_energy );
+      };
+
+      // Check if the energy is an originally tabulated energy
+      if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), energy) != endl_energy_grid.end() )
+      {
+        evaluated_grid[energy] =
+          d_endl_data_container->getBremsstrahlungPhotonEnergyAtEnergy( energy );
+      }
+      else
+      {
+        // Insert the min and max energy into the grid
+        evaluated_grid[energy] =
+          std::vector<double>{ distribution->getMinPhotonEnergy(energy),
+                                distribution->getMaxPhotonEnergy(energy) };
+      }
+
+      grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
+                                                evaluated_pdf[energy],
+                                                pdf_evaluator );
+    }
+
+    // Set the recoil energy
+    data_container.setBremsstrahlungPhotonEnergy( evaluated_grid );
+
+    // Set the recoil PDF
+    data_container.setBremsstrahlungPhotonPDF( evaluated_pdf );
+
+    // Set the energy grid
+    data_container.setBremsstrahlungEnergyGrid( energy_grid );
+
+}
+
+// Evaluate the electroionization subshell secondary grid
+void ENDLElectronPhotonRelaxationDataGenerator::setRefinedElectroionizationSubshellDistributionData(
+  const MonteCarlo::ElectroionizationSamplingType sampling_type )
+{
+  // Create a grid generator
+  Utility::GridGenerator<Utility::LinLin>
+    grid_generator( this->getElectroionizationGridConvergenceTolerance(),
+                    this->getElectroionizationAbsoluteDifferenceTolerance(),
+                    this->getElectroionizationDistanceTolerance() );
+
+  Data::ElectronPhotonRelaxationVolatileDataContainer& data_container =
+    this->getVolatileDataContainer();
+
+  // Loop through electroionization data for every subshell
+  for ( auto&& shell : data_container.getSubshells() )
+  {
+    // Create a electroionization subshell distribution
+    std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+          distribution;
+
+    unsigned max_number_of_iterations = 1000;
+    if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LINLINLIN_INTERPOLATION )
+    {
+      if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::Correlated>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBase>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+    }
+    else if( this->getElectronTwoDInterpPolicy() == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    {
+      if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_CORRELATED_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::CORRELATED_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+      else if( this->getElectronTwoDGridPolicy() == MonteCarlo::UNIT_BASE_GRID )
+      {
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBase>(
+            d_endl_data_container->getElectroionizationRecoilEnergy( shell ),
+            d_endl_data_container->getElectroionizationRecoilPDF( shell ),
+            d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell ),
+            d_endl_data_container->getSubshellBindingEnergy( shell ),
+            distribution,
+            sampling_type,
+            this->getElectroionizationEvaluationTolerance(),
+            max_number_of_iterations,
+            true );
+      }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                      "Error: the TwoDInterpPolicy " <<
+                      this->getElectronTwoDInterpPolicy() <<
+                      " is invalid or currently not supported!" );
+    }
+
+    std::vector<double>::const_iterator start_it = data_container.getElectronEnergyGrid().begin();
+    std::advance( start_it, data_container.getElectroionizationCrossSectionThresholdEnergyIndex( shell ) );
+
+    double min_grid_energy =
+      std::max( distribution->getMinEnergy(), this->getMinElectronEnergy() );
+
+    // Skip all energies before the secondary energy grid's min energy
+    while( *start_it <= min_grid_energy )
+      ++start_it;
+
+    // Include energy right below min
+    --start_it;
+
+    // Set the subshell energy grid
+    std::vector<double> energy_grid( start_it, data_container.getElectronEnergyGrid().end() );
+
+    // Reassign first energy to the min energy
+    energy_grid[0] = min_grid_energy;
+
+    std::map<double,std::vector<double> > evaluated_grid, evaluated_pdf;
+    // Generate the distribution at all incoming energies
+    for( auto&& energy : energy_grid )
+    {
+      // Construct the evaluator functor
+      auto&& pdf_evaluator = [&distribution, energy ]( const double& outgoing_energy ){
+        return distribution->evaluateProcessedPDF( energy, outgoing_energy );
+      };
+
+      // Insert the min and max energy into the grid
+      double min_energy = distribution->getMinSecondaryEnergy(energy);
+      double max_energy = distribution->getMaxSecondaryEnergy(energy);
+
+      // Initialize the energy grid
+      evaluated_grid[energy] =
+        this->initializeElectroionizationSecondaryGrid( sampling_type,
+                                                        energy,
+                                                        min_energy,
+                                                        max_energy,
+                                                        shell );
+
+      grid_generator.generateAndEvaluateInPlace( evaluated_grid[energy],
+                                                  evaluated_pdf[energy],
+                                                  pdf_evaluator );
+    }
+
+    // Set the recoil data
+    if( sampling_type == MonteCarlo::KNOCK_ON_SAMPLING )
+    {
+      data_container.setElectroionizationRecoilEnergy( shell, evaluated_grid );
+      data_container.setElectroionizationRecoilPDF( shell, evaluated_pdf );
+    }
+    // Set the outgoing energy data
+    else if( sampling_type == MonteCarlo::OUTGOING_ENERGY_SAMPLING )
+    {
+      data_container.setElectroionizationOutgoingEnergy( shell, evaluated_grid );
+      data_container.setElectroionizationOutgoingPDF( shell, evaluated_pdf );
+    }
+
+    // Set the energy grid
+    data_container.setElectroionizationEnergyGrid( shell, energy_grid );
+  }
+}
+
+// Initialize the electroionization subshell secondary grid
+std::vector<double>
+ENDLElectronPhotonRelaxationDataGenerator::initializeElectroionizationSecondaryGrid(
+  const MonteCarlo::ElectroionizationSamplingType sampling_type,
+  double incoming_energy,
+  const double min_secondary_energy,
+  const double max_secondary_energy,
+  const unsigned shell ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy >= this->getMinElectronEnergy() );
+  // make sure the min and max secondary energies are valid
+  testPrecondition( min_secondary_energy > 0.0 );
+  testPrecondition( max_secondary_energy < incoming_energy );
+  testPrecondition( max_secondary_energy > min_secondary_energy );
+
+  // Check if the energy is an originally tabulated energy
+  std::vector<double> endl_energy_grid =
+    d_endl_data_container->getElectroionizationRecoilEnergyGrid( shell );
+
+    // Check if the energy is an originally tabulated energy
+    if ( std::find(endl_energy_grid.begin(), endl_energy_grid.end(), incoming_energy) != endl_energy_grid.end() )
+    {
+      std::vector<double> evaluated_grid;
+
+      if( sampling_type == MonteCarlo::KNOCK_ON_SAMPLING )
+      {
+        evaluated_grid =
+        d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, incoming_energy );
+
+        evaluated_grid.back() = max_secondary_energy;
+      }
+      else
+      {
+        std::vector<double> processed_pdfs;
+
+        MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::calculateOutgoingEnergyAndPDFBins(
+          d_endl_data_container->getElectroionizationRecoilEnergyAtEnergy( shell, incoming_energy ),
+          d_endl_data_container->getElectroionizationRecoilPDFAtEnergy( shell, incoming_energy ),
+          incoming_energy,
+          d_endl_data_container->getSubshellBindingEnergy( shell ),
+          true,
+          evaluated_grid,
+          processed_pdfs );
+      }
+
+      // Make sure the grid is valid
+      testPostcondition( evaluated_grid.front() > 0.0 );
+      testPostcondition( evaluated_grid.back() < incoming_energy );
+      testPostcondition( evaluated_grid.front() < evaluated_grid.back() );
+
+      return evaluated_grid;
+    }
+    else
+      return std::vector<double>{ min_secondary_energy, max_secondary_energy };
 }
 
 // Return the endl data container

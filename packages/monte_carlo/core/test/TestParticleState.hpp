@@ -32,7 +32,7 @@ public:
                                  1,
                                  increment_generation_number,
                                  reset_collision_number,
-                                 existing_base_state.getRaySafetyOpticalPath() )
+                                 existing_base_state.getRaySafetyDistance() )
   { /* ... */ }
 
   ~TestParticleState()

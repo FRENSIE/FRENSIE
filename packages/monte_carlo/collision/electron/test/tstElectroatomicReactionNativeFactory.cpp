@@ -440,12 +440,14 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createSubshellElectroionizationReactions )
 {
   std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
+  MonteCarlo::ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
+                               sampling_type,
                                eval_tol );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 24 );
@@ -684,12 +686,14 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createSubshellElectroionizationReactions_LinLinLin )
 {
   std::vector<std::shared_ptr<const MonteCarlo::ElectroatomicReaction> > reactions;
+  MonteCarlo::ElectroionizationSamplingType sampling_type = MonteCarlo::KNOCK_ON_SAMPLING;
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
+                               sampling_type,
                                eval_tol );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 24 );

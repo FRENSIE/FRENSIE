@@ -72,7 +72,8 @@ createAtomicExcitationReaction(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
-        reaction );
+        reaction,
+        std::make_shared<const std::vector<double> >() );
 
   return reaction;
 }

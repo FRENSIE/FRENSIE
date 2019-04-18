@@ -79,13 +79,13 @@ FRENSIE_UNIT_TEST( AbsorptionAdjointElectroatomicReaction,
 FRENSIE_UNIT_TEST( AbsorptionAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = absorption_reaction->getCrossSection( 1e-5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.420906922056859401e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.422553386152458188e+01, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 2e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.595836278017287224, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.615627502403220728, 1e-12 );
 
   cross_section = absorption_reaction->getCrossSection( 20.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.873816755338521323e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 7.140740238621433311e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -129,12 +129,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     // Get the energy grid
-    std::shared_ptr<const std::vector<double> > energy_grid(
-       new std::vector<double>(  data_container.getAdjointElectronEnergyGrid() ) );
+    auto energy_grid = std::make_shared<const std::vector<double> >( data_container.getAdjointElectronEnergyGrid() );
 
     // Get the cross section (use the brem cross sections as a filler)
-    std::shared_ptr<const std::vector<double> > cross_section(
-       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
+    std::vector<double> temp = data_container.getAdjointBremsstrahlungElectronCrossSection();
+    temp.back() = temp[temp.size()-2]/2.0;
+
+    auto cross_section = std::make_shared<const std::vector<double> >( temp );
 
     // Create the reaction
     absorption_reaction.reset(

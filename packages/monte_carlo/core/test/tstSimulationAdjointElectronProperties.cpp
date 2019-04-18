@@ -43,6 +43,8 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties, defaults )
   FRENSIE_CHECK_EQUAL(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( properties.getAdjointElasticCutoffAngleCosine(),
                        1.0 );
@@ -170,6 +172,28 @@ FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
   FRENSIE_CHECK_EQUAL(
              properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the adjoint electroionization sampling mode can be set
+FRENSIE_UNIT_TEST( SimulationAdjointElectronProperties,
+                   setAdjointElectroionizationSamplingMode )
+{
+  MonteCarlo::SimulationAdjointElectronProperties properties;
+
+  MonteCarlo::ElectroionizationSamplingType function;
+
+  function = MonteCarlo::KNOCK_ON_SAMPLING;
+  properties.setAdjointElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
+
+  function = MonteCarlo::OUTGOING_ENERGY_SAMPLING;
+  properties.setAdjointElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
+
+  function = MonteCarlo::OUTGOING_ENERGY_RATIO_SAMPLING;
+  properties.setAdjointElectroionizationSamplingMode( function );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectroionizationSamplingMode(), function);
 }
 
 //---------------------------------------------------------------------------//
@@ -330,6 +354,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
     custom_properties.setAdjointAtomicExcitationModeOff();
     custom_properties.setAdjointElectronEvaluationTolerance( 1e-4 );
     custom_properties.setAdjointBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
+    custom_properties.setAdjointElectroionizationSamplingMode( MonteCarlo::OUTGOING_ENERGY_SAMPLING );
     custom_properties.setAdjointElasticElectronDistributionMode( MonteCarlo::DECOUPLED_DISTRIBUTION );
     custom_properties.setAdjointCoupledElasticSamplingMode( MonteCarlo::TWO_D_UNION );
     custom_properties.setAdjointElasticCutoffAngleCosine( 0.9 );
@@ -369,6 +394,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
   FRENSIE_CHECK_EQUAL(
              default_properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::TWOBS_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectroionizationSamplingMode(),
+                       MonteCarlo::KNOCK_ON_SAMPLING );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronEvaluationTolerance(), 1e-7 );
   FRENSIE_CHECK_EQUAL( default_properties.getAdjointElasticCutoffAngleCosine(),
                        1.0 );
@@ -397,6 +424,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointElectronProperties,
   FRENSIE_CHECK_EQUAL(
              custom_properties.getAdjointBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectroionizationSamplingMode(),
+                       MonteCarlo::OUTGOING_ENERGY_SAMPLING );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElectronEvaluationTolerance(), 1e-4 );
   FRENSIE_CHECK_EQUAL( custom_properties.getAdjointElasticCutoffAngleCosine(),
                        0.9 );

@@ -595,35 +595,118 @@ ReturnType UnitBase<_TwoDInterpPolicy>::evaluatePDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  // Create the grid evaluation functors
-  std::function<ReturnType(const YIndepType)>
-    evaluate_grid_0_functor =
-    std::bind<ReturnType>( evaluate,
-                           std::cref( *lower_bin_boundary->second ),
-                           std::placeholders::_1 );
+  if( lower_bin_boundary->first == x_indep_value ||
+      upper_bin_boundary->first == x_indep_value )
+  {
+    // Get the min and max y indep values
+    YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+    YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
 
-  std::function<ReturnType(const YIndepType)>
-    evaluate_grid_1_functor =
-    std::bind<ReturnType>( evaluate,
-                           std::cref( *upper_bin_boundary->second ),
-                           std::placeholders::_1 );
+    // Calculate the intermediate y min with fuzzy tol
+    YIndepType min_y_indep_value_with_tol =
+     TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+        min_y_indep_value, fuzzy_boundary_tol );
 
-  return TwoDInterpPolicy::interpolateUnitBase(
-                        lower_bin_boundary->first,
-                        upper_bin_boundary->first,
-                        x_indep_value,
-                        y_indep_value,
-                        min_y_indep_functor(x_indep_value),
-                        max_y_indep_functor(x_indep_value),
+    // Calculate the intermediate y max with fuzzy tol
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+          max_y_indep_value, fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( y_indep_value >= min_y_indep_value_with_tol && y_indep_value <= max_y_indep_value_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<YIndepType>::RawType eta;
+
+      if( y_indep_value > min_y_indep_value && y_indep_value < max_y_indep_value )
+      {
+        typename QuantityTraits<YIndepType>::RawType
+        intermediate_grid_length =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          min_y_indep_value,
+                          max_y_indep_value );
+
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                      y_indep_value, min_y_indep_value, intermediate_grid_length );
+      }
+      else if( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol )
+        eta = 0.0;
+      else // y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol
+        eta = 1.0;
+
+      typename QuantityTraits<YIndepType>::RawType grid_length;
+      if( lower_bin_boundary->first == x_indep_value )
+      {
+        // Get the intermediate grid lengths for the indep value and the lower bin boundary
+        typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        lower_bin_boundary->second->getUpperBoundOfIndepVar(),
-                        upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        upper_bin_boundary->second->getUpperBoundOfIndepVar(),
-                        evaluate_grid_0_functor,
-                        evaluate_grid_1_functor,
-                        QuantityTraits<ReturnType>::zero(),
-                        QuantityTraits<ReturnType>::zero(),
-                        fuzzy_boundary_tol );
+                        lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_0 ),
+                lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*lower_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+      else if( upper_bin_boundary->first == x_indep_value )
+      {
+        // Get the intermediate grid lengths for the indep value and the upper bin boundary
+        typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_1 ),
+                upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+    }
+    else
+    {
+      return QuantityTraits<ReturnType>::zero();
+    }
+  }
+  else
+  {
+    // Create the grid evaluation functors
+    std::function<ReturnType(const YIndepType)>
+      evaluate_grid_0_functor =
+      std::bind<ReturnType>( evaluate,
+                            std::cref( *lower_bin_boundary->second ),
+                            std::placeholders::_1 );
+
+    std::function<ReturnType(const YIndepType)>
+      evaluate_grid_1_functor =
+      std::bind<ReturnType>( evaluate,
+                            std::cref( *upper_bin_boundary->second ),
+                            std::placeholders::_1 );
+
+    return TwoDInterpPolicy::interpolateUnitBase(
+                          lower_bin_boundary->first,
+                          upper_bin_boundary->first,
+                          x_indep_value,
+                          y_indep_value,
+                          min_y_indep_functor(x_indep_value),
+                          max_y_indep_functor(x_indep_value),
+                          lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          lower_bin_boundary->second->getUpperBoundOfIndepVar(),
+                          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          upper_bin_boundary->second->getUpperBoundOfIndepVar(),
+                          evaluate_grid_0_functor,
+                          evaluate_grid_1_functor,
+                          QuantityTraits<ReturnType>::zero(),
+                          QuantityTraits<ReturnType>::zero(),
+                          fuzzy_boundary_tol );
+  }
 }
 
 // Evaluate the CDF between bin boundaries using the desired evaluation method
@@ -687,13 +770,85 @@ double UnitBase<_TwoDInterpPolicy>::evaluateCDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  if( lower_bin_boundary->first == x_indep_value )
+  if( lower_bin_boundary->first == x_indep_value ||
+      upper_bin_boundary->first == x_indep_value )
   {
-    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else if( upper_bin_boundary->first == x_indep_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+    // Get the min and max y indep values
+    YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+    YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+
+    // Calculate the intermediate y min with fuzzy tol
+    YIndepType min_y_indep_value_with_tol =
+     TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+        min_y_indep_value, fuzzy_boundary_tol );
+
+    // Calculate the intermediate y max with fuzzy tol
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+          max_y_indep_value, fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( y_indep_value >= min_y_indep_value_with_tol && y_indep_value <= max_y_indep_value_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<YIndepType>::RawType eta;
+
+      if( y_indep_value > min_y_indep_value && y_indep_value < max_y_indep_value )
+      {
+        typename QuantityTraits<YIndepType>::RawType
+        intermediate_grid_length =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          min_y_indep_value,
+                          max_y_indep_value );
+
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                      y_indep_value, min_y_indep_value, intermediate_grid_length );
+      }
+      else if( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol )
+        eta = 0.0;
+      else // y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol
+        eta = 1.0;
+
+      typename QuantityTraits<YIndepType>::RawType grid_length;
+      if( lower_bin_boundary->first == x_indep_value )
+      {
+        // Get the intermediate grid lengths for the indep value and the lower bin boundary
+        typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+            TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                        lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                        lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_0 ),
+                lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*lower_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+      else if( upper_bin_boundary->first == x_indep_value )
+      {
+        // Get the intermediate grid lengths for the indep value and the upper bin boundary
+        typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                          upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_1 ),
+                upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+    }
+    else if ( y_indep_value > max_y_indep_value_with_tol )
+      return 1.0;
+    else
+      return 0.0;
   }
   else
   {
@@ -756,14 +911,16 @@ double UnitBase<_TwoDInterpPolicy>::evaluateCDF(
         TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
                           eta,
                           lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                          grid_length_0 );
+                          grid_length_0,
+                          fuzzy_boundary_tol );
 
       // Scale eta to the upper bin grid length
       YIndepType y_indep_value_1 =
         TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
                           eta,
                           upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                          grid_length_1 );
+                          grid_length_1,
+                          fuzzy_boundary_tol );
 
       // Get the evaluation at the lower and upper bin boundaries
       double bin_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value_0);
@@ -1193,6 +1350,21 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper
               const double error_tol = 1e-15,
               unsigned max_number_of_iterations = 500u )
   { BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
+
+  // Evaluate the interpolated y at the CDF value
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static YIndepType evaluateY(
+             double& cdf,
+             const T& beta,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 )
+  {
+BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
 };
 
 /*! \brief Partial specialization of the
@@ -1241,6 +1413,19 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivar
               const double rel_error_tol = 1e-7,
               const double error_tol = 1e-15,
               unsigned max_number_of_iterations = 500u );
+
+  // Evaluate the interpolated y at the CDF value
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static YIndepType evaluateY(
+             double& cdf,
+             const T& beta,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 );
 };
 
 // Calculate the secondary independent values
@@ -1281,6 +1466,61 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivaria
     {
       lower_cdf_bound = bin_eval_1;
       upper_cdf_bound = bin_eval_0;
+    }
+
+    // Make sure the estimates are valid
+    YIndepType dummy_y0, dummy_y1;
+    YIndepType lower_y_estimate = ThisType::evaluateY<TwoDInterpPolicy>(
+                                                      lower_cdf_bound,
+                                                      beta,
+                                                      lower_bin_boundary,
+                                                      upper_bin_boundary,
+                                                      dummy_y0,
+                                                      dummy_y1 );
+
+    YIndepType upper_y_estimate = ThisType::evaluateY<TwoDInterpPolicy>(
+                                                      upper_cdf_bound,
+                                                      beta,
+                                                      lower_bin_boundary,
+                                                      upper_bin_boundary,
+                                                      dummy_y0,
+                                                      dummy_y1 );
+
+    while( lower_y_estimate > y_indep_value )
+    {
+      upper_cdf_bound = lower_cdf_bound;
+      lower_cdf_bound *= 0.9;
+
+      if( lower_cdf_bound == 0.0 )
+        break;
+
+      lower_y_estimate =
+        ThisType::evaluateY<TwoDInterpPolicy>( lower_cdf_bound,
+                                               beta,
+                                               lower_bin_boundary,
+                                               upper_bin_boundary,
+                                               dummy_y0,
+                                               dummy_y1 );
+    }
+
+    while( upper_y_estimate < y_indep_value )
+    {
+      lower_cdf_bound = upper_cdf_bound;
+      upper_cdf_bound *= 1.1;
+
+      if( upper_cdf_bound >= 1.0 )
+      {
+        upper_cdf_bound = 1.0;
+        break;
+      }
+
+      upper_y_estimate =
+        ThisType::evaluateY<TwoDInterpPolicy>( upper_cdf_bound,
+                                               beta,
+                                               lower_bin_boundary,
+                                               upper_bin_boundary,
+                                               dummy_y0,
+                                               dummy_y1 );
     }
   }
 
@@ -1341,17 +1581,13 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivar
     // Estimate the cdf as the midpoint of the lower and upper boundaries
     estimated_cdf = 0.5*( lower_cdf_est + upper_cdf_est );
 
-    // Get the sampled values at the upper and lower bin for the estimated_cdf
-    y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
-    y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
-
-    // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
     YIndepType est_y_indep_value =
-      TwoDInterpPolicy::YXInterpPolicy::interpolate( beta,
-                                                     y_indep_value_0,
-                                                     y_indep_value_1 );
+      ThisType::evaluateY<TwoDInterpPolicy>( estimated_cdf,
+                                             beta,
+                                             lower_bin_boundary,
+                                             upper_bin_boundary,
+                                             y_indep_value_0,
+                                             y_indep_value_1 );
 
     if ( y_indep_value == est_y_indep_value )
       break;
@@ -1414,6 +1650,39 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivar
 
   return estimated_cdf;
 }
+
+
+
+
+
+// Evaluate the interpolated y at the CDF value
+template<typename _T, typename _U>
+template<typename TwoDInterpPolicy,
+         typename YIndepType,
+         typename YZIterator,
+         typename T>
+YIndepType CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::evaluateY(
+             double& cdf,
+             const T& beta,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 )
+{
+  // Get the sampled values at the upper and lower bin for the estimated_cdf
+  y_indep_value_0 =
+    ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( cdf );
+  y_indep_value_1 =
+    ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( cdf );
+
+  // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
+  return TwoDInterpPolicy::YXInterpPolicy::interpolate( beta,
+                                                        y_indep_value_0,
+                                                        y_indep_value_1 );
+}
+
+
+
 
 /*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming linear interpolation with the secondary indep grid
@@ -1858,15 +2127,25 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDF(
     // Calculate the correlated y value at the lower and upper bin boundary
     YIndepType lower_y_value, upper_y_value;
 
+    YIndepType min_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+                        min_y_indep_value,
+                        fuzzy_boundary_tol );
+
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+                        max_y_indep_value,
+                        fuzzy_boundary_tol );
+
     // Check for a secondary indep value outside of the secondary indep grid limits
-    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value )
+    if ( y_indep_value < min_y_indep_value_with_tol || y_indep_value > max_y_indep_value_with_tol )
       return QuantityTraits<ReturnType>::zero();
-    else if ( y_indep_value == min_y_indep_value) // At min y value
+    else if ( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol ) // At min y value
     {
       lower_y_value = lower_bin_boundary->second->getLowerBoundOfIndepVar();
       upper_y_value = upper_bin_boundary->second->getLowerBoundOfIndepVar();
     }
-    else if ( y_indep_value == max_y_indep_value ) // At max y value
+    else if ( y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol ) // At max y value
     {
       lower_y_value = lower_bin_boundary->second->getUpperBoundOfIndepVar();
       upper_y_value = upper_bin_boundary->second->getUpperBoundOfIndepVar();
@@ -2528,6 +2807,24 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
   {
     BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
   }
+
+  // Evaluate the interpolated eta at the CDF value
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static double evaluateEta(
+             double& cdf,
+             const T& beta,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 )
+  {
+    BaseUnivariateDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
+  }
 };
 
 /*! \brief Partial specialization of the
@@ -2584,6 +2881,21 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
              const double rel_error_tol = 1e-7,
              const double error_tol = 1e-15,
              unsigned max_number_of_iterations = 500u );
+
+  // Evaluate the interpolated eta at the CDF value
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static double evaluateEta(
+             double& cdf,
+             const T& beta,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 );
 };
 
 // Calculate the secondary independent values
@@ -2618,30 +2930,35 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabular
   {
     YIndepType min_y_indep_value_with_tol =
       TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
-                        min_y_indep_value );
+                        min_y_indep_value,
+                        fuzzy_boundary_tol );
 
     YIndepType max_y_indep_value_with_tol =
       TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
-                        max_y_indep_value );
+                        max_y_indep_value,
+                        fuzzy_boundary_tol );
 
     // Calculate the unit base variable on the intermediate grid
     eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
                 y_indep_value,
                 min_y_indep_value,
-                intermediate_grid_length );
+                intermediate_grid_length,
+                fuzzy_boundary_tol );
 
     // Get the y indep var value for the upper and lower bin boundaries
     YIndepType y_indep_value_0 =
       TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
                         eta,
                         lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        grid_length_0 );
+                        grid_length_0,
+                        fuzzy_boundary_tol );
 
     YIndepType y_indep_value_1 =
       TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
                         eta,
                         upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                        grid_length_1 );
+                        grid_length_1,
+                        fuzzy_boundary_tol );
 
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
@@ -2658,6 +2975,73 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabular
     {
       lower_cdf_bound = bin_eval_1;
       upper_cdf_bound = bin_eval_0;
+    }
+
+    // Make sure the estimates are valid
+    YIndepType dummy_y0, dummy_y1;
+    typename QuantityTraits<YIndepType>::RawType lower_eta_estimate, upper_eta_estimate;
+
+    lower_eta_estimate =
+      ThisType::evaluateEta<TwoDInterpPolicy>(
+          lower_cdf_bound,
+          beta,
+          grid_length_0,
+          grid_length_1,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          dummy_y0,
+          dummy_y1 );
+
+    upper_eta_estimate =
+      ThisType::evaluateEta<TwoDInterpPolicy>(
+          upper_cdf_bound,
+          beta,
+          grid_length_0,
+          grid_length_1,
+          lower_bin_boundary,
+          upper_bin_boundary,
+          dummy_y0,
+          dummy_y1 );
+
+    while( lower_eta_estimate > eta )
+    {
+      upper_cdf_bound = lower_cdf_bound;
+      lower_cdf_bound *= 0.99;
+
+      if( lower_cdf_bound == 0.0 )
+        break;
+
+      lower_eta_estimate = ThisType::evaluateEta<TwoDInterpPolicy>(
+            lower_cdf_bound,
+            beta,
+            grid_length_0,
+            grid_length_1,
+            lower_bin_boundary,
+            upper_bin_boundary,
+            dummy_y0,
+            dummy_y1 );
+    }
+
+    while( upper_eta_estimate < eta )
+    {
+      lower_cdf_bound = upper_cdf_bound;
+      upper_cdf_bound *= 1.01;
+
+      if( upper_cdf_bound >= 1.0 )
+      {
+        upper_cdf_bound = 1.0;
+        break;
+      }
+
+      upper_eta_estimate = ThisType::evaluateEta<TwoDInterpPolicy>(
+            upper_cdf_bound,
+            beta,
+            grid_length_0,
+            grid_length_1,
+            lower_bin_boundary,
+            upper_bin_boundary,
+            dummy_y0,
+            dummy_y1 );
     }
   }
 
@@ -2720,32 +3104,15 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
     // Estimate the cdf as the midpoint of the lower and upper boundaries
     estimated_cdf = 0.5*( lower_cdf_est + upper_cdf_est );
 
-    // Get the sampled values at the upper and lower bin for the estimated_cdf
-    y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
-    y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
-
-    // Calculate the unit base variable on the intermediate grid corresponding to the
-    // raw samples on the lower and upper boundaries
-    typename QuantityTraits<YIndepType>::RawType
-      eta_estimate, eta_0, eta_1;
-
-    eta_0 =
-      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
-          y_indep_value_0,
-          lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-          grid_length_0 );
-
-    eta_1 =
-      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
-          y_indep_value_1,
-          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-          grid_length_1 );
-
-    // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
-    eta_estimate =
-      TwoDInterpPolicy::YXInterpPolicy::interpolate( beta, eta_0, eta_1 );
+    auto&& eta_estimate =
+        ThisType::evaluateEta<TwoDInterpPolicy>( estimated_cdf,
+                                                 beta,
+                                                 grid_length_0,
+                                                 grid_length_1,
+                                                 lower_bin_boundary,
+                                                 upper_bin_boundary,
+                                                 y_indep_value_0,
+                                                 y_indep_value_1 );
 
     // Update the number of iterations
     ++number_of_iterations;
@@ -2787,21 +3154,66 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
           break;
       else
       {
-        THROW_EXCEPTION( std::logic_error,
-                         "Error: The evaluation could not be completed. "
-                         "The max number of iterations ("
-                         << max_number_of_iterations
-                         << ") was reached before the relative error ("
-                         << rel_error
-                         << ") reached the evaluation tolerance ("
-                         << rel_error_tol
-                         << ")." );
+        std::ostringstream oss;
+        oss.precision( 18 );
+        oss << "max number of iterations (" << max_number_of_iterations
+            << ") hit before convergence (" << rel_error_tol << ")- "
+            << "(y0,y1) = (" << y_indep_value_0 << "," << y_indep_value_1
+            << "), (cdf_0,cdf_1) = (" << lower_cdf_est << "," << upper_cdf_est
+            << "), relError(eta,eta_exact) = relError(" << eta_estimate
+            << "," << eta << ") = " << rel_error;
+
+
+        THROW_EXCEPTION( std::runtime_error, oss.str() );
       }
     }
   }
 
   return estimated_cdf;
 }
+
+
+// Evaluate the interpolated eta at the CDF value
+template<typename _T, typename _U>
+template<typename TwoDInterpPolicy,
+         typename YIndepType,
+         typename YZIterator,
+         typename T>
+  double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::evaluateEta(
+             double& cdf,
+             const T& beta,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1 )
+  {
+    // Get the sampled values at the upper and lower bin for the cdf
+    y_indep_value_0 =
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( cdf );
+    y_indep_value_1 =
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( cdf );
+
+    // Calculate the unit base variable on the intermediate grid corresponding to the
+    // raw samples on the lower and upper boundaries
+    typename QuantityTraits<YIndepType>::RawType eta_0, eta_1;
+
+    eta_0 =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+          y_indep_value_0,
+          lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+          grid_length_0 );
+
+    eta_1 =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+          y_indep_value_1,
+          upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+          grid_length_1 );
+
+    // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
+    return TwoDInterpPolicy::YXInterpPolicy::interpolate( beta, eta_0, eta_1 );
+  }
 
 /*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming linear interpolation with the secondary indep grid
@@ -3006,14 +3418,92 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  // Check to see if the x indep value is on the bin limits
-  if( lower_bin_boundary->first == x_indep_value )
+  // Get the min and max y indep values
+  YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+  YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+
+  // Get the intermediate grid lengths for the indep value and the upper and lower bin boundary
+  typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  typename QuantityTraits<YIndepType>::RawType
+  intermediate_grid_length =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    min_y_indep_value,
+                    max_y_indep_value );
+
+
+
+  if( lower_bin_boundary->first == x_indep_value ||
+      upper_bin_boundary->first == x_indep_value )
   {
-    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else if( upper_bin_boundary->first == x_indep_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+    // Calculate the intermediate y min with fuzzy tol
+    YIndepType min_y_indep_value_with_tol =
+     TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+        min_y_indep_value, fuzzy_boundary_tol );
+
+    // Calculate the intermediate y max with fuzzy tol
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+          max_y_indep_value, fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( y_indep_value >= min_y_indep_value_with_tol && y_indep_value <= max_y_indep_value_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<YIndepType>::RawType eta;
+
+      if( y_indep_value > min_y_indep_value && y_indep_value < max_y_indep_value )
+      {
+        typename QuantityTraits<YIndepType>::RawType
+        intermediate_grid_length =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          min_y_indep_value,
+                          max_y_indep_value );
+
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                      y_indep_value, min_y_indep_value, intermediate_grid_length );
+      }
+      else if( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol )
+        eta = 0.0;
+      else // y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol
+        eta = 1.0;
+
+      typename QuantityTraits<YIndepType>::RawType grid_length;
+      if( lower_bin_boundary->first == x_indep_value )
+      {
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_0 ),
+                lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*lower_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+      else if( upper_bin_boundary->first == x_indep_value )
+      {
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_1 ),
+                upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+    }
+    else
+    {
+      return QuantityTraits<ReturnType>::zero();
+    }
   }
   else
   {
@@ -3028,28 +3518,8 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDF(
       TwoDInterpPolicy::ZXInterpPolicy::calculateUnitBaseIndepVar(
                                                     x_indep_value,
                                                     lower_bin_boundary->first,
-                                                    x_bin_length );
-
-    // Get the min and max y indep values
-    YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
-    YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
-
-    // Get the intermediate grid lengths for the indep value and the upper and lower bin boundary
-    typename QuantityTraits<YIndepType>::RawType grid_length_0 =
-          TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
-                      lower_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      lower_bin_boundary->second->getUpperBoundOfIndepVar() );
-
-    typename QuantityTraits<YIndepType>::RawType grid_length_1 =
-          TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
-                      upper_bin_boundary->second->getLowerBoundOfIndepVar(),
-                      upper_bin_boundary->second->getUpperBoundOfIndepVar() );
-
-    typename QuantityTraits<YIndepType>::RawType
-    intermediate_grid_length =
-          TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
-                      min_y_indep_value,
-                      max_y_indep_value );
+                                                    x_bin_length,
+                                                    fuzzy_boundary_tol );
 
     // Calculate the correlated y value at the lower and upper bin boundary
     YIndepType lower_y_value, upper_y_value;
@@ -3189,14 +3659,92 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
                                   const double error_tol,
                                   unsigned max_number_of_iterations )
 {
-  // Check to see if the x indep value is on the bin limits
-  if( lower_bin_boundary->first == x_indep_value )
+  // Get the min and max y indep values
+  YIndepType min_y_indep_value = min_y_indep_functor( x_indep_value );
+  YIndepType max_y_indep_value = max_y_indep_functor( x_indep_value );
+
+  // Get the intermediate grid lengths for the indep value and the upper and lower bin boundary
+  typename QuantityTraits<YIndepType>::RawType grid_length_0 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  typename QuantityTraits<YIndepType>::RawType grid_length_1 =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+                    upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+  typename QuantityTraits<YIndepType>::RawType
+  intermediate_grid_length =
+        TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                    min_y_indep_value,
+                    max_y_indep_value );
+
+
+
+  if( lower_bin_boundary->first == x_indep_value ||
+      upper_bin_boundary->first == x_indep_value )
   {
-    return ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-  }
-  else if( upper_bin_boundary->first == x_indep_value )
-  {
-    return ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+    // Calculate the intermediate y min with fuzzy tol
+    YIndepType min_y_indep_value_with_tol =
+     TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
+        min_y_indep_value, fuzzy_boundary_tol );
+
+    // Calculate the intermediate y max with fuzzy tol
+    YIndepType max_y_indep_value_with_tol =
+      TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyUpperBound(
+          max_y_indep_value, fuzzy_boundary_tol );
+
+    // Check if the secondary indep value is in the intermediate grid
+    if( y_indep_value >= min_y_indep_value_with_tol && y_indep_value <= max_y_indep_value_with_tol )
+    {
+      // Calculate the unit base independent variable
+      typename QuantityTraits<YIndepType>::RawType eta;
+
+      if( y_indep_value > min_y_indep_value && y_indep_value < max_y_indep_value )
+      {
+        typename QuantityTraits<YIndepType>::RawType
+        intermediate_grid_length =
+              TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
+                          min_y_indep_value,
+                          max_y_indep_value );
+
+        eta = TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseIndepVar(
+                      y_indep_value, min_y_indep_value, intermediate_grid_length );
+      }
+      else if( y_indep_value <= min_y_indep_value && y_indep_value >= min_y_indep_value_with_tol )
+        eta = 0.0;
+      else // y_indep_value >= max_y_indep_value && y_indep_value <= max_y_indep_value_with_tol
+        eta = 1.0;
+
+      typename QuantityTraits<YIndepType>::RawType grid_length;
+      if( lower_bin_boundary->first == x_indep_value )
+      {
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              lower_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_0 ),
+                lower_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*lower_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+      else if( upper_bin_boundary->first == x_indep_value )
+      {
+        YIndepType norm_y_value = std::min(
+          TwoDInterpPolicy::ZYInterpPolicy::calculateIndepVar(
+              eta,
+              upper_bin_boundary->second->getLowerBoundOfIndepVar(),
+              grid_length_1 ),
+                upper_bin_boundary->second->getUpperBoundOfIndepVar() );
+
+        return ((*upper_bin_boundary->second).*evaluate)(norm_y_value);
+      }
+    }
+    else if ( y_indep_value > max_y_indep_value_with_tol )
+      return 1.0;
+    else
+      return 0.0;
   }
   else
   {

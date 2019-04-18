@@ -59,9 +59,9 @@ void PositronatomNativeFactory::createPositronatomCore(
       if( TwoDInterpPolicy::name() == "LogLogLog" )
       {
         if( properties.getElasticElectronDistributionMode() == COUPLED_DISTRIBUTION &&
-            properties.getCoupledElasticSamplingMode() == TWO_D_UNION )
+            properties.getCoupledElasticSamplingMode() == MODIFIED_TWO_D_UNION )
         {
-          THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+          THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
                        << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported "
                        << "with a " << properties.getCoupledElasticSamplingMode()
                        << " coupled elastic sampling mode!" );
@@ -137,7 +137,7 @@ void PositronatomNativeFactory::createPositronatomCore(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D grid policy "
+      THROW_EXCEPTION( std::runtime_error, "Error: the bivariate grid policy "
                        << TwoDGridPolicy<TwoDInterpPolicy>::name() << " is not currently supported!" );
     }
   }
@@ -180,6 +180,7 @@ void PositronatomNativeFactory::createPositronatomCore(
                       energy_grid,
                       grid_searcher,
                       reaction_pointers,
+                      properties.getElectroionizationSamplingMode(),
                       properties.getElectronEvaluationTolerance() );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )

@@ -26,16 +26,13 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       properties.getCriticalAdjointElectronLineEnergies() );
 
   // Extract the common energy grid used for this atom
-  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
-  energy_grid->assign(
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+  auto energy_grid = std::make_shared<std::vector<double> >(
+    raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid() );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
-         new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher = std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                      energy_grid,
-                     properties.getNumberOfAdjointElectronHashGridBins() ) );
+                     properties.getNumberOfAdjointElectronHashGridBins() );
 
   std::shared_ptr<const ElectroatomicReaction> total_forward_reaction;
 
@@ -47,6 +44,9 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
   std::string electron_grid =
     raw_adjoint_electroatom_data.getElectronTwoDGridPolicy();
+
+  std::vector<std::vector<double> > forward_inelastic_cross_sections;
+  std::function<double (const double&)> forward_elastic_xs_evaluator;
 
   // Create the elastic scattering reaction
   if ( properties.isAdjointElasticModeOn() )
@@ -67,6 +67,16 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       }
       else if( electron_grid == "Unit-base" || electron_grid == "Direct" )
       {
+        if( properties.getAdjointCoupledElasticSamplingMode() == MODIFIED_TWO_D_UNION )
+        {
+          THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
+                           << Utility::UnitBase<Utility::LogLogLog>::name()
+                           << " is not currently supported "
+                           << "with a "
+                           << properties.getAdjointCoupledElasticSamplingMode()
+                           << " coupled elastic sampling mode!" );
+        }
+
         ThisType::createElasticElectroatomCore<Utility::LogNudgedLogCosLog,Utility::Direct>(
                                                   raw_adjoint_electroatom_data,
                                                   energy_grid,
@@ -101,7 +111,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -114,18 +124,34 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                        " is not currently supported!" );
     }
 
-    // Create the total forward reaction
-    AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-        raw_adjoint_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        elastic_reaction,
-        total_forward_reaction );
+    // Set the forward elastic reaction cross section evaluator
+    forward_elastic_xs_evaluator = [elastic_reaction](const double& energy ){
+      return elastic_reaction->getCrossSection( energy );
+    };
+  }
+  else
+  {
+    // Set a zero forward elastic reaction cross section evaluator
+    forward_elastic_xs_evaluator = [](const double& ){ return 0.0; };
   }
 
   // Create the bremsstrahlung scattering reaction
   if ( properties.isAdjointBremsstrahlungModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardBremsstrahlungElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
@@ -134,7 +160,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       if ( electron_grid == "Unit-base Correlated" )
       {
         AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
-                         raw_adjoint_electroatom_data,
+                        raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
                         reaction_pointer,
@@ -164,7 +190,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -204,7 +230,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -221,6 +247,20 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAdjointAtomicExcitationModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardAtomicExcitationElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
 
@@ -228,17 +268,29 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                raw_adjoint_electroatom_data,
                                energy_grid,
                                grid_searcher,
-                               reaction_pointer );
+                               reaction_pointer,
+                               critical_line_energies );
   }
 
   // Create the subshell electroionization reactions
   if ( properties.isAdjointElectroionizationModeOn() )
   {
+    std::vector<double> cross_section =
+      raw_adjoint_electroatom_data.getForwardElectroionizationElectronCrossSection();
+
+    for( unsigned j = 0; j < raw_adjoint_electroatom_data.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    // Make sure the cross section is the right size
+    testPostcondition( cross_section.size() == energy_grid->size() );
+
+    forward_inelastic_cross_sections.push_back( cross_section );
+
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
-
-  if ( electron_grid == "Unit-base Correlated" || electron_grid == "Correlated" ||
-       electron_grid == "Unit-base" || electron_grid == "Direct" )
 
     if( electron_interp == "Log-Log-Log" )
     {
@@ -275,7 +327,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -315,7 +367,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                        "the 2D grid policy "
+                        "the bivariate grid policy "
                         << electron_grid <<
                         " is not currently supported!" );
       }
@@ -335,6 +387,14 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     }
   }
 
+  // Create the total forward reaction
+  AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
+      forward_inelastic_cross_sections,
+      energy_grid,
+      grid_searcher,
+      forward_elastic_xs_evaluator,
+      total_forward_reaction );
+
   // Create the electroatom core
   adjoint_electroatom_core.reset(
     new AdjointElectroatomCore( energy_grid,
@@ -345,7 +405,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
                                 AdjointElectroatomCore::ConstReactionMap(),
                                 AdjointElectroatomCore::ConstLineEnergyReactionMap(),
                                 false,
-                                Utility::LinLin() ) );
+                                Utility::LogLog() ) );
 }
 
 // Create a adjoint electroatom

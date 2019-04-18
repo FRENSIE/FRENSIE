@@ -58,7 +58,7 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.034967894439161196e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.034966588275830075e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
@@ -83,21 +83,21 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          4.420906922056859401e+01 + 6.1243057898416743e+07,
+                          4.422553386152458188e+01 + 6.124055828282346576e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          1.557600066977331110e+01 + 1.050234737111856416e+07,
+                          1.569786837648857869e+01 + 1.050254326707092859e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
-                          2.873816755338521323e-01 + 8.1829299836129925e+04,
+                          1.303534746154091928e-01 + 8.18292998361299251e+04,
                           1e-12 );
 }
 
@@ -195,10 +195,10 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   FRENSIE_CHECK_EQUAL( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  FRENSIE_CHECK_EQUAL( grid_index, 17 );
+  FRENSIE_CHECK_EQUAL( grid_index, 14 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  FRENSIE_CHECK_EQUAL( grid_index, 62 );
+  FRENSIE_CHECK_EQUAL( grid_index, 98 );
 }
 
 //---------------------------------------------------------------------------//
@@ -290,45 +290,85 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         test_native_file_name );
 
     // Create the atomic excitation, bremsstrahlung cross sections
-    std::shared_ptr<const std::vector<double> > energy_grid(
-       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
+    auto energy_grid = std::make_shared<const std::vector<double> >(
+        data_container.getAdjointElectronEnergyGrid() );
 
     // Create the hash-based grid searcher
-    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
-       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher
+      = std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
                                              energy_grid,
-                                             100 ) );
+                                             100 );
 
     // Get void reaction
-    std::shared_ptr<const std::vector<double> > void_cross_section(
-                         new std::vector<double>( energy_grid->size(), 0.0 ) );
+    auto void_cross_section = std::make_shared<const std::vector<double> >(
+        energy_grid->size(), 0.0 );
 
-    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
-     new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction =
+      std::make_shared<MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false> >(
                        energy_grid,
                        void_cross_section,
                        0u,
                        grid_searcher,
-                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
+                       MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION );
+
+    std::function<double (const double&)> forward_elastic_xs_evaluator =
+      [void_reaction]( const double& energy){
+        return void_reaction->getCrossSection(energy);
+      };
+
+    std::vector<std::vector<double> > forward_inelastic_xs;
+
+    std::vector<double> cross_section =
+      data_container.getForwardBremsstrahlungElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardAtomicExcitationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
+
+    cross_section =
+      data_container.getForwardElectroionizationElectronCrossSection();
+
+    for( unsigned j = 0; j < data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(); ++j )
+    {
+      auto it = cross_section.begin();
+      it = cross_section.insert(it, 0.0);
+    }
+
+    forward_inelastic_xs.push_back( cross_section );
 
     // Create the total forward reaction
     std::shared_ptr<const MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
-                                       data_container,
+                                       forward_inelastic_xs,
                                        energy_grid,
                                        grid_searcher,
-                                       void_reaction,
+                                       forward_elastic_xs_evaluator,
                                        total_forward_reaction );
 
     // Atomic Excitation cross section
-    std::shared_ptr<const std::vector<double> > ae_cross_section(
-       new std::vector<double>( data_container.getAdjointAtomicExcitationCrossSection() ) );
+    auto ae_cross_section =
+       std::make_shared<const std::vector<double> >( data_container.getAdjointAtomicExcitationCrossSection() );
 
     size_t ae_threshold_index =
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-    std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+    std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
         ae_distribution;
 
     // Create the atomic excitation distribution
@@ -336,19 +376,25 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         data_container,
         ae_distribution );
 
+    auto critical_line_energies = std::make_shared<std::vector<double> >(2);
+    (*critical_line_energies)[0] =
+      Utility::PhysicalConstants::electron_rest_mass_energy;
+    (*critical_line_energies)[1] = 20.0;
+
+    ae_distribution->setCriticalLineEnergies( critical_line_energies );
+
     // Create the atomic excitation reaction
-    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> ae_reaction(
-        new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog>(
+    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> ae_reaction =
+      std::make_shared< MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LogLog> >(
             energy_grid,
             ae_cross_section,
             ae_threshold_index,
             grid_searcher,
-            ae_distribution ) );
-
+            ae_distribution );
 
     // Bremsstrahlung cross section
-    std::shared_ptr<const std::vector<double> > b_cross_section(
-       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
+    auto b_cross_section =
+       std::make_shared<const std::vector<double> >( data_container.getAdjointBremsstrahlungElectronCrossSection() );
 
     size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
@@ -359,26 +405,21 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     double evaluation_tol = 1e-7;
 
     // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         data_container,
-        data_container.getAdjointElectronEnergyGrid(),
+        data_container.getAdjointElectronBremsstrahlungEnergyGrid(),
         b_distribution,
         evaluation_tol );
-
-    auto critical_line_energies = std::make_shared<std::vector<double> >(2);
-    (*critical_line_energies)[0] =
-      Utility::PhysicalConstants::electron_rest_mass_energy;
-    (*critical_line_energies)[1] = 20.0;
 
     b_distribution->setCriticalLineEnergies( critical_line_energies );
 
     // Create the bremsstrahlung scattering reaction
-    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction(
-            new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog>(
+    std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> b_reaction =
+      std::make_shared<MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LogLog> >(
             energy_grid,
             b_cross_section,
             b_threshold_index,
-            b_distribution ) );
+            b_distribution );
 
     // Create the reaction maps
     MonteCarlo::AdjointElectroatomCore::ConstReactionMap scattering_reactions,
@@ -388,7 +429,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
 
-    // Create a test  adjoint electroatom core
+    // Create a test adjoint electroatom core
     electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
         energy_grid,
         grid_searcher,
@@ -398,7 +439,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         absorption_reactions,
         MonteCarlo::AdjointElectroatomCore::ConstLineEnergyReactionMap(),
         false,
-        Utility::LinLin() ) );
+        Utility::LogLog() ) );
   }
 }
 

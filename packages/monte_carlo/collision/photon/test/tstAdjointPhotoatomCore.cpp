@@ -41,11 +41,11 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getTotalForwardReaction )
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 73136.5325778411352, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1.0 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.96240900282447228, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.08806003440055754, 1e-12 );
 }
 
@@ -64,22 +64,22 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getScatteringReactions )
     *(scattering_reactions.find(MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION)->second);
 
   double cross_section = incoherent_reaction.getCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
 
   cross_section = incoherent_reaction.getCrossSection( 1.0 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.50415974966055277, 1e-12 );
 
   cross_section = incoherent_reaction.getCrossSection( 20.0 );
-  
+
   FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 
   const MonteCarlo::AdjointPhotoatomicReaction& coherent_reaction =
     *(scattering_reactions.find(MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION)->second);
 
   cross_section = coherent_reaction.getCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 99.9639104922271571, 1e-12 );
 
   cross_section = coherent_reaction.getCrossSection( 1.0 );
@@ -177,7 +177,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getLineEnergyReactions )
   FRENSIE_CHECK_EQUAL( me_line_energy_reactions.size(), 2 );
   FRENSIE_CHECK( me_line_energy_reactions.count( MonteCarlo::PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION ) );
   FRENSIE_CHECK( me_line_energy_reactions.count( MonteCarlo::TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION ) );
-  
+
   const MonteCarlo::AdjointPhotoatomicReaction& pp_reaction =
     *(me_line_energy_reactions.find( MonteCarlo::PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION )->second );
 
@@ -187,7 +187,7 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getLineEnergyReactions )
 
   const MonteCarlo::AdjointPhotoatomicReaction& tp_reaction =
     *(me_line_energy_reactions.find( MonteCarlo::TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION )->second );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( tp_reaction.getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ),
                           0.6221793747726394,
                           1e-12 );
@@ -406,7 +406,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     MonteCarlo::AdjointPhotoatomCore::ConstReactionMap& me_line_energy_reactions =
       line_energy_reactions[Utility::PhysicalConstants::electron_rest_mass_energy];
-    
+
     std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotoatomicReaction> reaction;
 
     MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
@@ -440,8 +440,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                           line_energy_reactions,
                           false,
                           Utility::LinLin() ) );
-                                                         
-    
+
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

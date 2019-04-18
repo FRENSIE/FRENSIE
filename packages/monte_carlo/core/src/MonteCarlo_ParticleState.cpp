@@ -33,7 +33,7 @@ ParticleState::ParticleState()
     d_generation_number( 0 ),
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
-    d_ray_safety_op( 0.0 ),
+    d_ray_safety_distance( 0.0 ),
     d_source_cell( 0 ),
     d_lost( false ),
     d_gone( false ),
@@ -58,7 +58,7 @@ ParticleState::ParticleState(
     d_generation_number( 0 ),
     d_source_weight( 1.0 ),
     d_weight( 1.0 ),
-    d_ray_safety_op( 0.0 ),
+    d_ray_safety_distance( 0.0 ),
     d_source_cell( 0 ),
     d_lost( false ),
     d_gone( false ),
@@ -77,7 +77,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
                               const chargeType new_charge,
                               const bool increment_generation_number,
                               const bool reset_collision_number,
-                              const raySafetyOPType ray_safety_op )
+                              const raySafetyDistanceType ray_safety_distance )
   : d_history_number( existing_base_state.d_history_number ),
     d_particle_type( new_type ),
     d_source_id( existing_base_state.d_source_id ),
@@ -90,7 +90,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_generation_number( existing_base_state.d_generation_number ),
     d_source_weight( existing_base_state.d_source_weight ),
     d_weight( existing_base_state.d_weight ),
-    d_ray_safety_op( ray_safety_op ),
+    d_ray_safety_distance( ray_safety_distance ),
     d_source_cell( existing_base_state.d_source_cell ),
     d_lost( false ),
     d_gone( false ),
@@ -492,19 +492,19 @@ void ParticleState::multiplyWeight( const double weight_factor )
   d_weight *= weight_factor;
 }
 
-// Return the ray safety op (i.e. optical path to the closest boundary)
-auto ParticleState::getRaySafetyOpticalPath() const -> raySafetyOPType
+// Return the ray safety distance (i.e. distance to the closest boundary)
+auto ParticleState::getRaySafetyDistance() const -> raySafetyDistanceType
 {
-  return d_ray_safety_op;
+  return d_ray_safety_distance;
 }
 
-// Set the ray safety op (i.e. optical path to the closest boundary)
-void ParticleState::setRaySafetyOpticalPath( const raySafetyOPType safety_op )
+// Set the ray safety distance (i.e. distance to the closest boundary)
+void ParticleState::setRaySafetyDistance( const raySafetyDistanceType ray_safety_distance )
 {
-  // Make sure that the current safety op is valid
-  testPrecondition( safety_op >= 0.0 );
+  // Make sure that the current safety distance is valid
+  testPrecondition( ray_safety_distance >= 0.0 );
 
-  d_ray_safety_op = safety_op;
+  d_ray_safety_distance = ray_safety_distance;
 }
 
 // Return if the particle is lost

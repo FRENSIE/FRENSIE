@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
 
@@ -145,6 +146,69 @@ public:
   //! Return the electron TwoDGridPolicy
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set refine secondary electron grids mode on (Default off)
+  void setRefineSecondaryElectronGridsModeOn();
+
+  //! Set refine secondary electron grids mode off (Default off)
+  void setRefineSecondaryElectronGridsModeOff();
+
+  //! Return if the refine secondary electron grids mode is on (default off)
+  bool isRefineSecondaryElectronGridsModeOn();
+
+  //! Set the electron elastic sampling method (TWO_D_UNION by default)
+  void setElectronElasticSamplingMethod( MonteCarlo::CoupledElasticSamplingMethod sampling );
+
+  //! Return the electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod getElectronElasticSamplingMethod() const;
+
+  //! Set the bremsstrahlung cross section evaluation tolerance
+  void setBremsstrahlungEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the bremsstrahlung cross section evaluation tolerance
+  double getBremsstrahlungEvaluationTolerance() const;
+
+  //! Set the bremsstrahlung grid convergence tolerance
+  void setBremsstrahlungGridConvergenceTolerance( const double convergence_tol );
+
+  //! Return the bremsstrahlung grid convergence tolerance
+  double getBremsstrahlungGridConvergenceTolerance() const;
+
+  //! Set the bremsstrahlung absolute difference tolerance
+  void setBremsstrahlungAbsoluteDifferenceTolerance( const double absolute_diff_tol );
+
+  //! Return the bremsstrahlung absolute difference tolerance
+  double getBremsstrahlungAbsoluteDifferenceTolerance() const;
+
+  //! Set the bremsstrahlung distance tolerance
+  void setBremsstrahlungDistanceTolerance( const double distance_tol );
+
+  //! Return the bremsstrahlung distance tolerance
+  double getBremsstrahlungDistanceTolerance() const;
+
+  //! Set the electroionization cross section evaluation tolerance
+  void setElectroionizationEvaluationTolerance( const double evaluation_tol );
+
+  //! Return the electroionization cross section evaluation tolerance
+  double getElectroionizationEvaluationTolerance() const;
+
+  //! Set the electroionization grid convergence tolerance
+  void setElectroionizationGridConvergenceTolerance( const double convergence_tol );
+
+  //! Return the electroionization grid convergence tolerance
+  double getElectroionizationGridConvergenceTolerance() const;
+
+  //! Set the electroionization absolute difference tolerance
+  void setElectroionizationAbsoluteDifferenceTolerance( const double absolute_diff_tol );
+
+  //! Return the electroionization absolute difference tolerance
+  double getElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Set the electroionization distance tolerance
+  void setElectroionizationDistanceTolerance( const double distance_tol );
+
+  //! Return the electroionization distance tolerance
+  double getElectroionizationDistanceTolerance() const;
+
   //! Set the generation notes
   void setNotes( const std::string& notes );
 
@@ -197,6 +261,12 @@ private:
   // The default electron grid generator
   std::unique_ptr<Utility::GridGenerator<Utility::LogLog> >
   d_default_electron_grid_generator;
+
+  // The refine secondary electron grid mode bollean
+  bool d_refine_secondary_electron_grid_mode;
+
+  // The electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod d_elastic_sampling_method;
 
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;

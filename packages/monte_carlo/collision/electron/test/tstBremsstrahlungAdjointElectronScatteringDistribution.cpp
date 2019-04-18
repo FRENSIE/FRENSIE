@@ -47,7 +47,7 @@ public:
 std::shared_ptr<TestBremsstrahlungAdjointElectronScatteringDistribution>
   distribution;
 
-double max_energy = 2.00100001000000027e+01;
+double max_energy = 2.00000011000000022e+01;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -86,7 +86,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
                    isEnergyInScatteringWindow )
 {
-  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
+  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 0.1, 9.9999e-6 ) );
 
   FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 0.1, 1e-5 ));
 
@@ -96,7 +96,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
 
-  FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 21.0 ) );
+  FRENSIE_CHECK( distribution->isEnergyInScatteringWindow( 21.0, 21.0 ) );
 
   FRENSIE_CHECK( !distribution->isEnergyInScatteringWindow( 21.0, 22.0 ) );
 }
@@ -110,22 +110,22 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
     start_energy, end_energy;
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 9.9999e-6,
-                                                                start_energy,
-                                                                end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( start_energy, end_energy );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 1e-5,
-                                                                start_energy,
-                                                                end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy, 0.08 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 4 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.18,
-                                                                start_energy,
-                                                                end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy,
                        Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -133,8 +133,8 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy), 3 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.21,
-                                                                start_energy,
-                                                                end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy,
                        Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -142,8 +142,8 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.25,
-                                                          start_energy,
-                                                          end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy,
                        Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -151,16 +151,16 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 3 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 0.52,
-                                                          start_energy,
-                                                          end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy, 1.0 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
   FRENSIE_CHECK_EQUAL( std::distance( start_energy, end_energy ), 2 );
 
   distribution->getCriticalLineEnergiesInScatteringWindow( 1.1,
-                                                          start_energy,
-                                                          end_energy );
+                                                           start_energy,
+                                                           end_energy );
 
   FRENSIE_CHECK_EQUAL( *start_energy, 5.0 );
   FRENSIE_CHECK_EQUAL( *end_energy, 21.0 );
@@ -186,15 +186,15 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = distribution->evaluate( 1.0e-5, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.17623452967737336e-10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.176942104157241354e-10, 1e-12 );
 
   // Check between bins
   pdf = distribution->evaluate( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.571378268628855476e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.684424297550174436e-07, 1e-12 );
 
   // Check on highest bin
   pdf = distribution->evaluate( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.966315777350755911e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 3.441797211110002245e+05, 1e-12 );
 
   // Check above highest bin
   pdf = distribution->evaluate( 21.0, 22.0 );
@@ -214,15 +214,15 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   pdf = distribution->evaluatePDF( 1.0e-5, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.208637156398267522e-10, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.208819622817437738e-10, 1e-12 );
 
   // Check between bins
   pdf = distribution->evaluatePDF( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.603435651317428790e-06, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.353320918135283604e-08, 1e-12 );
 
   // Check on highest bin
   pdf = distribution->evaluatePDF( 20.0, max_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.611274024020572793e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.483195697467969730e+05, 1e-12 );
 
   // Check above highest bin
   pdf = distribution->evaluatePDF( 21.0, 22.0 );
@@ -242,11 +242,11 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check on lowest bin
   cdf = distribution->evaluateCDF( 1.0e-5, 10.1000050505 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999421083678453e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999423525742781e-01, 1e-12 );
 
   // Check in between bins
   cdf = distribution->evaluateCDF( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9999767762830605e-01, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999998655226245425e-01, 1e-12 );
 
   // Check on highest bin
   cdf = distribution->evaluateCDF( 20.0, max_energy );
@@ -265,7 +265,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.552488576879764695e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -275,7 +275,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.292134711932079911e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.552488576879764695e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
 }
 
@@ -289,7 +289,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.552488576879764695e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -304,7 +304,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.292134711932079911e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.552488576879764695e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle, 1.0, 1e-12 );
   FRENSIE_CHECK_EQUAL( trials, 1.0 );
 }
@@ -325,7 +325,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 1e-5 MeV and 1.1192e-5 MeV distributions
-  fake_stream[1] = 0.5; // Sample an E_out of 1.292134711932079911e-05
+  fake_stream[1] = 0.5; // Sample an E_out of 1.552488576879764695e-05
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -335,7 +335,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.292134711932079911e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.552488576879764695e-05, 1e-12 );
   FRENSIE_CHECK_SMALL( adjoint_electron.getXDirection(), 1e-12 );
   FRENSIE_CHECK_SMALL( adjoint_electron.getYDirection(), 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 1.0, 1e-12 );

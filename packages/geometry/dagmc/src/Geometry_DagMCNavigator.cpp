@@ -440,7 +440,7 @@ void DagMCNavigator::advanceBySubstepImpl( const Length substep_distance )
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
   // Make sure that the substep distance is valid
-  testPrecondition( substep_distance.value() >= 0.0  );
+  testPrecondition( substep_distance.value() >= 0.0 );
   testPrecondition( substep_distance.value() <
                     d_internal_ray.getDistanceToIntersectionSurface());
 

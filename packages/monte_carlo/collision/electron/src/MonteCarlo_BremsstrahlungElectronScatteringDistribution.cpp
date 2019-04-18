@@ -155,6 +155,19 @@ void BremsstrahlungElectronScatteringDistribution::sample(
   testPostcondition( photon_angle_cosine >= -1.0 );
 }
 
+// Sample the photon energy from the distribution with a random number
+double BremsstrahlungElectronScatteringDistribution::sampleWithRandomNumber(
+             const double incoming_energy,
+             const double random_number ) const
+{
+  // Sample the photon energy
+  return d_bremsstrahlung_scattering_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      random_number,
+      [self = this](const double& energy){return self->getMinPhotonEnergy( energy );},
+      [self = this](const double& energy){return self->getMaxPhotonEnergy( energy );} );
+}
+
 // Sample an outgoing energy and direction and record the number of trials
 void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
                             const double incoming_energy,

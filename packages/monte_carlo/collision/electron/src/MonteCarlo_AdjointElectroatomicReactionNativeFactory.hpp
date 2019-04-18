@@ -122,7 +122,8 @@ public:
         raw_adjoint_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-    std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction );
+    std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction,
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
@@ -163,14 +164,12 @@ public:
     const double evaluation_tol );
 
   //! Create the forward total reaction (only used to get the cross section)
-  template<typename ReactionType>
   static void createTotalForwardReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-        raw_adjoint_electroatom_data,
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
-      const std::shared_ptr<const ReactionType>& elastic_reaction,
-      std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction );
+        const std::vector<std::vector<double> >& forward_inelastic_cross_section,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        const std::function<double (const double&)> forward_elastic_xs_evaluator,
+        std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction );
 };
 
 } // end MonteCarlo namespace

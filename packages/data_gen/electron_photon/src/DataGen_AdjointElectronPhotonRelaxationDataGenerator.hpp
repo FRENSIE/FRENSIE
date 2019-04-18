@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_GridGenerator.hpp"
 
@@ -162,6 +164,15 @@ public:
   //! Return the max electron energy
   double getMaxElectronEnergy() const;
 
+  //! Set the electron scatter above max energy mode is on (on by default)
+  void setElectronScatterAboveMaxModeOn();
+
+  //! Set the electron scatter above max energy mode is off (on by default)
+  void setElectronScatterAboveMaxModeOff();
+
+  //! Return if the electron scatter above max energy mode is on
+  bool isElectronScatterAboveMaxModeOn() const;
+
   //! Set the default electron grid convergence tolerance
   void setDefaultElectronGridConvergenceTolerance( const double convergence_tol );
 
@@ -211,6 +222,12 @@ public:
   //! Return the electron TwoDGridPolicy (Unit-base Correlated by default)
   MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
+  //! Set the adjoint electron elastic sampling method (TWO_D_UNION by default)
+  void setAdjointElectronElasticSamplingMethod( MonteCarlo::CoupledElasticSamplingMethod sampling );
+
+  //! Return the adjoint electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod getAdjointElectronElasticSamplingMethod() const;
+
   //! Set the adjoint bremsstrahlung min energy nudge value
   void setAdjointBremsstrahlungMinEnergyNudgeValue( const double min_energy_nudge_value );
 
@@ -246,6 +263,13 @@ public:
 
   //! Return the adjoint bremsstrahlung distance tolerance
   double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Set the forward electroionization sampling mode
+  void setForwardElectroionizationSamplingMode(
+      const MonteCarlo::ElectroionizationSamplingType sampling_mode );
+
+  //! Return the forward electroionization sampling mode
+  MonteCarlo::ElectroionizationSamplingType getForwardElectroionizationSamplingMode() const;
 
   //! Set the adjoint electroionization min energy nudge value
   void setAdjointElectroionizationMinEnergyNudgeValue( const double min_energy_nudge_value );
@@ -324,10 +348,14 @@ private:
 
   // Convert string to TwoDInterpolationType
   const MonteCarlo::TwoDInterpolationType
-  convertStringToTwoDInterpType( const std::string& raw_policy );
+  convertStringToTwoDInterpType( const std::string& raw_policy ) const;
 
   // Convert string to TwoDGridType
-  const MonteCarlo::TwoDGridType convertStringToTwoDGridType( const std::string& raw_policy );
+  const MonteCarlo::TwoDGridType convertStringToTwoDGridType( const std::string& raw_policy ) const;
+
+  // Convert string to ElectroionizationSamplingType
+  const MonteCarlo::ElectroionizationSamplingType convertStringToElectroionizationSamplingType(
+      const std::string& raw_policy ) const;
 
   // The adjoint electron-photon-relaxation volatile data container
   std::shared_ptr<Data::AdjointElectronPhotonRelaxationVolatileDataContainer> d_data_container;
@@ -345,6 +373,14 @@ private:
 
   // The electron TwoDGridPolicy (Unit-base Correlated - default)
   MonteCarlo::TwoDGridType d_two_d_grid;
+
+  // The electron elastic sampling method
+  MonteCarlo::CoupledElasticSamplingMethod d_elastic_sampling_method;
+
+  // The forward ElectroionizationSamplingType (Knock-on - default)
+  MonteCarlo::ElectroionizationSamplingType d_forward_electroionization_sampling_mode;
+
+  bool d_scatter_above_max;
 };
 
 } // end DataGen namespace

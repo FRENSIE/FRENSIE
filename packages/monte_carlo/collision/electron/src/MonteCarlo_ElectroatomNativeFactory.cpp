@@ -37,11 +37,9 @@ void ElectroatomNativeFactory::createElectroatom(
 
   std::shared_ptr<const ElectroatomCore> core;
 
-  TwoDInterpolationType electron_interp =
-                          properties.getElectronTwoDInterpPolicy();
+  TwoDInterpolationType electron_interp = properties.getElectronTwoDInterpPolicy();
 
-  TwoDGridType electron_sampling =
-                          properties.getElectronTwoDGridPolicy();
+  TwoDGridType grid_policy = properties.getElectronTwoDGridPolicy();
 
   // Create the electroatom core
   /*! \todo Once testing for the proper 2D interp and sampling policies is
@@ -50,7 +48,7 @@ void ElectroatomNativeFactory::createElectroatom(
    */
   if( electron_interp == LOGLOGLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
+    if( grid_policy == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                               raw_electroatom_data,
@@ -58,7 +56,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_GRID )
+    else if( grid_policy == CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Correlated>(
                               raw_electroatom_data,
@@ -66,7 +64,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_GRID )
+    else if( grid_policy == UNIT_BASE_GRID )
     {
       ThisType::createElectroatomCore<Utility::LogLogLog,Utility::UnitBase>(
                               raw_electroatom_data,
@@ -76,13 +74,13 @@ void ElectroatomNativeFactory::createElectroatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
-                       << electron_sampling << " is not currently supported!" );
+      THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
+                       << grid_policy << " is not currently supported!" );
     }
   }
   else if( electron_interp == LINLINLIN_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
+    if( grid_policy == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                               raw_electroatom_data,
@@ -90,7 +88,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_GRID )
+    else if( grid_policy == CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                               raw_electroatom_data,
@@ -98,7 +96,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_GRID )
+    else if( grid_policy == UNIT_BASE_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLin,Utility::UnitBase>(
                               raw_electroatom_data,
@@ -109,12 +107,12 @@ void ElectroatomNativeFactory::createElectroatom(
     else
     {
       THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
-                       << electron_sampling << " is not currently supported!" );
+                       << grid_policy << " is not currently supported!" );
     }
   }
   else if( electron_interp == LINLINLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
+    if( grid_policy == UNIT_BASE_CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                               raw_electroatom_data,
@@ -122,7 +120,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_GRID )
+    else if( grid_policy == CORRELATED_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
                               raw_electroatom_data,
@@ -130,7 +128,7 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_GRID )
+    else if( grid_policy == UNIT_BASE_GRID )
     {
       ThisType::createElectroatomCore<Utility::LinLinLog,Utility::UnitBase>(
                               raw_electroatom_data,
@@ -140,8 +138,8 @@ void ElectroatomNativeFactory::createElectroatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
-                       << electron_sampling << " is not currently supported!" );
+      THROW_EXCEPTION( std::runtime_error, "the bivariate grid policy "
+                       << grid_policy << " is not currently supported!" );
     }
   }
   else

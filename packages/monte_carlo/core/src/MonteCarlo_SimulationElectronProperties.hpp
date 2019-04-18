@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
@@ -71,10 +72,10 @@ public:
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron 2D grid policy (UnitBaseCorrelated by default)
+  //! Set the electron bivariate grid policy (UnitBaseCorrelated by default)
   void setElectronTwoDGridPolicy( TwoDGridType grid_type );
 
-  //! Return the electron 2D grid policy
+  //! Return the electron bivariate grid policy
   TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Set the number of electron hash grid bins
@@ -131,6 +132,13 @@ public:
 
   //! Return if electroionization mode is on
   bool isElectroionizationModeOn() const;
+
+  //! Set the electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  void setElectroionizationSamplingMode(
+                         const ElectroionizationSamplingType sampling_mode );
+
+  //! Return the electroionization sampling mode
+  ElectroionizationSamplingType getElectroionizationSamplingMode() const;
 
   /* ------ Bremsstrahlung Properties ------ */
 
@@ -231,6 +239,9 @@ private:
   // The electroionization electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electroionization_interpolation_type;
 
+  // The electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+  ElectroionizationSamplingType d_electroionization_sampling_mode;
+
   // The bremsstrahlung electron scattering mode (true = on - default, false = off)
   bool d_bremsstrahlung_mode_on;
 
@@ -270,6 +281,7 @@ void SimulationElectronProperties::serialize( Archive& ar,
   ar & BOOST_SERIALIZATION_NVP( d_elastic_cutoff_angle_cosine );
   ar & BOOST_SERIALIZATION_NVP( d_electroionization_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_electroionization_interpolation_type );
+  ar & BOOST_SERIALIZATION_NVP( d_electroionization_sampling_mode );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_interpolation_type );
   ar & BOOST_SERIALIZATION_NVP( d_bremsstrahlung_angular_distribution_function );

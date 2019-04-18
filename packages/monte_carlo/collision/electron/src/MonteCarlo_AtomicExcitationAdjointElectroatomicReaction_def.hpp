@@ -30,6 +30,15 @@ AtomicExcitationAdjointElectroatomicReaction<InterpPolicy,processed_cross_sectio
 {
   // Make sure the energy gain distribution data is valid
   testPrecondition( energy_gain_distribution.use_count() > 0 );
+
+  // Set the max energy index
+  size_t max_energy_index = incoming_energy_grid->size() - threshold_energy_index - 1;
+
+  // Check if the cross section at max_energy_index is zero
+  while( cross_section->at(max_energy_index) == 0.0 )
+    --max_energy_index;
+
+  this->setMaxEnergyIndex( max_energy_index );
 }
 
 // Constructor
@@ -49,6 +58,15 @@ AtomicExcitationAdjointElectroatomicReaction<InterpPolicy,processed_cross_sectio
 {
   // Make sure the energy gain distribution data is valid
   testPrecondition( energy_gain_distribution.use_count() > 0 );
+
+  // Set the max energy index
+  size_t max_energy_index = incoming_energy_grid->size() - threshold_energy_index - 1;
+
+  // Check if the cross section at max_energy_index is zero
+  while( cross_section->at(max_energy_index) == 0.0 )
+    --max_energy_index;
+
+  this->setMaxEnergyIndex( max_energy_index );
 }
 
 // Return the number of adjoint photons emitted from the rxn at the given energy
