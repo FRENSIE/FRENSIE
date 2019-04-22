@@ -195,11 +195,15 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
 
+  MonteCarlo::ElectroionizationSamplingType sampling_type =
+    MonteCarlo::KNOCK_ON_SAMPLING;
+
   ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       subshell,
       binding_energy,
       distribution,
+      sampling_type,
       evaluation_tol );
 
   // Make sure the distribution was created correctly

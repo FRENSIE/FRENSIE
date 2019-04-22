@@ -41,79 +41,6 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMinSecondaryEnergyAtIncomingEnergy )
-{
-  // Get min energy
-  double min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
-
-  // Get min energy
-  min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-
-  // Use eprdata14 file
-  min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
-
-  // Get min energy
-  min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
-{
-  // Get max energy
-  double max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
-
-  // Use eprdata14 file
-  max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
-
-  // Get max energy
-  max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
-
-  // Get max energy
-  max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    evaluateCDF )
@@ -205,7 +132,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   samplePrimaryAndSecondary )
+                   sample_PrimaryAndSecondary )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -220,7 +147,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_electroionization_distribution->samplePrimaryAndSecondary(
+  ace_electroionization_distribution->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -239,7 +166,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   // sample the electron using the eprdata14 file
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  epr14_electroionization_distribution->samplePrimaryAndSecondary(
+  epr14_electroionization_distribution->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -382,12 +309,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                        shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3707352378289799, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 2.545797837616818882e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.097476217102010571e-02, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376122531e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762170867221e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 1.3707352378289799, 1e-12 );
 
   bank.pop();
 
@@ -402,13 +329,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                          shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3715157338528261, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 2.522361013030052779e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.019426614717383495e-02, 1e-12 );
 
   // Test knock-on electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130255830e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147025766e-02, 1e-12 );
-
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 1.3715157338528261, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

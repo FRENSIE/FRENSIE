@@ -361,7 +361,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
     (1.0 + min_inverse_energy_gain_ratio);
 
   double inverse_energy_gain_ratio;
-  
+
   while( true )
   {
     ++trials;
@@ -384,7 +384,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
       const double rejection_value =
         min_inverse_energy_gain_ratio/(1.0-min_inverse_energy_gain_ratio)*
         (1.0/inverse_energy_gain_ratio - 1.0);
-      
+
       if( random_number_3 <= rejection_value )
         break;
     }
@@ -635,7 +635,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
 
   const double min_scattering_angle_cosine =
     calculateMinScatteringAngleCosine( incoming_energy, d_max_energy );
-  
+
   // Check for roundoff error
   if( scattering_angle_cosine > 1.0 )
     scattering_angle_cosine = 1.0;
@@ -690,7 +690,7 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
     }
     else
     {
-      scattering_angle_cosine = 
+      scattering_angle_cosine =
         MonteCarlo::calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
                                                            energy_of_interest );
     }

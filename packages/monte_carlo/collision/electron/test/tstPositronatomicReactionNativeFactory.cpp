@@ -425,11 +425,15 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::PositronatomicReaction> > reactions;
 
+  MonteCarlo::ElectroionizationSamplingType sampling_type =
+    MonteCarlo::KNOCK_ON_SAMPLING;
+
   MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
+                               sampling_type,
                                eval_tol );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 24 );
@@ -669,11 +673,15 @@ FRENSIE_UNIT_TEST( PositronatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<const MonteCarlo::PositronatomicReaction> > reactions;
 
+  MonteCarlo::ElectroionizationSamplingType sampling_type =
+    MonteCarlo::KNOCK_ON_SAMPLING;
+
   MonteCarlo::PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<Utility::LinLinLin,Utility::Correlated>(
                                *data_container,
                                energy_grid,
                                grid_searcher,
                                reactions,
+                               sampling_type,
                                eval_tol );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 24 );

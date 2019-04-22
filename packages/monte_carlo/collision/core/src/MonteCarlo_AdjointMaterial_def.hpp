@@ -117,23 +117,16 @@ double AdjointMaterial<ScatteringCenter>::getAdjointWeightFactor( const double e
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double weight_factor;
-
   double macroscopic_total_forward_cross_section =
     this->getMacroscopicTotalForwardCrossSection( energy );
 
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
-    weight_factor = this->getMacroscopicTotalCrossSection( energy )/
-      this->getMacroscopicTotalForwardCrossSection( energy );
+    return this->getMacroscopicTotalCrossSection( energy )/
+      macroscopic_total_forward_cross_section;
   }
   else
-    weight_factor = 1.0;
-
-  // Make sure that the weight factor is valid
-  testPrecondition( weight_factor > 0.0 );
-
-  return weight_factor;
+    return 1.0;
 }
 
 // Return the adjoint line energy weight factor
@@ -144,29 +137,22 @@ double AdjointMaterial<ScatteringCenter>::getAdjointLineEnergyWeightFactor( cons
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double weight_factor;
-
   double macroscopic_total_forward_cross_section =
     this->getMacroscopicTotalForwardCrossSection( energy );
 
   if( macroscopic_total_forward_cross_section > 0.0 )
   {
-    weight_factor = this->getMacroscopicTotalLineEnergyCrossSection( energy )/
-      this->getMacroscopicTotalForwardCrossSection( energy );
+    return this->getMacroscopicTotalLineEnergyCrossSection( energy )/
+      macroscopic_total_forward_cross_section;
   }
   else
-    weight_factor = 1.0;
-
-  // Make sure the weight factor is valid
-  testPostcondition( weight_factor >= 0.0 );
-
-  return weight_factor;
+    return 1.0;
 }
 
 // Collide with a scattering center and survival bias
-/*! \details There are no absorption reactions associated with adjoint 
+/*! \details There are no absorption reactions associated with adjoint
  * particles so this method is identical to the analogue method.
- */ 
+ */
 template<typename ScatteringCenter>
 inline void AdjointMaterial<ScatteringCenter>::collideSurvivalBias(
                                            ParticleStateType& adjoint_particle,
@@ -181,7 +167,7 @@ inline void AdjointMaterial<ScatteringCenter>::collideSurvivalBias(
  * particle's energy.
  */
 template<typename ScatteringCenter>
-void AdjointMaterial<ScatteringCenter>::collideAtLineEnergy( 
+void AdjointMaterial<ScatteringCenter>::collideAtLineEnergy(
                                            ParticleStateType& adjoint_particle,
                                            ParticleBank& bank ) const
 {
@@ -205,7 +191,7 @@ size_t AdjointMaterial<ScatteringCenter>::sampleCollisionAtomAtLineEnergy( const
                  d_macroscopic_total_line_energy_cs_evaluation_functor,
                  s_total_line_energy_cs_evaluation_functor );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ADJOINT_MATERIAL_DEF_HPP

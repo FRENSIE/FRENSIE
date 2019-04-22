@@ -483,7 +483,7 @@ public:
   //! Return the electroionization recoil energy for a subshell and incident energy
   const std::vector<double>& getElectroionizationRecoilEnergyAtEnergy(
                            const unsigned subshell,
-					       const double incident_energy ) const;
+                           const double incident_energy ) const;
 
   //! Return the electroionization recoil energy for a subshell and all incident energies
   const std::map<double,std::vector<double> >&
@@ -492,7 +492,7 @@ public:
   //! Return the electroionization recoil energy pdf for a subshell and incident energy
   const std::vector<double>& getElectroionizationRecoilPDFAtEnergy(
                            const unsigned subshell,
-					       const double incident_energy ) const;
+                           const double incident_energy ) const;
 
   //! Return the electroionization recoil energy pdf for a subshell and all incident energies
   const std::map<double,std::vector<double> >&

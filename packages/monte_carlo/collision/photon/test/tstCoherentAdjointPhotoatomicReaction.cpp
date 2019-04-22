@@ -111,9 +111,9 @@ FRENSIE_UNIT_TEST( CoherentAdjointPhotoatomicReaction,
 // Check that the cross section can be returned
 FRENSIE_UNIT_TEST( CoherentAdjointPhotoatomicReaction, getCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     adjoint_coherent_reaction->getCrossSection( 1e-3 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 99.9639104922271571, 1e-12 );
 
   cross_section =
@@ -132,9 +132,9 @@ FRENSIE_UNIT_TEST( CoherentAdjointPhotoatomicReaction, getCrossSection )
 FRENSIE_UNIT_TEST( CoherentAdjointPhotoatomicReaction,
                    getCrossSection_efficient )
 {
-  double cross_section = 
+  double cross_section =
     adjoint_coherent_reaction->getCrossSection( 1e-3, 0u );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 99.9639104922271571, 1e-12 );
 
   cross_section =
@@ -189,12 +189,12 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Create the reaction
   std::shared_ptr<std::vector<double> > incoming_energy_grid(
       new std::vector<double>( data_container.getAdjointPhotonEnergyGrid() ) );
-    
+
   std::shared_ptr<std::vector<double> > coherent_cross_section(
       new std::vector<double>( data_container.getAdjointWallerHartreeCoherentCrossSection() ) );
 
   std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> scattering_distribution;
-  
+
   MonteCarlo::CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
                                                      data_container,
                                                      scattering_distribution );
@@ -205,7 +205,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                    coherent_cross_section,
                                                    0u,
                                                    scattering_distribution ) );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

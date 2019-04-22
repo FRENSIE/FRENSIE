@@ -354,6 +354,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<const ReactionType>& electroionization_subshell_reaction,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol )
 {
   // Convert subshell number to enum
@@ -382,6 +383,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       subshell,
       raw_electroatom_data.getSubshellBindingEnergy( subshell ),
       electroionization_subshell_distribution,
+      sampling_type,
       evaluation_tol );
 
 
@@ -406,6 +408,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::vector<std::shared_ptr<const ReactionType> >&
     electroionization_subshell_reactions,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol )
 {
   electroionization_subshell_reactions.clear();
@@ -425,6 +428,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
+      sampling_type,
       evaluation_tol );
 
     electroionization_subshell_reactions.push_back(

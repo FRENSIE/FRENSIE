@@ -77,7 +77,7 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatte
 //----------------------------------------------------------------------------//
 
 //! Create an adjoint atomic excitation distribution
-std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
+std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container );
 
 } // end MonteCarlo namespace

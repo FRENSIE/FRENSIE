@@ -17,6 +17,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeTypeTraits.hpp"
+#include "MonteCarlo_CollisionForcer.hpp"
+#include "MonteCarlo_StandardCollisionForcer.hpp"
 
 namespace MonteCarlo{
 
@@ -75,7 +77,7 @@ StandardParticleSimulationManager<mode>::StandardParticleSimulationManager(
                                next_history,
                                rendezvous_number,
                                use_single_rendezvous_file )
-{ 
+{
   Details::ModeInitializationHelper<typename boost::mpl::begin<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type,typename boost::mpl::end<typename ParticleModeTypeTraits<mode>::ActiveParticles>::type>::initializeSimulateParticleFunctions( *this );
 }
 
@@ -105,7 +107,7 @@ template<typename State>
 void StandardParticleSimulationManager<mode>::addSimulateParticleFunction()
 {
   constexpr const ParticleType particle_type = State::type;
-  
+
   // Make sure that the state is compatible with the mode
   testPrecondition( MonteCarlo::isParticleTypeCompatible<mode>( particle_type ) );
 

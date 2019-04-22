@@ -17,6 +17,7 @@
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDGridType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElectroionizationSamplingType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
@@ -105,6 +106,9 @@ using namespace MonteCarlo;
 
 // Import the BremsstrahlungAngularDistributionType
 %include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+
+// Import the ElectroionizationSamplingType
+%include "MonteCarlo_ElectroionizationSamplingType.hpp"
 
 // Import the ElasticElectronDistributionType
 %include "MonteCarlo_ElasticElectronDistributionType.hpp"

@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
-  
+
 // FRENSIE Includes
 #include "MonteCarlo_LineEnergyAdjointPhotonScatteringDistribution.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
@@ -170,7 +170,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 1.03, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 1.03, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 1.03, 1.0 ), 0.0 );
-  
+
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 20.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 20.0, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.5, 20.0, 1.0 ), 0.0 );
@@ -181,7 +181,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
                                1e-15 );
   FRENSIE_CHECK_SMALL( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 2*Utility::PhysicalConstants::electron_rest_mass_energy, 1.0 ),
                                1e-15 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0, -1.0 ),
                                    0.01464514445067216682,
                                    1e-15 );
@@ -191,7 +191,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 5.0, 1.0 ),
                                    0.01464514445067216682,
                                    1e-15 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( full_distribution->evaluateJointPDF( Utility::PhysicalConstants::electron_rest_mass_energy, 20.0, -1.0 ),
                                    0.04286468992381434889,
                                    1e-15 );
@@ -205,7 +205,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 1.03, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 1.03, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 1.03, 1.0 ), 0.0 );
-  
+
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 20.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 20.0, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( full_distribution->evaluateJointPDF( 0.52, 20.0, 1.0 ), 0.0 );
@@ -249,7 +249,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution, sample )
                           2*Utility::PhysicalConstants::electron_rest_mass_energy,
                           1e-15 );
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
-                          
+
   distribution->sample( Utility::PhysicalConstants::electron_rest_mass_energy,
                         outgoing_energy,
                         scattering_angle_cosine );
@@ -282,7 +282,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
                           2*Utility::PhysicalConstants::electron_rest_mass_energy,
                           1e-15 );
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
-                          
+
   full_distribution->sample( outgoing_energy, scattering_angle_cosine );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 20.0, 1e-15 );
@@ -318,7 +318,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
                           1e-15 );
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
   FRENSIE_CHECK_EQUAL( trials, 1u );
-                          
+
   distribution->sampleAndRecordTrials( Utility::PhysicalConstants::electron_rest_mass_energy,
                                        outgoing_energy,
                                        scattering_angle_cosine,
@@ -357,7 +357,7 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistribution,
                           1e-15 );
   FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
   FRENSIE_CHECK_EQUAL( trials, 1u );
-                          
+
   full_distribution->sampleAndRecordTrials( outgoing_energy,
                                             scattering_angle_cosine,
                                             trials );

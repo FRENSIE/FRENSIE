@@ -33,21 +33,88 @@ public:
     const double binding_energy,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
-    const double evaluation_tol = 1e-7 );
+    const ElectroionizationSamplingType sampling_type,
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500,
+    const bool renormalize_max_knock_on_energy = false );
+
+  //! Create a electroionization subshell distribution
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  static void createElectroionizationSubshellDistribution(
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
+    const std::vector<double>& energy_grid,
+    const double binding_energy,
+    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
+      electroionization_subshell_distribution,
+    const ElectroionizationSamplingType sampling_type,
+    const double evaluation_tol = 1e-7,
+    const unsigned max_number_of_iterations = 500,
+    const bool renormalize_max_knock_on_energy = false );
 
 //protected:
-
 
   //! Create the electroionization subshell distribution function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createSubshellDistribution(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::vector<double> energy_grid,
-    const unsigned subshell,
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
+    const std::vector<double>& energy_grid,
+    const double binding_energy,
     std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
-      subshell_distribution,
-    const double evaluation_tol );
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations,
+    const bool renormalize_max_knock_on_energy = false );
+
+  //! Create the electroionization subshell distribution function
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  static void createOutgoingDistribution(
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
+    const std::vector<double>& energy_grid,
+    const double binding_energy,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations );
+
+  //! Create the electroionization subshell distribution function
+  template <typename TwoDInterpPolicy = Utility::LogLogLog,
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
+  static void createOutgoingRatioDistribution(
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
+    const std::vector<double>& energy_grid,
+    const double binding_energy,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
+        subshell_distribution,
+    const double evaluation_tol,
+    const unsigned max_number_of_iterations );
+
+  // Calculate full outgoing energy bins and pdf from recoil energy
+  static void calculateOutgoingEnergyAndPDFBins(
+    const std::map<double,std::vector<double> >& recoil_energy_data,
+    const std::map<double,std::vector<double> >& recoil_pdf_data,
+    const std::vector<double>& energy_grid,
+    const double binding_energy,
+    const bool renormalize_max_knock_on_energy,
+    std::map<double,std::vector<double> >& processed_energy_data,
+    std::map<double,std::vector<double> >& processed_pdf_data,
+    std::vector<double>& processed_energy_grid );
+
+  // Calculate full outgoing energy bins and pdf from recoil energy
+  static void calculateOutgoingEnergyAndPDFBins(
+      const std::vector<double>& knock_on_energy,
+      const std::vector<double>& knock_on_pdf,
+      double& energy,
+      const double binding_energy,
+      const bool renormalize_max_knock_on_energy,
+      std::vector<double>& processed_energy_bins,
+      std::vector<double>& processed_pdf );
 };
 
 } // end MonteCarlo namespace

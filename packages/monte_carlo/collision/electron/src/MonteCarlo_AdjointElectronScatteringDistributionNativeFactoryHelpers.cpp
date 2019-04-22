@@ -21,10 +21,10 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create a atomic excitation distribution
-std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
+std::shared_ptr<AtomicExcitationAdjointElectronScatteringDistribution> createAtomicExcitationDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container )
 {
-  std::shared_ptr<const AtomicExcitationAdjointElectronScatteringDistribution>
+  std::shared_ptr<AtomicExcitationAdjointElectronScatteringDistribution>
     distribution;
 
   AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(

@@ -73,6 +73,7 @@ def setGeneratorOptions( generator,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
                          bremss_min_energy_nudge_val,
@@ -81,6 +82,7 @@ def setGeneratorOptions( generator,
                          bremss_grid_convergence_tol,
                          bremss_grid_abs_diff_tol,
                          bremss_grid_dist_tol,
+                         electroion_sampling_mode,
                          electroion_min_energy_nudge_val,
                          electroion_max_energy_nudge_val,
                          electroion_eval_tol,
@@ -147,6 +149,14 @@ def setGeneratorOptions( generator,
     if not tabular_evaluation_tol is None:
         generator.setElectronTabularEvaluationTolerance( tabular_evaluation_tol )
 
+    if electron_scatter_above_max_mode_on is False:
+        generator.setElectronScatterAboveMaxModeOff()
+
+    if generator.isElectronScatterAboveMaxModeOn():
+      print "Data will be generated to allow electrons to scatter above the max energy!"
+    else:
+      print "Data will be generated to allow electrons to scatter to the max energy but not above it!"
+
     if not electron_two_d_interp_policy is None:
         if electron_two_d_interp_policy == "LinLinLin":
             generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
@@ -174,12 +184,12 @@ def setGeneratorOptions( generator,
         elif electron_two_d_grid_policy == "UnitBaseCorrelated":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
         elif electron_two_d_grid_policy == "Direct":
-            print "Electron 2D grid policy", electron_two_d_grid_policy, "is currently not supported!"
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is currently not supported!"
             sys.exit(1)
         elif electron_two_d_grid_policy == "UnitBase":
             generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
         else:
-            print "Electron 2D grid policy", electron_two_d_grid_policy, "is not valid!"
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
             sys.exit(1)
 
     if not bremss_min_energy_nudge_val is None:
@@ -199,6 +209,17 @@ def setGeneratorOptions( generator,
 
     if not bremss_grid_dist_tol is None:
         generator.setAdjointBremsstrahlungDistanceTolerance( bremss_grid_dist_tol )
+
+    if not electroion_sampling_mode is None:
+        if electroion_sampling_mode == "Knock-On":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy Ratio":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_RATIO_SAMPLING )
+        else:
+            print "the electro-ionization sampling mode ", electroion_sampling_mode, "is not valid!"
+            sys.exit(1)
 
     if not electroion_min_energy_nudge_val is None:
         generator.setAdjointElectroionizationMinEnergyNudgeValue( electroion_min_energy_nudge_val )
@@ -249,6 +270,7 @@ def generateData( epr_file_name,
                   cutoff_angle_cosine = None,
                   num_moment_preserving_angles = None,
                   tabular_evaluation_tol = None,
+                  electron_scatter_above_max_mode_on = None,
                   electron_two_d_interp_policy = None,
                   electron_two_d_grid_policy = None,
                   bremss_min_energy_nudge_val = None,
@@ -257,6 +279,7 @@ def generateData( epr_file_name,
                   bremss_grid_convergence_tol = None,
                   bremss_grid_abs_diff_tol = None,
                   bremss_grid_dist_tol = None,
+                  electroion_sampling_mode = None,
                   electroion_min_energy_nudge_val = None,
                   electroion_max_energy_nudge_val = None,
                   electroion_eval_tol = None,
@@ -298,6 +321,7 @@ def generateData( epr_file_name,
                          cutoff_angle_cosine,
                          num_moment_preserving_angles,
                          tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
                          electron_two_d_interp_policy,
                          electron_two_d_grid_policy,
                          bremss_min_energy_nudge_val,
@@ -306,6 +330,7 @@ def generateData( epr_file_name,
                          bremss_grid_convergence_tol,
                          bremss_grid_abs_diff_tol,
                          bremss_grid_dist_tol,
+                         electroion_sampling_mode,
                          electroion_min_energy_nudge_val,
                          electroion_max_energy_nudge_val,
                          electroion_eval_tol,
@@ -416,10 +441,12 @@ if __name__ == "__main__":
                       help="The number of moment preserving angles for electrons")
     parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
                       help="The tabular evaluation tolerance")
+    parser.add_option("--electron_scatter_above_max_mode_off", action="store_false", dest="electron_scatter_above_max_mode", default=True,
+                      help="Don't allow adjoint electrons to scatter above the max energy.")
     parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
                       help="The electron 2D interpolation policy (e.g. LogLogLog)")
     parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
-                      help="The electron 2D grid policy")
+                      help="The electron bivariate grid policy")
     parser.add_option("--bremss_min_energy_nudge_val", type="float", dest="bremss_min_energy_nudge_val",
                       help="The bremsstrahlung min energy nudge value")
     parser.add_option("--bremss_max_energy_nudge_val", type="float", dest="bremss_max_energy_nudge_val",
@@ -432,6 +459,8 @@ if __name__ == "__main__":
                       help="The bremsstrahlung grid absolute difference tolerance")
     parser.add_option("--bremss_grid_dist_tol", type="float", dest="bremss_grid_dist_tol",
                       help="The bremsstrahlung grid distance tolerance")
+    parser.add_option("--electroion_sampling_mode", type="string", dest="electroion_sampling_mode",
+                      help="The forward electroionization sampling mode")
     parser.add_option("--electroion_min_energy_nudge_val", type="float", dest="electroion_min_energy_nudge_val",
                       help="The electroionization min energy nudge value")
     parser.add_option("--electroion_max_energy_nudge_val", type="float", dest="electroion_max_energy_nudge_val",
@@ -484,6 +513,7 @@ if __name__ == "__main__":
                   options.cutoff_angle_cosine,
                   options.num_moment_preserving_angles,
                   options.tabular_evaluation_tol,
+                  options.electron_scatter_above_max_mode,
                   options.electron_two_d_interp_policy,
                   options.electron_two_d_grid_policy,
                   options.bremss_min_energy_nudge_val,
@@ -492,6 +522,7 @@ if __name__ == "__main__":
                   options.bremss_grid_convergence_tol,
                   options.bremss_grid_abs_diff_tol,
                   options.bremss_grid_dist_tol,
+                  options.electroion_sampling_mode,
                   options.electroion_min_energy_nudge_val,
                   options.electroion_max_energy_nudge_val,
                   options.electroion_eval_tol,

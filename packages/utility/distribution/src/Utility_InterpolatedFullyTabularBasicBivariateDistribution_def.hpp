@@ -171,17 +171,19 @@ template<typename TwoDGridPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
-     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions,
-     const double fuzzy_boundary_tol,
-     const double evaluate_relative_error_tol,
-     const double evaluate_error_tol )
+    const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+    const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+    secondary_distributions,
+    const double fuzzy_boundary_tol,
+    const double evaluate_relative_error_tol,
+    const double evaluate_error_tol,
+    const unsigned max_number_of_iterations )
   : BaseType( primary_indep_grid,
               secondary_distributions,
               fuzzy_boundary_tol,
               evaluate_relative_error_tol,
-              evaluate_error_tol )
+              evaluate_error_tol,
+              max_number_of_iterations )
 {
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -192,12 +194,13 @@ template<typename TwoDGridPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
-       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-       const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const std::vector<std::vector<DepQuantity> >& dependent_values,
-       const double fuzzy_boundary_tol,
-       const double evaluate_relative_error_tol,
-       const double evaluate_error_tol )
+  const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+  const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
+  const std::vector<std::vector<DepQuantity> >& dependent_values,
+  const double fuzzy_boundary_tol,
+  const double evaluate_relative_error_tol,
+  const double evaluate_error_tol,
+  const unsigned max_number_of_iterations )
 {
   TEST_FOR_EXCEPTION( primary_indep_grid.size() != secondary_indep_grids.size(),
                       Utility::BadBivariateDistributionParameter,
@@ -234,7 +237,8 @@ UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,Prima
 
   this->setEvaluationTolerances( fuzzy_boundary_tol,
                                  evaluate_relative_error_tol,
-                                 evaluate_error_tol );
+                                 evaluate_error_tol,
+                                 max_number_of_iterations );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }

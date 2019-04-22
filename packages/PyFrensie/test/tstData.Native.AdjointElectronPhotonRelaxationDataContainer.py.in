@@ -67,12 +67,12 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
         data = self.native_data.getAdjointPhotonEnergyGrid()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 1e-3 )
-        self.assertEqual( data[len(data)-1], 20.0 )
+        self.assertEqual( data[-1], 20.0 )
 
         data = self.native_data.getAdjointWallerHartreeIncoherentCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
-        self.assertEqual( len(data[len(data)-1]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
 
         data = self.native_data.getAdjointImpulseApproxIncoherentCrossSection()
         self.assertEqual( len(data), 1009 )
@@ -82,7 +82,7 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
         data = self.native_data.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 12 )
-        self.assertEqual( len(data[len(data)-1]), 12 )
+        self.assertEqual( len(data[-1]), 12 )
 
         data = self.native_data.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)
         self.assertEqual( len(data), 1009 )
@@ -92,32 +92,32 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
         data = self.native_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(1)
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
-        self.assertEqual( len(data[len(data)-1]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
 
         data = self.native_data.getAdjointWallerHartreeCoherentCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 2.45600299049398139e+01 )
-        self.assertEqual( data[len(data)-1], 1.92198769740615498e-06 )
+        self.assertEqual( data[-1], 1.92198769740615498e-06 )
 
         data = self.native_data.getAdjointWallerHartreeTotalCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 3 )
-        self.assertEqual( len(data[len(data)-1]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
 
         data = self.native_data.getAdjointImpulseApproxTotalCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( len(data[0]), 12 )
-        self.assertEqual( len(data[len(data)-1]), 12 )
+        self.assertEqual( len(data[-1]), 12 )
 
         data = self.native_data.getWallerHartreeTotalCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 4.40594690580228344e+04 )
-        self.assertEqual( data[len(data)-1], 3.13338538552983381e-01 )
+        self.assertEqual( data[-1], 3.13338538552983381e-01 )
 
         data = self.native_data.getImpulseApproxTotalCrossSection()
         self.assertEqual( len(data), 1009 )
         self.assertEqual( data[0], 4.40594858435388887e+04 )
-        self.assertEqual( data[len(data)-1], 3.13351508326949857e-01 )
+        self.assertEqual( data[-1], 3.13351508326949857e-01 )
 
     def testElectronData(self):
         "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer electron data methods"
@@ -127,53 +127,65 @@ class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
         data = self.native_data.getAdjointCutoffElasticAngles()
         self.assertEqual( len(data), 12 )
         self.assertEqual( len(data[1e-5]), 2 )
-        self.assertEqual( len(data[20.0]), 95 )
+        self.assertEqual( len(data[20.0]), 164 )
 
         data = self.native_data.getAdjointCutoffElasticPDF()
         self.assertEqual( len(data), 12 )
         self.assertEqual( len(data[1e-5]), 2 )
-        self.assertEqual( len(data[20.0]), 95 )
+        self.assertEqual( len(data[20.0]), 164 )
 
         data = self.native_data.getAdjointElectronEnergyGrid()
-        self.assertEqual( len(data), 90 )
+        self.assertEqual( len(data), 88 )
         self.assertEqual( data[0], 1e-5 )
-        self.assertEqual( data[len(data)-1], 20.0 )
+        self.assertEqual( data[-1], 20.0 )
 
         data = self.native_data.getAdjointCutoffElasticCrossSection()
-        self.assertEqual( len(data), 90 )
+        self.assertEqual( len(data), 88 )
         self.assertEqual( data[0], 3.06351e+09 )
-        self.assertEqual( data[len(data)-1], 1.04023584578018363e+04 )
+        self.assertEqual( data[-1], 1.04023584578018363e+04 )
 
         data = self.native_data.getAdjointScreenedRutherfordElasticCrossSection()
         threshold = self.native_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
-        self.assertEqual( len(data), 90 - threshold )
+        self.assertEqual( len(data), 88 - threshold )
         self.assertEqual( data[0], 1.9363459618063644e+01 )
-        self.assertEqual( data[len(data)-1], 1.30888131403400272e+05 )
+        self.assertEqual( data[-1], 1.30888131403400272e+05 )
 
         data = self.native_data.getAdjointTotalElasticCrossSection()
-        self.assertEqual( len(data), 90 )
+        self.assertEqual( len(data), 88 )
         self.assertEqual( data[0], 3.06351e+09 )
-        self.assertEqual( data[len(data)-1], 1.41290489861202106e+05 )
+        self.assertEqual( data[-1], 1.412904898612021e+05 )
 
         data = self.native_data.getAdjointElectroionizationCrossSection(1)
-        self.assertEqual( len(data), 90 )
-        self.assertEqual( data[0], 1.6359001736627002e+09 )
-        self.assertEqual( data[len(data)-1], 1.3345789646459076e+04 )
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 4.0099376757954115e+08 )
+        self.assertEqual( data[-1], 1.2491122082781872e+04 )
 
         data = self.native_data.getAdjointBremsstrahlungElectronCrossSection()
-        self.assertEqual( len(data), 90 )
-        self.assertEqual( data[0], 9.383502051677241e+02 )
-        self.assertEqual( data[len(data)-1], 4.536969105953958 )
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 9.383751316029665e+02 )
+        self.assertEqual( data[-1], 4.46027232691087 )
 
         data = self.native_data.getAdjointAtomicExcitationCrossSection()
-        self.assertEqual( len(data), 90 )
+        self.assertEqual( len(data), 88 )
         self.assertEqual( data[0], 5.90009144459967241e+07 )
-        self.assertEqual( data[len(data)-1], 1.24076998649746965e+05 )
+        self.assertEqual( data[-1], 1.24076998649746980e+05 )
 
-        data = self.native_data.getForwardInelasticElectronCrossSection()
-        self.assertEqual( len(data), 90 )
-        self.assertEqual( data[0], 3.46182331279999986e+07 )
-        self.assertEqual( data[len(data)-1], 5.24548861414271640e+05 )
+        # Check the forward brem cross section data
+        data = self.native_data.getForwardBremsstrahlungElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 6.03128e+02 )
+        self.assertEqual( data[-1], 1.32769004460848929e+01 )
+
+         # Check the forward electroionization cross section data
+        data = self.native_data.getForwardElectroionizationElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.1449e+07 )
+        self.assertEqual( data[-1], 4.00458584513825655e+05 )
+
+        data = self.native_data.getForwardAtomicExcitationElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.16863e+06 )
+        self.assertEqual( data[-1], 1.24077e+05 )
 
 #-----------------------------------------------------------------------------#
 # Custom main

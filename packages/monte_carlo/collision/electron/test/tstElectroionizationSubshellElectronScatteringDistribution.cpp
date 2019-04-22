@@ -27,9 +27,11 @@ public:
   TestElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
       electroionization_subshell_scattering_distribution,
+    const MonteCarlo::ElectroionizationSamplingType sampling_type,
     const double binding_energy )
     : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
         electroionization_subshell_scattering_distribution,
+        sampling_type,
         binding_energy )
   { /* ... */ }
 
@@ -57,38 +59,55 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    getBindingEnergy )
 {
   // Get binding energy
-  double binding_energy =
-    ace_ionization_dist->getBindingEnergy();
-
-  // Test original electron
+  double binding_energy = ace_ionization_dist->getBindingEnergy();
   FRENSIE_CHECK_EQUAL( binding_energy, 8.8290E-02 );
+
+  binding_energy = unit_base_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
+
+  binding_energy = unit_correlated_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
+
+  binding_energy = correlated_ionization_dist->getBindingEnergy();
+  FRENSIE_CHECK_EQUAL( binding_energy, 4.88e-06 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
+// Check the min energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
+                   getMinEnergy )
 {
-  // Get max energy
-  double max_energy =
-    ace_ionization_dist->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
+  // Get binding energy
+  double energy = ace_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 8.8290E-02 );
 
-  // Test original electron
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
+  energy = unit_base_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
 
-  // Get max energy
-  max_energy =
-    ace_ionization_dist->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
+  energy = unit_correlated_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
 
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+  energy = correlated_ionization_dist->getMinEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 4.88e-06 );
+}
 
-  // Get max energy
-  max_energy =
-    ace_ionization_dist->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
+//---------------------------------------------------------------------------//
+// Check the max energy
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   getMaxEnergy )
+{
+  // Get binding energy
+  double energy = ace_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
 
-  // Test original electron
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
+  energy = unit_base_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+
+  energy = unit_correlated_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
+
+  energy = correlated_ionization_dist->getMaxEnergy();
+  FRENSIE_CHECK_EQUAL( energy, 1e5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -97,6 +116,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_ace )
 {
   double pdf = ace_ionization_dist->evaluate( 8.829e-2, 5e-8 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-12 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   pdf = ace_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
@@ -121,22 +141,22 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluate( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6866000434174901e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686600043417490087e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794064728877693e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.678581995788152526e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611321793168750e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.052979096459874725e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815828429294956e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.234593387270582819e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636700787675897e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.548368486384188533e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497193189141950e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318262361153e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -160,7 +180,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639971990510892e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719317907309385e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318262361153e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -169,6 +189,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_ace )
 {
   double pdf = ace_ionization_dist->evaluatePDF( 8.829e-2, 5e-8 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.111111111111111194e+07, 1e-12 );
   FRENSIE_CHECK_SMALL( pdf, 1e-12 );
 
   pdf = ace_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
@@ -196,25 +217,25 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluatePDF( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6865999321744699e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686599932174469868e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794063002002872e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.678581861862938496e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611317283132534e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.052978642312027965e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815824201618231e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.234592950188111637e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636692194095449e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.548367608184818212e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497177573288197e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756676985891e-11, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.2480895846405665e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584586491624e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -238,10 +259,10 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639322085223699e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756321954802e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756676985891e-11, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584449132797e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584586491624e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -250,6 +271,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluateCDF_ace )
 {
   double cdf = ace_ionization_dist->evaluateCDF( 8.829e-2, 5e-8 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 4.444444444444444753e-01, 1e-12 );
   FRENSIE_CHECK_SMALL( cdf, 1e-12 );
 
   cdf = ace_ionization_dist->evaluateCDF( 9.12175e-2, 4.275e-4 );
@@ -280,19 +302,19 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_SMALL( cdf, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9364828663505689e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.936482866350568877e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9984273751835129e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.998427375183512877e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9998825717709872e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999882571770987161e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9998150891124138e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999815089112413791e-01, 1e-12 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9999998501226084e-01, 1e-10 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.999999850122608391e-01, 1e-10 );
 
   cdf = unit_correlated_ionization_dist->evaluateCDF( 1e5, 5e4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 1.0, 1e-10 );
@@ -394,8 +416,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                      knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.7795576315906780e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.7765e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.779557631590678035e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.776499999999767842e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -408,7 +430,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    sample_knock_on_native_correlated )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0-1e-15;
 
@@ -423,8 +445,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                       knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 4.068725548925718194e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
 
   // sample the electron at the max random number
   correlated_ionization_dist->sample( incoming_energy,
@@ -434,12 +456,33 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   // Test knock-on electron at the max random number
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865936982e-01, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.696314156988312136e-05, 1e-12 );
+
+  // Sample at the max energy
+  incoming_energy = 1e5;
+
+  // sample the electron at the min random number
+  correlated_ionization_dist->sample( incoming_energy,
+                                      knock_on_energy,
+                                      knock_on_angle_cosine );
+
+  // Test knock-on electron at the min random number
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 3.128075402514134454e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1e-7, 1e-12 );
+
+  // sample the electron at the max random number
+  correlated_ionization_dist->sample( incoming_energy,
+                                      knock_on_energy,
+                                      knock_on_angle_cosine );
+
+  // Test knock-on electron at the max random number
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 9.999948899933791546e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.999946716424614715e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   samplePrimaryAndSecondary_ace )
+                   sample_ace )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -453,7 +496,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_ionization_dist->samplePrimaryAndSecondary(
+  ace_ionization_dist->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,
@@ -558,12 +601,12 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                                         shell_of_interaction );
 
   // Test original positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 7.8974722856283108e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.5585500000302387e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 7.897472285592083141e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 4.558549999969761513e-01, 1e-12 );
 
   // Test knock-on positron
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 07.8974722855920831e-01, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.5585499999697615e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 7.897472285628310829e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.558550000030238691e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -683,7 +726,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   ace_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
-                            binding_energies[subshell] ) );
+                            MonteCarlo::KNOCK_ON_SAMPLING,
+                            binding_energies[subshell],
+                            true,
+                            false ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -745,6 +791,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_base_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
   {
@@ -760,6 +807,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
   {
@@ -775,6 +823,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
   }

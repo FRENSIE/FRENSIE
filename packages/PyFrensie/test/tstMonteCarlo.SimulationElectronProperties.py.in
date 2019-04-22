@@ -48,6 +48,8 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
                           MonteCarlo.MODIFIED_TWO_D_UNION )
         self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
         self.assertTrue(properties.isElectroionizationModeOn() )
+        self.assertEqual( properties.getElectroionizationSamplingMode(),
+                          MonteCarlo.KNOCK_ON_SAMPLING )
         self.assertTrue(properties.isBremsstrahlungModeOn() )
         self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
                           MonteCarlo.TWOBS_DISTRIBUTION )
@@ -165,7 +167,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         self.assertEqual( properties.getElasticElectronDistributionMode(),
                           MonteCarlo.COUPLED_DISTRIBUTION )
 
-        mode = MonteCarlo.COUPLED_DISTRIBUTION
+        mode = MonteCarlo.DECOUPLED_DISTRIBUTION
         properties.setElasticElectronDistributionMode( mode )
         self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
 
@@ -196,7 +198,7 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 
-        mode = MonteCarlo.MODIFIED_TWO_D_UNION
+        mode = MonteCarlo.TWO_D_UNION
         properties.setCoupledElasticSamplingMode( mode )
         self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
 
@@ -216,6 +218,22 @@ class SimulationElectronPropertiesTestCase(unittest.TestCase):
 
         properties.setElectroionizationModeOn()
         self.assertTrue(properties.isElectroionizationModeOn() )
+
+    def testSetElectroionizationSamplingMode(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectroionizationSamplingMode"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        function = MonteCarlo.OUTGOING_ENERGY_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
+
+        function = MonteCarlo.OUTGOING_ENERGY_RATIO_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
+
+        function = MonteCarlo.KNOCK_ON_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
 
     def testSetBremsstrahlungModeOffOn(self):
         "*Test MonteCarlo.SimulationElectronProperties setBremsstrahlungModeOffOn"

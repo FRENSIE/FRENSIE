@@ -47,6 +47,14 @@ public:
   using ElectronPhotonRelaxationDataContainer::setElectronGridConvergenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setElectronGridAbsoluteDifferenceTolerance;
   using ElectronPhotonRelaxationDataContainer::setElectronGridDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungDistanceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationDistanceTolerance;
 
   // Relaxation functions
   using ElectronPhotonRelaxationDataContainer::setSubshells;
@@ -102,11 +110,15 @@ public:
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionReduction;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
-  using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilInterpPolicy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingEnergyAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingPDFAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationOutgoingPDF;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy;

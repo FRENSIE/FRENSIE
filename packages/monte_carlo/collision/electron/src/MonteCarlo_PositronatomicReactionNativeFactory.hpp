@@ -134,6 +134,7 @@ public:
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<const ReactionType>& electroionization_subshell_reaction,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol );
 
   //! Create the subshell electroionization positron-atomic reactions
@@ -146,6 +147,7 @@ public:
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::vector<std::shared_ptr<const ReactionType> >&
         electroionization_subshell_reactions,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung positron-atomic reaction

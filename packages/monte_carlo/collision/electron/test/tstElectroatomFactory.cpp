@@ -1005,8 +1005,6 @@ FRENSIE_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction(
                                              MonteCarlo::DIPOLE_DISTRIBUTION );
-  // Set the secondary interpolation policy to LinLinLin
-//  properties.setLinLinLogInterpolationModeOff();
   // Set the elastic cutoff angle cosine to 1.0
   properties.setElasticCutoffAngleCosine( 1.0 );
   // Set atomic relaxation on for electrons

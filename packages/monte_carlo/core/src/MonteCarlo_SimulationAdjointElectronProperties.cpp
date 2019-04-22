@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SimulationAdjointElectronProperties.hpp
+//! \file   MonteCarlo_SimulationAdjointElectronProperties.cpp
 //! \author Luke Kersting
 //! \brief  Simulation adjoint electron properties class definition
 //!
@@ -31,6 +31,7 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_atomic_excitation_mode_on( true ),
     d_adjoint_evaluation_tol( 1e-7 ),
     d_adjoint_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
+    d_adjoint_electroionization_sampling_mode( KNOCK_ON_SAMPLING ),
     d_adjoint_elastic_distribution_mode( COUPLED_DISTRIBUTION ),
     d_coupled_elastic_sampling_method( MODIFIED_TWO_D_UNION ),
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
@@ -202,6 +203,20 @@ void SimulationAdjointElectronProperties::setAdjointBremsstrahlungAngularDistrib
                           const BremsstrahlungAngularDistributionType function )
 {
   d_adjoint_bremsstrahlung_angular_distribution_function = function;
+}
+
+// Set the adjoint electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+void SimulationAdjointElectronProperties::setAdjointElectroionizationSamplingMode(
+                        const ElectroionizationSamplingType sampling_mode )
+{
+  d_adjoint_electroionization_sampling_mode = sampling_mode;
+}
+
+// Return the adjoint electroionization sampling mode
+ElectroionizationSamplingType
+SimulationAdjointElectronProperties::getAdjointElectroionizationSamplingMode() const
+{
+  return d_adjoint_electroionization_sampling_mode;
 }
 
 // Return the adjoint bremsstrahlung photon angular distribution function (2BS by default)

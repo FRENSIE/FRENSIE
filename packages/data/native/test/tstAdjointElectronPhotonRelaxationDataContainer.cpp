@@ -1735,6 +1735,18 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the forward electroionization sampling mode can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardElectroionizationSamplingMode )
+{
+  std::string grid = "Knock-on Electroionization Sampling";
+  epr_data_container.setForwardElectroionizationSamplingMode( grid );
+
+  FRENSIE_CHECK_EQUAL( grid,
+                       epr_data_container.getForwardElectroionizationSamplingMode() );
+}
+
+//---------------------------------------------------------------------------//
 // Check if there is a separate electroionization incoming electron energy grid for the scattering spectrum
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    separateAdjointElectroionizationEnergyGrid )
@@ -2192,31 +2204,89 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the atomic excitation electron cross section can be set
+// Check that the Bremsstrahlung electron cross section can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setForwardInelasticElectronCrossSection )
+                   setForwardBremsstrahlungElectronCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
   cross_section[1] = 1e-1;
   cross_section[2] = 1.0;
 
-  epr_data_container.setForwardInelasticElectronCrossSection(  cross_section );
+  epr_data_container.setForwardBremsstrahlungElectronCrossSection(  cross_section );
 
   FRENSIE_CHECK_EQUAL(
-            epr_data_container.getForwardInelasticElectronCrossSection(),
+            epr_data_container.getForwardBremsstrahlungElectronCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Bremsstrahlung cs threshold index can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex( 0 );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(),
+    0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Electroionization electron cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardElectroionizationElectronCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setForwardElectroionizationElectronCrossSection(  cross_section );
+
+  FRENSIE_CHECK_EQUAL(
+            epr_data_container.getForwardElectroionizationElectronCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Electroionization cs threshold index can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardElectroionizationElectronCrossSectionThresholdEnergyIndex )
+{
+  epr_data_container.setForwardElectroionizationElectronCrossSectionThresholdEnergyIndex( 0 );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(),
+    0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation electron cross section can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setForwardAtomicExcitationElectronCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setForwardAtomicExcitationElectronCrossSection(  cross_section );
+
+  FRENSIE_CHECK_EQUAL(
+            epr_data_container.getForwardAtomicExcitationElectronCrossSection(),
             cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cs threshold index can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setForwardInelasticElectronCrossSectionThresholdEnergyIndex )
+                   setForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex )
 {
-  epr_data_container.setForwardInelasticElectronCrossSectionThresholdEnergyIndex( 0 );
+  epr_data_container.setForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex( 0 );
 
   FRENSIE_CHECK_EQUAL(
-    epr_data_container.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(),
+    epr_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(),
     0 );
 }
 
@@ -2348,9 +2418,14 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getForwardInelasticElectronCrossSection().size(), 3u );
+    epr_data_container_copy.getForwardBremsstrahlungElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
   FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(), 0 );
+    epr_data_container_copy.getForwardElectroionizationElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(), 0 );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getForwardAtomicExcitationElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2479,8 +2554,15 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointAtomicExcitationCrossSection().size(), 3u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(), 0 );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardInelasticElectronCrossSection().size(), 3u );
-  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardInelasticElectronCrossSectionThresholdEnergyIndex(), 0 );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getForwardBremsstrahlungElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(), 0 );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getForwardElectroionizationElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(), 0 );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getForwardAtomicExcitationElectronCrossSection().size(), 3u );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(), 0 );
 }
 
 //---------------------------------------------------------------------------//

@@ -48,6 +48,14 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_evaluation_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_convergence_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_distance_tol );
 
   // Relaxation Data
   DATA_MAKE_NVP_DEFAULT( ar, subshells );
@@ -101,9 +109,11 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_outgoing_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_outgoing_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );
@@ -155,6 +165,14 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, electron_grid_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_evaluation_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_convergence_tolerance );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_distance_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_evaluation_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_convergence_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_absolute_diff_tol );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_distance_tol );
 
   // Relaxation Data
   DATA_MAKE_NVP_DEFAULT( ar, subshells );
@@ -208,9 +226,11 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
-  DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_outgoing_energy );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_outgoing_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );

@@ -80,7 +80,8 @@ public:
      secondary_distributions,
      const double fuzzy_boundary_tol = 1e-3,
      const double relative_error_tol = 1e-7,
-     const double error_tol = 1e-16 );
+     const double error_tol = 1e-16,
+     const unsigned max_number_of_iterations = 500 );
 
   //! Destructor
   virtual ~UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase()
@@ -94,6 +95,9 @@ public:
 
   //! Return the evaluation error tolerance
   double getErrorTolerance() const;
+
+  //! Return the evaluation max number of iterations
+  unsigned getMaxNumberOfIterations() const;
 
   //! Evaluate the distribution
   virtual DepQuantity evaluate(
@@ -140,7 +144,8 @@ protected:
   //! Set the evaluation tolerances
   void setEvaluationTolerances( const double fuzzy_boundary_tol,
                                 const double relative_error_tol,
-                                const double error_tol );
+                                const double error_tol,
+                                const unsigned max_number_of_iterations = 500 );
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename ReturnType, typename EvaluationMethod>
@@ -158,8 +163,7 @@ protected:
              min_secondary_indep_var_functor,
              const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
              max_secondary_indep_var_functor,
-             EvaluationMethod evaluate,
-             unsigned max_number_of_iterations = 500 ) const;
+             EvaluationMethod evaluate ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -231,6 +235,9 @@ private:
 
   // The evaluation error tol
   double d_error_tol;
+
+  // The evaluation max number of iterations
+  unsigned d_max_number_of_iterations;
 };
 
 } // end Utility namespace

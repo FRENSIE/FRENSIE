@@ -77,6 +77,10 @@ public:
                double& photon_energy,
                double& photon_angle_cosine ) const override;
 
+  //! Sample an outgoing energy from the distribution with a random number
+  double sampleWithRandomNumber( const double incoming_energy,
+                                 const double random_number ) const;
+
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& photon_energy,

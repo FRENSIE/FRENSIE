@@ -364,6 +364,7 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<const ReactionType>& electroionization_subshell_reaction,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol )
 {
   // Convert subshell number to enum
@@ -390,6 +391,7 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
       subshell,
       raw_positronatom_data.getSubshellBindingEnergy( subshell ),
       electroionization_subshell_distribution,
+      sampling_type,
       evaluation_tol );
 
 
@@ -414,6 +416,7 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::vector<std::shared_ptr<const ReactionType> >&
     electroionization_subshell_reactions,
+    const ElectroionizationSamplingType sampling_type,
     const double evaluation_tol )
 {
   electroionization_subshell_reactions.clear();
@@ -434,6 +437,7 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
+      sampling_type,
       evaluation_tol );
 
     electroionization_subshell_reactions.push_back(

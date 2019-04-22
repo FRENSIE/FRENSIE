@@ -298,10 +298,10 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
             energy,
             d_cutoff_angle_cosine );
 
-    evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
+    this->evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
   }
 
-    evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
+  this->evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
   legendre_zero = rutherford_zero + cutoff_zero;
 
   // Iterate to get get all n moments
@@ -309,9 +309,9 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   {
     if ( d_cutoff_angle_cosine < ElasticTraits::mu_peak )
     {
-      evaluateCutoffMoment( cutoff_moment, angular_grid, integrator, energy, i );
+      this->evaluateCutoffMoment( cutoff_moment, angular_grid, integrator, energy, i );
     }
-    evaluateScreenedRutherfordMoment( rutherford_moment, energy, i );
+    this->evaluateScreenedRutherfordMoment( rutherford_moment, energy, i );
 
 
     legendre_moments[i] = (rutherford_moment + cutoff_moment)/legendre_zero;
@@ -332,7 +332,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffMoment(
   testPrecondition( angular_grid.size() > 1 );
 
   // Get the moments of the PDF
-  evaluateCutoffPDFMoment(
+  this->evaluateCutoffPDFMoment(
         cutoff_moment,
         angular_grid,
         integrator,
@@ -593,7 +593,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
       Numerical integration has been left in in case there is an exception
       which the recursion relationship cannot calculate.
    */
-  evaluateScreenedRutherfordPDFMomentByRecursion(
+  this->evaluateScreenedRutherfordPDFMomentByRecursion(
     rutherford_moment,
     eta,
     n);

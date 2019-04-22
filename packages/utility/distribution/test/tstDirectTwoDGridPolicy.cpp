@@ -38,18 +38,20 @@ namespace cgs = boost::units::cgs;
 // Testing Typenames
 //---------------------------------------------------------------------------//
 
-using DistributionType = Utility::FullyTabularBasicBivariateDistribution::DistributionType;
-using UnitAwareDistributionType = Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType;
+using DistributionType = std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution > > >;
+
 using XIndepType = Utility::UnitTraits<MegaElectronVolt>::template GetQuantityType<double>::type;
 using YIndepType = Utility::UnitTraits<cgs::length>::template GetQuantityType<double>::type;
 using ZDepType = Utility::UnitTraits<Barn>::template GetQuantityType<double>::type;
+
+using UnitAwareDistributionType = std::vector<std::pair<Utility::UnitTraits<MegaElectronVolt>::template GetQuantityType<double>::type,std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn> > > >;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution::DistributionType> distribution;
-std::shared_ptr<Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType> unit_aware_distribution;
+std::shared_ptr<DistributionType> distribution;
+std::shared_ptr<UnitAwareDistributionType> unit_aware_distribution;
 
 std::function<double(const Utility::TabularUnivariateDistribution&)> functor;
 std::function<YIndepType(const Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>&)> ua_functor;
@@ -57,10 +59,10 @@ std::function<YIndepType(const Utility::UnitAwareTabularUnivariateDistribution<c
 std::function<double (double)> min_func, max_func;
 std::function<YIndepType(const XIndepType)> ua_min_func, ua_max_func;
 
-Utility::FullyTabularBasicBivariateDistribution::DistributionType::const_iterator
+DistributionType::const_iterator
   lower_bin, upper_bin, sampled_bin, start_bin;
 
-Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType::const_iterator
+UnitAwareDistributionType::const_iterator
   ua_lower_bin, ua_upper_bin, ua_sampled_bin, ua_start_bin;
 
 //---------------------------------------------------------------------------//
@@ -1358,12 +1360,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the two-dimensional distribution
   {
-    Utility::FullyTabularBasicBivariateDistribution::DistributionType
-      distribution_data( 3 );
+    DistributionType distribution_data( 3 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0;
+    Utility::get<1>( distribution_data[0] ) = std::make_shared<Utility::UniformDistribution>( 0.0, 10.0, 1.0 );
 
     // Create the secondary distribution in the second bin
     std::vector<double> bin_boundaries( 3 ), values( 3 );
@@ -1371,15 +1372,14 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     bin_boundaries[1] = 5.0; values[1] = 1.0;
     bin_boundaries[2] = 7.5; values[2] = 0.5;
 
-    distribution_data[1].first = 1.0;
-    distribution_data[1].second.reset( new Utility::TabularDistribution<Utility::LinLin>( bin_boundaries, values ) );
+    Utility::get<0>( distribution_data[1] ) = 1.0;
+    Utility::get<1>( distribution_data[1] ) = std::make_shared<Utility::TabularDistribution<Utility::LinLin> >( bin_boundaries, values );
 
     // Create the secondary distribution beyond the second bin
-    distribution_data[2].first = 2.0;
-    distribution_data[2].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    Utility::get<0>( distribution_data[2] ) = 2.0;
+    Utility::get<1>( distribution_data[2] ) = std::make_shared<Utility::UniformDistribution>( 0.0, 10.0, 0.1 );
 
-    distribution.reset( new Utility::FullyTabularBasicBivariateDistribution::DistributionType(
-                                                        distribution_data ) );
+    distribution.reset( new DistributionType( distribution_data ) );
 
     // Create the sampling functor
     functor = std::bind<double>( &Utility::TabularUnivariateDistribution::sample,
@@ -1388,30 +1388,28 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create the unit-aware two-dimensional distribution
   {
-    Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType
-    distribution_data( 3 );
+    UnitAwareDistributionType distribution_data( 3 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0*MeV;
-    distribution_data[0].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn ) );
+    Utility::get<0>( distribution_data[0] ) = 0.0*MeV;
+    Utility::get<1>( distribution_data[0] ) = std::make_shared<Utility::UnitAwareUniformDistribution<cgs::length,Barn> >( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 1.0*barn );
 
     // Create the secondary distribution in the second bin
-    Teuchos::Array<quantity<cgs::length> > bin_boundaries( 3 );
-    Teuchos::Array<quantity<Barn> > values( 3 );
+    std::vector<quantity<cgs::length> > bin_boundaries( 3 );
+    std::vector<quantity<Barn> > values( 3 );
     bin_boundaries[0] = 2.5*cgs::centimeter; values[0] = 0.1*barn;
     bin_boundaries[1] = 5.0*cgs::centimeter; values[1] = 1.0*barn;
     bin_boundaries[2] = 7.5*cgs::centimeter; values[2] = 0.5*barn;
 
-    distribution_data[1].first = 1.0*MeV;
-    distribution_data[1].second.reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn>( bin_boundaries, values ) );
+    Utility::get<0>( distribution_data[1] ) = 1.0*MeV;
+    Utility::get<1>( distribution_data[1] ) = std::make_shared<Utility::UnitAwareTabularDistribution<Utility::LinLin,cgs::length,Barn> >( bin_boundaries, values );
 
     // Create the secondary distribution beyond the second bin
-    distribution_data[2].first = 2.0*MeV;
-    distribution_data[2].second.reset( new Utility::UnitAwareUniformDistribution<cgs::length,Barn>( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn ) );
+    Utility::get<0>( distribution_data[2] ) = 2.0*MeV;
+    Utility::get<1>( distribution_data[2] ) = std::make_shared<Utility::UnitAwareUniformDistribution<cgs::length,Barn> >( 0.0*cgs::centimeter, 10.0*cgs::centimeter, 0.1*barn );
 
     unit_aware_distribution.reset(
-        new Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>::DistributionType(
-                                                        distribution_data ) );
+        new UnitAwareDistributionType( distribution_data ) );
 
     // Create the sampling functor
     ua_functor = std::bind<YIndepType>(

@@ -338,8 +338,6 @@ double AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionization
   return d_adjoint_electroionization_distance_tol;
 }
 
-
-
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -890,6 +888,13 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointMomentPreservingElasticW
   return d_adjoint_moment_preserving_elastic_weights.find( incoming_adjoint_energy )->second;
 }
 
+// Return the forward electroionization sampling mode
+const std::string&
+AdjointElectronPhotonRelaxationDataContainer::getForwardElectroionizationSamplingMode() const
+{
+  return d_forward_electroionization_sampling_mode;
+}
+
 // Return the electroionization energy grid for a subshell
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyGrid(
@@ -898,7 +903,10 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationEnergyG
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
 
-  return d_adjoint_electroionization_energy_grid.find( subshell )->second;
+  if ( this->separateAdjointElectroionizationEnergyGrid() )
+    return d_adjoint_electroionization_energy_grid.find( subshell )->second;
+  else
+    return this->getAdjointElectronEnergyGrid();
 }
 
 // Return if there is a separate electroionization incoming electron energy grid for the scattering spectrum
@@ -960,7 +968,10 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointElectroionizationRecoilP
 const std::vector<double>&
 AdjointElectronPhotonRelaxationDataContainer::getAdjointElectronBremsstrahlungEnergyGrid() const
 {
-  return d_adjoint_electron_bremsstrahlung_energy_grid;
+    if ( this->separateAdjointBremsstrahlungEnergyGrid() )
+      return d_adjoint_electron_bremsstrahlung_energy_grid;
+    else
+      return this->getAdjointElectronEnergyGrid();
 }
 
 // Return if there is a separate bremsstrahlung incoming electron energy grid for the scattering spectrum
@@ -1116,18 +1127,45 @@ AdjointElectronPhotonRelaxationDataContainer::getAdjointAtomicExcitationCrossSec
   return d_adjoint_atomic_excitation_cross_section_threshold_index;
 }
 
-// Return the forward inelastic electron cross section
+// Return the forward bremsstrahlung electron cross section
 const std::vector<double>&
-AdjointElectronPhotonRelaxationDataContainer::getForwardInelasticElectronCrossSection() const
+AdjointElectronPhotonRelaxationDataContainer::getForwardBremsstrahlungElectronCrossSection() const
 {
-  return d_forward_inelastic_electron_cross_section;
+  return d_forward_bremsstrahlung_electron_cross_section;
+}
+// Return the forward bremsstrahlung electron cross section threshold energy bin index
+unsigned
+AdjointElectronPhotonRelaxationDataContainer::getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex() const
+{
+  return d_forward_bremsstrahlung_electron_cross_section_threshold_index;
 }
 
-// Return the forward inelastic electron cross section threshold energy bin index
-unsigned
-AdjointElectronPhotonRelaxationDataContainer::getForwardInelasticElectronCrossSectionThresholdEnergyIndex() const
+// Return the forward electroionization electron cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getForwardElectroionizationElectronCrossSection() const
 {
-  return d_forward_inelastic_electron_cross_section_threshold_index;
+  return d_forward_electroionization_electron_cross_section;
+}
+
+// Return the forward electroionization electron cross section threshold energy bin index
+unsigned
+AdjointElectronPhotonRelaxationDataContainer::getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex() const
+{
+  return d_forward_electroionization_electron_cross_section_threshold_index;
+}
+
+// Return the forward atomic excitation electron cross section
+const std::vector<double>&
+AdjointElectronPhotonRelaxationDataContainer::getForwardAtomicExcitationElectronCrossSection() const
+{
+  return d_forward_atomic_excitation_electron_cross_section;
+}
+
+// Return the forward atomic excitation electron cross section threshold energy bin index
+unsigned
+AdjointElectronPhotonRelaxationDataContainer::getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex() const
+{
+  return d_forward_atomic_excitation_electron_cross_section_threshold_index;
 }
 
 //---------------------------------------------------------------------------//
@@ -2429,6 +2467,15 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointMomentPreservingEla
     adjoint_moment_preserving_elastic_weights;
 }
 
+// Set the forward electroionization sampling mode
+void AdjointElectronPhotonRelaxationDataContainer::setForwardElectroionizationSamplingMode( const std::string sampling_mode )
+{
+  // Make sure the string is valid
+  testPrecondition( this->isElectroionizationSamplingModeValid( sampling_mode ) );
+
+  d_forward_electroionization_sampling_mode = sampling_mode;
+}
+
 // Set the electroionization energy grid for a subshell
 void AdjointElectronPhotonRelaxationDataContainer::setAdjointElectroionizationEnergyGrid(
             const unsigned subshell,
@@ -2778,29 +2825,88 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
   d_adjoint_atomic_excitation_cross_section_threshold_index = index;
 }
 
-// Set the forward inelastic electron cross section
-void AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSection(
-           const std::vector<double>& forward_inelastic_electron_cross_section )
+// Set the forward bremsstrahlung electron cross section
+void AdjointElectronPhotonRelaxationDataContainer::setForwardBremsstrahlungElectronCrossSection(
+          const std::vector<double>& forward_bremsstrahlung_electron_cross_section )
 {
-  // Make sure the forward inelastic electron cross section is valid
-  testPrecondition( forward_inelastic_electron_cross_section.size() <=
+  // Make sure the forward bremsstrahlung electron cross section is valid
+  testPrecondition( forward_bremsstrahlung_electron_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
   testPrecondition( Data::valuesGreaterThanZero(
-    forward_inelastic_electron_cross_section ) );
+    forward_bremsstrahlung_electron_cross_section ) );
 
-  d_forward_inelastic_electron_cross_section =
-    forward_inelastic_electron_cross_section;
+  d_forward_bremsstrahlung_electron_cross_section =
+    forward_bremsstrahlung_electron_cross_section;
 }
 
-// Set the forward inelastic electron cross section threshold energy bin index
-void AdjointElectronPhotonRelaxationDataContainer::setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
-                                const unsigned index )
+// Set the forward bremsstrahlung electron cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
+                              const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( d_forward_inelastic_electron_cross_section.size() + index ==
+  testPrecondition( d_forward_bremsstrahlung_electron_cross_section.size() + index ==
                     d_adjoint_electron_energy_grid.size() );
 
-  d_forward_inelastic_electron_cross_section_threshold_index = index;
+  d_forward_bremsstrahlung_electron_cross_section_threshold_index = index;
+}
+
+// Set the forward electroionization electron cross section
+void AdjointElectronPhotonRelaxationDataContainer::setForwardElectroionizationElectronCrossSection(
+          const std::vector<double>& forward_electroionization_electron_cross_section )
+{
+  // Make sure the forward electroionization electron cross section is valid
+  testPrecondition( forward_electroionization_electron_cross_section.size() <=
+                    d_adjoint_electron_energy_grid.size() );
+  testPrecondition( Data::valuesGreaterThanZero(
+    forward_electroionization_electron_cross_section ) );
+
+  d_forward_electroionization_electron_cross_section =
+    forward_electroionization_electron_cross_section;
+}
+
+// Set the forward electroionization electron cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setForwardElectroionizationElectronCrossSectionThresholdEnergyIndex(
+                              const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_forward_electroionization_electron_cross_section.size() + index ==
+                    d_adjoint_electron_energy_grid.size() );
+
+  d_forward_electroionization_electron_cross_section_threshold_index = index;
+}
+
+// Set the forward atomic excitation electron cross section
+void AdjointElectronPhotonRelaxationDataContainer::setForwardAtomicExcitationElectronCrossSection(
+          const std::vector<double>& forward_atomic_excitation_electron_cross_section )
+{
+  // Make sure the forward atomic excitationelectron cross section is valid
+  testPrecondition( forward_atomic_excitation_electron_cross_section.size() <=
+                    d_adjoint_electron_energy_grid.size() );
+  testPrecondition( Data::valuesGreaterThanZero(
+    forward_atomic_excitation_electron_cross_section ) );
+
+  d_forward_atomic_excitation_electron_cross_section =
+    forward_atomic_excitation_electron_cross_section;
+}
+
+// Set the forward atomic excitation electron cross section threshold energy bin index
+void AdjointElectronPhotonRelaxationDataContainer::setForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex(
+                              const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_forward_atomic_excitation_electron_cross_section.size() + index ==
+                    d_adjoint_electron_energy_grid.size() );
+
+  d_forward_atomic_excitation_electron_cross_section_threshold_index = index;
+}
+
+// Test if the Electroionization Sampling Mode is valid
+bool AdjointElectronPhotonRelaxationDataContainer::isElectroionizationSamplingModeValid( const std::string value )
+{
+  if ( value == "Knock-on Electroionization Sampling" || value == "Outgoing Energy Electroionization Sampling" || value == "Outgoing Energy Ratio Electroionization Sampling")
+    return true;
+  else
+    return false;
 }
 
 EXPLICIT_CLASS_SAVE_LOAD_INST( AdjointElectronPhotonRelaxationDataContainer );

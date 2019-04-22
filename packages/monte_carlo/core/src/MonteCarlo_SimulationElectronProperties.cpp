@@ -38,6 +38,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_bremsstrahlung_angular_distribution_function( TWOBS_DISTRIBUTION ),
     d_electroionization_mode_on( true ),
     d_electroionization_interpolation_type( LOGLOGLOG_INTERPOLATION ),
+    d_electroionization_sampling_mode( KNOCK_ON_SAMPLING ),
     d_atomic_excitation_mode_on( true ),
     d_threshold_weight( 0.0 ),
     d_survival_weight()
@@ -122,14 +123,14 @@ SimulationElectronProperties::getElectronTwoDInterpPolicy() const
   return d_electron_interpolation_type;
 }
 
-// Set the electron 2D grid policy (Unit-base Correlated by default)
+// Set the electron bivariate grid policy (Unit-base Correlated by default)
 void SimulationElectronProperties::setElectronTwoDGridPolicy(
     TwoDGridType grid_type )
 {
   d_electron_grid_type = grid_type;
 }
 
-// Return the electron 2D grid policy
+// Return the electron bivariate grid policy
 TwoDGridType
 SimulationElectronProperties::getElectronTwoDGridPolicy() const
 {
@@ -245,6 +246,20 @@ void SimulationElectronProperties::setElectroionizationModeOn()
 bool SimulationElectronProperties::isElectroionizationModeOn() const
 {
   return d_electroionization_mode_on;
+}
+
+// Set the electroionization sampling mode (KNOCK_ON_SAMPLING by default)
+void SimulationElectronProperties::setElectroionizationSamplingMode(
+                        const ElectroionizationSamplingType sampling_mode )
+{
+  d_electroionization_sampling_mode = sampling_mode;
+}
+
+// Return the electroionization sampling mode
+ElectroionizationSamplingType
+SimulationElectronProperties::getElectroionizationSamplingMode() const
+{
+  return d_electroionization_sampling_mode;
 }
 
 // Set bremsstrahlung mode to off (on by default)

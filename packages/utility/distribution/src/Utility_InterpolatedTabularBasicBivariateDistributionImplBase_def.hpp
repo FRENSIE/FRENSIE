@@ -26,11 +26,13 @@ UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Di
      secondary_distributions,
      const double fuzzy_boundary_tol,
      const double relative_error_tol,
-     const double error_tol )
+     const double error_tol,
+     const unsigned max_number_of_iterations )
   : BaseType( primary_indep_grid, secondary_distributions ),
     d_fuzzy_boundary_tol( fuzzy_boundary_tol ),
     d_relative_error_tol( relative_error_tol ),
-    d_error_tol( error_tol )
+    d_error_tol( error_tol ),
+    d_max_number_of_iterations( max_number_of_iterations )
 {
   // Verify that the distribution data is valid
   this->verifyValidData( primary_indep_grid, secondary_distributions );
@@ -56,13 +58,15 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 // Set the evaluation tolerances
 template<typename TwoDGridPolicy, typename Distribution>
 void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::setEvaluationTolerances(
-                                               const double fuzzy_boundary_tol,
-                                               const double relative_error_tol,
-                                               const double error_tol )
+                                      const double fuzzy_boundary_tol,
+                                      const double relative_error_tol,
+                                      const double error_tol,
+                                      const unsigned max_number_of_iterations )
 {
   d_fuzzy_boundary_tol = fuzzy_boundary_tol;
   d_relative_error_tol = relative_error_tol;
   d_error_tol = error_tol;
+  d_max_number_of_iterations = max_number_of_iterations;
 
   this->verifyValidTolerances( fuzzy_boundary_tol,
                                relative_error_tol,
@@ -88,6 +92,13 @@ template<typename TwoDGridPolicy, typename Distribution>
 double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getErrorTolerance() const
 {
   return d_error_tol;
+}
+
+// Return the evaluation max number of iterations
+template<typename TwoDGridPolicy, typename Distribution>
+unsigned UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getMaxNumberOfIterations() const
+{
+  return d_max_number_of_iterations;
 }
 
 // Verify that the distribution data is valid
@@ -223,8 +234,7 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDG
              min_secondary_indep_var_functor,
              const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
              max_secondary_indep_var_functor,
-             EvaluationMethod evaluate,
-             unsigned max_number_of_iterations ) const
+             EvaluationMethod evaluate ) const
   -> ReturnType
 {
   // Find the bin boundaries
@@ -247,7 +257,7 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDG
         d_fuzzy_boundary_tol,
         d_relative_error_tol,
         d_error_tol,
-        max_number_of_iterations );
+        d_max_number_of_iterations );
   }
   // Primary value is outside of the primary grid limits
   else
@@ -456,8 +466,14 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  // Check if the primary_indep_var_value is on a bin boundary
+  if( lower_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar();
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar();
+
   // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  else if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
       return Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar();
@@ -485,8 +501,14 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
                            lower_bin_boundary,
                            upper_bin_boundary );
 
+  // Check if the primary_indep_var_value is on a bin boundary
+  if( lower_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar();
+  else if( upper_bin_boundary->first == primary_indep_var_value )
+    return Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar();
+
   // Check for a primary value outside of the primary grid limits
-  if( lower_bin_boundary == upper_bin_boundary )
+  else if( lower_bin_boundary == upper_bin_boundary )
   {
     if( this->arePrimaryLimitsExtended() )
       return Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar();
@@ -521,6 +543,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   ar & BOOST_SERIALIZATION_NVP( d_fuzzy_boundary_tol );
   ar & BOOST_SERIALIZATION_NVP( d_relative_error_tol );
   ar & BOOST_SERIALIZATION_NVP( d_error_tol );
+  ar & BOOST_SERIALIZATION_NVP( d_max_number_of_iterations );
 }
 
 // Load the distribution from an archive
@@ -535,6 +558,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   ar & BOOST_SERIALIZATION_NVP( d_fuzzy_boundary_tol );
   ar & BOOST_SERIALIZATION_NVP( d_relative_error_tol );
   ar & BOOST_SERIALIZATION_NVP( d_error_tol );
+  ar & BOOST_SERIALIZATION_NVP( d_max_number_of_iterations );
 }
 
 } // end Utility namespace

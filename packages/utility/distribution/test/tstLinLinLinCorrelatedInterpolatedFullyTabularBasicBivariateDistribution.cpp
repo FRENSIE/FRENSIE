@@ -168,7 +168,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Beyond the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        0.0 );
 
@@ -219,7 +219,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Beyond the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
@@ -234,10 +234,10 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0),
                        0.0 );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0),
                        10.0 );
 
@@ -285,10 +285,10 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0*MeV),
                        0.0*cgs::centimeter );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0*MeV),
                        10.0*cgs::centimeter );
 
@@ -346,7 +346,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
     // Create the secondary distribution in the first bin
     primary_grid[0] = 0.0;
     secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
-    
+
     // Create the secondary distribution in the second bin
     primary_grid[1] = 1.0;
     secondary_dists[1] = secondary_dists[0];
@@ -366,7 +366,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
     // Create the secondary distribution in the first bin
     primary_grid[0] = 1.0;
     secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
-    
+
     // Create the secondary distribution in the second bin
     primary_grid[1] = 2.0;
     secondary_dists[1] = secondary_dists[0];
@@ -424,7 +424,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution, evaluate 
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( -1.0, 0.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluate( -1.0, 5.0 ), 0.1 );
@@ -602,7 +602,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.1 );
@@ -697,7 +697,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
@@ -792,7 +792,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 5.0 ), 0.5 );
@@ -875,7 +875,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.5 );
@@ -955,7 +955,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -1094,7 +1094,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -1212,7 +1212,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1325,7 +1325,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1438,7 +1438,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -1597,7 +1597,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.5;
@@ -1756,7 +1756,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
 
   // Subrange
@@ -1882,7 +1882,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   std::vector<double> fake_stream( 3 );
 
 
@@ -1998,7 +1998,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_LinLinLin_correlated_interpolated_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
@@ -2028,7 +2028,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
 
   concrete_dist->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 0.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 5.0 ), 0.1 );
@@ -2087,9 +2087,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
     intermediate_base_dist;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
-  
+
   intermediate_base_dist->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 0.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 5.0 ), 0.1 );
@@ -2214,7 +2214,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedFullyTabularBasicBivaria
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_LinLinLin_correlated_unit_aware_interpolated_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 

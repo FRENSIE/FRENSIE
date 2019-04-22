@@ -259,22 +259,24 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LinLinLog )
+                   evaluateAngularGridAndPDF_LinLinLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 1.0;
+  double grid_convergence = 0.1;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -285,32 +287,34 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 79 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 94 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 79 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 94 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 3.5132603358279131e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.5730479931889207e+05 );
 
   // Test highest energy bin
   energy = 1.0e+5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 90 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -323,22 +327,24 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LinLinLin )
+                   evaluateAngularGridAndPDF_LinLinLin )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 1.0;
+  double grid_convergence = 0.2;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -349,32 +355,34 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 79 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 92 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.999999 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 79 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 92 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 4.1328742821075420e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.0425623618948285e+05 );
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LinLinLin,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 90 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -387,22 +395,24 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
 FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
-                   getAngularGridAndPDF_LogLogCosLog )
+                   evaluateAngularGridAndPDF_LogLogCosLog )
 {
   std::vector<double> angular_grid, evaluated_pdf;
   double evaluation_tol = 1e-7;
   double cutoff_angle_cosine = 0.9;
+  double grid_convergence = 0.1;
 
   // Test lowerest energy bin
   double energy = 1.0e-5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 2 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
@@ -414,32 +424,34 @@ FRENSIE_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test in between energy bins
   energy = 20.0;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
-  FRENSIE_CHECK_EQUAL( angular_grid.size(), 21 );
+  FRENSIE_CHECK_EQUAL( angular_grid.size(), 28 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );
   FRENSIE_CHECK_EQUAL( angular_grid.back(), 0.9 );
-  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 21 );
+  FRENSIE_CHECK_EQUAL( evaluated_pdf.size(), 28 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.front(), 3.5132603358279131e-08 );
   FRENSIE_CHECK_EQUAL( evaluated_pdf.back(), 3.0235502709952670e-04 );
 
   // Test highest energy bin
   energy = 1.0e5;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::evaluateAngularGridAndPDF<Utility::LogLogCosLog,Utility::Correlated>(
     angular_grid,
     evaluated_pdf,
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     energy,
     cutoff_angle_cosine,
-    evaluation_tol );
+    evaluation_tol,
+    grid_convergence );
 
   FRENSIE_CHECK_EQUAL( angular_grid.size(), 21 );
   FRENSIE_CHECK_EQUAL( angular_grid.front(), -1.0 );

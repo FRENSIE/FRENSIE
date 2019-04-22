@@ -342,7 +342,7 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
     def setUp(self):
       # Determine the database directory
       database_path = options.database
-      
+
       # Load the database
       database = Data.ScatteringCenterPropertiesDatabase( database_path )
 
@@ -369,6 +369,8 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
 
       # Create the unfilled model
       unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+
+      self.test_model = unfilled_model
 
       # Create the adjoint photon model
       properties = MonteCarlo.SimulationProperties()
@@ -456,6 +458,16 @@ class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
         source_component = ActiveRegion.StandardAdjointElectronSourceComponent( 1, 1.0, self.adjoint_electron_model, self.particle_distribution )
 
         self.assertEqual( source_component.getId(), 1 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 2, 1.0, self.test_model, self.particle_distribution, [0.1, 1.0] )
+
+        self.assertEqual( source_component.getId(), 2 )
         self.assertEqual( source_component.getSelectionWeight(), 1.0 )
 
         starting_cells = source_component.getStartingCells()

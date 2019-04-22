@@ -44,7 +44,7 @@ public:
       MonteCarlo::LOGLOGLOG_INTERPOLATION,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method =
       MonteCarlo::MODIFIED_TWO_D_UNION,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Constructor from Native data file
   ElectronElasticDataEvaluator(
@@ -60,12 +60,12 @@ public:
       MonteCarlo::LOGLOGLOG_INTERPOLATION,
     const MonteCarlo::CoupledElasticSamplingMethod sampling_method =
       MonteCarlo::MODIFIED_TWO_D_UNION,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Basic Constructor from Native data file
   ElectronElasticDataEvaluator(
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& data_container,
-    const bool generate_new_distribution_at_max_energy = false );
+    const bool generate_new_distribution_at_min_and_max_energy = false );
 
   //! Destructor
   ~ElectronElasticDataEvaluator()
@@ -119,14 +119,14 @@ public:
   //! Return the CoupledElasticSamplingMethod
   MonteCarlo::CoupledElasticSamplingMethod getCoupledElasticSamplingMethod() const;
 
-  //! Set generate new distribution at max energy off (off by default)
-  void setGenerateNewDistributionAtMaxEnergyOff();
+  //! Set generate new distribution at the min and max energy off (off by default)
+  void setGenerateNewDistributionAtMinAndMaxEnergyOff();
 
-  //! Set generate new distribution at max energy on (off by default)
-  void setGenerateNewDistributionAtMaxEnergyOn();
+  //! Set generate new distribution at the min and max energy on (off by default)
+  void setGenerateNewDistributionAtMinAndMaxEnergyOn();
 
-  //! Return if generate new distribution at max energy is on (off by default)
-  bool isGenerateNewDistributionAtMaxEnergyOn() const;
+  //! Return if generate new distribution at the min and max energy is on (off by default)
+  bool isGenerateNewDistributionAtMinAndMaxEnergyOn() const;
 
   //! Evaluate the electron elastic secondary distribution
   void evaluateElasticSecondaryDistribution(
@@ -135,7 +135,10 @@ public:
     std::map<double,std::vector<double> >& elastic_pdf,
     std::vector<double>& moment_preserving_cross_section_reduction,
     std::map<double,std::vector<double> >& moment_preserving_angles,
-    std::map<double,std::vector<double> >& moment_preserving_weights ) const;
+    std::map<double,std::vector<double> >& moment_preserving_weights,
+    const double grid_convergence_tol = 1e-3,
+    const double absolute_diff_tol = 1e-13,
+    const double distance_tol = 1e-13 ) const;
 
   //! Create the analog cutoff elastic cross section evaluator
   void createCutoffCrossSectionEvaluator(
@@ -167,7 +170,19 @@ protected:
   void evaluateAnalogElasticSecondaryDistribution(
     std::vector<double>& angular_energy_grid,
     std::map<double,std::vector<double> >& elastic_angle,
-    std::map<double,std::vector<double> >& elastic_pdf ) const;
+    std::map<double,std::vector<double> >& elastic_pdf,
+    const double grid_convergence_tol,
+    const double absolute_diff_tol,
+    const double distance_tol ) const;
+
+  // Evaluate the electron analog elastic secondary distribution on the angular energy grid
+  void evaluateAnalogElasticSecondaryDistributionInPlace(
+    const std::vector<double>& angular_energy_grid,
+    std::map<double,std::vector<double> >& elastic_angle,
+    std::map<double,std::vector<double> >& elastic_pdf,
+    const double grid_convergence_tol,
+    const double absolute_diff_tol,
+    const double distance_tol ) const;
 
   // Evaluate the electron moment preserving elastic secondary distribution
   void evaluateMomentPreservingElasticData(
@@ -248,7 +263,7 @@ private:
   std::map<double,std::vector<double> > d_elastic_pdf;
 
   // If true a new secondary distribution will be generated at the max energy
-  bool d_generate_new_distribution_at_max_energy;
+  bool d_generate_new_distribution_at_min_and_max_energy;
 
 };
 
