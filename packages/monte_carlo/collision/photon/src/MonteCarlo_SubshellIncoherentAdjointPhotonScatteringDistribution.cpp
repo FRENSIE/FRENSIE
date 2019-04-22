@@ -290,13 +290,23 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
   const double final_energy =
     MonteCarlo::calculateAdjointComptonLineEnergy( incoming_energy,
                                                    scattering_angle_cosine );
+
+  if( final_energy < d_binding_energy )
+  {
+    FRENSIE_LOG_WARNING( "final energy " << final_energy << " less than "
+                         "binding energy " << d_binding_energy << "!" );
+    
+    return 0.0;
+  }
+  else
+  {
+    const double pz_max =
+      MonteCarlo::calculateMaxElectronMomentumProjection( final_energy,
+                                                          d_binding_energy,
+                                                          scattering_angle_cosine );
   
-  const double pz_max =
-    MonteCarlo::calculateMaxElectronMomentumProjection( final_energy,
-                                                        d_binding_energy,
-                                                        scattering_angle_cosine );
-  
-  return this->evaluateOccupationNumber( pz_max );
+    return this->evaluateOccupationNumber( pz_max );
+  }
 }
 
 // Evaluate the max adjoint occupation number
