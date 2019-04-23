@@ -195,22 +195,22 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
                                                     scattering_angle_cosine ));
 
     // Calculate the pdf conversion value
-    // const double pdf_conversion =
-    //   adjoint_photon.getEnergy()/
-    //   (adjoint_compton_line_energy*
-    //    Utility::PhysicalConstants::electron_rest_mass_energy*
-    //    sqrt( energy_of_interest*energy_of_interest +
-    //          adjoint_photon.getEnergy()*adjoint_photon.getEnergy() -
-    //          2*energy_of_interest*adjoint_photon.getEnergy()*
-    //          scattering_angle_cosine ));
-
     const double pdf_conversion =
       adjoint_photon.getEnergy()/
       (adjoint_compton_line_energy*
+       Utility::PhysicalConstants::electron_rest_mass_energy*
        sqrt( energy_of_interest*energy_of_interest +
              adjoint_photon.getEnergy()*adjoint_photon.getEnergy() -
              2*energy_of_interest*adjoint_photon.getEnergy()*
              scattering_angle_cosine ));
+
+    // const double pdf_conversion =
+    //   adjoint_photon.getEnergy()/
+    //   (adjoint_compton_line_energy*
+    //    sqrt( energy_of_interest*energy_of_interest +
+    //          adjoint_photon.getEnergy()*adjoint_photon.getEnergy() -
+    //          2*energy_of_interest*adjoint_photon.getEnergy()*
+    //          scattering_angle_cosine ));
 
     // Calculate the probe weight multiplier
     const double weight_mult = pdf_conversion*
