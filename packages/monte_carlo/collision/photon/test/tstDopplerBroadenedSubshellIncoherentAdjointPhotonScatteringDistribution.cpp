@@ -401,8 +401,8 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-                          2.38437213137202253,
-                          1e-14 );
+                                   1.218411560475448630,
+                                   1e-14 );
 
   bank.pop();
 
@@ -411,8 +411,8 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
                        Utility::PhysicalConstants::electron_rest_mass_energy );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-                          0.055721926387480733,
-                          1e-14 );
+                                   2.847384365434673867e-02,
+                                   1e-14 );
 
   bank.pop();
 
@@ -420,8 +420,8 @@ FRENSIE_UNIT_TEST( DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDist
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
-                          0.0251673815641741128,
-                          1e-14 );
+                                   1.286050455011882553e-02,
+                                   1e-14 );
 
   bank.pop();
                        
