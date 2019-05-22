@@ -128,6 +128,18 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimension, toString )
   dimension_name = Utility::toString( MonteCarlo::WEIGHT_DIMENSION );
 
   FRENSIE_CHECK_EQUAL( dimension_name, "Weight Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::SOURCE_ENERGY_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Source Energy Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::SOURCE_TIME_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Source Time Dimension" );
+  
+  dimension_name = Utility::toString( MonteCarlo::SOURCE_WEIGHT_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Source Weight Dimension" );
 }
 
 //---------------------------------------------------------------------------//
@@ -195,6 +207,27 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimension, stream_operator )
   oss << MonteCarlo::WEIGHT_DIMENSION;
 
   FRENSIE_CHECK_EQUAL( oss.str(), "Weight Dimension" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << MonteCarlo::SOURCE_ENERGY_DIMENSION;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Source Energy Dimension" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << MonteCarlo::SOURCE_TIME_DIMENSION;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Source Time Dimension" );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << MonteCarlo::SOURCE_WEIGHT_DIMENSION;
+
+  FRENSIE_CHECK_EQUAL( oss.str(), "Source Weight Dimension" );
 }
 
 //---------------------------------------------------------------------------//
@@ -244,6 +277,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
     MonteCarlo::PhaseSpaceDimension dimension_9 =
       MonteCarlo::WEIGHT_DIMENSION;
 
+    MonteCarlo::PhaseSpaceDimension dimension_10 =
+      MonteCarlo::SOURCE_ENERGY_DIMENSION;
+    
+    MonteCarlo::PhaseSpaceDimension dimension_11 =
+      MonteCarlo::SOURCE_TIME_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_12 =
+      MonteCarlo::SOURCE_WEIGHT_DIMENSION;
+
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_1) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_2) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_3) );
@@ -253,6 +295,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_7) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_8) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_9) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_10) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_11) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_12) );
   }
 
   // Copy the archive ostream to an istream
@@ -265,7 +310,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
 
   MonteCarlo::PhaseSpaceDimension dimension_1, dimension_2, dimension_3,
     dimension_4, dimension_5, dimension_6, dimension_7, dimension_8,
-    dimension_9;
+    dimension_9, dimension_10, dimension_11, dimension_12;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_1) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_2) );
@@ -276,6 +321,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_7) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_8) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_9) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_10) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_11) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_12) );
 
   iarchive.reset();
 
@@ -288,6 +336,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   FRENSIE_CHECK_EQUAL( dimension_7, MonteCarlo::ENERGY_DIMENSION );
   FRENSIE_CHECK_EQUAL( dimension_8, MonteCarlo::TIME_DIMENSION );
   FRENSIE_CHECK_EQUAL( dimension_9, MonteCarlo::WEIGHT_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_10, MonteCarlo::SOURCE_ENERGY_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_11, MonteCarlo::SOURCE_TIME_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_12, MonteCarlo::SOURCE_WEIGHT_DIMENSION );
 }
 
 //---------------------------------------------------------------------------//

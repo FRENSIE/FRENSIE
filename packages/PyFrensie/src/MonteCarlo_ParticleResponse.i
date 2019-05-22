@@ -149,6 +149,9 @@ using namespace MonteCarlo;
 %pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
 %pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
 %pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_ENERGY_DIMENSION>, SourceEnergyParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_TIME_DIMENSION>, SourceTimeParticleResponseFunction)
+%pre_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_WEIGHT_DIMENSION>, SourceWeightParticleResponseFunction)
 
 // (use template instantiation typedefs as python %template names)
 %include "MonteCarlo_SinglePhaseSpaceDimensionParticleResponseFunction.hpp"
@@ -166,6 +169,9 @@ using namespace MonteCarlo;
 %post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::ENERGY_DIMENSION>, EnergyParticleResponseFunction)
 %post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::TIME_DIMENSION>, TimeParticleResponseFunction)
 %post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION>, WeightParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_ENERGY_DIMENSION>, SourceEnergyParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_TIME_DIMENSION>, SourceTimeParticleResponseFunction)
+%post_template_setup_helper( SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_WEIGHT_DIMENSION>, SourceWeightParticleResponseFunction)
 
 // ---------------------------------------------------------------------------//
 // Add FullPhaseSpaceParticleResponseFunction support

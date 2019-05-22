@@ -288,6 +288,45 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   { point.setEnergyCoordinateWeight( coord_weight ); }
 };
 
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::ENERGY_DIMENSION
+ * \ingroup phase_space_dimension_traits
+ */
+template<>
+struct PhaseSpaceDimensionTraits<SOURCE_ENERGY_DIMENSION>
+{
+  //! The type associated with this dimension
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
+
+  //! Get the dimension class type
+  static inline PhaseSpaceDimensionClass getClass()
+  { return ENERGY_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getSourceEnergy(); }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
+  { return point.getEnergyCoordinate(); }
+
+  //! Set the coordinate value
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
+  { point.setEnergyCoordinate( coord_value ); }
+
+  //! Get the coordinate weight
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
+  { return point.getEnergyCoordinateWeight(); }
+
+  //! Set the coordinate weight
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
+  { point.setEnergyCoordinateWeight( coord_weight ); }
+};
+
 /*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TIME_DIMENSION
  * \ingroup phase_space_dimension_traits
  */
@@ -307,6 +346,45 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const ParticleState& point )
   { return point.getTime(); }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
+  { return point.getTimeCoordinate(); }
+
+  //! Set the coordinate value
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
+  { point.setTimeCoordinate( coord_value ); }
+
+  //! Get the coordinate weight
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
+  { return point.getTimeCoordinateWeight(); }
+
+  //! Set the coordinate weight
+  static inline void setCoordinateWeight( PhaseSpacePoint& point,
+                                          const DimensionWeightType coord_weight )
+  { point.setTimeCoordinateWeight( coord_weight ); }
+};
+
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::TIME_DIMENSION
+ * \ingroup phase_space_dimension_traits
+ */
+template<>
+struct PhaseSpaceDimensionTraits<SOURCE_TIME_DIMENSION>
+{
+  //! The type associated with this dimension
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
+
+  //! Get the dimension class type
+  static inline PhaseSpaceDimensionClass getClass()
+  { return TIME_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getSourceTime(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
@@ -351,6 +429,56 @@ struct PhaseSpaceDimensionTraits<WEIGHT_DIMENSION>
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const ParticleState& point )
   { return point.getWeight(); }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
+  { return point.getWeightCoordinate(); }
+
+  //! Set the coordinate value
+  static inline void setCoordinate( PhaseSpacePoint& point,
+                                    const DimensionValueType coord_value )
+  { point.setWeightCoordinate( coord_value ); }
+
+  //! Get the coordinate weight
+  static inline DimensionWeightType getCoordinateWeight( const PhaseSpacePoint& point )
+  { return point.getWeightCoordinate(); }
+
+  //! Set the coordinate weight
+  static inline void setCoordinateWeight( PhaseSpacePoint&,
+                                          const DimensionWeightType coord_weight )
+  {
+    if( coord_weight != 1.0 )
+    {
+      FRENSIE_LOG_WARNING( "The weight coordinate cannot have a weight "
+                           "applied!" );
+    }
+  }
+};
+
+/*! Specialization of MonteCarlo::PhaseSpaceDimensionTraits for MonteCarlo::WEIGHT_DIMENSION
+ *
+ * Note that the weight dimension does not have an additional weight associated
+ * with it (the set/get coordinate weight methods call the same 
+ * MonteCarlo::PhaseSpacePoint method as the set/get coordinate
+ * methods).
+ * \ingroup phase_space_dimension_traits
+ */
+template<>
+struct PhaseSpaceDimensionTraits<SOURCE_WEIGHT_DIMENSION>
+{
+  //! The type associated with this dimension
+  typedef double DimensionValueType;
+
+  //! The type associated with this dimension weight
+  typedef double DimensionWeightType;
+
+  //! Get the dimension class type
+  static inline PhaseSpaceDimensionClass getClass()
+  { return WEIGHT_DIMENSION_CLASS; }
+
+  //! Get the coordinate value
+  static inline DimensionValueType getCoordinate( const ParticleState& point )
+  { return point.getSourceWeight(); }
 
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )

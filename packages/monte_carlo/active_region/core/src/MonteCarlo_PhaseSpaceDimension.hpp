@@ -33,6 +33,9 @@ enum PhaseSpaceDimension
   ENERGY_DIMENSION,
   TIME_DIMENSION,
   WEIGHT_DIMENSION,
+  SOURCE_ENERGY_DIMENSION,
+  SOURCE_TIME_DIMENSION,
+  SOURCE_WEIGHT_DIMENSION
 };
 
 //! Convert the spatial dimension to the equivalent phase space dimension
@@ -104,6 +107,9 @@ void serialize( Archive& archive,
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ENERGY_DIMENSION, int, type );
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::TIME_DIMENSION, int, type );
       BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::WEIGHT_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::SOURCE_ENERGY_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::SOURCE_TIME_DIMENSION, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::SOURCE_WEIGHT_DIMENSION, int, type );
 
       default:
       {
