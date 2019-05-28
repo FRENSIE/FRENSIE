@@ -184,7 +184,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
     // Evaluate the adjoint occupation number
     const double adjoint_occupation_number =
       this->evaluateAdjointOccupationNumber( adjoint_photon.getEnergy(),
-                                             energy_of_interest,
+                                             this->getMaxEnergy(),
                                              scattering_angle_cosine );
 
     // Calculate pz corresponding to the energy of interest
