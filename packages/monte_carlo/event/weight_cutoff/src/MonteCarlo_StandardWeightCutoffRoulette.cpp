@@ -84,7 +84,7 @@ void StandardWeightCutoffRoulette::rouletteParticleWeight( ParticleState& partic
       // Particle doesn't survive roulette (new weight = 0)
       if ( random_number > particle.getWeight()/survival_weight )
       {
-        particle.multiplyWeight( 0.0 );
+        //particle.multiplyWeight( 0.0 ); // this is not necessary
         particle.setAsGone();
       }
       // Particle survive roulette (new weight = survival_weight)

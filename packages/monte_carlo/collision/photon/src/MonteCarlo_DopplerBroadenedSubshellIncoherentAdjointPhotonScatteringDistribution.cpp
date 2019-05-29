@@ -204,8 +204,13 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
              scattering_angle_cosine ));
 
     // Calculate the probe weight multiplier
-    const double weight_mult = pdf_conversion*
+    double weight_mult = pdf_conversion*
       (d_compton_profile->evaluate( pz ).value()/adjoint_occupation_number);
+
+    // If the pz value is very large, the Compton profile will evaluate to 0.0.
+    // Set the weight to 1e-15 when this occurs
+    if( weight_mult == 0.0 )
+      weight_mult = 1e-15;
 
     // Create the probe with the desired energy and modified weight
     std::shared_ptr<AdjointPhotonProbeState> probe(

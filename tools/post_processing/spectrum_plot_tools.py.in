@@ -25,7 +25,8 @@ def plotSpectralDataWithErrors( frensie_data_name,
                                 legend_pos = None,
                                 output_plot_names = None,
                                 frensie_data_abrv = None,
-                                test_data_abrv = None ):
+                                test_data_abrv = None,
+                                y_log_spacing = None ):
 
     # Make sure that the FRENSIE data is a dictionary
     if not isinstance(frensie_data, dict):
@@ -95,6 +96,8 @@ def plotSpectralDataWithErrors( frensie_data_name,
     # Set up the top subplot
     if log_spacing:
         line1, = ax[0].semilogx( energy_mid_pts, test_normalized_mean, label=test_data_name )
+    elif not y_log_spacing is None:
+        line1, = ax[0].semilogy( energy_mid_pts, test_normalized_mean, label=test_data_name )
     else:
         line1, = ax[0].plot( energy_mid_pts, test_normalized_mean, label=test_data_name )
         
@@ -103,6 +106,8 @@ def plotSpectralDataWithErrors( frensie_data_name,
 
     if log_spacing:
         line2, = ax[0].semilogx( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+    elif not y_log_spacing is None:
+        line2, = ax[0].semilogy( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
     else:
         line2, = ax[0].plot( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
         

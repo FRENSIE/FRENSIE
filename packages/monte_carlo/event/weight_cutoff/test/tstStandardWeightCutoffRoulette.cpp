@@ -165,7 +165,7 @@ FRENSIE_UNIT_TEST( StandardWeightCutoffRoulette,
     photon.setWeight( 9e-16 );
     weight_roulette->rouletteParticleWeight( photon );
 
-    FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.0 );
+    //FRENSIE_CHECK_EQUAL( photon.getWeight(), 0.0 );
     FRENSIE_CHECK( photon.isGone() );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
@@ -197,7 +197,7 @@ FRENSIE_UNIT_TEST( StandardWeightCutoffRoulette,
     neutron.setWeight( 9e-16 );
     weight_roulette->rouletteParticleWeight( neutron );
 
-    FRENSIE_CHECK_EQUAL( neutron.getWeight(), 0.0 );
+    //FRENSIE_CHECK_EQUAL( neutron.getWeight(), 0.0 );
     FRENSIE_CHECK( neutron.isGone() );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
@@ -229,7 +229,7 @@ FRENSIE_UNIT_TEST( StandardWeightCutoffRoulette,
     electron.setWeight( 9e-16 );
     weight_roulette->rouletteParticleWeight( electron );
 
-    FRENSIE_CHECK_EQUAL( electron.getWeight(), 0.0 );
+    //FRENSIE_CHECK_EQUAL( electron.getWeight(), 0.0 );
     FRENSIE_CHECK( electron.isGone() );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
@@ -261,7 +261,7 @@ FRENSIE_UNIT_TEST( StandardWeightCutoffRoulette,
     positron.setWeight( 9e-16 );
     weight_roulette->rouletteParticleWeight( positron );
 
-    FRENSIE_CHECK_EQUAL( positron.getWeight(), 0.0 );
+    //FRENSIE_CHECK_EQUAL( positron.getWeight(), 0.0 );
     FRENSIE_CHECK( positron.isGone() );
 
     Utility::RandomNumberGenerator::unsetFakeStream();
