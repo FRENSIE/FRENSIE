@@ -174,7 +174,7 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotonScatteringDistribution,
 
   cross_section = base_distribution_s1->evaluateIntegratedCrossSection(20.0-0.08829, 1e-4);
   
-  FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.976575091589059546e-05, 1e-12 );
 
   cross_section = base_distribution_s1->evaluateIntegratedCrossSection(20.0, 1e-4);
   

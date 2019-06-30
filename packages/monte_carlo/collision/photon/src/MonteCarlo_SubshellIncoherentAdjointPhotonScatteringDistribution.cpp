@@ -269,8 +269,7 @@ bool SubshellIncoherentAdjointPhotonScatteringDistribution::isCrossSectionNonZer
     MonteCarlo::calculateAdjointComptonLineEnergy( incoming_energy,
                                                    scattering_angle_cosine );
   
-  return (incoming_energy < max_energy - d_binding_energy) &&
-    (outgoing_energy > d_binding_energy);
+  return outgoing_energy > d_binding_energy;
 }    
 
 // Evaluate the adjoint occupation number
@@ -281,7 +280,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >=
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
@@ -316,7 +315,7 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateMaxAdjoint
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= max_energy - d_binding_energy );
+  testPrecondition( incoming_energy <= max_energy );
 
   const double min_scattering_angle_cosine = 
     MonteCarlo::calculateMinScatteringAngleCosine( incoming_energy,
