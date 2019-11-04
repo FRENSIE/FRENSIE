@@ -56,11 +56,11 @@ SET(COLLISION_DATABASE_XML_FILE_TARGET monte_carlo_collision_database_xml)
 ADD_CUSTOM_TARGET(${COLLISION_DATABASE_XML_FILE_TARGET} ALL
   DEPENDS ${COLLISION_DATABASE_XML_FILE})
 
-ADD_SUBDIRECTORY(monte_carlo)
-INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/neutron/src monte_carlo/collision/photon/src monte_carlo/collision/electron/src monte_carlo/collision/kernel/src monte_carlo/active_region/core/src monte_carlo/active_region/response/src monte_carlo/active_region/source/src monte_carlo/event/core/src monte_carlo/event/estimator/src monte_carlo/event/particle_tracker/src monte_carlo/event/dispatcher/src monte_carlo/event/weight_windows/src monte_carlo/event/weight_cutoff/src monte_carlo/event/forced_collisions/src monte_carlo/manager/src )
+# ADD_SUBDIRECTORY(monte_carlo)
+# INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/neutron/src monte_carlo/collision/photon/src monte_carlo/collision/electron/src monte_carlo/collision/kernel/src monte_carlo/active_region/core/src monte_carlo/active_region/response/src monte_carlo/active_region/source/src monte_carlo/event/core/src monte_carlo/event/estimator/src monte_carlo/event/particle_tracker/src monte_carlo/event/dispatcher/src monte_carlo/event/weight_windows/src monte_carlo/event/weight_cutoff/src monte_carlo/event/forced_collisions/src monte_carlo/manager/src )
 
-ADD_SUBDIRECTORY(data_gen)
-INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
+# ADD_SUBDIRECTORY(data_gen)
+# INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
 
-ADD_SUBDIRECTORY(PyFrensie)
+# ADD_SUBDIRECTORY(PyFrensie)
 
