@@ -45,6 +45,58 @@ MACRO(__SET_ACE_LIBRARY_AVAILABILITY ACE_LIBRARY_NAME ACE_LIBRARY_AVAILABLE)
   
 ENDMACRO()
 
+# Replace ACE placeholder arguments in a string. Placeholder arguments are
+# acelibname:available, acelibname:filepath and acelibname:filestartline.
+# If the requested ACE library is available the placeholder arguments will
+# be replaced as follows:
+#  1001.70c:available     -> true
+#  1001.70c:filepath      -> /home/usr/mcnpdata/neutron/H.txt
+#  1001.70c:filestartline -> 1
+# If a requested library is not available the placeholder arguments will be
+# replaced as follows:
+#  1001.70c:available     -> false
+#  1001.70c:filepath      -> ''
+#  1001.70c:filestartline -> -1
+#
+# Example usage:
+#
+#  SET(MY_TARGET_STRING "--program_arg=1001.70c:filepath")
+#  REPLACE_ACE_PLACEHOLDER_ARGS(MY_TARGET_STRING)
+#
+#  SET(MY_TARGET_STRING "--program_arg=1001.70c:filepath")
+#  REPLACE_ACE_PLACEHOLDER_ARGS(MY_TARGET_STRING
+#    LIBRARY_NAMES 1001.70c)
+#   
+MACRO(REPLACE_ACE_PLACEHOLDER_ARGS TARGET_STRING)
+  SET(options)
+  SET(oneValueArgs)
+  SET(multiValueArgs LIBRARY_NAMES)
+  CMAKE_PARSE_ARGUMENTS(REPLACE_ACE_PLACEHOLDER_ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Check for unused parameters
+  IF(NOT "${REPLACE_ACE_PLACEHOLDER_ARGS_UNPARSED_ARGUMENTS}" STREQUAL "")
+    MESSAGE(WARNING "REPLACE_ACE_PLACEHOLDER_ARGS unused parameters = ${REPLACE_ACE_PLACEHOLDER_ARGS_UNPARSED_ARGUMENTS}")
+  ENDIF()
+
+  # Check if specific library names were specified
+  IF(NOT "${REPLACE_ACE_PLACEHOLDER_ARGS_LIBRARY_NAMES}" STREQUAL "")
+    SET(LIBRARY_NAMES_TO_USE ${REPLACE_ACE_PLACEHOLDER_ARGS_LIBRARY_NAMES})
+  ELSE()
+    SET(LIBRARY_NAMES_TO_USE ${CACHED_REQUESTED_ACE_LIBRARY_NAMES})
+  ENDIF()
+
+  FOREACH(LIBRARY_NAME ${LIBRARY_NAMES_TO_USE})
+    IS_ACE_LIBRARY_AVAILABLE(${LIBRARY_NAME} IS_LIB_AVAILABLE)
+    STRING(TOLOWER ${IS_LIB_AVAILABLE} IS_LIB_AVAILABLE)
+    GET_ACE_LIBRARY_FILE_PATH(${LIBRARY_NAME} ACE_LIB_FILE_PATH)
+    GET_ACE_LIBRARY_FILE_START_LINE(${LIBRARY_NAME} ACE_LIB_FILE_START_LINE)
+
+    STRING(REPLACE "${LIBRARY_NAME}:available" "${IS_LIB_AVAILABLE}" ${TARGET_STRING} "${${TARGET_STRING}}")
+    STRING(REPLACE "${LIBRARY_NAME}:filepath" "${ACE_LIB_FILE_PATH}" ${TARGET_STRING} "${${TARGET_STRING}}")
+    STRING(REPLACE "${LIBRARY_NAME}:filestartline" "${ACE_LIB_FILE_START_LINE}" ${TARGET_STRING} "${${TARGET_STRING}}")
+  ENDFOREACH()
+ENDMACRO()
+
 # Find the location of the requested ACE libraries by parsing the specified
 # xsdir file. If a requested library is found the following variables will be
 # set and cached (library name = 1001.70c):
@@ -159,9 +211,9 @@ MACRO(GET_ACE_LIBRARY_FILE_PATH ACE_LIBRARY_NAME FILE_PATH)
   __PARSE_ACE_LIBRARY_NAME(${ACE_LIBRARY_NAME} CACHED_ACE_LIBRARY_NAME)
 
   IF(NOT DEFINED ${CACHED_ACE_LIBRARY_NAME}_AVAILABLE)
-    SET(${FILE_PATH} "")
+    SET(${FILE_PATH} "undefined")
   ELSEIF(NOT ${CACHED_ACE_LIBRARY_NAME}_AVAILABLE)
-    SET(${FILE_PATH} "")
+    SET(${FILE_PATH} "undefined")
   ELSE()
     SET(${FILE_PATH} ${${CACHED_ACE_LIBRARY_NAME}_FILE_PATH})
   ENDIF()
@@ -183,3 +235,5 @@ MACRO(GET_ACE_LIBRARY_FILE_START_LINE ACE_LIBRARY_NAME FILE_START_LINE)
 
   UNSET(CACHED_ACE_LIBRARY_NAME)
 ENDMACRO()
+
+

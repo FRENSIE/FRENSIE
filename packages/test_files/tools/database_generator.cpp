@@ -21,93 +21,135 @@ using Utility::Units::amu;
 
 namespace Details{
 
-//! Add the "test_au_epr14_ace_file.txt" properties
+//! Add the 79000.14p properties
 void addTestAuEPR14ACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_b_electron_ace_file.txt" properties
-void addBElectronACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 5000.03e properties
+void addBElectronACEFile( const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_b_epr_ace_file.txt" properties
-void addBEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 5000.12p properties
+void addBEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_c12_photonuclear_ace_file.txt" properties
+//! Add the 6012.24u properties
 void addC12PhotonuclearACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
   
-//! Add the "test_c_epr_ace_file.txt" properties
-void addCEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 6000.12p properties
+void addCEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_grph_sab_ace_file.txt" properties
-void addGrphSabACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the grph.10t properties
+void addGrphSabACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_h1_ace_file.txt" properties
-void addH1ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 1001.70c properties
+void addH1ACEFile( const bool library_available,
+                   const std::string& library_filepath,
+                   const int library_filestartline,
                    Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_h2o_sab_ace_file.txt" properties
-void addH2OSabACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the lwtr.10t properties
+void addH2OSabACEFile( const bool library_available,
+                       const std::string& library_filepath,
+                       const int library_filestartline,
                        Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_h2_photonuclear_ace_file.txt" properties
+//! Add the 1002.24u properties
 void addH2PhotonuclearACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_h_epr14_ace_file.txt" properties
-void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 1000.14p properties
+void addHEPR14ACEFile( const bool library_available,
+                       const std::string& library_filepath,
+                       const int library_filestartline,
                        Data::ScatteringCenterPropertiesDatabase& database );
   
-//! Add the "test_h_epr_ace_file.txt" properties
-void addHEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 1000.12p properties
+void addHEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_poly_sab_ace_file.txt" properties
-void addPolySabACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the poly.10t properties
+void addPolySabACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_o16_ace_file.txt" properties
-void addO16ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 8016.70c properties
+void addO16ACEFile( const bool library_available,
+                    const std::string& library_filepath,
+                    const int library_filestartline,
                     Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_o_epr_ace_file.txt" properties
-void addOEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 8000.12p properties
+void addOEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_pb208_ace_file.txt" properties
-void addPb208ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 82208.70c properties
+void addPb208ACEFile( const bool library_available,
+                      const std::string& library_filepath,
+                      const int library_filestartline,
                       Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_pb_electron_ace_file.txt" properties
+//! Add the 82000.03e properties
 void addPbElectronACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_pb_epr14_ace_file.txt" properties
-void addPbEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 82000.14p properties
+void addPbEPR14ACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_pb_epr_ace_file.txt" properties
-void addPbEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 82000.12p properties
+void addPbEPRACEFile( const bool library_available,
+                      const std::string& library_filepath,
+                      const int library_filestartline,
                       Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_pb_photoatomic_ace_file.txt" properties
+//! Add the 82000.04p properties
 void addPbPhotoatomicACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_u238_ace_file.txt" properties
-void addU238ACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 92238.70c properties
+void addU238ACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
-//! Add the "test_u_epr_ace_file.txt" properties
-void addUEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+//! Add the 92000.12p properties
+void addUEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database );
 
 //! Add the "test_epr_1_native.xml" properties
@@ -147,69 +189,6 @@ void addPbNativeEPRFile( const boost::filesystem::path& native_test_data_dir,
                          Data::ScatteringCenterPropertiesDatabase& database );
 
 } // end Details namespace
-
-//! Add the ACE test files for H
-void addHACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                       Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addH1ACEFile( ace_test_data_dir, database );
-  Details::addH2OSabACEFile( ace_test_data_dir, database );
-  Details::addH2PhotonuclearACEFile( ace_test_data_dir, database );
-  Details::addHEPR14ACEFile( ace_test_data_dir, database );
-  Details::addHEPRACEFile( ace_test_data_dir, database );
-  Details::addPolySabACEFile( ace_test_data_dir, database );
-}
-
-//! Add the ACE test files for B
-void addBACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                       Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addBElectronACEFile( ace_test_data_dir, database );
-  Details::addBEPRACEFile( ace_test_data_dir, database );
-}
-
-//! Add the ACE test files for C
-void addCACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                       Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addC12PhotonuclearACEFile( ace_test_data_dir, database );
-  Details::addCEPRACEFile( ace_test_data_dir, database );
-  Details::addGrphSabACEFile( ace_test_data_dir, database );
-}
-
-//! Add the ACE test files for O
-void addOACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                       Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addO16ACEFile( ace_test_data_dir, database );
-  Details::addOEPRACEFile( ace_test_data_dir, database );
-}
-
-//! Add the test files for Au
-void addAuACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                        Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addTestAuEPR14ACEFile( ace_test_data_dir, database );
-}
-
-//! Add the ACE test files for Pb
-void addPbACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                        Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addPb208ACEFile( ace_test_data_dir, database );
-  Details::addPbElectronACEFile( ace_test_data_dir, database );
-  Details::addPbEPR14ACEFile( ace_test_data_dir, database );
-  Details::addPbEPRACEFile( ace_test_data_dir, database );
-  Details::addPbPhotoatomicACEFile( ace_test_data_dir, database );
-}
-
-//! Add the ACE test files for U
-void addUACETestFiles( const boost::filesystem::path& ace_test_data_dir,
-                       Data::ScatteringCenterPropertiesDatabase& database )
-{
-  Details::addU238ACEFile( ace_test_data_dir, database );
-  Details::addUEPRACEFile( ace_test_data_dir, database );
-}
 
 //! Add the Native test files for H
 void addHNativeTestFiles( const boost::filesystem::path& native_test_data_dir,
@@ -259,9 +238,195 @@ int main( int argc, char** argv )
     boost::program_options::options_description command_line_options;
     command_line_options.add_options()
       ("help,h", "produce help message")
-      ("ace_dir,a",
+      ("1000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 1000.12p ACE library is available")
+      ("1000_12p_filepath",
        boost::program_options::value<std::string>(),
-       "specify the relative location of the ace test data directory")
+       "specify the location of the 1000.12p ACE library")
+      ("1000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 1000.12p ACE library")
+      ("1000_14p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 1000.14p ACE library is available")
+      ("1000_14p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 1000.14p ACE library")
+      ("1000_14p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 1000.14p ACE library")
+      ("5000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 5000.12p ACE library is available")
+      ("5000_12p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 5000.12p ACE library")
+      ("5000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 5000.12p ACE library")
+      ("6000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 6000.12p ACE library is available")
+      ("6000_12p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 6000.12p ACE library")
+      ("6000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 6000.12p ACE library")
+      ("8000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 8000.12p ACE library is available")
+      ("8000_12p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 8000.12p ACE library")
+      ("8000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 8000.12p ACE library")
+      ("79000_14p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 79000.14p ACE library is available")
+      ("79000_14p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 79000.14p ACE library")
+      ("79000_14p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 79000.14p ACE library")
+      ("82000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 82000.12p ACE library is available")
+      ("82000_12p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 82000.12p ACE library")
+      ("82000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 82000.12p ACE library")
+      ("82000_14p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 82000.14p ACE library is available")
+      ("82000_14p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 82000.14p ACE library")
+      ("82000_14p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 82000.14p ACE library")
+      ("92000_12p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 92000.12p ACE library is available")
+      ("92000_12p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 92000.12p ACE library")
+      ("92000_12p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 92000.12p ACE library")
+      ("82000_04p_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 82000.04p ACE library is available")
+      ("82000_04p_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 82000.04p ACE library")
+      ("82000_04p_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 82000.04p ACE library")
+      ("5000_03e_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 5000.03e ACE library is available")
+      ("5000_03e_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 5000.03e ACE library")
+      ("5000_03e_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 5000.03e ACE library")
+      ("82000_03e_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 82000.03e ACE library is available")
+      ("82000_03e_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 82000.03e ACE library")
+      ("82000_03e_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 82000.03e ACE library")
+      ("1002_24u_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 1002.24u ACE library is available")
+      ("1002_24u_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 1002.24u ACE library")
+      ("1002_24u_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 1002.24u ACE library")
+      ("6012_24u_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 6012.24u ACE library is available")
+      ("6012_24u_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 6012.24u ACE library")
+      ("6012_24u_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 6012.24u ACE library")
+      ("1001_70c_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 1001.70c ACE library is available")
+      ("1001_70c_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 1001.70c ACE library")
+      ("1001_70c_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 1001.70c ACE library")
+      ("8016_70c_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 8016.70c ACE library is available")
+      ("8016_70c_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 8016.70c ACE library")
+      ("8016_70c_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 8016.70c ACE library")
+      ("82208_70c_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 82208.70c ACE library is available")
+      ("82208_70c_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 82208.70c ACE library")
+      ("82208_70c_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 82208.70c ACE library")
+      ("92238_70c_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the 92238.70c ACE library is available")
+      ("92238_70c_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the 92238.70c ACE library")
+      ("92238_70c_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the 92238.70c ACE library")
+      ("grph_10t_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the grph.10t ACE library is available")
+      ("grph_10t_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the grph.10t ACE library")
+      ("grph_10t_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the grph.10t ACE library")
+      ("lwtr_10t_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the lwtr.10t ACE library is available")
+      ("lwtr_10t_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the lwtr.10t ACE library")
+      ("lwtr_10t_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the lwtr.10t ACE library")
+      ("poly_10t_available",
+       boost::program_options::value<bool>()->default_value(false),
+       "specify if the poly.10t ACE library is available")
+      ("poly_10t_filepath",
+       boost::program_options::value<std::string>(),
+       "specify the location of the poly.10t ACE library")
+      ("poly_10t_filestartline",
+       boost::program_options::value<int>(),
+       "specify the file start line of the poly.10t ACE library")
       ("native_dir,n",
        boost::program_options::value<std::string>(),
        "specify the relative location of the native test data directory")
@@ -287,21 +452,6 @@ int main( int argc, char** argv )
                       "The database output file name cannot contain any "
                       "white space!" );
 
-  // Set the ace test data directory path
-  TEST_FOR_EXCEPTION( !command_line_arguments.count( "ace_dir" ),
-                      std::runtime_error,
-                      "The ace test data directory must be specified!" );
-
-  boost::filesystem::path ace_test_data_dir =
-    command_line_arguments["ace_dir"].as<std::string>();
-
-  TEST_FOR_EXCEPTION( !boost::filesystem::is_directory( ace_test_data_dir ),
-                      std::runtime_error,
-                      "The ace test data directory is not valid!" );
-
-  ace_test_data_dir = boost::filesystem::relative( ace_test_data_dir );
-                                                   
-
   // Set the native test data directory path
   TEST_FOR_EXCEPTION( !command_line_arguments.count( "native_dir" ),
                       std::runtime_error,
@@ -320,13 +470,96 @@ int main( int argc, char** argv )
   Data::ScatteringCenterPropertiesDatabase database;
   
   // Add the ace data properties
-  addHACETestFiles( ace_test_data_dir, database );
-  addBACETestFiles( ace_test_data_dir, database );
-  addCACETestFiles( ace_test_data_dir, database );
-  addOACETestFiles( ace_test_data_dir, database );
-  addAuACETestFiles( ace_test_data_dir, database );
-  addPbACETestFiles( ace_test_data_dir, database );
-  addUACETestFiles( ace_test_data_dir, database );
+  Details::addH1ACEFile( command_line_arguments["1001_70c_available"].as<bool>(),
+                         command_line_arguments["1001_70c_filepath"].as<std::string>(),
+                         command_line_arguments["1001_70c_filestartline"].as<int>(),
+                         database );
+  Details::addH2OSabACEFile( command_line_arguments["lwtr_10t_available"].as<bool>(),
+                             command_line_arguments["lwtr_10t_filepath"].as<std::string>(),
+                             command_line_arguments["lwtr_10t_filestartline"].as<int>(),
+                             database );
+  Details::addH2PhotonuclearACEFile( command_line_arguments["1002_24u_available"].as<bool>(),
+                                     command_line_arguments["1002_24u_filepath"].as<std::string>(),
+                                     command_line_arguments["1002_24u_filestartline"].as<int>(),
+                                     database );
+  Details::addHEPR14ACEFile( command_line_arguments["1000_14p_available"].as<bool>(),
+                             command_line_arguments["1000_14p_filepath"].as<std::string>(),
+                             command_line_arguments["1000_14p_filestartline"].as<int>(),
+                             database );
+  Details::addHEPRACEFile( command_line_arguments["1000_12p_available"].as<bool>(),
+                           command_line_arguments["1000_12p_filepath"].as<std::string>(),
+                           command_line_arguments["1000_12p_filestartline"].as<int>(),
+                           database );
+  Details::addPolySabACEFile( command_line_arguments["poly_10t_available"].as<bool>(),
+                              command_line_arguments["poly_10t_filepath"].as<std::string>(),
+                              command_line_arguments["poly_10t_filestartline"].as<int>(),
+                              database );
+
+  Details::addBElectronACEFile( command_line_arguments["5000_03e_available"].as<bool>(),
+                                command_line_arguments["5000_03e_filepath"].as<std::string>(),
+                                command_line_arguments["5000_03e_filestartline"].as<int>(),
+                                database );
+  Details::addBEPRACEFile( command_line_arguments["5000_12p_available"].as<bool>(),
+                           command_line_arguments["5000_12p_filepath"].as<std::string>(),
+                           command_line_arguments["5000_12p_filestartline"].as<int>(),
+                           database );
+
+  Details::addC12PhotonuclearACEFile( command_line_arguments["6012_24u_available"].as<bool>(),
+                                      command_line_arguments["6012_24u_filepath"].as<std::string>(),
+                                      command_line_arguments["6012_24u_filestartline"].as<int>(),
+                                      database );
+  Details::addCEPRACEFile( command_line_arguments["6000_12p_available"].as<bool>(),
+                           command_line_arguments["6000_12p_filepath"].as<std::string>(),
+                           command_line_arguments["6000_12p_filestartline"].as<int>(),
+                           database );
+  Details::addGrphSabACEFile( command_line_arguments["grph_10t_available"].as<bool>(),
+                              command_line_arguments["grph_10t_filepath"].as<std::string>(),
+                              command_line_arguments["grph_10t_filestartline"].as<int>(),
+                              database );
+
+  Details::addO16ACEFile( command_line_arguments["8016_70c_available"].as<bool>(),
+                          command_line_arguments["8016_70c_filepath"].as<std::string>(),
+                          command_line_arguments["8016_70c_filestartline"].as<int>(),
+                          database );
+  Details::addOEPRACEFile( command_line_arguments["8000_12p_available"].as<bool>(),
+                           command_line_arguments["8000_12p_filepath"].as<std::string>(),
+                           command_line_arguments["8000_12p_filestartline"].as<int>(),
+                           database );
+
+  Details::addTestAuEPR14ACEFile( command_line_arguments["79000_14p_available"].as<bool>(),
+                                  command_line_arguments["79000_14p_filepath"].as<std::string>(),
+                                  command_line_arguments["79000_14p_filestartline"].as<int>(),
+                                  database );
+
+  Details::addPb208ACEFile( command_line_arguments["82208_70c_available"].as<bool>(),
+                            command_line_arguments["82208_70c_filepath"].as<std::string>(),
+                            command_line_arguments["82208_70c_filestartline"].as<int>(),
+                            database );
+  Details::addPbElectronACEFile( command_line_arguments["82000_03e_available"].as<bool>(),
+                                 command_line_arguments["82000_03e_filepath"].as<std::string>(),
+                                 command_line_arguments["82000_03e_filestartline"].as<int>(),
+                                 database );
+  Details::addPbEPR14ACEFile( command_line_arguments["82000_14p_available"].as<bool>(),
+                              command_line_arguments["82000_14p_filepath"].as<std::string>(),
+                              command_line_arguments["82000_14p_filestartline"].as<int>(),
+                              database );
+  Details::addPbEPRACEFile( command_line_arguments["82000_12p_available"].as<bool>(),
+                            command_line_arguments["82000_12p_filepath"].as<std::string>(),
+                            command_line_arguments["82000_12p_filestartline"].as<int>(),
+                            database );
+  Details::addPbPhotoatomicACEFile( command_line_arguments["82000_04p_available"].as<bool>(),
+                                    command_line_arguments["82000_04p_filepath"].as<std::string>(),
+                                    command_line_arguments["82000_04p_filestartline"].as<int>(),
+                                    database );
+
+  Details::addU238ACEFile( command_line_arguments["92238_70c_available"].as<bool>(),
+                           command_line_arguments["92238_70c_filepath"].as<std::string>(),
+                           command_line_arguments["92238_70c_filestartline"].as<int>(),
+                           database );
+  Details::addUEPRACEFile( command_line_arguments["92000_12p_available"].as<bool>(),
+                           command_line_arguments["92000_12p_filepath"].as<std::string>(),
+                           command_line_arguments["92000_12p_filestartline"].as<int>(),
+                           database );
 
   // Add the native data properties
   addHNativeTestFiles( native_test_data_dir, database );
@@ -341,725 +574,851 @@ int main( int argc, char** argv )
 
 namespace Details{
 
-// Add the "test_au_epr14_ace_file.txt" properties
-void addTestAuEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 79000.14p properties
+void addTestAuEPR14ACEFile( const bool library_available,
+                            const std::string& library_filepath,
+                            const int library_filestartline,
                             Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_au_epr14_ace_file.txt";
-  
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_au_epr14_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  if( !database.doAtomPropertiesExist( Data::Au_ATOM ) )
-    database.initializeAtomProperties( Data::Au_ATOM, 195.275000 );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 79000.14p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
+
+    if( !database.doAtomPropertiesExist( Data::Au_ATOM ) )
+      database.initializeAtomProperties( Data::Au_ATOM, 195.275000 );
     
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Au_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Au_ATOM );
 
-  auto atomic_weight =
-    195.275000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "79000.14p" ) );
+    auto atomic_weight =
+      195.275000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
     
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "79000.14p" ) );
+    
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "79000.14p" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "79000.14p" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_b_electron_ace_file.txt" properties
-void addBElectronACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 5000.03e properties
+void addBElectronACEFile( const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_b_electron_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_b_electron_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 5000.03e data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
+    
+    if( !database.doAtomPropertiesExist( Data::B_ATOM ) )
+      database.initializeAtomProperties( Data::B_ATOM, 10.717168 );
+    
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::B_ATOM );
+    
+    auto atomic_weight =
+      10.717168*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "5000.03e" ) );
 
-  if( !database.doAtomPropertiesExist( Data::B_ATOM ) )
-    database.initializeAtomProperties( Data::B_ATOM, 10.717168 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::B_ATOM );
-
-  auto atomic_weight =
-    10.717168*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "5000.03e" ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_b_epr_ace_file.txt" properties
-void addBEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 5000.12p properties
+void addBEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_b_epr_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_b_epr_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 5000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::B_ATOM ) )
-    database.initializeAtomProperties( Data::B_ATOM, 10.717100 );
+    if( !database.doAtomPropertiesExist( Data::B_ATOM ) )
+      database.initializeAtomProperties( Data::B_ATOM, 10.717100 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::B_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::B_ATOM );
 
-  auto atomic_weight =
-    10.717100*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      10.717100*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "5000.12p" ) );
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "5000.12p" ) );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "5000.12p" ) );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "5000.12p" ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_c12_photonuclear_ace_file.txt" properties
+// Add the 6012.24u properties
 void addC12PhotonuclearACEFile(
-                           const boost::filesystem::path& ace_test_data_dir,
+                           const bool library_available,
+                           const std::string& library_filepath,
+                           const int library_filestartline,
                            Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_c12_photonuclear_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_c12_photonuclear_ace_file.txt\" data file "
-                      "could not be found (check ace test data directory "
-                      "path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 6012.24u data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 6012 ) )
-    database.initializeNuclideProperties( 6012, 11.896910 );
+    if( !database.doNuclidePropertiesExist( 6012 ) )
+      database.initializeNuclideProperties( 6012, 11.896910 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 6012 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 6012 );
 
-  auto atomic_weight =
-    11.896910*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      11.896910*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotonuclearDataProperties>
-    photonuclear_properties( new Data::ACEPhotonuclearDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "6012.24u" ) );
+    std::shared_ptr<const Data::PhotonuclearDataProperties>
+      photonuclear_properties( new Data::ACEPhotonuclearDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "6012.24u" ) );
 
-  nuclide_properties.setPhotonuclearDataProperties( photonuclear_properties );
+    nuclide_properties.setPhotonuclearDataProperties( photonuclear_properties );
+  }
 }
 
-// Add the "test_c_epr_ace_file.txt" properties
-void addCEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 6000.12p properties
+void addCEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_c_epr_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_c_epr_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 6000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::C_ATOM ) )
-    database.initializeAtomProperties( Data::C_ATOM, 11.907800 );
+    if( !database.doAtomPropertiesExist( Data::C_ATOM ) )
+      database.initializeAtomProperties( Data::C_ATOM, 11.907800 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::C_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::C_ATOM );
+    
+    auto atomic_weight =
+      11.907800*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                          atomic_weight,
+                                                          ace_test_data_file,
+                                                          library_filestartline,
+                                                          "6000.12p" ) );
 
-  auto atomic_weight =
-    11.907800*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "6000.12p" ) );
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "6000.12p" ) );
-
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
-
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "6000.12p" ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_grph_sab_ace_file.txt" properties
-void addGrphSabACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the grph.10t properties
+void addGrphSabACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_grph_sab_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_grph_sab_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The grph.10t data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  std::shared_ptr<const Data::ThermalNuclearDataProperties>
-    thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
-                                                            {6000, 6012, 6013},
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "grph.10t" ) );
+    std::shared_ptr<const Data::ThermalNuclearDataProperties>
+      thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
+                                                         {6000, 6012, 6013},
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "grph.10t" ) );
 
-  if( !database.doNuclidePropertiesExist( Data::C_ATOM ) )
-    database.initializeNuclideProperties( Data::C_ATOM, 11.907800 );
+    if( !database.doNuclidePropertiesExist( Data::C_ATOM ) )
+      database.initializeNuclideProperties( Data::C_ATOM, 11.907800 );
 
-  database.getNuclideProperties( Data::C_ATOM ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+    database.getNuclideProperties( Data::C_ATOM ).setThermalNuclearDataProperties( thermal_nuclear_properties );
 
-  if( !database.doNuclidePropertiesExist( 6012 ) )
-    database.initializeNuclideProperties( 6012, 11.89691424 );
+    if( !database.doNuclidePropertiesExist( 6012 ) )
+      database.initializeNuclideProperties( 6012, 11.89691424 );
 
-  database.getNuclideProperties( 6012 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+    database.getNuclideProperties( 6012 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
 
-  if( !database.doNuclidePropertiesExist( 6013 ) )
-    database.initializeNuclideProperties( 6013, 12.89164978 );
+    if( !database.doNuclidePropertiesExist( 6013 ) )
+      database.initializeNuclideProperties( 6013, 12.89164978 );
 
-  database.getNuclideProperties( 6013 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+    database.getNuclideProperties( 6013 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+  }
 }
 
-// Add the "test_h1_ace_file.txt" properties
-void addH1ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 1001.70c properties
+void addH1ACEFile( const bool library_available,
+                   const std::string& library_filepath,
+                   const int library_filestartline,
                    Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_h1_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h1_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 1001.70c data file ("
+                        << ace_test_data_file <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 1001 ) )
-    database.initializeNuclideProperties( 1001, 0.999167 );
+    if( !database.doNuclidePropertiesExist( 1001 ) )
+      database.initializeNuclideProperties( 1001, 0.999167 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 1001 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 1001 );
 
-  std::shared_ptr<const Data::NuclearDataProperties>
-    nuclear_properties( new Data::ACENuclearDataProperties( 0.999167,
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1001.70c" ) );
+    std::shared_ptr<const Data::NuclearDataProperties>
+      nuclear_properties( new Data::ACENuclearDataProperties(
+                                                         0.999167,
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1001.70c" ) );
   
-  nuclide_properties.setNuclearDataProperties( nuclear_properties );
+    nuclide_properties.setNuclearDataProperties( nuclear_properties );
+  }
 }
 
-// Add the "test_h2o_sab_ace_file.txt" properties
-void addH2OSabACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the lwtr.10t properties
+void addH2OSabACEFile( const bool library_available,
+                       const std::string& library_filepath,
+                       const int library_filestartline,
                        Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_h2o_sab_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h2o_sab_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The lwtr.10t data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  std::shared_ptr<const Data::ThermalNuclearDataProperties>
-    thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
-                                                            {1001},
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "lwtr.10t" ) );
+    std::shared_ptr<const Data::ThermalNuclearDataProperties>
+      thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
+                                                         {1001},
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "lwtr.10t" ) );
 
-  if( !database.doNuclidePropertiesExist( 1001 ) )
-    database.initializeNuclideProperties( 1001, 0.999167 );
+    if( !database.doNuclidePropertiesExist( 1001 ) )
+      database.initializeNuclideProperties( 1001, 0.999167 );
 
-  database.getNuclideProperties( 1001 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+    database.getNuclideProperties( 1001 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+  }
 }
 
-// Add the "test_h2_photonuclear_ace_file.txt" properties
+// Add the 1002.24u properties
 void addH2PhotonuclearACEFile(
-                           const boost::filesystem::path& ace_test_data_dir,
+                           const bool library_available,
+                           const std::string& library_filepath,
+                           const int library_filestartline,
                            Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_h2_photonuclear_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h2_photonuclear_ace_file.txt\" data file "
-                      "could not be found (check ace test data directory "
-                      "path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 1002.24u data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 1002 ) )
-    database.initializeNuclideProperties( 1002, 1.996300 );
+    if( !database.doNuclidePropertiesExist( 1002 ) )
+      database.initializeNuclideProperties( 1002, 1.996300 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 1002 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 1002 );
 
-  auto atomic_weight =
-    1.996300*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotonuclearDataProperties>
-    photonuclear_properties( new Data::ACEPhotonuclearDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1002.24u" ) );
+    auto atomic_weight =
+      1.996300*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    
+    std::shared_ptr<const Data::PhotonuclearDataProperties>
+      photonuclear_properties( new Data::ACEPhotonuclearDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1002.24u" ) );
   
-  nuclide_properties.setPhotonuclearDataProperties( photonuclear_properties );
+    nuclide_properties.setPhotonuclearDataProperties( photonuclear_properties );
+  }
 }
 
-// Add the "test_h_epr14_ace_file.txt" properties
-void addHEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 1000.14p properties
+void addHEPR14ACEFile( const bool library_available,
+                       const std::string& library_filepath,
+                       const int library_filestartline,
                        Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_h_epr14_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
   
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h_epr14_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
-
-  if( !database.doAtomPropertiesExist( Data::H_ATOM ) )
-    database.initializeAtomProperties( Data::H_ATOM, 0.999242 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::H_ATOM );
-
-  auto atomic_weight =
-    0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1000.14p" ) );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 1000.14p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
+  
+    if( !database.doAtomPropertiesExist( Data::H_ATOM ) )
+      database.initializeAtomProperties( Data::H_ATOM, 0.999242 );
     
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::H_ATOM );
+    
+    auto atomic_weight =
+      0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1000.14p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1000.14p" ) );
+    
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1000.14p" ) );
+
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
   
-// Add the "test_h_epr_ace_file.txt" properties
-void addHEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 1000.12p properties
+void addHEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_h_epr_ace_file.txt";
-  
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_h_epr_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
-
-  if( !database.doAtomPropertiesExist( Data::H_ATOM ) )
-    database.initializeAtomProperties( Data::H_ATOM, 0.999242 );
-
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::H_ATOM );
-
-  auto atomic_weight =
-    0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
-
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1000.12p" ) );
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
     
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 1000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
+    
+    if( !database.doAtomPropertiesExist( Data::H_ATOM ) )
+      database.initializeAtomProperties( Data::H_ATOM, 0.999242 );
+    
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::H_ATOM );
+    
+    auto atomic_weight =
+      0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1000.12p" ) );
+    
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "1000.12p" ) );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "1000.12p" ) );
-
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_poly_sab_ace_file.txt" properties
-void addPolySabACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the poly.10t properties
+void addPolySabACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_poly_sab_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_poly_sab_ace_file.txt\" data file could not "
-                      "be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The poly.10t data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  std::shared_ptr<const Data::ThermalNuclearDataProperties>
-    thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
-                                                            {1001},
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "poly.10t" ) );
-  if( !database.doNuclidePropertiesExist( 1001 ) )
-    database.initializeNuclideProperties( 1001, 0.999167 );
+    std::shared_ptr<const Data::ThermalNuclearDataProperties>
+      thermal_nuclear_properties( new Data::ACEThermalNuclearDataProperties(
+                                                         {1001},
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "poly.10t" ) );
+    if( !database.doNuclidePropertiesExist( 1001 ) )
+      database.initializeNuclideProperties( 1001, 0.999167 );
 
-  database.getNuclideProperties( 1001 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+    database.getNuclideProperties( 1001 ).setThermalNuclearDataProperties( thermal_nuclear_properties );
+  }
 }
 
-// Add the "test_o16_ace_file.txt" properties
-void addO16ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 8016.70c properties
+void addO16ACEFile( const bool library_available,
+                    const std::string& library_filepath,
+                    const int library_filestartline,
                     Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_o16_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_o16_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 8016.70c data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 8016 ) )
-    database.initializeNuclideProperties( 8016, 15.857510 );
+    if( !database.doNuclidePropertiesExist( 8016 ) )
+      database.initializeNuclideProperties( 8016, 15.857510 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 8016 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 8016 );
 
-  std::shared_ptr<const Data::NuclearDataProperties>
-    nuclear_properties( new Data::ACENuclearDataProperties( 15.857510,
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "8016.70c" ) );
+    std::shared_ptr<const Data::NuclearDataProperties>
+      nuclear_properties( new Data::ACENuclearDataProperties(
+                                                         15.857510,
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "8016.70c" ) );
   
-  nuclide_properties.setNuclearDataProperties( nuclear_properties );
+    nuclide_properties.setNuclearDataProperties( nuclear_properties );
+  }
 }
 
-// Add the "test_o_epr_ace_file.txt" properties
-void addOEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 8000.12p properties
+void addOEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_o_epr_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_o_epr_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 8000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::O_ATOM ) )
-    database.initializeAtomProperties( Data::O_ATOM, 15.862000 );
+    if( !database.doAtomPropertiesExist( Data::O_ATOM ) )
+      database.initializeAtomProperties( Data::O_ATOM, 15.862000 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::O_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::O_ATOM );
 
-  auto atomic_weight =
-    15.862000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      15.862000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "8000.12p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "8000.12p" ) );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "8000.12p" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "8000.12p" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_pb208_ace_file.txt" properties
-void addPb208ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 82208.70c properties
+void addPb208ACEFile( const bool library_available,
+                      const std::string& library_filepath,
+                      const int library_filestartline,
                       Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_pb208_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb208_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 82208.70c data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 82208 ) )
-    database.initializeNuclideProperties( 82208, 206.190000 );
+    if( !database.doNuclidePropertiesExist( 82208 ) )
+      database.initializeNuclideProperties( 82208, 206.190000 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 82208 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 82208 );
 
-  std::shared_ptr<const Data::NuclearDataProperties>
-    nuclear_properties( new Data::ACENuclearDataProperties( 206.190000,
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82208.70c" ) );
+    std::shared_ptr<const Data::NuclearDataProperties>
+      nuclear_properties( new Data::ACENuclearDataProperties(
+                                                         206.190000,
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82208.70c" ) );
   
-  nuclide_properties.setNuclearDataProperties( nuclear_properties );
+    nuclide_properties.setNuclearDataProperties( nuclear_properties );
+  }
 }
 
-// Add the "test_pb_electron_ace_file.txt" properties
-void addPbElectronACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
-                          Data::ScatteringCenterPropertiesDatabase& database )
+// Add the 82000.03e properties
+void addPbElectronACEFile( const bool library_available,
+                           const std::string& library_filepath,
+                           const int library_filestartline,
+                           Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_pb_electron_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb_electron_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 82000.03e data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
-    database.initializeAtomProperties( Data::Pb_ATOM, 205.436151 );
+    if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
+      database.initializeAtomProperties( Data::Pb_ATOM, 205.436151 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Pb_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Pb_ATOM );
 
-  auto atomic_weight =
-    205.436151*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      205.436151*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.03e" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.03e" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_pb_epr14_ace_file.txt" properties
-void addPbEPR14ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 82000.14p properties
+void addPbEPR14ACEFile( const bool library_available,
+                        const std::string& library_filepath,
+                        const int library_filestartline,
                         Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_pb_epr14_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb_epr14_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 82000.14p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
-    database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
+    if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
+      database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Pb_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Pb_ATOM );
 
-  auto atomic_weight =
-    205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.14p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.14p" ) );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.14p" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.14p" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_pb_epr_ace_file.txt" properties
-void addPbEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 82000.12p properties
+void addPbEPRACEFile( const bool library_available,
+                      const std::string& library_filepath,
+                      const int library_filestartline,
                       Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_pb_epr_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb_epr_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 82000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
-    database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
+    if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
+      database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Pb_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Pb_ATOM );
 
-  auto atomic_weight =
-    205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.12p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.12p" ) );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.12p" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.12p" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
-// Add the "test_pb_photoatomic_ace_file.txt" properties
+// Add the 82000.04p properties
 void addPbPhotoatomicACEFile(
-                          const boost::filesystem::path& ace_test_data_dir,
+                          const bool library_available,
+                          const std::string& library_filepath,
+                          const int library_filestartline,
                           Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_pb_photoatomic_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_pb_photoatomic_ace_file.txt\" data file "
-                      "could not be found (check ace test data directory "
-                      "path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 82000.04p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
-    database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
+    if( !database.doAtomPropertiesExist( Data::Pb_ATOM ) )
+      database.initializeAtomProperties( Data::Pb_ATOM, 205.420000 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::Pb_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Pb_ATOM );
 
-  auto atomic_weight =
-    205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      205.420000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "82000.04p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "82000.04p" ) );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+  }
 }
 
-// Add the "test_u238_ace_file.txt" properties
-void addU238ACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 92238.70c properties
+void addU238ACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_u238_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_u238_ace_file.txt\" data file could not be "
-                      "found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 92238.70c data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doNuclidePropertiesExist( 92238 ) )
-    database.initializeNuclideProperties( 92238, 236.005800 );
+    if( !database.doNuclidePropertiesExist( 92238 ) )
+      database.initializeNuclideProperties( 92238, 236.005800 );
 
-  Data::NuclideProperties& nuclide_properties =
-    database.getNuclideProperties( 92238 );
+    Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 92238 );
 
-  std::shared_ptr<const Data::NuclearDataProperties>
-    nuclear_properties( new Data::ACENuclearDataProperties( 236.005800,
-                                                            2.53010E-08*MeV,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "92238.70c" ) );
+    std::shared_ptr<const Data::NuclearDataProperties>
+      nuclear_properties( new Data::ACENuclearDataProperties(
+                                                         236.005800,
+                                                         2.53010E-08*MeV,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "92238.70c" ) );
   
-  nuclide_properties.setNuclearDataProperties( nuclear_properties );
+    nuclide_properties.setNuclearDataProperties( nuclear_properties );
+  }
 }
 
-// Add the "test_u_epr_ace_file.txt" properties
-void addUEPRACEFile( const boost::filesystem::path& ace_test_data_dir,
+// Add the 92000.12p properties
+void addUEPRACEFile( const bool library_available,
+                     const std::string& library_filepath,
+                     const int library_filestartline,
                      Data::ScatteringCenterPropertiesDatabase& database )
 {
-  boost::filesystem::path ace_test_data_file = ace_test_data_dir;
-  ace_test_data_file /= "test_u_epr_ace_file.txt";
+  if( library_available )
+  {
+    boost::filesystem::path ace_test_data_file = library_filepath;
+    ace_test_data_file = boost::filesystem::relative( ace_test_data_file );
 
-  TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
-                      std::runtime_error,
-                      "The \"test_u_epr_ace_file.txt\" data file could "
-                      "not be found (check ace test data directory path)!" );
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( ace_test_data_file ),
+                        std::runtime_error,
+                        "The 92000.12p data file ("
+                        << library_filepath <<
+                        ") could not be found!" );
 
-  if( !database.doAtomPropertiesExist( Data::U_ATOM ) )
-    database.initializeAtomProperties( Data::U_ATOM, 235.984000 );
+    if( !database.doAtomPropertiesExist( Data::U_ATOM ) )
+      database.initializeAtomProperties( Data::U_ATOM, 235.984000 );
 
-  Data::AtomProperties& atom_properties =
-    database.getAtomProperties( Data::U_ATOM );
+    Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::U_ATOM );
 
-  auto atomic_weight =
-    235.984000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+    auto atomic_weight =
+      235.984000*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
 
-  std::shared_ptr<const Data::PhotoatomicDataProperties>
-    photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "92000.12p" ) );
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
+      photoatomic_properties( new Data::ACEPhotoatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "92000.12p" ) );
 
-  atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
+    atom_properties.setPhotoatomicDataProperties( photoatomic_properties );
 
-  std::shared_ptr<const Data::ElectroatomicDataProperties>
-    electroatomic_properties( new Data::ACEElectroatomicDataProperties(
-                                                            atomic_weight,
-                                                            ace_test_data_file,
-                                                            1,
-                                                            "92000.12p" ) );
+    std::shared_ptr<const Data::ElectroatomicDataProperties>
+      electroatomic_properties( new Data::ACEElectroatomicDataProperties(
+                                                         atomic_weight,
+                                                         ace_test_data_file,
+                                                         library_filestartline,
+                                                         "92000.12p" ) );
 
-  atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+    atom_properties.setElectroatomicDataProperties( electroatomic_properties );
+  }
 }
 
 // Add the "test_epr_1_native.xml" properties
