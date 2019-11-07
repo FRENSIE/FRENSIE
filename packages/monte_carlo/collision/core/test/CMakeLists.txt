@@ -2,21 +2,28 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_core)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DetailedSubshellRelaxationModel DEPENDS tstDetailedSubshellRelaxationModel.cpp)
 FRENSIE_ADD_TEST(DetailedSubshellRelaxationModel
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DetailedAtomicRelaxationModel DEPENDS tstDetailedAtomicRelaxationModel.cpp)
 FRENSIE_ADD_TEST(DetailedAtomicRelaxationModel
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
-FRENSIE_ADD_TEST_EXECUTABLE(AtomicRelaxationModelFactory DEPENDS tstAtomicRelaxationModelFactory.cpp)
-FRENSIE_ADD_TEST(AtomicRelaxationModelFactory
+FRENSIE_ADD_TEST_EXECUTABLE(AtomicRelaxationModelFactoryACE DEPENDS tstAtomicRelaxationModelFactoryACE.cpp)
+FRENSIE_ADD_TEST(AtomicRelaxationModelFactoryACE
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AtomicRelaxationModelFactoryNative DEPENDS tstAtomicRelaxationModelFactoryNative.cpp)
+FRENSIE_ADD_TEST(AtomicRelaxationModelFactoryNative
+  EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 FRENSIE_ADD_TEST_EXECUTABLE(LabSystemConversionPolicy DEPENDS tstLabSystemConversionPolicy.cpp)
@@ -54,9 +61,10 @@ FRENSIE_ADD_TEST(AceLaw61NuclearScatteringDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(NuclearScatteringDistributionFactoryHelpers DEPENDS tstNuclearScatteringDistributionFactoryHelpers.cpp)
 FRENSIE_ADD_TEST(NuclearScatteringDistributionFactoryHelpers
+  ACE_LIB_DEPENDS 92238.70c
   EXTRA_ARGS
-  --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
-  --test_u238_ace_table=92238.70c)
+  --test_u238_ace_file=92238.70c:filepath
+  --test_u238_ace_file_start_line=92238.70c:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterDefinition DEPENDS tstScatteringCenterDefinition.cpp)
 FRENSIE_ADD_TEST(ScatteringCenterDefinition)

@@ -47,15 +47,17 @@ FRENSIE_ADD_TEST(StandardFormFactorSquared)
 
 FRENSIE_ADD_TEST_EXECUTABLE(CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution DEPENDS tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
 FRENSIE_ADD_TEST(CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution DEPENDS tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
 FRENSIE_ADD_TEST(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(StandardSubshellDopplerBroadenedPhotonEnergyDistribution DEPENDS tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution.cpp)
 FRENSIE_ADD_TEST(StandardSubshellDopplerBroadenedPhotonEnergyDistribution
@@ -77,21 +79,24 @@ FRENSIE_ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DetailedWHIncoherentPhotonScatteringDistribution DEPENDS tstDetailedWHIncoherentPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(DetailedWHIncoherentPhotonScatteringDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(WHIncoherentAdjointPhotonScatteringDistribution DEPENDS tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DopplerBroadenedHybridIncoherentPhotonScatteringDistribution DEPENDS tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(DopplerBroadenedHybridIncoherentPhotonScatteringDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(SubshellIncoherentPhotonScatteringDistribution DEPENDS tstSubshellIncoherentPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(SubshellIncoherentPhotonScatteringDistribution
@@ -118,15 +123,17 @@ FRENSIE_ADD_TEST(ThompsonScatteringDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(BasicCoherentScatteringDistribution DEPENDS tstBasicCoherentScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(BasicCoherentScatteringDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(EfficientCoherentScatteringDistribution DEPENDS tstEfficientCoherentScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(EfficientCoherentScatteringDistribution
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(LineEnergyAdjointPhotonScatteringDistribution DEPENDS tstLineEnergyAdjointPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(LineEnergyAdjointPhotonScatteringDistribution
@@ -139,9 +146,10 @@ FRENSIE_ADD_TEST(LineEnergyAdjointPhotonScatteringDistribution
 
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentPhotonScatteringDistributionACEFactory DEPENDS tstIncoherentPhotonScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(IncoherentPhotonScatteringDistributionACEFactory
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentPhotonScatteringDistributionNativeFactory DEPENDS tstIncoherentPhotonScatteringDistributionNativeFactory.cpp)
 FRENSIE_ADD_TEST(IncoherentPhotonScatteringDistributionNativeFactory
@@ -160,9 +168,10 @@ FRENSIE_ADD_TEST(LineEnergyAdjointPhotonScatteringDistributionNativeFactory
 
 FRENSIE_ADD_TEST_EXECUTABLE(CoherentScatteringDistributionACEFactory DEPENDS tstCoherentScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(CoherentScatteringDistributionACEFactory
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(CoherentScatteringDistributionNativeFactory DEPENDS tstCoherentScatteringDistributionNativeFactory.cpp)
 FRENSIE_ADD_TEST(CoherentScatteringDistributionNativeFactory
@@ -171,15 +180,17 @@ FRENSIE_ADD_TEST(CoherentScatteringDistributionNativeFactory
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonuclearScatteringDistributionACEFactory DEPENDS tstPhotonuclearScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotonuclearScatteringDistributionACEFactory
+  ACE_LIB_DEPENDS 6012.24u
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt
-  --test_ace_table=6012.24u )
+  --test_ace_file=6012.24u:filepath
+  --test_ace_file_start_line=6012.24u:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonuclearNeutronScatteringDistributionACEFactory DEPENDS tstPhotonuclearNeutronScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory
+  ACE_LIB_DEPENDS 1002.24u
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt
-  --test_ace_table=1002.24u )
+  --test_ace_file=1002.24u:filepath
+  --test_ace_file_start_line=1002.24u:filestartline)
 
 ##---------------------------------------------------------------------------##
 ## Reaction tests
@@ -187,15 +198,17 @@ FRENSIE_ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory
 
 FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotoatomicReaction DEPENDS tstStandardPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(StandardPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.04p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt
-  --test_ace_table=82000.04p)
+  --test_ace_file=82000.04p:filepath
+  --test_ace_file_start_line=82000.04p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PairProductionPhotoatomicReaction DEPENDS tstPairProductionPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(PairProductionPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.04p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt
-  --test_ace_table=82000.04p)
+  --test_ace_file=82000.04p:filepath
+  --test_ace_file_start_line=82000.04p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(TripletProductionPhotoatomicReaction DEPENDS tstTripletProductionPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(TripletProductionPhotoatomicReaction
@@ -204,9 +217,10 @@ FRENSIE_ADD_TEST(TripletProductionPhotoatomicReaction
 
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentPhotoatomicReaction DEPENDS tstIncoherentPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(IncoherentPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointPhotoatomicReaction DEPENDS tstIncoherentAdjointPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(IncoherentAdjointPhotoatomicReaction
@@ -225,9 +239,10 @@ FRENSIE_ADD_TEST(SubshellIncoherentAdjointPhotoatomicReaction
 
 FRENSIE_ADD_TEST_EXECUTABLE(CoherentPhotoatomicReaction DEPENDS tstCoherentPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(CoherentPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(CoherentAdjointPhotoatomicReaction DEPENDS tstCoherentAdjointPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(CoherentAdjointPhotoatomicReaction
@@ -236,15 +251,17 @@ FRENSIE_ADD_TEST(CoherentAdjointPhotoatomicReaction
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoelectricPhotoatomicReaction DEPENDS tstPhotoelectricPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(PhotoelectricPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(SubshellPhotoelectricPhotoatomicReaction DEPENDS tstSubshellPhotoelectricPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(SubshellPhotoelectricPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(LineEnergyAdjointPhotoatomicReaction DEPENDS tstLineEnergyAdjointPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(LineEnergyAdjointPhotoatomicReaction
@@ -253,17 +270,24 @@ FRENSIE_ADD_TEST(LineEnergyAdjointPhotoatomicReaction
 
 FRENSIE_ADD_TEST_EXECUTABLE(AbsorptionPhotoatomicReaction DEPENDS tstAbsorptionPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(AbsorptionPhotoatomicReaction
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
-FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotonuclearReaction DEPENDS tstStandardPhotonuclearReaction.cpp)
-FRENSIE_ADD_TEST(StandardPhotonuclearReaction
+FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotonuclearReactionH2 DEPENDS tstStandardPhotonuclearReactionH2.cpp)
+FRENSIE_ADD_TEST(StandardPhotonuclearReactionH2
+  ACE_LIB_DEPENDS 1002.24u
   EXTRA_ARGS
-  --h2_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt
-  --h2_ace_table=1002.24u
-  --c12_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt
-  --c12_ace_table=6012.24u)
+  --h2_ace_file=1002.24u:filepath
+  --h2_ace_file_start_line=1002.24u:filestartline)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotonuclearReactionC12 DEPENDS tstStandardPhotonuclearReactionC12.cpp)
+FRENSIE_ADD_TEST(StandardPhotonuclearReactionC12
+  ACE_LIB_DEPENDS 6012.24u
+  EXTRA_ARGS
+  --c12_ace_file=6012.24u:filepath
+  --c12_ace_file_start_line=6012.24u:filestartline)
 
 ##---------------------------------------------------------------------------##
 ## Reaction factory tests
