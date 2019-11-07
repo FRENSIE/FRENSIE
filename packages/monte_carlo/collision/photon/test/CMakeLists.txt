@@ -295,9 +295,10 @@ FRENSIE_ADD_TEST(StandardPhotonuclearReactionC12
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionACEFactory DEPENDS tstPhotoatomicReactionACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionACEFactory
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionNativeFactory DEPENDS tstPhotoatomicReactionNativeFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionNativeFactory
@@ -315,9 +316,10 @@ FRENSIE_ADD_TEST(AdjointPhotoatomicReactionNativeFactory
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomCore DEPENDS tstPhotoatomCore.cpp)
 FRENSIE_ADD_TEST(PhotoatomCore
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomCore DEPENDS tstAdjointPhotoatomCore.cpp)
 FRENSIE_ADD_TEST(AdjointPhotoatomCore
@@ -326,9 +328,10 @@ FRENSIE_ADD_TEST(AdjointPhotoatomCore
 
 FRENSIE_ADD_TEST_EXECUTABLE(Photoatom DEPENDS tstPhotoatom.cpp)
 FRENSIE_ADD_TEST(Photoatom
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatom DEPENDS tstAdjointPhotoatom.cpp)
 FRENSIE_ADD_TEST(AdjointPhotoatom
@@ -341,9 +344,10 @@ FRENSIE_ADD_TEST(AdjointPhotoatom
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomACEFactory DEPENDS tstPhotoatomACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomACEFactory
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
-  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
-  --test_ace_table=82000.12p)
+  --test_ace_file=82000.12p:filepath
+  --test_ace_file_start_line=82000.12p:filestartline)
 
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomNativeFactory DEPENDS tstAdjointPhotoatomNativeFactory.cpp)
   FRENSIE_ADD_TEST(AdjointPhotoatomNativeFactory
@@ -354,6 +358,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomFactory
   DEPENDS tstPhotoatomFactory.cpp
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
 FRENSIE_ADD_TEST(PhotoatomFactory
+  ACE_LIB_DEPENDS 1000.12p 82000.12p
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
@@ -372,6 +377,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(PhotonMaterial
   DEPENDS tstPhotonMaterial.cpp
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
 FRENSIE_ADD_TEST(PhotonMaterial
+  ACE_LIB_DEPENDS 82000.12p
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
