@@ -10,6 +10,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(MaterialParticleResponseFunction
   DEPENDS tstMaterialParticleResponseFunction
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
 FRENSIE_ADD_TEST(MaterialParticleResponseFunction
+  ACE_LIB_DEPENDS 8000.12p
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
@@ -17,6 +18,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(MaterialComponentParticleResponseFunction
   DEPENDS tstMaterialComponentParticleResponseFunction
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
 FRENSIE_ADD_TEST(MaterialComponentParticleResponseFunction
+  ACE_LIB_DEPENDS 8000.12p
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
