@@ -58,25 +58,26 @@ FRENSIE_UNIT_TEST( DecoupledCrossSectionBasedPhotonProductionReaction, getCrossS
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_basic_ace_file_name;
-std::string test_basic_ace_table_name;
+unsigned test_basic_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_file",
                                         test_basic_ace_file_name, "",
                                         "Test basic ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_table",
-                                        test_basic_ace_table_name, "",
-                                        "Test basic ACE table name in basic ACE file" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_file_start_line",
+                                        test_basic_ace_file_start_line, 1,
+                                        "Test basic ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the ace file handler
   std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
-                           new Data::ACEFileHandler( test_basic_ace_file_name,
-						     test_basic_ace_table_name,
-						     1u ) );
+                  new Data::ACEFileHandler( test_basic_ace_file_name,
+                                            "1001.70c",
+					    test_basic_ace_file_start_line ) );
 
   // Create the XSS data extractor
   std::unique_ptr<Data::XSSNeutronDataExtractor> xss_data_extractor(
@@ -86,7 +87,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   // Create the photon production nuclear scattering distribution ACE factory
   MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
-    photon_production_dist_factory( test_basic_ace_file_name,
+    photon_production_dist_factory( "1001.70c",
                                     ace_file_handler->getTableAtomicWeightRatio(),
                                     *xss_data_extractor );
 

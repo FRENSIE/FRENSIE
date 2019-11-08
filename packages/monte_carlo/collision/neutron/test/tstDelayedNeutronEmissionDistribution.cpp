@@ -54,16 +54,17 @@ FRENSIE_UNIT_TEST( DelayedNeutronEmissionDistribution, scatterNeutron )
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_u238_ace_file_name;
-std::string test_u238_ace_table_name;
+unsigned test_u238_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_u238_ace_file",
                                         test_u238_ace_file_name, "",
                                         "Test U238 ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_u238_ace_table",
-                                        test_u238_ace_table_name, "",
-                                        "Test U238 ACE table name in basic ACE file" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_u238_ace_file_start_line",
+                                        test_u238_ace_file_start_line, 1,
+                                        "Test U238 ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -71,8 +72,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Initialize ace file handler, data extractor and multiplicity factory
   std::unique_ptr<Data::ACEFileHandler>
     ace_file_handler( new Data::ACEFileHandler( test_u238_ace_file_name,
-                                                test_u238_ace_table_name,
-                                                1u ) );
+                                                "92238.70c",
+                                                test_u238_ace_file_start_line ) );
 
   std::unique_ptr<Data::XSSNeutronDataExtractor>
     xss_data_extractor( new Data::XSSNeutronDataExtractor(

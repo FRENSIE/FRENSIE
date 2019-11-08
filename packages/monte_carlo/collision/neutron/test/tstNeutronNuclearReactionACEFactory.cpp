@@ -283,32 +283,33 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createAbsorptionReactio
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_h1_ace_file_name, test_h1_ace_table_name;
-std::string test_o16_ace_file_name, test_o16_ace_table_name;
+std::string test_h1_ace_file_name, test_o16_ace_file_name;
+unsigned test_h1_ace_file_start_line, test_o16_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_file",
                                          test_h1_ace_file_name, "",
                                          "Test h1 ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_table",
-                                        test_h1_ace_table_name, "",
-                                        "Test ACE table name in h1 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_file_start_line",
+                                         test_h1_ace_file_start_line, 1,
+                                         "Test h1 ACE file start line" );
 
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_file",
                                         test_o16_ace_file_name, "",
                                         "Test o16 ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_table",
-                                        test_o16_ace_table_name, "",
-                                        "Test ACE table name in o16 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_file_start_line",
+                                        test_o16_ace_file_start_line, 1,
+                                        "Test o16 ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the H-1 file handler, data extractor and energy grid
-  h1_ace_file_handler.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
-                                                       test_h1_ace_table_name,
-                                                       1u ) );
+  h1_ace_file_handler.reset(
+                     new Data::ACEFileHandler( test_h1_ace_file_name,
+                                               "1001.70c",
+                                               test_h1_ace_file_start_line ) );
 
   h1_xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
                                    h1_ace_file_handler->getTableNXSArray(),
@@ -324,9 +325,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                h1_energy_grid->size()/100+1) );
 
   // Create the O-16 file handler, data extractor and energy grid
-  o16_ace_file_handler.reset( new Data::ACEFileHandler(test_o16_ace_file_name,
-                                                       test_o16_ace_table_name,
-                                                       1u ) );
+  o16_ace_file_handler.reset(
+                    new Data::ACEFileHandler( test_o16_ace_file_name,
+                                              "8016.70c",
+                                              test_o16_ace_file_start_line ) );
 
   o16_xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
                                   o16_ace_file_handler->getTableNXSArray(),
