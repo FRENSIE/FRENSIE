@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstPositronatomEPR14FACTORY.cpp
+//! \file   tstPositronatomEPR14Factory.cpp
 //! \author Luke Kersting
 //! \brief  Positronatom factory using EPR14 data unit tests
 //!
@@ -816,16 +816,18 @@ FRENSIE_UNIT_TEST( PositronatomACEFactory, createPositronatom_no_atomic_excitati
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name;
+std::string test_ace_file_name;
+unsigned test_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
                                         test_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
-                                        test_ace_table_name, "",
-                                        "Test ACE table name" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file_start_line",
+                                        test_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -834,8 +836,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create a file handler and data extractor
     std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace_file_name,
-                                  test_ace_table_name,
-                                  1u ) );
+                                  "82000.14p",
+                                  test_ace_file_start_line ) );
+    
     xss_data_extractor.reset(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
@@ -848,7 +851,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
            1e-5,
            true );
 
-    positronatom_name = test_ace_table_name;
+    positronatom_name = "82000.14p";
     atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
       Utility::PhysicalConstants::neutron_rest_mass_amu;
   }
@@ -857,5 +860,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstPositronatomEPR14FACTORY.cpp
+// end tstPositronatomEPR14Factory.cpp
 //---------------------------------------------------------------------------//

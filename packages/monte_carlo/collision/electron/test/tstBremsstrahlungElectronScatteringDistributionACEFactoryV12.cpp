@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBremsstrahlungElectronScatteringDistributionACEFactory.cpp
+//! \file   tstBremsstrahlungElectronScatteringDistributionACEFactoryV12.cpp
 //! \author Luke Kersting
 //! \brief  bremsstrahlung scattering distribution ACE factory unit tests
 //!
@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  dipole_distribution, twobs_distribution, epr14_distribution;
+  dipole_distribution, twobs_distribution;
 
 
 //---------------------------------------------------------------------------//
@@ -48,19 +48,6 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                                photon_angle_cosine );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
-
-  // sample using the eprdata14 file
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  epr14_distribution->sample( incoming_energy,
-                              photon_energy,
-                              photon_angle_cosine );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  // Test
-  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 5.9272490590767779e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,21 +76,6 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
   FRENSIE_CHECK_EQUAL( trials, 11 );
-
-  // sample using the eprdata14 file
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  epr14_distribution->sampleAndRecordTrials( incoming_energy,
-                                             photon_energy,
-                                             photon_angle_cosine,
-                                             trials );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  // Test
-  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02, 1e-12 );
-  FRENSIE_CHECK_EQUAL( trials, 12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -173,34 +145,27 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace12_file_name, test_ace12_table_name,
-            test_ace14_file_name, test_ace14_table_name;
+std::string test_ace12_file_name;
+unsigned test_ace12_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_file",
                                         test_ace12_file_name, "",
                                         "Test ACE12 file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_table",
-                                        test_ace12_table_name, "",
-                                        "Test ACE12 table name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_file",
-                                        test_ace14_file_name, "",
-                                        "Test ACE14 file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_table",
-                                        test_ace14_table_name, "",
-                                        "Test ACE14 table name" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_file_start_line",
+                                        test_ace12_file_start_line, 1,
+                                        "Test ACE12 file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Create the distributions using the eprdata14 file
-  {
   // Create a file handler and data extractor
   std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace12_file_name,
-                                  test_ace12_table_name,
-                                  1u ) );
+                                  "82000.12p",
+                                  test_ace12_file_start_line ) );
 
   std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -215,25 +180,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                     xss_data_extractor->extractAtomicNumber(),
                                     *xss_data_extractor,
                                     twobs_distribution );
-  }
-
-  // Create the distribution using the eprdata14 file
-  {
-  // Create a file handler and data extractor
-  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
-        new Data::ACEFileHandler( test_ace14_file_name,
-                                  test_ace14_table_name,
-                                  1u ) );
-
-  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
-        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
-                                       ace_file_handler->getTableJXSArray(),
-                                       ace_file_handler->getTableXSSArray() ) );
-
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
-                                    *xss_data_extractor,
-                                    epr14_distribution );
-  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -242,5 +188,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstBremsstrahlungElectronScatteringDistributionACEFactory.cpp
+// end tstBremsstrahlungElectronScatteringDistributionACEFactoryV14.cpp
 //---------------------------------------------------------------------------//

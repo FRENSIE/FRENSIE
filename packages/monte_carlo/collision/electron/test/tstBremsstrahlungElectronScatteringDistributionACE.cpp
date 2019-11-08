@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBremsstrahlungElectronScatteringDistribution.cpp
+//! \file   tstBremsstrahlungElectronScatteringDistributionACE.cpp
 //! \author Luke Kersting
 //! \brief  Bremsstrahlung electron scattering distribution unit tests
 //!
@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  ace_dipole_brem_dist, twobs_brem_dist, native_brem_dist;
+  ace_dipole_brem_dist, twobs_brem_dist;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -59,20 +59,6 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_ace )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be evaluated for a given incoming and knock-on energy
-FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_native )
-{
-  double pdf = native_brem_dist->evaluate( 0.02, 1.0e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4075092621554539e+05, 1e-12 );
-
-  pdf = native_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.6884672502034462e+01, 1e-12 );
-
-  pdf = native_brem_dist->evaluate( 1.0e5, 2.0e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.50132e-06, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF_ace )
 {
@@ -85,21 +71,6 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF_ace
 
   pdf = twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the PDF can be evaluated for a given incoming and knock-on energy
-FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-                   evaluatePDF_native )
-{
-  double pdf = native_brem_dist->evaluatePDF( 0.02, 1.0e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4075092855101428e+05, 1e-12 );
-
-  pdf = native_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 6.6884671036581750e+01, 1e-12 );
-
-  pdf = native_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.5013204641704462e-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -116,21 +87,6 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   cdf = twobs_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
   FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the CDF can be evaluated for a given incoming and knock-on energy
-FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-                   evaluateCDF_native )
-{
-  double cdf = native_brem_dist->evaluateCDF( 0.02, 1.0e-7 );
-  FRENSIE_CHECK_SMALL( cdf, 1e-12 );
-
-  cdf = native_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
-
-  cdf = native_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.5771054298946046e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -418,143 +374,91 @@ FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name;
-std::string test_native_file_name;
+std::string test_ace_file_name;
+unsigned test_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
                                         test_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
-                                        test_ace_table_name, "",
-                                        "Test ACE table name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
-                                        test_native_file_name, "",
-                                        "Test Native file name" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file_start_line",
+                                        test_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Create the ACE Distributions
-  {
-    // Create a file handler and data extractor
-    std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
-                                  new Data::ACEFileHandler( test_ace_file_name,
-                                                            test_ace_table_name,
-                                                            1u ) );
-    std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
+  // Create a file handler and data extractor
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
+                        new Data::ACEFileHandler( test_ace_file_name,
+                                                  "82000.12p",
+                                                  test_ace_file_start_line ) );
+  
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                               new Data::XSSEPRDataExtractor(
                                         ace_file_handler->getTableNXSArray(),
                                         ace_file_handler->getTableJXSArray(),
                                         ace_file_handler->getTableXSSArray() ) );
 
-    // Extract the elastic scattering information data block (BREMI)
-    Utility::ArrayView<const double> bremi_block(
+  // Extract the elastic scattering information data block (BREMI)
+  Utility::ArrayView<const double> bremi_block(
                                         xss_data_extractor->extractBREMIBlock() );
 
-    // Extract the number of tabulated distributions
-    int N = bremi_block.size()/3;
+  // Extract the number of tabulated distributions
+  int N = bremi_block.size()/3;
+  
+  // Extract the electron energy grid for bremsstrahlung energy distributions
+  std::vector<double> energy_grid(bremi_block(0,N));
+  
+  // Extract the table lengths for bremsstrahlung energy distributions
+  std::vector<double> table_length(bremi_block(N,N));
+  
+  // Extract the offsets for bremsstrahlung energy distributions
+  std::vector<double> offset(bremi_block(2*N,N));
+  
+  // Extract the bremsstrahlung photon energy distributions block (BREME)
+  Utility::ArrayView<const double> breme_block =
+    xss_data_extractor->extractBREMEBlock();
+  
+  // Create the scattering function
+  std::vector<double> primary_grid( N );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( N );
 
-    // Extract the electron energy grid for bremsstrahlung energy distributions
-    std::vector<double> energy_grid(bremi_block(0,N));
-
-    // Extract the table lengths for bremsstrahlung energy distributions
-    std::vector<double> table_length(bremi_block(N,N));
-
-    // Extract the offsets for bremsstrahlung energy distributions
-    std::vector<double> offset(bremi_block(2*N,N));
-
-    // Extract the bremsstrahlung photon energy distributions block (BREME)
-    Utility::ArrayView<const double> breme_block =
-      xss_data_extractor->extractBREMEBlock();
-
-    // Create the scattering function
-    std::vector<double> primary_grid( N );
-    std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-      secondary_dists( N );
-
-    for( unsigned n = 0; n < N; ++n )
-    {
-      primary_grid[n] = energy_grid[n];
-
-      std::vector<double> photon_energy( breme_block( offset[n], table_length[n]) );
-
-      secondary_dists[n].reset(
+  for( unsigned n = 0; n < N; ++n )
+  {
+    primary_grid[n] = energy_grid[n];
+    
+    std::vector<double> photon_energy( breme_block( offset[n], table_length[n]) );
+    
+    secondary_dists[n].reset(
           new Utility::HistogramDistribution(
                 photon_energy,
                 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
                 true ) );
-    }
+  }
 
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_distribution(
+  // Create the scattering function
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_distribution(
     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
                                                            primary_grid,
                                                            secondary_dists ) );
-
-    // Create the scattering distributions
-    ace_dipole_brem_dist.reset(
+  
+  // Create the scattering distributions
+  ace_dipole_brem_dist.reset(
       new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
           scattering_distribution ) );
 
-    twobs_brem_dist.reset(
+  twobs_brem_dist.reset(
       new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
           xss_data_extractor->extractAtomicNumber(),
           scattering_distribution ) );
 
-    // Clear setup data
-    ace_file_handler.reset();
-    xss_data_extractor.reset();
-  }
-
-  // Create the Native Distribution
-  {
-    // Create the native data file container
-    std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container(
-        new Data::ElectronPhotonRelaxationDataContainer(
-              test_native_file_name ) );
-
-    // Get the energy grid for bremsstrahlung energy distributions
-    std::vector<double> energy_grid =
-          data_container->getBremsstrahlungEnergyGrid();
-
-    // Get the function data
-    std::vector<double> primary_grid( energy_grid.size() );
-    std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-      secondary_dists( energy_grid.size() );
-
-    for( unsigned n = 0; n < energy_grid.size(); ++n )
-    {
-      primary_grid[n] = energy_grid[n];
-
-      // Get the energy of the bremsstrahlung photon at the incoming energy
-      std::vector<double> photon_energy(
-          data_container->getBremsstrahlungPhotonEnergy( energy_grid[n] ) );
-
-      // Get the bremsstrahlung photon pdf at the incoming energy
-      std::vector<double> pdf(
-          data_container->getBremsstrahlungPhotonPDF( energy_grid[n] ) );
-
-      secondary_dists[n].reset(
-        new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
-                                                                 pdf ) );
-    }
-
-    double eval_tol = 1e-12;
-
-    // Create the scattering function
-    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> energy_loss_function(
-       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
-                                                            primary_grid,
-                                                            secondary_dists,
-                                                            1e-6,
-                                                            eval_tol ) );
-
-    native_brem_dist.reset(
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-              energy_loss_function ) );
-  }
+  // Clear setup data
+  ace_file_handler.reset();
+  xss_data_extractor.reset();
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -563,5 +467,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstBremsstrahlungElectronScatteringDistribution.cpp
+// end tstBremsstrahlungElectronScatteringDistributionACE.cpp
 //---------------------------------------------------------------------------//
