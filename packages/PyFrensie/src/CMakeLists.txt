@@ -10,7 +10,7 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/PyFrensie_MPI_Setup.i.in
   ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie_MPI_Setup.i)
 
 # Set the PyTrilinos package headers and sources
-FRENSIE_SETUP_PACKAGE(pyfrensie
+FRENSIE_SETUP_PACKAGE(pyfrensie_cpp
   MPI_LIBRARIES ${MPI_CXX_LIBRARIES}
   NON_MPI_LIBRARIES ${Boost_LIBRARIES} ${PYTHON_LIBRARIES}
   SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})
@@ -55,7 +55,7 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Mesh)
 SET(UTILITY_PACKAGES ${UTILITY_PACKAGES} Mesh)
 
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
-SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system utility_mesh pyfrensie)
+SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist utility_system utility_mesh pyfrensie_cpp)
 
 # Add the Data package
 SET(DATA_MODULE_DOCSTRING "is the python interface to the FRENSIE data package.")
@@ -76,7 +76,7 @@ SET(DATA_PACKAGES ${DATA_PACKAGES} ENDL)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGES ${DATA_PACKAGES} Native)
 
-SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_database data_ace data_endl data_native data_xsdir pyfrensie)
+SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_database data_ace data_endl data_native data_xsdir pyfrensie_cpp)
 
 # Add the DataGen package
 SET(DATA_GEN_MODULE_DOCSTRING "is the python interface to the FRENSIE data_gen package.")
@@ -93,7 +93,7 @@ SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ElectronPhoton)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ENDL)
 SET(DATA_GEN_PACKAGES ${DATA_GEN_PACKAGES} ENDL)
 
-SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon data_gen_endl pyfrensie)
+SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon data_gen_endl pyfrensie_cpp)
 
 # Add the Geometry package
 SET(GEOMETRY_MODULE_DOCSTRING "is the python interface to the FRENSIE geometry package")
@@ -105,20 +105,20 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.Geometry__init__)
 SET(GEOMETRY_PACKAGES ${GEOMETRY_PACKAGES} Geometry__init__)
 SET(GEOMETRY_MODULE_INIT_PACKAGE Geometry__init__)
 
-SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core utility_core pyfrensie)
+SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core utility_core pyfrensie_cpp)
 
 IF(FRENSIE_ENABLE_DAGMC)
   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
   SET(GEOMETRY_PACKAGES ${GEOMETRY_PACKAGES} DagMC)
 
-  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc pyfrensie)
+  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc pyfrensie_cpp)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
   SET(GEOMETRY_PACKAGES ${GEOMETRY_PACKAGES} ROOT)
 
-  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root pyfrensie)
+  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root pyfrensie_cpp)
 ENDIF()
 
 # Add the MonteCarlo package
@@ -155,10 +155,13 @@ SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Event)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Manager)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Manager)
 
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core monte_carlo_active_region_response monte_carlo_active_region_source monte_carlo_event_core monte_carlo_event_estimator monte_carlo_event_particle_tracker monte_carlo_event_dispatcher monte_carlo_manager pyfrensie)
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel monte_carlo_active_region_core monte_carlo_active_region_response monte_carlo_active_region_source monte_carlo_event_core monte_carlo_event_estimator monte_carlo_event_particle_tracker monte_carlo_event_dispatcher monte_carlo_manager pyfrensie_cpp)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
+
+# Track all PyFrensie targets
+SET(PyFrensie_TARGETS pyfrensie_cpp)
 
 # Loop over the PyFrensie modules and parse the corresponding swig .i files
 FOREACH(MODULE ${PyFrensie_MODULES})
@@ -173,6 +176,7 @@ FOREACH(MODULE ${PyFrensie_MODULES})
   STRING(TOUPPER ${MODULE} MODULE_UPPER)
   STRING(REPLACE "." "_" MODULE_NODOT ${MODULE})
   SET(PyFrensie_TARGET_NAME ${MODULE_NODOT})
+  LIST(APPEND PyFrensie_TARGETS ${PyFrensie_TARGET_NAME})
   SWIG_ADD_MODULE(${PyFrensie_TARGET_NAME}
     python
     "${MODULE}.i"
@@ -268,3 +272,7 @@ FOREACH(MODULE ${PyFrensie_MODULES})
   ENDIF()
 
 ENDFOREACH(MODULE)
+
+# Add the PyFrensie package custom target
+ADD_CUSTOM_TARGET(pyfrensie
+  DEPENDS ${PyFrensie_TARGETS})

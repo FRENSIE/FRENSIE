@@ -21,6 +21,8 @@ parser.add_option("-e", "--test_h_endl_file", type="string", dest="test_h_endl_f
                   help="the h endl file name")
 parser.add_option("-a", "--test_h_ace_file", type="string", dest="test_h_ace_file", default="",
                   help="the h ace file name")
+parser.add_option("-l", "--test_h_ace_file_start_line", type="int", dest="test_h_ace_file_start_line", default=1,
+                  help="the h ace file start line")
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
@@ -402,7 +404,7 @@ class ACEAndENDLElectronPhotonRelaxationDataGenerator(unittest.TestCase):
     def setUpClass(cls):
         cls.endl_container = ENDL.ENDLDataContainer( options.test_h_endl_file )
 
-        ace_file = ACE.ACEFileHandler( options.test_h_ace_file, "1000.12p", 1 )
+        ace_file = ACE.ACEFileHandler( options.test_h_ace_file, "1000.12p", options.test_h_ace_file_start_line )
 
         cls.ace_container = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 

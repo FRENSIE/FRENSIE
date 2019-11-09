@@ -18,6 +18,8 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-a", "--acefile", type="string", dest="acefile",
                   help="set the ACE file to test.")
+parser.add_option("-l", "--startline", type="int", dest="startline",
+                  help="set the ACE file start line.")
 parser.add_option("-n", "--tablename", type="string", dest="tablename",
                   help="set the ACE table name (must be in the file).")
 options,args = parser.parse_args()
@@ -33,7 +35,7 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with H ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
@@ -343,7 +345,7 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with Pb ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
@@ -659,7 +661,7 @@ class XSSEPRDataExtractorEPR14PbTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with Pb ACE14 table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):

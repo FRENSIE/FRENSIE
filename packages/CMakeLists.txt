@@ -129,5 +129,5 @@ INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_ca
 ADD_SUBDIRECTORY(data_gen)
 INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
 
-# ADD_SUBDIRECTORY(PyFrensie)
+ADD_SUBDIRECTORY(PyFrensie)
 
