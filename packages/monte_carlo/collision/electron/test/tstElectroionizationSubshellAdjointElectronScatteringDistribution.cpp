@@ -83,7 +83,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = distribution->evaluate( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.837743828237808075e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.858726091810971592e-01, 1e-12 );
 
   // Check the last bin
   pdf = distribution->evaluate( 20.0, max_energy );
@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = distribution->evaluatePDF( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.450262428455214525e-02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.487424940913061128e-02, 1e-6 );
 
   // Check the last bin
   pdf = distribution->evaluatePDF( 20.0, max_energy );

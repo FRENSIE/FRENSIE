@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroionizationSubshellAdjointElectronScatteringDistribution.cpp
+//! \file   tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.cpp
 //! \author Luke Kersting
 //! \brief  adjoint electroionization subshell scattering distribution Native factory unit tests
 //!
@@ -62,7 +62,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.837743940181838231e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.858726173232574108e-01, 1e-12 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, max_energy );
@@ -90,7 +90,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.450262754837988111e-02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 5.487425171273361407e-02, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, max_energy );

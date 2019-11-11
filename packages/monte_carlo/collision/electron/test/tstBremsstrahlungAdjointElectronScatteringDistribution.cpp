@@ -190,7 +190,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check between bins
   pdf = distribution->evaluate( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.684424297550174436e-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.910363237438800817e-07, 1e-12 );
 
   // Check on highest bin
   pdf = distribution->evaluate( 20.0, max_energy );
@@ -218,7 +218,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   // Check between bins
   pdf = distribution->evaluatePDF( 1.1e-5, 1.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 9.353320918135283604e-08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.060791771156673650e-07, 1e-12 );
 
   // Check on highest bin
   pdf = distribution->evaluatePDF( 20.0, max_energy );
