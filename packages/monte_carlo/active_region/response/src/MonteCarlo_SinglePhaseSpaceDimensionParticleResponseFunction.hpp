@@ -88,6 +88,15 @@ typedef SinglePhaseSpaceDimensionParticleResponseFunction<TIME_DIMENSION> TimePa
 
 //! The weight dimension particle response function
 typedef SinglePhaseSpaceDimensionParticleResponseFunction<WEIGHT_DIMENSION> WeightParticleResponseFunction;
+
+//! The energy dimension particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<SOURCE_ENERGY_DIMENSION> SourceEnergyParticleResponseFunction;
+
+//! The time dimension particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<SOURCE_TIME_DIMENSION> SourceTimeParticleResponseFunction;
+
+//! The weight dimension particle response function
+typedef SinglePhaseSpaceDimensionParticleResponseFunction<SOURCE_WEIGHT_DIMENSION> SourceWeightParticleResponseFunction;
   
 } // end MonteCarlo namespace
 

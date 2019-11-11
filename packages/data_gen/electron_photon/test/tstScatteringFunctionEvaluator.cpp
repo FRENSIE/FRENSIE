@@ -62,16 +62,18 @@ FRENSIE_UNIT_TEST( ScatteringFunctionEvaluator,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_pb_ace_file_name, test_pb_ace_table_name;
+std::string test_pb_ace_file_name;
+unsigned test_pb_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_pb_ace_file",
                                         test_pb_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_pb_ace_table",
-                                        test_pb_ace_table_name, "",
-                                        "Test ACE table name" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_pb_ace_file_start_line",
+                                        test_pb_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -79,8 +81,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Create the file handler and data extractor for lead
   std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
           new Data::ACEFileHandler( test_pb_ace_file_name,
-            test_pb_ace_table_name,
-            1u ) );
+                                    "82000.12p",
+                                    test_pb_ace_file_start_line ) );
 
   std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
       new Data::XSSEPRDataExtractor(

@@ -41,13 +41,80 @@ TARGET_LINK_LIBRARIES(database_generator data_database)
 # database (e.g. EXTRA_ARGS --test_database=${COLLISION_DATABASE_XML_FILE})
 SET(COLLISION_DATABASE_XML_FILE ${CMAKE_CURRENT_BINARY_DIR}/database.xml)
 
+SET(DATABASE_GENERATOR_CLA
+  --1000_12p_available=1000.12p:available
+  --1000_12p_filepath=1000.12p:filepath
+  --1000_12p_filestartline=1000.12p:filestartline
+  --1000_14p_available=1000.14p:available
+  --1000_14p_filepath=1000.14p:filepath
+  --1000_14p_filestartline=1000.14p:filestartline
+  --5000_12p_available=5000.12p:available
+  --5000_12p_filepath=5000.12p:filepath
+  --5000_12p_filestartline=5000.12p:filestartline
+  --6000_12p_available=6000.12p:available
+  --6000_12p_filepath=6000.12p:filepath
+  --6000_12p_filestartline=6000.12p:filestartline
+  --8000_12p_available=8000.12p:available
+  --8000_12p_filepath=8000.12p:filepath
+  --8000_12p_filestartline=8000.12p:filestartline
+  --79000_14p_available=79000.14p:available
+  --79000_14p_filepath=79000.14p:filepath
+  --79000_14p_filestartline=79000.14p:filestartline
+  --82000_12p_available=82000.12p:available
+  --82000_12p_filepath=82000.12p:filepath
+  --82000_12p_filestartline=82000.12p:filestartline
+  --82000_14p_available=82000.14p:available
+  --82000_14p_filepath=82000.14p:filepath
+  --82000_14p_filestartline=82000.14p:filestartline
+  --92000_12p_available=92000.12p:available
+  --92000_12p_filepath=92000.12p:filepath
+  --92000_12p_filestartline=92000.12p:filestartline
+  --82000_04p_available=82000.04p:available
+  --82000_04p_filepath=82000.04p:filepath
+  --82000_04p_filestartline=82000.04p:filestartline
+  --5000_03e_available=5000.03e:available
+  --5000_03e_filepath=5000.03e:filepath
+  --5000_03e_filestartline=5000.03e:filestartline
+  --82000_03e_available=82000.03e:available
+  --82000_03e_filepath=82000.03e:filepath
+  --82000_03e_filestartline=82000.03e:filestartline
+  --1002_24u_available=1002.24u:available
+  --1002_24u_filepath=1002.24u:filepath
+  --1002_24u_filestartline=1002.24u:filestartline
+  --6012_24u_available=6012.24u:available
+  --6012_24u_filepath=6012.24u:filepath
+  --6012_24u_filestartline=6012.24u:filestartline
+  --1001_70c_available=1001.70c:available
+  --1001_70c_filepath=1001.70c:filepath
+  --1001_70c_filestartline=1001.70c:filestartline
+  --8016_70c_available=8016.70c:available
+  --8016_70c_filepath=8016.70c:filepath
+  --8016_70c_filestartline=8016.70c:filestartline
+  --82208_70c_available=82208.70c:available
+  --82208_70c_filepath=82208.70c:filepath
+  --82208_70c_filestartline=82208.70c:filestartline
+  --92238_70c_available=92238.70c:available
+  --92238_70c_filepath=92238.70c:filepath
+  --92238_70c_filestartline=92238.70c:filestartline
+  --grph_10t_available=grph.10t:available
+  --grph_10t_filepath=grph.10t:filepath
+  --grph_10t_filestartline=grph.10t:filestartline
+  --lwtr_10t_available=lwtr.10t:available
+  --lwtr_10t_filepath=lwtr.10t:filepath
+  --lwtr_10t_filestartline=lwtr.10t:filestartline
+  --poly_10t_available=poly.10t:available
+  --poly_10t_filepath=poly.10t:filepath
+  --poly_10t_filestartline=poly.10t:filestartline
+  --native_dir=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}
+  --database_name=database.xml)
+REPLACE_ACE_PLACEHOLDER_ARGS(DATABASE_GENERATOR_CLA)
+
 ADD_CUSTOM_COMMAND(OUTPUT ${COLLISION_DATABASE_XML_FILE}
   DEPENDS database_generator
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  COMMAND database_generator
-  --ace_dir=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}
-  --native_dir=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}
-  --database_name=database.xml)
+  COMMAND database_generator ${DATABASE_GENERATOR_CLA})
+
+UNSET(DATABASE_GENERATOR_CLA)
 
 # Use this variable in the target dependencies list of a FRENSIE test
 # executable (e.g. TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})

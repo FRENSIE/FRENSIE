@@ -118,6 +118,18 @@ BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightParticleResponseFunction, M
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION> );
 EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::WEIGHT_DIMENSION> );
 
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( SourceEnergyParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_ENERGY_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( SourceTimeParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_TIME_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_TIME_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( SourceWeightParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_WEIGHT_DIMENSION> );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, SinglePhaseSpaceDimensionParticleResponseFunction<MonteCarlo::SOURCE_WEIGHT_DIMENSION> );
+
 #endif // end MONTE_CARLO_SINGLE_PHASE_SPACE_DIMENSION_PARTICLE_RESPONSE_FUNCTION_DEF_HPP
 
 //---------------------------------------------------------------------------//

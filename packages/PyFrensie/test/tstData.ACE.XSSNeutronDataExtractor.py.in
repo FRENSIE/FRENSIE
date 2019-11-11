@@ -18,6 +18,8 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-a", "--acefile", type="string", dest="acefile",
                   help="set the ACE file to test.")
+parser.add_option("-l", "--startline", type="int", dest="startline",
+                  help="set the ACE file start line.")
 parser.add_option("-n", "--tablename", type="string", dest="tablename",
                   help="set the ACE table name (must be in the file).")
 options,args = parser.parse_args()
@@ -33,7 +35,7 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSNeutronDataExtractor class with H1 ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
@@ -254,7 +256,7 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSNeutronDataExtractor class with U238 ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):

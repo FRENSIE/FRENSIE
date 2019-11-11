@@ -338,15 +338,21 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string h2_ace_file_name;
 std::string h2_ace_table_name;
+unsigned h2_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "h2_ace_file",
-                                        h2_ace_file_name, "",
-                                        "Test H2 ACE file name" );
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "h2_ace_table",
                                         h2_ace_table_name, "",
                                         "Test H2 ACE table name in ACE file" );
+  
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "h2_ace_file",
+                                        h2_ace_file_name, "",
+                                        "Test H2 ACE file name" );
+  
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "h2_ace_file_start_line",
+                                        h2_ace_file_start_line, 1,
+                                        "Test H2 ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -354,7 +360,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Initialize ace file handler and data extractor
   Data::ACEFileHandler ace_file_handler( h2_ace_file_name,
                                          h2_ace_table_name,
-                                         1u );
+                                         h2_ace_file_start_line );
 
   h2_xss_data_extractor.reset(
       new Data::XSSPhotonuclearDataExtractor(

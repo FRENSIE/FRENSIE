@@ -18,8 +18,8 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-f", "--test_ace_file", type="string", dest="test_ace_file",
                   help="the ace file used for testing")
-parser.add_option("-t", "--test_ace_table", type="string", dest="test_ace_table",
-                  help="the name of the ace table used for testing")
+parser.add_option("-l", "--test_ace_file_start_line", type="int", dest="test_ace_file_start_line",
+                  help="set the ACE file start line.")
 
 options,args = parser.parse_args()
 
@@ -40,7 +40,7 @@ class CoherentScatteringDistributionACEFactoryTestCase(unittest.TestCase):
     "TestCase for MonteCarlo.Photon.CoherentScatteringDistributionACEFactory class"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.test_ace_file, options.test_ace_table, 1 )
+        ace_file = ACE.ACEFileHandler( options.test_ace_file, "82000.12p", options.test_ace_file_start_line )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testCreateThompsonDistribution(self):

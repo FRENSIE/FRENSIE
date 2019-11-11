@@ -488,6 +488,7 @@ void ParticleState::multiplyWeight( const double weight_factor )
 {
   // Make sure that the current weight is valid
   testPrecondition( d_weight > 0.0 );
+  testPrecondition( weight_factor > 0.0 );
 
   d_weight *= weight_factor;
 }

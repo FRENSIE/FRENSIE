@@ -69,9 +69,9 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         "*Test MonteCarlo.ActiveRegion.ParticleResponse subtraction_operator"
         response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
 
-        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+        energy_response_function = ActiveRegion.SourceEnergyParticleResponseFunction( response_distribution )
 
-        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+        time_response_function = ActiveRegion.SourceTimeParticleResponseFunction( response_distribution )
 
         total_response_function = ActiveRegion.subtract(energy_response_function,time_response_function)
 
@@ -84,8 +84,8 @@ class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
         self.assertTrue( total_response_function.description().find( '-' ) )
 
         photon = MonteCarlo.PhotonState( 1 )
-        photon.setEnergy( 1.0 )
-        photon.setTime( 2.0 )
+        photon.setSourceEnergy( 1.0 )
+        photon.setSourceTime( 2.0 )
 
         self.assertAlmostEqual( total_response_function.evaluate( photon ),
                                 0.23254415793482963,

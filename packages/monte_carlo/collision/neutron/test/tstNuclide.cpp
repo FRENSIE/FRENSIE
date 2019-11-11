@@ -401,33 +401,34 @@ FRENSIE_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_h1_ace_file_name, test_h1_ace_table_name;
-std::string test_o16_ace_file_name, test_o16_ace_table_name;
+std::string test_h1_ace_file_name, test_o16_ace_file_name;
+unsigned test_h1_ace_file_start_line, test_o16_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_file",
                                          test_h1_ace_file_name, "",
                                          "Test h1 ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_table",
-                                        test_h1_ace_table_name, "",
-                                        "Test ACE table name in h1 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_file_start_line",
+                                         test_h1_ace_file_start_line, 1,
+                                         "Test h1 ACE file start line" );
 
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_file",
                                         test_o16_ace_file_name, "",
                                         "Test o16 ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_table",
-                                        test_o16_ace_table_name, "",
-                                        "Test ACE table name in o16 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_file_start_line",
+                                        test_o16_ace_file_start_line, 1,
+                                        "Test o16 ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize H-1
   std::unique_ptr<Data::ACEFileHandler> ace_file_handler;
-  ace_file_handler.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
-                                                    test_h1_ace_table_name,
-                                                    1u ) );
+  ace_file_handler.reset(
+                     new Data::ACEFileHandler( test_h1_ace_file_name,
+                                               "1001.70c",
+                                               test_h1_ace_file_start_line ) );
 
   std::unique_ptr<Data::XSSNeutronDataExtractor> xss_data_extractor(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -446,7 +447,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   std::unique_ptr<MonteCarlo::NeutronNuclearReactionACEFactory> reaction_factory(
                           new MonteCarlo::NeutronNuclearReactionACEFactory(
-			       test_h1_ace_table_name,
+			       "1001.70c",
                                ace_file_handler->getTableAtomicWeightRatio(),
 			       ace_file_handler->getTableTemperature().value(),
                                energy_grid,
@@ -462,7 +463,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
 
   h1_nuclide.reset( new MonteCarlo::Nuclide(
-			       test_h1_ace_table_name,
+			       "1001.70c",
                                1u,
                                1u,
                                0u,
@@ -474,9 +475,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                standard_absorption_reactions ) );
 
   // Initialize O-16
-  ace_file_handler.reset(new Data::ACEFileHandler( test_o16_ace_file_name,
-						   test_o16_ace_table_name,
-						   1u ) );
+  ace_file_handler.reset(
+                    new Data::ACEFileHandler( test_o16_ace_file_name,
+                                              "8016.70c",
+					      test_o16_ace_file_start_line ) );
 
   xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -493,7 +495,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   reaction_factory.reset(
                           new MonteCarlo::NeutronNuclearReactionACEFactory(
-			       test_h1_ace_table_name,
+			       "8016.70c",
                                ace_file_handler->getTableAtomicWeightRatio(),
 			       ace_file_handler->getTableTemperature().value(),
                                energy_grid,
@@ -509,7 +511,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
 
   o16_nuclide.reset( new MonteCarlo::Nuclide(
-			       test_o16_ace_table_name,
+			       "8016.70c",
                                1u,
                                1u,
                                0u,

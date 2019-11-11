@@ -2281,8 +2281,8 @@ FRENSIE_CHECK_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_h_ace_file_name, test_h_ace_table_name;
-std::string test_c_ace_file_name, test_c_ace_table_name;
+std::string test_h_ace_file_name, test_c_ace_file_name;
+unsigned test_h_ace_file_start_line, test_c_ace_file_start_line;
 std::string test_h_endl_file_name, test_c_endl_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
@@ -2290,9 +2290,10 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h_ace_file",
                                         test_h_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h_ace_table",
-                                        test_h_ace_table_name, "",
-                                        "Test ACE table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h_ace_file_start_line",
+                                        test_h_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
+  
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h_endl_file",
                                         test_h_endl_file_name, "",
                                         "Test ENDL file name" );
@@ -2300,9 +2301,10 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_c_ace_file",
                                         test_c_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_c_ace_table",
-                                        test_c_ace_table_name, "",
-                                        "Test ACE table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_c_ace_file_start_line",
+                                        test_c_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
+  
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_c_endl_file",
                                         test_c_endl_file_name, "",
                                         "Test ENDL file name" );
@@ -2313,9 +2315,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     // Create the file handler and data extractor for hydrogen
     std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
-                               new Data::ACEFileHandler( test_h_ace_file_name,
-                                                         test_h_ace_table_name,
-                                                         1u ) );
+                      new Data::ACEFileHandler( test_h_ace_file_name,
+                                                "1000.12p",
+                                                test_h_ace_file_start_line ) );
 
     h_xss_data_extractor.reset(
                                 new Data::XSSEPRDataExtractor(
@@ -2327,12 +2329,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     // Create the file handler and data extractor for carbon
     std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
-                               new Data::ACEFileHandler( test_c_ace_file_name,
-                                                         test_c_ace_table_name,
-                                                         1u ) );
+                      new Data::ACEFileHandler( test_c_ace_file_name,
+                                                "6000.12p",
+                                                test_c_ace_file_start_line ) );
 
-    c_xss_data_extractor.reset(
-                                new Data::XSSEPRDataExtractor(
+    c_xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
                                       ace_file_handler->getTableNXSArray(),
                                       ace_file_handler->getTableJXSArray(),
                                       ace_file_handler->getTableXSSArray() ) );

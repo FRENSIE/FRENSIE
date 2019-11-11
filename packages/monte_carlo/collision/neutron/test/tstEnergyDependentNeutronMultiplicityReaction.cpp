@@ -62,25 +62,26 @@ FRENSIE_UNIT_TEST( EnergyDependentNeutronMultiplicityReaction,
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace_file_name;
-std::string test_ace_table_name;
+unsigned test_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
                                         test_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
-                                        test_ace_table_name, "",
-                                        "Test ACE table name in ACE file" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file_start_line",
+                                        test_ace_file_start_line, 1,
+                                        "Test ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize the ace file handler and data extractor
   std::unique_ptr<const Data::ACEFileHandler> ace_file_handler(
-                                 new Data::ACEFileHandler( test_ace_file_name,
-                                                           test_ace_table_name,
-                                                           1u ) );
+                        new Data::ACEFileHandler( test_ace_file_name,
+                                                  "8016.70c",
+                                                  test_ace_file_start_line ) );
   
   std::unique_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor(
      new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -88,7 +89,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                         ace_file_handler->getTableXSSArray()));
 
   MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
-    factory( test_ace_table_name,
+    factory( "8016.70c",
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     *xss_data_extractor );
 

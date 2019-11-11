@@ -146,16 +146,18 @@ FRENSIE_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_ace_file_name, test_ace_table_name;
+std::string test_ace_file_name;
+unsigned test_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
                                         test_ace_file_name, "",
                                         "Test ACE file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
-                                        test_ace_table_name, "",
-                                        "Test ACE table name" );
+  
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file_start_line",
+                                        test_ace_file_start_line, 1,
+                                        "Test ACE file start_line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -163,9 +165,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   {
     // Create a file handler and data extractor
     std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                        new Data::ACEFileHandler( test_ace_file_name,
+                                                  "82000.12p",
+						  test_ace_file_start_line ) );
+    
     xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),

@@ -50,6 +50,12 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getClass )
                        MonteCarlo::TIME_DIMENSION_CLASS );
   FRENSIE_CHECK_EQUAL( MonteCarlo::PhaseSpaceDimensionTraits<MonteCarlo::WEIGHT_DIMENSION>::getClass(),
                        MonteCarlo::WEIGHT_DIMENSION_CLASS );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::PhaseSpaceDimensionTraits<MonteCarlo::SOURCE_ENERGY_DIMENSION>::getClass(),
+                       MonteCarlo::ENERGY_DIMENSION_CLASS );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::PhaseSpaceDimensionTraits<MonteCarlo::SOURCE_TIME_DIMENSION>::getClass(),
+                       MonteCarlo::TIME_DIMENSION_CLASS );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::PhaseSpaceDimensionTraits<MonteCarlo::SOURCE_WEIGHT_DIMENSION>::getClass(),
+                       MonteCarlo::WEIGHT_DIMENSION_CLASS );
 }
 
 //---------------------------------------------------------------------------//
@@ -94,6 +100,18 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate_point )
   point.setWeightCoordinate( 0.9 );
 
   FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::WEIGHT_DIMENSION>( point ), 0.9 );
+
+  point.setEnergyCoordinate( 0.5 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_ENERGY_DIMENSION>( point ), 0.5 );
+
+  point.setTimeCoordinate( 0.1 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_TIME_DIMENSION>( point ), 0.1 );
+
+  point.setWeightCoordinate( 0.9 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_WEIGHT_DIMENSION>( point ), 0.9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -125,6 +143,18 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate_particle )
   point.setWeight( 0.9 );
 
   FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::WEIGHT_DIMENSION>( point ), 0.9 );
+
+  point.setSourceEnergy( 1.0 );
+  
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_ENERGY_DIMENSION>( point ), 1.0 );
+
+  point.setSourceTime( 0.2 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_TIME_DIMENSION>( point ), 0.2 );
+
+  point.setSourceWeight( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SOURCE_WEIGHT_DIMENSION>( point ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -167,6 +197,18 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, setCoordinate )
   FRENSIE_CHECK_EQUAL( point.getTimeCoordinate(), 0.1 );
 
   MonteCarlo::setCoordinate<MonteCarlo::WEIGHT_DIMENSION>( point, 0.9 );
+
+  FRENSIE_CHECK_EQUAL( point.getWeightCoordinate(), 0.9 );
+
+  MonteCarlo::setCoordinate<MonteCarlo::SOURCE_ENERGY_DIMENSION>( point, 0.5 );
+
+  FRENSIE_CHECK_EQUAL( point.getEnergyCoordinate(), 0.5 );
+
+  MonteCarlo::setCoordinate<MonteCarlo::SOURCE_TIME_DIMENSION>( point, 0.1 );
+
+  FRENSIE_CHECK_EQUAL( point.getTimeCoordinate(), 0.1 );
+
+  MonteCarlo::setCoordinate<MonteCarlo::SOURCE_WEIGHT_DIMENSION>( point, 0.9 );
 
   FRENSIE_CHECK_EQUAL( point.getWeightCoordinate(), 0.9 );
 }
@@ -213,6 +255,18 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinateWeight )
   point.setWeightCoordinate( 0.9 );
 
   FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinateWeight<MonteCarlo::WEIGHT_DIMENSION>( point ), 0.9 );
+
+  point.setEnergyCoordinateWeight( 0.7 );
+  
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinateWeight<MonteCarlo::SOURCE_ENERGY_DIMENSION>( point ), 0.7 );
+
+  point.setTimeCoordinateWeight( 0.8 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinateWeight<MonteCarlo::SOURCE_TIME_DIMENSION>( point ), 0.8 );
+
+  point.setWeightCoordinate( 0.9 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinateWeight<MonteCarlo::SOURCE_WEIGHT_DIMENSION>( point ), 0.9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -256,6 +310,19 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, setCoordinateWeight )
 
   // The weight should be ignored with the weight dimension
   MonteCarlo::setCoordinateWeight<MonteCarlo::WEIGHT_DIMENSION>( point, 0.9 );
+
+  FRENSIE_CHECK_EQUAL( point.getWeightCoordinate(), 1.0 );
+
+  MonteCarlo::setCoordinateWeight<MonteCarlo::SOURCE_ENERGY_DIMENSION>( point, 0.7 );
+
+  FRENSIE_CHECK_EQUAL( point.getEnergyCoordinateWeight(), 0.7 );
+
+  MonteCarlo::setCoordinateWeight<MonteCarlo::SOURCE_TIME_DIMENSION>( point, 0.8 );
+
+  FRENSIE_CHECK_EQUAL( point.getTimeCoordinateWeight(), 0.8 );
+
+  // The weight should be ignored with the weight dimension
+  MonteCarlo::setCoordinateWeight<MonteCarlo::SOURCE_WEIGHT_DIMENSION>( point, 0.9 );
 
   FRENSIE_CHECK_EQUAL( point.getWeightCoordinate(), 1.0 );
 }

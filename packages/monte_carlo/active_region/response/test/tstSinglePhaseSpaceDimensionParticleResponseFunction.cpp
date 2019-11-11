@@ -34,7 +34,10 @@ typedef std::tuple<std::integral_constant<PhaseSpaceDimension,PRIMARY_SPATIAL_DI
                    std::integral_constant<PhaseSpaceDimension,TERTIARY_DIRECTIONAL_DIMENSION>,
                    std::integral_constant<PhaseSpaceDimension,ENERGY_DIMENSION>,
                    std::integral_constant<PhaseSpaceDimension,TIME_DIMENSION>,
-                   std::integral_constant<PhaseSpaceDimension,WEIGHT_DIMENSION>
+                   std::integral_constant<PhaseSpaceDimension,WEIGHT_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,SOURCE_ENERGY_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,SOURCE_TIME_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,SOURCE_WEIGHT_DIMENSION>
                   > TestPhaseSpaceDimensions;
 
 typedef TestArchiveHelper::TestArchives TestArchives;
@@ -129,12 +132,24 @@ FRENSIE_UNIT_TEST( SinglePhaseSpaceDimensionParticleResponseFunction,
   std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
     weight_response_function( new MonteCarlo::WeightParticleResponseFunction( response_distribution ) );
 
+  std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+    source_energy_response_function( new MonteCarlo::SourceEnergyParticleResponseFunction( response_distribution ) );
+
+  std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+    source_time_response_function( new MonteCarlo::SourceTimeParticleResponseFunction( response_distribution ) );
+
+  std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+    source_weight_response_function( new MonteCarlo::SourceWeightParticleResponseFunction( response_distribution ) );
+
   MonteCarlo::PhotonState photon( 1ull );
   photon.setPosition( 1.0, 2.0, 3.0 );
   photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 );
   photon.setEnergy( 10.0 );
+  photon.setSourceEnergy( 10.1 );
   photon.setTime( 5.0 );
+  photon.setSourceTime( 5.1 );
   photon.setWeight( 0.5 );
+  photon.setSourceWeight( 0.51 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( x_response_function->evaluate( photon ),
                                    0.36787944117144233,
@@ -162,6 +177,15 @@ FRENSIE_UNIT_TEST( SinglePhaseSpaceDimensionParticleResponseFunction,
                                    1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( weight_response_function->evaluate( photon ),
                                    0.6065306597126334,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_energy_response_function->evaluate( photon ),
+                                   4.1079555225300724e-05,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_time_response_function->evaluate( photon ),
+                                   0.006096746565515638,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_weight_response_function->evaluate( photon ),
+                                   0.6004955788122659,
                                    1e-15 );
 }
 
@@ -204,7 +228,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
       v_response_function( new MonteCarlo::YDirectionParticleResponseFunction( response_distribution ) );
     
     std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
-    w_response_function( new MonteCarlo::ZDirectionParticleResponseFunction( response_distribution ) );
+      w_response_function( new MonteCarlo::ZDirectionParticleResponseFunction( response_distribution ) );
     
     std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
       energy_response_function( new MonteCarlo::EnergyParticleResponseFunction( response_distribution ) );
@@ -214,6 +238,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
     
     std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
       weight_response_function( new MonteCarlo::WeightParticleResponseFunction( response_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+      source_energy_response_function( new MonteCarlo::SourceEnergyParticleResponseFunction( response_distribution ) );
+    
+    std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+      source_time_response_function( new MonteCarlo::SourceTimeParticleResponseFunction( response_distribution ) );
+    
+    std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
+      source_weight_response_function( new MonteCarlo::SourceWeightParticleResponseFunction( response_distribution ) );
   
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( x_response_function ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( y_response_function ) );
@@ -224,6 +257,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( energy_response_function ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( time_response_function ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( weight_response_function ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( source_energy_response_function ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( source_time_response_function ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( source_weight_response_function ) );
   }
 
   // Copy the archive ostream to an istream
@@ -237,7 +273,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
   std::shared_ptr<const MonteCarlo::ParticleResponseFunction>
     x_response_function, y_response_function, z_response_function,
     u_response_function, v_response_function, w_response_function,
-    energy_response_function, time_response_function, weight_response_function;
+    energy_response_function, time_response_function, weight_response_function,
+    source_energy_response_function, source_time_response_function,
+    source_weight_response_function;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( x_response_function ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( y_response_function ) );
@@ -248,14 +286,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( energy_response_function ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( time_response_function ) );
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( weight_response_function ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( source_energy_response_function ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( source_time_response_function ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( source_weight_response_function ) );
 
   iarchive.reset();
 
   MonteCarlo::PhotonState photon( 1ull );
   photon.setPosition( 1.0, 2.0, 3.0 );
   photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 );
+  photon.setSourceEnergy( 10.1 );
   photon.setEnergy( 10.0 );
+  photon.setSourceTime( 5.1 );
   photon.setTime( 5.0 );
+  photon.setSourceWeight( 0.51 );
   photon.setWeight( 0.5 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( x_response_function->evaluate( photon ),
@@ -284,6 +328,15 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SinglePhaseSpaceDimensionParticleResponseFunc
                                    1e-15 );
   FRENSIE_CHECK_FLOATING_EQUALITY( weight_response_function->evaluate( photon ),
                                    0.6065306597126334,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_energy_response_function->evaluate( photon ),
+                                   4.1079555225300724e-05,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_time_response_function->evaluate( photon ),
+                                   0.006096746565515638,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( source_weight_response_function->evaluate( photon ),
+                                   0.6004955788122659,
                                    1e-15 );
 }
 

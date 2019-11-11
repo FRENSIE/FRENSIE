@@ -1,0 +1,94 @@
+Albedo analysis of a 30 cm x 30 cm x 30 cm slab of Aluminum
+c
+c
+c -----------------------------------------------------------------------------c
+c Cell block-------------------------------------------------------------------c
+c -----------------------------------------------------------------------------c
+c
+c Cell 10 is the volume of aluminum
+10  1  -2.6989  100 -101 102 -103 104 -105    IMP:e=1   IMP:p=1
+c Cell 20 is a void
+20  0  200 -201 202 -203 204 -205 #10       IMP:e=1   IMP:p=1
+c Cell 30 is the graveyard
+30  0  #20 #10                              IMP:e=0   IMP:p=0
+c
+c
+c ----------------------------------------------------------------------------c
+c MCNP necessary space--------------------------------------------------------c
+c ----------------------------------------------------------------------------c
+
+c ----------------------------------------------------------------------------c
+c Surface block---------------------------------------------------------------c
+c ----------------------------------------------------------------------------c
+c
+c the 100 series define the inner cube made of aluminum
+c
+100 PX -15.0
+101 PX 15.0
+102 PY -15
+103 PY 15
+104 PZ -15
+105 PZ 15
+c
+c the 200 series define the outer cube filling a void
+c
+200 PX -16
+201 PX 16
+202 PY -16
+203 PY 16
+204 PZ -16
+205 PZ 16
+c
+c
+c
+c ----------------------------------------------------------------------------c
+c MCNP necessary space--------------------------------------------------------c
+c ----------------------------------------------------------------------------c
+
+c ----------------------------------------------------------------------------c
+c Data block------------------------------------------------------------------c
+c ----------------------------------------------------------------------------c
+c
+c
+c Material Definition
+c
+m1    13000.14p  1.0 $ Material def for Al from the erp (.14p) library
+c
+c
+c --------------------
+c Source
+c --------------------
+c monodirectional, monoenergetic point source located
+c just before the the edge of the shield
+c Energies: .0093 .011 .0134 .0173 .0252 .0415 .0621 .0818 .102
+SDEF  ERG=.06 POS=-20 0 0 DIR=1 VEC=1 0 0 PAR=e
+c --------------------
+c Job Control
+c --------------------
+c run in photon-electron mode to get low energy physics
+mode p e
+c run for 5e6 histories
+nps 5e6
+c Surface current on front surface
+f11:e 100
+c11  0 0.99 1
+c
+c Surface current on back surface
+f21:e 101
+c21  0 0.99 1
+c
+c Cell track length flux for additional verification
+F4:e  10
+E4 1e-04 99ilog 0.015
+c
+dbcn 17j 2 $ Turn on analog mode
+c
+CUT:P J 1.0 $ Set photon cutoff to 1 MeV
+CUT:E J 1e-04 $ Set electron cutoff to 100 eV
+c
+c Max energy, p's don't make e's, e's don't make p's, simple brem dist, skip 8, full elastic, skip 1 analog start energy
+PHYS:E 1.0 1 1 1 8J 2 J 1.0
+c
+prdmp  j  1e7  1   1
+c PHYS:E entry 13 is the selection of the elastic distribution:
+c 2 = full elastic, 1 = transport x-sec cutoff, 0 = cutoff, -1 = no elastic
