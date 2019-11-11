@@ -16,7 +16,7 @@ import PyFrensie.Data as Data
 import PyFrensie.Data.Native as Native
 import PyFrensie.MonteCarlo as MonteCarlo
 
-# Verify the user specified photon and electron limits
+# Generate the native epr library using cached parameters
 def generateNativeEPRLibrary( endl_directory,
                               native_directory,
                               overwrite,

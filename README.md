@@ -321,7 +321,7 @@ the following CMake variables can be set:
  * `-D DAGMC_PREFIX:PATH=path-to-dagmc-install-dir` indicates where the custom DAGMC install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
  * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
- * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. 
+ * `-D XSDIR_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system (specifically, where the desired xsdir file is located). 
 
 **Note 3**: Each FRENSIE package has a custom build target, a custom test build
 target and a custom test run target. For a given package PACKAGE the three
@@ -376,8 +376,27 @@ FRENSIE has the following packages:
  * data_gen_endl
  * data_gen_electron_photon
  * data_gen_free_gas_sab
+ * pyfrensie
+
+**Note 4**: The FRENSIE manual is generated using doxygen (using the make
+manual command). After running make install, a link to the manual will be
+placed in the doc directory of the install directory. This manual must be
+opened in your web browser of choice (e.g. google-chrome manual.html).
+
+## Running FRENSIE
+Before running FRENSIE, a database must be generated. This database is used by
+FRENSIE to load the various data files requested by the user (it functions in
+a similar way to the MCNP xsdir file). Simply run `generate_database.sh` to
+generate the database.
+
+Once the database has been generated, review the example problems and the
+manual. Additional example problems can be found at
+[frensie-tests](https://github.com/FRENSIE/FRENSIE-tests).
 
 ## Dashboard
+**The dashboard is not currently active - the following comments have been kept
+in the event that the dashboard is reactivated again in the future.**
+
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.
 
 To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system). However, it is recommended that these targets are never used and instead the shell scripts frensie-run-nightly.sh and frensie-run-ci.sh (found in the scripts directory) are used. Because cron only loads a few environment variables when it executes commands, it is necessary to write shell scripts that load the necessary environment variables, which is what the two scripts do.
@@ -387,6 +406,3 @@ Before setting up the crontab entries, a separate frensie build should be create
 * `*/5 * * * * abs-path-to-ci-build-dir/frensie-run-ci.sh`
 
 The second line can be omitted if the client will only do nightly builds. Note that the first line tells cron to run the nightly script every day at 1:00 AM. The second line tells cron to run the ci script every 5 minutes (if no changes to the master branch have occurred nothing happens).
-
-## Feedback
-If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson), [Eli Moll](https://github.com/ecmoll) or [Luke Kersting](https://github.com/lkersting).

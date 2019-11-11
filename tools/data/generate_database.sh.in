@@ -1,0 +1,36 @@
+#!/bin/sh
+
+##---------------------------------------------------------------------------##
+##-------------------------- FRENSIE DATA GENERATOR -------------------------##
+##---------------------------------------------------------------------------##
+## Script to generate the frensie database.xml file
+#
+# NOTE: The frensie bin directory must be added to PATH and the frensie python
+# lib directory must be added to PYTHONPATH for the following commands to work.
+# Run script in the directory that contains the xsdir file
+
+##---------------------------------------------------------------------------##
+##-------------------------------- COMMANDS ---------------------------------##
+##---------------------------------------------------------------------------##
+EXTRA_ARGS=$@
+
+# Move to the xsdir directory
+cd ${XSDIR_DIR}
+
+# Process the mcnp6.2 xsdir file
+process_xsdir.py -o --xsdir=${XSDIR_FILE} --log_file=process_xsdir_log.txt
+
+# Create endl_downloader bash script
+endl_downloader.py -a > endl_downloader.sh
+
+# Download the endl data
+bash ./endl_downloader.sh -d ./
+
+# Process the endl data
+endl_to_native_endl.py -a
+
+# Create a directory for native epr data
+mkdir -p native; mkdir -p native/epr; mkdir -p native/aepr
+
+# Generate native epr data
+generate_native_epr.py -o --log_file=generate_native_epr_log.out

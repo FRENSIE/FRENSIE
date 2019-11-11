@@ -1,10 +1,6 @@
 // This file is used for miscellaneous code documentation.
 
-/*! \namespace Facemc
- * \brief The primary namespace
- * \details All classes, structs and enums used by Facemc will be found inside
- * of this namespace.
- *
+/*!
  * \defgroup policies Policies
  * \brief This group contains all policies that are used in FRENSIE.
  * \details A policy represents configurable behavior for generic functions and
