@@ -37,48 +37,6 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMinSecondaryEnergyAtIncomingEnergy )
-{
-  // Get min energy
-  double min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
-
-  // Get min energy
-  min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
-{
-  // Get max energy
-  double max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
-
-  // Get max energy
-  max_energy =
-    ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    evaluateCDF )

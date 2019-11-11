@@ -37,48 +37,6 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 }
 
 //---------------------------------------------------------------------------//
-// Check that the min secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMinSecondaryEnergyAtIncomingEnergy )
-{
-  // Get min energy
-  double min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
-
-  // Get min energy
-  min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-
-  // Get min energy
-  min_energy =
-    epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the max secondary (knock-on) electron energy can be returned
-FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   getMaxSecondaryEnergyAtIncomingEnergy )
-{
-  // Get max energy
-  double max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
-
-  // Get max energy
-  max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
-
-  // Get max energy
-  max_energy =
-    epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    evaluateCDF )
@@ -135,7 +93,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
-                   samplePrimaryAndSecondary )
+                   sample_PrimaryAndSecondary )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -150,7 +108,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  epr14_electroionization_distribution->samplePrimaryAndSecondary(
+  epr14_electroionization_distribution->sample(
         incoming_energy,
         outgoing_energy,
         knock_on_energy,

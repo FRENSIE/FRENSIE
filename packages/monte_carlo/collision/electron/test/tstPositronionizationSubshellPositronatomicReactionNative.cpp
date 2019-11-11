@@ -84,35 +84,35 @@ FRENSIE_UNIT_TEST( PositronionizationSubshellPositronatomicReaction,
         0.0025118800000459599528,
         0.0012514500000459765489 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.3239695450508114e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.323969587494164333e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459773,
         0.0012514500000459765489 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.3239695450507767e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.323969587494142726e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.002511885,
         0.0012514500000459765489 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.3239636906804170e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.323968814544089139e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118897153524992472,
         0.0012514500000459765489 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.3239581696372867e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.323968085650828853e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118908794333669708,
         0.0012514500000459765489 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.3239481392953299e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( diff_cross_section, 2.323796410036558285e+07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -175,14 +175,17 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     native_first_binding_energy =
       data_container->getSubshellBindingEnergy( *shell );
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         native_first_binding_energy,
         electroionization_subshell_distribution,
+        sampling_type,
         1e-15 );
-
 
     // Create the subshell electroelectric reaction
     native_first_subshell_reaction.reset(
@@ -221,14 +224,17 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     native_last_binding_energy =
       data_container->getSubshellBindingEnergy( *shell );
 
+    MonteCarlo::ElectroionizationSamplingType sampling_type =
+      MonteCarlo::KNOCK_ON_SAMPLING;
+
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         native_last_binding_energy,
         electroionization_subshell_distribution,
+        sampling_type,
         1e-12 );
-
 
     // Create the subshell electroelectric reaction
     native_last_subshell_reaction.reset(
@@ -240,7 +246,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                 subshell_type,
                 electroionization_subshell_distribution ) );
   }
-
+  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

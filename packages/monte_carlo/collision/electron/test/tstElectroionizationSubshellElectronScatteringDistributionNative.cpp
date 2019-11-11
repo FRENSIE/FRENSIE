@@ -19,29 +19,6 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Structs.
-//---------------------------------------------------------------------------//
-class TestElectroionizationSubshellElectronScatteringDistribution : public MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution
-{
-public:
-  TestElectroionizationSubshellElectronScatteringDistribution(
-    const std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
-      electroionization_subshell_scattering_distribution,
-    const double binding_energy )
-    : MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-        electroionization_subshell_scattering_distribution,
-        binding_energy )
-  { /* ... */ }
-
-  ~TestElectroionizationSubshellElectronScatteringDistribution()
-  { /* ... */ }
-
-  // Allow public access to the ElectroionizationSubshellElectronScatteringDistribution protected member functions
-  using MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle;
-
-};
-
-//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
@@ -57,22 +34,22 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluate_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluate( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6866000434174901e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686600043417490087e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794064728877693e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.679406472887769297e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611321793168750e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.961132179316875043e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815828429294956e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.181582842929495631e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636700787675897e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.463670078767589726e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497193189141950e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318262361153e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -96,7 +73,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639971990510892e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluate( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719317907309385e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449719318262361153e-11, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -105,25 +82,25 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
                    evaluatePDF_unit_base_correlated )
 {
   double pdf = unit_correlated_ionization_dist->evaluatePDF( 8.829e-2, 1e-7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6865999321744699e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686599932174469868e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.6794063002002872e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.679406300200287205e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e-1, 1e-2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.9611317283132534e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.961131728313253442e-02, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 1.33136131511529e-1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1815824201618231e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.181582420161823117e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1.0, 9.7163E-02 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.4636692194095449e-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.463669219409544931e-04, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.4497177573288197e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756676985891e-11, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.2480895846405665e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584586491624e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -147,10 +124,10 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.978639322085223699e-04, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 1.752970e2 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756321954802e-11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 8.449717756676985891e-11, 1e-12 );
 
   pdf = unit_base_ionization_dist->evaluatePDF( 1e5, 5e4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584449132797e-15, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 2.248089584586491624e-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -352,6 +329,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_base_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
   {
@@ -367,8 +345,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   unit_correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
+
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution(
@@ -382,6 +362,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   correlated_ionization_dist.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
+                            MonteCarlo::KNOCK_ON_SAMPLING,
                             binding_energy ) );
   }
 

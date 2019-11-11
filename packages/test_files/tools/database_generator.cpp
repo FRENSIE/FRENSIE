@@ -51,6 +51,7 @@ void addC12PhotonuclearACEFile(
 void addCEPRACEFile( const bool library_available,
                      const std::string& library_filepath,
                      const int library_filestartline,
+                     Data::ScatteringCenterPropertiesDatabase& database );
 
 //! Add the grph.10t properties
 void addGrphSabACEFile( const bool library_available,
@@ -87,6 +88,7 @@ void addHEPR14ACEFile( const bool library_available,
 void addHEPRACEFile( const bool library_available,
                      const std::string& library_filepath,
                      const int library_filestartline,
+                     Data::ScatteringCenterPropertiesDatabase& database );
 
 //! Add the poly.10t properties
 void addPolySabACEFile( const bool library_available,
