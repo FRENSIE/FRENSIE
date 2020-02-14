@@ -1,6 +1,6 @@
 # Configure the downloader script
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/tools/data/endl_downloader.py.in
-  ${CMAKE_CURRENT_BINARY_DIR}/endl_downloader.py)
+  ${CMAKE_CURRENT_BINARY_DIR}/endl_downloader.py @ONLY)
 
 MACRO(CHECK_FOR_FILES DIR DOWNLOAD_NEEDED)
   IF(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${DIR}/za001000)
