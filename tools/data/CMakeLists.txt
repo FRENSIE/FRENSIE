@@ -2,7 +2,7 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/process_xsdir.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/process_xsdir.py)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/endl_downloader.py.in
-  ${CMAKE_CURRENT_BINARY_DIR}/endl_downloader.py)
+  ${CMAKE_CURRENT_BINARY_DIR}/endl_downloader.py @ONLY)
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/endl_to_native_endl.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/endl_to_native_endl.py)
