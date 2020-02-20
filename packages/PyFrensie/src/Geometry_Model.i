@@ -155,6 +155,43 @@ stored in the model. A brief usage tutorial for this class is shown below:
 
 %model_interface_setup( InfiniteMediumModel )
 
+%typemap(in) const Geometry::Model::EntityId ( Geometry::Model::EntityId temp ){
+  temp = PyInt_AsUnsignedLongMask( $input );
+  $1 = temp;
+}
+
+%typemap(typecheck, precedence=70) (const Geometry::Model::EntityId) {
+  $1 = (PyInt_Check($input)) ? 1 : 0;
+}
+
+%typemap(in) const Geometry::Model::MaterialId ( Geometry::Model::MaterialId temp ){
+  temp = PyInt_AsUnsignedLongMask( $input );
+  $1 = temp;
+}
+
+%typemap(typecheck, precedence=70) (const Geometry::Model::MaterialId) {
+  $1 = (PyInt_Check($input)) ? 1 : 0;
+}
+
+%typemap(in) const Geometry::Model::Density {
+  if(PyFloat_Check($input))
+  {
+    $1 = Geometry::Model::Density::from_value( PyFrensie::convertFromPython<double>( $input ) );
+  }
+  else
+  {
+    $1 = Geometry::Model::Density::from_value( (double)(PyFrensie::convertFromPython<int>( $input )) );
+  }
+}
+
+%typemap(out) Geometry::Model::Density {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
+
+%typemap(typecheck, precedence=90) (const Geometry::Model::Density) {
+  $1 = (PyFloat_Check($input) || PyInt_Check($input)) ? 1 : 0;
+}
+
 // Include the InfiniteMediumModel class
 %include "Geometry_InfiniteMediumModel.hpp"
 

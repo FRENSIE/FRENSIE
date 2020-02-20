@@ -40,6 +40,7 @@ except ImportError:
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
+
 # Test the Model class with a DagMC geometry
 if inspect.ismodule( DagMC ):
     class DagMCModelTestCase(unittest.TestCase):
@@ -605,7 +606,7 @@ if inspect.ismodule( ROOT ):
 
         @classmethod
         def setUpClass(cls):
-            cls.model = ROOT.RootModel.getInstance()
+            cls.model = ROOT.RootModel.getInstance() 
             properties = ROOT.RootModelProperties( options.root_file )
             properties.setMaterialPropertyName( "mat" )
             cls.model.initialize( properties )
@@ -742,7 +743,7 @@ if __name__ == "__main__":
     # Create the test suite object
     suite = unittest.TestSuite()
 
-    # Add the test cases to the test suite
+    # Add the test cases to the test suite 
     if len(options.dagmc_h5m_file) > 0 and inspect.ismodule(DagMC):
         suite.addTest(unittest.makeSuite(DagMCModelTestCase))
 
