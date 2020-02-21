@@ -281,6 +281,9 @@ PyFrensie_MAKE_TEST(Geometry.Ray)
 PyFrensie_ADD_TEST(Geometry.Ray)
 
 # Add the Geometry.ModelProperties unit tests
+PyFrensie_MAKE_TEST(Geometry.InfiniteMediumModel)
+PyFrensie_ADD_TEST(Geometry.InfiniteMediumModel)
+
 IF(${FRENSIE_ENABLE_DAGMC} OR ${FRENSIE_ENABLE_ROOT})
   PyFrensie_MAKE_TEST(Geometry.ModelProperties)
 

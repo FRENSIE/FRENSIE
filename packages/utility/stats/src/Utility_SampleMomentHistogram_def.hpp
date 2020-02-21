@@ -274,8 +274,12 @@ void SampleMomentHistogram<T>::load( Archive& ar, const unsigned version )
   
 } // end Utility namespace
 
+#if !defined SWIG
+
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( Utility::SampleMomentHistogram<double> );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( Utility, SampleMomentHistogram<double> );
+
+#endif // end !defined SWIG
 
 #endif // end UTILITY_SAMPLE_MOMENT_HISTOGRAM_DEF_HPP
 

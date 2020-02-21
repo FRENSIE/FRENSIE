@@ -58,8 +58,8 @@ class NeutronStateTestCase(unittest.TestCase):
     def testGetSourceCell(self):
         "*Test MonteCarlo.NeutronState embedInModel"
         particle = MonteCarlo.NeutronState( 1 )
-        local_model = Geometry.InfiniteMediumModel( 1 )
-        particle .embedInModel( local_model )
+        local_model = Geometry.InfiniteMediumModel(1)
+        particle.embedInModel( local_model )
 
     def testAdvance(self):
         "*Test MonteCarlo.NeutronState advance"
