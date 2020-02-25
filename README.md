@@ -209,7 +209,7 @@ are described.
 2. move to the moab directory
 3. run `git clone https://bitbucket.org/aprobinson/moab.git`
 4. move to the moab directory (e.g. software/moab/moab)
-5. run `git checkout Version5.0`
+5. run `git checkout Version5.1.0`
 6. run `autoreconf -fi`
 7. move up a directory (e.g. software/moab)
 8. run `ln -s moab src`
@@ -230,7 +230,7 @@ are described.
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)
 2. move to the dagmc directory
-3. run `git clone https://github.com/svalinn/DAGMC`
+3. run `git clone https://github.com/FRENSIE/DAGMC.git`
 4. move to the DAGMC directory (e.g. software/dagmc/DAGMC)
 5. run `git checkout develop`
 6. move up a directory (e.g. software/dagmc)
@@ -238,7 +238,7 @@ are described.
 7. run `mkdir build`
 8. move to the build directory (e.g. software/dagmc/build)
 9. if HDF5 was built from source, run `env HDF5_ROOT=absolute-path-to_software/hdf5`
-10. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=RELEASE -DCMAKE_CXX_FLAGS:STRING="-D_GLIBCXX_USE_CXX11_ABI=0"`
+10. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_CXX_FLAGS:STRING="-D_GLIBCXX_USE_CXX11_ABI=0" -DMOAB_DIR=absolute-path-to_software/moab`
 11. run `make -j n`
 12. run `make install`
 13. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`
