@@ -1,4 +1,4 @@
-#!${PYTHON_EXECUTABLE}
+#!@PYTHON_EXECUTABLE@
 ##---------------------------------------------------------------------------##
 ##!
 ##! \file   endl_downloader.py
@@ -192,6 +192,7 @@ def generateBashScript( element_list ):
     print "else" 
     print "  printf \"ERROR: Invalid cross_section_directory!\\n\""
     print "  printf \"  endl_downloader.sh -d cross_section_directory\\n\""
+    print "  exit 1"
     print "fi\n" 
 
 ##---------------------------------------------------------------------------##

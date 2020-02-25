@@ -69,7 +69,7 @@ are described.
 ### Checking out FRENSIE
 1. create a working directory where FRENSIE will be built (e.g. software/frensie)
 2. move to the frensie directory
-3. run `git clone git@github.com:aprobinson/FRENSIE.git`
+3. run `git clone git@github.com:FRENSIE/FRENSIE.git`
 4. run `ln -s FRENSIE src`
 
 ### Building Git

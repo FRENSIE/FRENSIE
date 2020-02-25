@@ -5,15 +5,18 @@ SET(ROOT_GEOM_TEST_TARGET monte_carlo_active_region_source_test_root_geom)
 ADD_SUBDIRECTORY(test_files)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
+
 FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponent DEPENDS tstStandardParticleSourceComponent.cpp)
 FRENSIE_ADD_TEST(StandardParticleSourceComponent)
 
-FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponentDagMC
-  DEPENDS tstStandardParticleSourceComponentDagMC.cpp
-  LIB_DEPENDS geometry_dagmc)
-FRENSIE_ADD_TEST(StandardParticleSourceComponentDagMC
-  EXTRA_ARGS
-  --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.h5m)
+IF(FRENSIE_ENABLE_DAGMC)
+  FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleSourceComponentDagMC
+    DEPENDS tstStandardParticleSourceComponentDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(StandardParticleSourceComponentDagMC
+    EXTRA_ARGS
+    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.h5m)
+ENDIF()
 
 FRENSIE_ADD_TEST_EXECUTABLE(StandardAdjointParticleSourceComponent
   DEPENDS tstStandardAdjointParticleSourceComponent.cpp

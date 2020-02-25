@@ -108,9 +108,9 @@ typedef long unsigned int uint64_t;
 %ignore *::addRawScore;
 %ignore *::mergeHistograms;
 
-%include "Utility_SampleMomentHistogram.hpp"
+%include "Utility_SampleMomentHistogram.hpp" 
 
-%template(SampleMomentHistogram) Utility::SampleMomentHistogram<double>;
+%template(SampleMomentHistogram) Utility::SampleMomentHistogram<double>; 
 
 //---------------------------------------------------------------------------//
 // Add EstimatorContributionMultiplierPolicy support

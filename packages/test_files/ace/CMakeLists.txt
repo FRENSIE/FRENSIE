@@ -1,5 +1,9 @@
 # If additional ACE libraries are required for testing purposes add them to the
 # LIBRARY_NAMES list
+IF("${XSDIR}" STREQUAL "")
+  SET(XSDIR "xsdir")
+ENDIF()
+
 FIND_ACE_LIBRARIES(${XSDIR}
   LIBRARY_NAMES
   1000.12p 1000.14p 5000.12p 6000.12p 8000.12p 79000.14p 82000.12p 82000.14p 92000.12p
