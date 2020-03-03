@@ -215,17 +215,16 @@ are described.
 8. run `ln -s moab src`
 9. run `mkdir build`
 10. move to the build directory (e.g. software/moab/build)
-11.
   * **Basic HDF5 Build:**
     * run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
     * run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-12. run `make -j n`
-13. run `make check`
-14. run `make install`
-15. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
-16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
-17. run `exec bash`
+11. run `make -j n`
+12. run `make check`
+13. run `make install`
+14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
+15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
+16. run `exec bash`
 
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)
@@ -243,7 +242,7 @@ are described.
 12. run `make install`
 13. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`
 14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/dagmc/lib:$LD_LIBRARY_PATH`
-14. run `exec bash`
+15. run `exec bash`
 
 ### Building ROOT - optional
 **Basic:**
