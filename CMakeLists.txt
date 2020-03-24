@@ -1,6 +1,9 @@
 ##---------------------------------------------------------------------------##
 ## Initialize the FRENSIE Project
 ##---------------------------------------------------------------------------##
+# Define the project
+project(FRENSIE)
+
 # Define the minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9.3 FATAL_ERROR)
 

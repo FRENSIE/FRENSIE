@@ -32,11 +32,11 @@ namespace cgs = boost::units::cgs;
 //---------------------------------------------------------------------------//
 // Template Test Types
 //---------------------------------------------------------------------------//
-typedef boost::mpl::list<char, signed char, unsigned char, int8_t> SingleByteTypes;
+typedef boost::mpl::list<char, signed char, unsigned char> SingleByteTypes;
 
-typedef boost::mpl::list<short, int16_t, int, long, int32_t, long long, int64_t> MultipleByteTypes;
+typedef boost::mpl::list<short, int, long, long long> MultipleByteTypes;
 
-typedef boost::mpl::list<int, unsigned int, long, unsigned long, int32_t, uint32_t, long long, unsigned long long, int64_t, uint64_t, float, double> ComplexTestTypes;
+typedef boost::mpl::list<int, unsigned int, long, unsigned long, long long, unsigned long long, float, double> ComplexTestTypes;
 
 template<typename Unit, typename RawTypeWrapper = void>
 struct QuantityTypeList

@@ -12,7 +12,7 @@
 // Boost Includes
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
-#include <boost/test/floating_point_comparison.hpp>
+#include <boost/test/tools/floating_point_comparison.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/systems/cgs/area.hpp>
 #include <boost/units/systems/si/area.hpp>
