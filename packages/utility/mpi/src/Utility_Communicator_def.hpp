@@ -27,6 +27,14 @@
                       InvalidCommunicator,      \
                       "A null communicator (size == 0) was encountered!" )
 
+/*! NOTE: Due to scatterv changes introduced in boost 1.72, 
+ *  anything involving scatterv does not function properly 
+ * at the moment and its tests are disabled. If you require
+ * scatterv, please find the bug, fix it, and submit it for
+ * a pull request.
+ *  \ingroup mpi
+ */
+
 namespace Utility{
 
 namespace Details{
