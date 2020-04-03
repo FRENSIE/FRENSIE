@@ -23,7 +23,12 @@ namespace Utility{
  * code is not used to indicate errors. All of the wrapped mpi methods that
  * return a MPICommunicatorStatus will throw a std::exception to indicate that
  * an  error has occurred.
- * \ingroup mpi
+ * NOTE: Due to scatterv changes introduced in boost 1.72, 
+ * anything involving scatterv does not function properly 
+ * at the moment and its tests are disabled. If you require
+ * scatterv, please find the bug, fix it, and submit it for
+ * a pull request.
+ *  \ingroup mpi
  */
 template<typename T>
 class MPICommunicatorStatusImpl : public Communicator::Status::Impl
@@ -53,7 +58,7 @@ public:
   int tag() const override
   { return d_status.tag(); }
 
-  //! Determine the number of elements that were contained in a message
+  //! Determine the number of elements that were contained in a message. Does not currently function properly with non-native types due to boost 1.72 bug.
   int count() const override
   {
     if( boost::optional<int> wrapped_count = d_status.count<T>() )

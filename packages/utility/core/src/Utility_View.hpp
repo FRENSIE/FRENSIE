@@ -62,9 +62,6 @@ public:
   //! The size type of the view
   typedef typename std::make_unsigned<difference_type>::type size_type;
 
-  //! Default constructor
-  View();
-
   //! Iterator constructor
   template<typename OtherIterator>
   View( const OtherIterator& start, const OtherIterator& end );
@@ -125,8 +122,13 @@ public:
   //! Implicitly convert a view to a const view
   operator View<const_iterator>() const;
 
-private:
+protected:
 
+  //! Default constructor
+  View();
+
+private:
+  
   // The view start iterator
   iterator d_start_iterator;
 

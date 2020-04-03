@@ -21,6 +21,14 @@
 #include "Utility_TypeTraits.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
+/*! NOTE: Due to scatterv changes introduced in boost 1.72, 
+ *  anything involving scatterv does not function properly 
+ * at the moment and its tests are disabled. If you require
+ * scatterv, please find the bug, fix it, and submit it for
+ * a pull request. This test will not run until the bug is fixed.
+ *  \ingroup mpi
+ */
+
 //---------------------------------------------------------------------------//
 // Template Types
 //---------------------------------------------------------------------------//
