@@ -1,18 +1,20 @@
 ##---------------------------------------------------------------------------##
 ## Initialize the FRENSIE Project
 ##---------------------------------------------------------------------------##
-# Define the project
-project(FRENSIE)
 
 # Define the minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9.3 FATAL_ERROR)
+
+# Define the project
+SET(PROJECT_NAME FRENSIE)
+PROJECT(${PROJECT_NAME} C CXX Fortran)
 
 # Add the custom modules to the module path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   ${PROJECT_SOURCE_DIR}/cmake)
 
 # Define the project name
-INCLUDE(ProjectName)
+#INCLUDE(ProjectName)
 
 # Define the project version
 INCLUDE(Version)
