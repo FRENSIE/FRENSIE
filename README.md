@@ -36,7 +36,7 @@ described in the next sections.
 ### Additional Software
 
 1. GNU compiler (g++ 6.0+)
-2. [CMake 3.0+](https://cmake.org/)
+2. [CMake 3.17.1+](https://cmake.org/)
 3. [git 2.14+](https://git-scm.com/)
 4. [Doxygen 1.8.6+](http://www.doxygen.nl/) - optional
 1. [Trelis 16.3](https://www.csimsoft.com/trelis) - optional
@@ -52,8 +52,8 @@ installation guide can be found
 
 ## Building Dependent Software Libraries
 Before any of the software libraries are built, verify that the system has
-CMake version 3.0.1 or greater installed. If CMake is not installed or an older
-version is present, build CMake using the instructions below.
+CMake version 3.17.1 or greater installed. If CMake is not installed or an
+older version is present, build CMake using the instructions below.
 
 When building software libraries and executables from source, the following
 directory structure should be adopted: software/package/package.xx.xx.xx,
@@ -79,11 +79,12 @@ are described.
 **Basic:**
 
 1. run `sudo apt-get install cmake`
-2. run `cmake --version` and verify that the output is >= 3.0.1
+2. run `cmake --version` and verify that the output is >= 3.17.1. If the output
+        is less than 3.17.1 proceed to the advanced build instructions
 
 **Advanced:**
 
-1. download the latest source release [CMake 3.x source](https://cmake.org/download/)
+1. download the latest source release [CMake 3.17.1+ source](https://cmake.org/download/)
 2. move the cmake-3.x.tar.gz file to the cmake directory (e.g. software/cmake)
 3. move to the cmake directory
 4. run `tar -xvf cmake-3.x.tar.gz`
@@ -215,17 +216,18 @@ are described.
 8. run `ln -s moab src`
 9. run `mkdir build`
 10. move to the build directory (e.g. software/moab/build)
-11.
+11. run `sudo apt-get install libeigen3-dev`
+12.
   * **Basic HDF5 Build:**
     * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
     * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-12. run `make -j n`
-13. run `make check`
-14. run `make install`
-15. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
-16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
-17. run `exec bash`
+13. run `make -j n`
+14. run `make check`
+15. run `make install`
+16. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
+17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
+18. run `exec bash`
 
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)

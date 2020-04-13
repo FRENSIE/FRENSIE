@@ -14,9 +14,28 @@ MACRO(ENABLE_MOAB_SUPPORT)
   # not currently supported)
   FIND_PACKAGE(MOAB REQUIRED)
 
-  # Use the user supplied prefix to find the Moab libraries and include dirs.
-  SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
-  SET(MOAB_LIBRARY_DIRS ${MOAB_PREFIX}/lib)
+  # Make sure that the MOABConfig.cmake was found and that the required
+  # variables were set
+  SET(MOAB_ERROR_MESSAGE "was not set. There may be a problem with the MOABConfig.cmake file generated during the MOAB build.")
+  
+  IF(NOT DEFINED MOAB_INCLUDE_DIRS)
+    MESSAGE(FATAL_ERROR "MOAB_INCLUDE_DIRS ${MOAB_ERROR_MESSAGE}")
+  ENDIF()
+
+  IF(NOT DEFINED MOAB_LIBRARY_DIRS)
+    MESSAGE(FATAL_ERROR "MOAB_LIBRARY_DIRS ${MOAB_ERROR_MESSAGE}")
+  ENDIF()
+
+  IF(NOT DEFINED MOAB_USE_EIGEN)
+    MESSAGE(FATAL_ERROR "MOAB_USE_EIGEN ${MOAB_ERROR_MESSAGE}")
+  ENDIF()
+
+  # Make sure that MOAB was configured with eigen
+  IF(NOT ${MOAB_USE_EIGEN})
+    MESSAGE(FATAL_ERROR "MOAB was not built with eigen3! Rebuild MOAB with eigen3 (and install eigen3 if necessare - e.g. 'sudo apt-get install libeigen3-dev')")
+  ENDIF()
+
+  # Find the MOAB library
   FIND_LIBRARY(MOAB MOAB ${MOAB_LIBRARY_DIRS})
 
   IF(${MOAB} MATCHES NOTFOUND)
