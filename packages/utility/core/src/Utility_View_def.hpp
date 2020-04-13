@@ -39,7 +39,7 @@ struct IteratorHelper
   }
 };
 
-// The iterator helper class partial specialization for random acces iterators
+// The iterator helper class partial specialization for random access iterators
 template<typename Iterator>
 struct IteratorHelper<Iterator,typename std::enable_if<std::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value>::type>
 {

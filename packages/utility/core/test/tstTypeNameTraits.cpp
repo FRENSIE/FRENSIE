@@ -40,7 +40,7 @@ typedef boost::mpl::list<std::tuple<si::energy,double>,
                          std::tuple<KiloElectronVolt,float>,
                          std::tuple<MegaElectronVolt,float> > QuantityTypes;
 
-typedef boost::mpl::list<float,double,char,short,unsigned short,int,unsigned int,long int,unsigned long int,long long int,unsigned long long int,std::complex<float>,std::complex<double>,std::complex<double>,boost::units::quantity<si::energy,double>,boost::units::quantity<ElectronVolt,float>,std::string> TestTypes;
+typedef boost::mpl::list<float,double,char,short,unsigned short,int,unsigned int,long int,unsigned long int,long long int,unsigned long long int,std::complex<float>,std::complex<double>, boost::units::quantity<si::energy,double>,boost::units::quantity<ElectronVolt,float>,std::string> TestTypes;
 
 //---------------------------------------------------------------------------//
 // Tests

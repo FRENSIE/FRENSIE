@@ -200,7 +200,8 @@ int Communicator::Status::tag() const
 }
 
 // Count the number of elements that were contained in the message
-/*! \details If there are no message details, the return value is always -1.
+/*! \details If there are no message details, the return value is always -1. 
+ *NOTE: Currently does not function properly for non-native types due to bug in boost 1.72 that always returns count of 1.
  */
 int Communicator::Status::count() const
 {
@@ -282,6 +283,14 @@ bool operator!=( const Communicator& comm_a, const Communicator& comm_b )
 { return !comm_a.isIdentical( comm_b ); }
 
 } // end Utility namespace
+
+/*! NOTE: Due to scatterv changes introduced in boost 1.72, 
+ *  anything involving scatterv does not function properly 
+ * at the moment and its tests are disabled. If you require
+ * scatterv, please find the bug, fix it, and submit it for
+ * a pull request.
+ *  \ingroup mpi
+ */
 
 // Explicit instantiations
 __EXPLICIT_COMM_SEND_RECV_HELPER_INST__;

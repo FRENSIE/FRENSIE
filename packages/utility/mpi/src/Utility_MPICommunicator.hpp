@@ -22,8 +22,14 @@ namespace Utility{
  * Utility::Communicator::getDefault() method. If MPI has been
  * configured for use and has been initialized successfully, the MPI world
  * communicator will be returned.
- * \ingroup mpi
+ * NOTE: Due to scatterv changes introduced in boost 1.72, 
+ *  anything involving scatterv does not function properly 
+ * at the moment and its tests are disabled. If you require
+ * scatterv, please find the bug, fix it, and submit it for
+ * a pull request.
+ *  \ingroup mpi
  */
+ 
 class MPICommunicator : public Communicator
 {
 

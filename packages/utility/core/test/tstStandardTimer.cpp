@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------//
 // Template Test Types
 //---------------------------------------------------------------------------//
-typedef boost::mpl::list<std::chrono::system_clock,std::chrono::steady_clock,std::chrono::high_resolution_clock> ClockTypes;
+typedef boost::mpl::list<std::chrono::system_clock,std::chrono::steady_clock> ClockTypes;
 
 //---------------------------------------------------------------------------//
 // Tests.

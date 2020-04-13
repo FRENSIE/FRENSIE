@@ -180,6 +180,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( IsSequenceContainerWithContiguousMemory,
 
 //---------------------------------------------------------------------------//
 // Check that a view can be constructed
+/*
 BOOST_AUTO_TEST_CASE_TEMPLATE( default_constructor,
                                Container,
                                TestContainers )
@@ -194,6 +195,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( default_constructor,
   BOOST_CHECK_EQUAL( view_of_const.size(), 0 );
   BOOST_CHECK( view.empty() );
 }
+*/
 
 //---------------------------------------------------------------------------//
 // Check that a view can be constructed from iterators
@@ -1001,6 +1003,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_equal,
 
   Container left_container = initializeContainer<Container>();
   Container right_container = initializeContainer<Container>();
+  Container empty_container;
 
   // Construct a view from iterators
   View left_view( left_container.begin(), left_container.end() );
@@ -1008,23 +1011,26 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_equal,
 
   View right_view( right_container.begin(), right_container.end() );
   ViewOfConst right_view_of_const = right_view.toConst();
-  
+
+  View empty_view( empty_container.begin(), empty_container.end() );
+  ViewOfConst emtpy_view_of_const = empty_view.toConst();
+
   std::ostringstream oss;
 
   // No details logging
   bool compare_result =
     Utility::ComparisonTraits<View>::template compare<Policy,0,0>(
-                                                      View(), "lhs", false,
+                                                      empty_view, "lhs", false,
                                                       right_view, "rhs", false,
                                                       "", oss );
-
+ 
   BOOST_CHECK( !compare_result );
   BOOST_CHECK_EQUAL( oss.str(), "" );
 
   compare_result =
     Utility::ComparisonTraits<View>::template compare<Policy,0,0>(
                                                        left_view, "lhs", false,
-                                                       View(), "rhs", false,
+                                                       empty_view, "rhs", false,
                                                        "", oss );
 
   BOOST_CHECK( !compare_result );
@@ -1770,6 +1776,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_equal,
   
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
 }
 
 //---------------------------------------------------------------------------//
