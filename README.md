@@ -39,7 +39,7 @@ described in the next sections.
 2. [CMake 3.0+](https://cmake.org/)
 3. [git 2.14+](https://git-scm.com/)
 4. [Doxygen 1.8.6+](http://www.doxygen.nl/) - optional
-1. [Trelis 16.3](https://www.csimsoft.com/trelis) - optional
+5. [Trelis 16.3](https://www.csimsoft.com/trelis) - optional
 
 FRENSIE requires a GNU compiler (6.0 or greater), CMake (3.0.1 or
 greater) and git (1.9.1 or greater) to build correctly. If you plan on building
