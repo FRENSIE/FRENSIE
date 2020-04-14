@@ -19,7 +19,7 @@
 #include <boost/units/static_rational.hpp>
 #include <boost/units/limits.hpp>
 #include <boost/units/io.hpp>
-#include <boost/math/common_factor.hpp>
+#include <boost/integer/common_factor.hpp>
 
 // FRENSIE Includes
 #include "Utility_QuantityTraitsDecl.hpp"
@@ -198,7 +198,7 @@ struct RawRationalPowerHelper
 template<boost::units::integer_type N,
          boost::units::integer_type D,
          typename T>
-struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && D>1 && boost::math::static_gcd<N,D>::value==1 && ((N==1 && D>3) || N>1) && std::is_signed<T>::value)>::type>
+struct RawRationalPowerHelper<N,D,T,typename std::enable_if<(D%2==1 && D>1 && boost::integer::static_gcd<N,D>::value==1 && ((N==1 && D>3) || N>1) && std::is_signed<T>::value)>::type>
 {
   //! The return type
   typedef typename ToFloatingPointHelper<T>::type ReturnType;
@@ -403,7 +403,7 @@ struct RawRationalPowerHelper<1,3,T>
 template<boost::units::integer_type N,
          boost::units::integer_type D,
          typename T>
-struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N!=D && boost::math::static_gcd<N,D>::value>1)>::type> : public RawRationalPowerHelper<N/boost::math::static_gcd<N,D>::value,D/boost::math::static_gcd<N,D>::value,T>
+struct RawRationalPowerHelper<N, D, T, typename std::enable_if<(N>1 && D>1 && N!=D && boost::integer::static_gcd<N,D>::value>1)>::type> : public RawRationalPowerHelper<N/boost::integer::static_gcd<N,D>::value,D/boost::integer::static_gcd<N,D>::value,T>
 { /* ... */ };
 
 /*! The partial specialization of RawRationalPowerHelper for N<0, D>0

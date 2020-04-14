@@ -11,7 +11,7 @@ depends on are listed below.
 3. [Python 2.7+](https://www.python.org/) 
 4. [Numpy 1.8+](http://www.numpy.org/) 
 5. [SWIG 4.0+](https://github.com/swig/swig)
-6. [Boost 1.66.0+](http://www.boost.org/)
+6. [Boost 1.72.0+](http://www.boost.org/)
 7. [MOAB 5.0](https://bitbucket.org/fathomteam/moab) - optional
 8. [DagMC 2.8+](http://svalinn.github.io/DAGMC/) - optional
 9. [ROOT 6.04/02+](https://root.cern.ch/content/release-60402) - optional
@@ -36,7 +36,7 @@ described in the next sections.
 ### Additional Software
 
 1. GNU compiler (g++ 6.0+)
-2. [CMake 3.0+](https://cmake.org/)
+2. [CMake 3.17.1+](https://cmake.org/)
 3. [git 2.14+](https://git-scm.com/)
 4. [Doxygen 1.8.6+](http://www.doxygen.nl/) - optional
 5. [Trelis 16.3](https://www.csimsoft.com/trelis) - optional
@@ -52,8 +52,8 @@ installation guide can be found
 
 ## Building Dependent Software Libraries
 Before any of the software libraries are built, verify that the system has
-CMake version 3.0.1 or greater installed. If CMake is not installed or an older
-version is present, build CMake using the instructions below.
+CMake version 3.17.1 or greater installed. If CMake is not installed or an
+older version is present, build CMake using the instructions below.
 
 When building software libraries and executables from source, the following
 directory structure should be adopted: software/package/package.xx.xx.xx,
@@ -79,11 +79,12 @@ are described.
 **Basic:**
 
 1. run `sudo apt-get install cmake`
-2. run `cmake --version` and verify that the output is >= 3.0.1
+2. run `cmake --version` and verify that the output is >= 3.17.1. If the output
+        is less than 3.17.1 proceed to the advanced build instructions
 
 **Advanced:**
 
-1. download the latest source release [CMake 3.x source](https://cmake.org/download/)
+1. download the latest source release [CMake 3.17.1+ source](https://cmake.org/download/)
 2. move the cmake-3.x.tar.gz file to the cmake directory (e.g. software/cmake)
 3. move to the cmake directory
 4. run `tar -xvf cmake-3.x.tar.gz`
@@ -156,7 +157,7 @@ are described.
 5. run `ln -s hdf5-1.8.13 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/hdf5/build)
-10. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --prefix=absolute-path-to_software/hdf5`
+10. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug --prefix=absolute-path-to_software/hdf5`
 11. run `make -j n`
 12. run `make test`
 13. run `make install`
@@ -193,14 +194,14 @@ are described.
 
 **Advanced:**
 
-1. download the [Boost 1.66.0 source](http://sourceforge.net/projects/boost/files/boost/1.66.0/)
-2. move the boost_1_66_0.tar.gz file to the boost directory (e.g. software/boost)
+1. download the [Boost 1.72.0 source](http://sourceforge.net/projects/boost/files/boost/1.72.0/)
+2. move the boost_1_72_0.tar.gz file to the boost directory (e.g. software/boost)
 3. move to the boost directory
-4. run `tar -xvf boost_1_66_0.tar.gz`
-5. move to the boost_1_66_0 directory (e.g. software/boost/boost_1_66_0)
+4. run `tar -xvf boost_1_72_0.tar.gz`
+5. move to the boost_1_72_0 directory (e.g. software/boost/boost_1_72_0)
 6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
 7. if OpenMPI has been built, run `sed -i "$ a using mpi ;" project-config.jam`
-8. run `./b2 -jn --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0" install`, where n is the number of threads to use while building
+8. run `./b2 -jn --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared install`, where n is the number of threads to use while building
 9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
@@ -215,17 +216,18 @@ are described.
 8. run `ln -s moab src`
 9. run `mkdir build`
 10. move to the build directory (e.g. software/moab/build)
-11.
+11. run `sudo apt-get install libeigen3-dev`
+12.
   * **Basic HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-12. run `make -j n`
-13. run `make check`
-14. run `make install`
-15. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
-16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
-17. run `exec bash`
+    * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+13. run `make -j n`
+14. run `make check`
+15. run `make install`
+16. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
+17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
+18. run `exec bash`
 
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)
@@ -238,7 +240,7 @@ are described.
 7. run `mkdir build`
 8. move to the build directory (e.g. software/dagmc/build)
 9. if HDF5 was built from source, run `env HDF5_ROOT=absolute-path-to_software/hdf5`
-10. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_CXX_FLAGS:STRING="-D_GLIBCXX_USE_CXX11_ABI=0" -DMOAB_DIR=absolute-path-to_software/moab`
+10. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=absolute-path-to_software/moab`
 11. run `make -j n`
 12. run `make install`
 13. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`

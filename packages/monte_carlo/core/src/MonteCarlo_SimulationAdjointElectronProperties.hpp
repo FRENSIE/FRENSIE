@@ -14,6 +14,7 @@
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
+#include <boost/serialization/vector.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
