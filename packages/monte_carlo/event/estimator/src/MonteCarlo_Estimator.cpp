@@ -31,7 +31,6 @@ Estimator::Estimator( const Id id, const double multiplier )
     d_multiplier( multiplier ),
     d_particle_types(),
     d_response_functions( 1 ),
-    d_phase_space_discretization(),
     d_sample_moment_histogram_bins( Estimator::getDefaultSampleMomentHistogramBins() ),
     d_has_uncommitted_history_contribution( 1, false )
 {
@@ -54,39 +53,6 @@ auto Estimator::getId() const -> Id
 double Estimator::getMultiplier() const
 {
   return d_multiplier;
-}
-
-// Set the discretization for a dimension of the phase space
-void Estimator::setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins )
-{
-  this->assignDiscretization( bins, false );
-}
-
-// Check if a discretization has been set for a dimension of the phase space
-bool Estimator::doesDimensionHaveDiscretization(
-                            const ObserverPhaseSpaceDimension dimension ) const
-{
-  return d_phase_space_discretization.doesDimensionHaveDiscretization( dimension );
-}
-
-// Return the dimensions that have been discretized
-void Estimator::getDiscretizedDimensions(
-       std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const
-{
-  return d_phase_space_discretization.getDiscretizedDimensions( discretized_dimensions );
-}
-
-// Return the number of bins for a dimension of the phase space
-size_t Estimator::getNumberOfBins(
-                            const ObserverPhaseSpaceDimension dimension ) const
-{
-  return d_phase_space_discretization.getNumberOfBins( dimension );
-}
-
-// Return the total number of bins
-size_t Estimator::getNumberOfBins() const
-{
-  return d_phase_space_discretization.getNumberOfBins();
 }
 
 // Add a response function
@@ -991,17 +957,6 @@ void Estimator::getTotalProcessedSnapshots(
                                     processed_snapshots["fom"] );
 }
 
-// Assign discretization to an estimator dimension
-void Estimator::assignDiscretization(
-  const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
-  const bool range_dimension )
-{
-  // Make sure only the master thread calls this function
-  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
-
-  d_phase_space_discretization.assignDiscretizationToDimension( bins, range_dimension );
-}
-
 // Assign response function to the estimator
 /*! \details Override this method in a derived class if response function
  * properties need to be checked before the assignment takes place.
@@ -1259,13 +1214,6 @@ size_t Estimator::calculateResponseFunctionIndex(
   return bin_index/this->getNumberOfBins();
 }
 
-// Check if the range intersects the estimator phase space
-bool Estimator::doesRangeIntersectEstimatorPhaseSpace(
-            const ObserverParticleStateWrapper& particle_state_wrapper ) const
-{
-  return d_phase_space_discretization.doesRangeIntersectDiscretization( particle_state_wrapper );
-}
-
 // Calculate the bin indices for the desired response function
 void Estimator::calculateBinIndicesAndWeightsOfRange(
             const ObserverParticleStateWrapper& particle_state_wrapper,
@@ -1464,12 +1412,6 @@ void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
        << this->getResponseFunctionName( i )
        << std::endl;
   }
-}
-
-// Print the estimator discretization
-void Estimator::printEstimatorDiscretization( std::ostream& os ) const
-{
-  d_phase_space_discretization.print( os );
 }
 
 // Print the estimator data stored in an array

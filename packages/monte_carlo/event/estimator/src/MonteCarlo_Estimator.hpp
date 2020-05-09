@@ -21,11 +21,8 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleObserverDiscretizationInterface.hpp"
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
-#include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
-#include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
-#include "MonteCarlo_ObserverParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleResponse.hpp"
 #include "MonteCarlo_UniqueIdManager.hpp"
@@ -45,17 +42,13 @@
 namespace MonteCarlo{
 
 //! The estimator base class
-class Estimator : public ParticleHistoryObserver
+class Estimator : public ParticleObserverDiscretizationInterface
 {
 
 protected:
 
   //! Typedef for Utility::QuantityTraits
   typedef Utility::QuantityTraits<double> ST;
-
-  //! Typedef for map of dimension values
-  typedef ObserverPhaseSpaceDiscretization::DimensionValueMap
-  DimensionValueMap;
 
   //! Typedef for the collection of estimator moments
   typedef Utility::SampleMomentCollection<double,2,1> TwoEstimatorMomentsCollection;
@@ -95,30 +88,6 @@ public:
 
   //! Check if the estimator is a mesh estimator
   virtual bool isMeshEstimator() const = 0;
-
-  //! Check if a discretization has been set for a dimension of the phase space
-  bool doesDimensionHaveDiscretization( const ObserverPhaseSpaceDimension dimension ) const;
-
-  //! Set the discretization for a dimension of the phase space
-  template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-  void setDiscretization( const InputDataType& input_bin_data );
-
-  //! Set the discretization for a dimension of the phase space
-  void setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins );
-
-  //! Return the discretization for a dimension of the phase space
-  template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-  void getDiscretization( InputDataType& bin_data );
-
-  //! Return the dimensions that have been discretized
-  void getDiscretizedDimensions(
-      std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
-
-  //! Return the number of bins for a dimension of the phase space
-  size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;
-
-  //! Return the total number of bins (per response function)
-  size_t getNumberOfBins() const;
 
   //! Add a response function
   void addResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
@@ -489,10 +458,6 @@ protected:
   //! Default constructor
   Estimator();
 
-  //! Assign discretization to an estimator dimension
-  virtual void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
-                                     const bool range_dimension );
-
   //! Assign response function to the estimator
   virtual void assignResponseFunction( const std::shared_ptr<const ParticleResponse>& response_function );
 
@@ -546,14 +511,6 @@ protected:
   //! Calculate the response function index given a bin index
   size_t calculateResponseFunctionIndex( const size_t bin_index ) const;
 
-  //! Check if the point is in the estimator phase space
-  template<typename PointType>
-  bool isPointInEstimatorPhaseSpace( const PointType& phase_space_point ) const;
-
-  //! Check if the range intersects the estimator phase space
-  bool doesRangeIntersectEstimatorPhaseSpace(
-            const ObserverParticleStateWrapper& particle_state_wrapper ) const;
-
   //! Calculate the bin index for the desired response function
   template<typename PointType>
   void calculateBinIndicesOfPoint(
@@ -588,9 +545,6 @@ protected:
 
   //! Print the estimator response function names
   void printEstimatorResponseFunctionNames( std::ostream& os ) const;
-
-  //! Print the estimator discretization
-  void printEstimatorDiscretization( std::ostream& os ) const;
 
   //! Print the estimator data stored in an collection
   void printEstimatorBinData(
@@ -686,9 +640,6 @@ private:
 
   // The response functions
   std::vector<std::shared_ptr<const ParticleResponse> > d_response_functions;
-
-  // The estimator phase space discretization
-  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
 
   // The sample moment histogram bins
   std::shared_ptr<const std::vector<double> > d_sample_moment_histogram_bins;

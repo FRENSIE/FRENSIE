@@ -1129,7 +1129,7 @@ void EntityEstimator::printImplementation(
   this->printEstimatorResponseFunctionNames( os );
 
   // Print the binning data
-  this->printEstimatorDiscretization( os );
+  this->printObserverDiscretization( os );
 
   os << "\n";
 
