@@ -14,6 +14,16 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_ObserverParticleStateWrapper.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+
+// Boost Includes
+#include <boost/any.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 namespace MonteCarlo{
 
@@ -24,8 +34,10 @@ class ParticleObserverDiscretizationInterface : public ParticleHistoryObserver
 protected:
 
   //! Typedef for map of dimension values
-  typedef ObserverPhaseSpaceDiscretization::DimensionValueMap
-  DimensionValueMap;
+  typedef ObserverPhaseSpaceDiscretization::DimensionValueMap DimensionValueMap;
+
+  //! Typedef for observer phase space dimension discretization pair type
+  typedef ObserverPhaseSpaceDiscretization::BinIndexWeightPairArray BinIndexWeightPairArray;
 
 public: 
 
@@ -60,7 +72,17 @@ public:
   void getDiscretizedDimensions(
       std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
 
+private:
+
+  // The observer phase space discretization
+  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
+
 protected:
+
+  std::string getBinName(const size_t bin_index ) const;
+
+  void calculateBinIndicesAndWeightsOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,
+                                             BinIndexWeightPairArray& bin_indices_and_weights ) const;
 
   //! Assign discretization to an observer dimension
   virtual void assignDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
@@ -77,12 +99,31 @@ protected:
   //! Print the observer discretization
   void printObserverDiscretization( std::ostream& os ) const;
 
-  // The observer phase space discretization
-  ObserverPhaseSpaceDiscretization d_phase_space_discretization;
+  void print( std::ostream& os,
+              const ObserverPhaseSpaceDimension dimension,
+              const size_t index ) const;
+
+  template<typename PointType>
+  void calculateBinIndicesOfPoint( const PointType& phase_space_point,
+                                   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray& bin_indices) const;
+
+  // Serialize the observer discretization
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+    ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleObserverDiscretizationInterface , MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleObserverDiscretizationInterface, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleObserverDiscretizationInterface);
 
 //---------------------------------------------------------------------------//
 // Template Includes

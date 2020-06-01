@@ -31,8 +31,8 @@ void Estimator::calculateBinIndicesOfPoint(
   testPrecondition( response_function_index <
                     this->getNumberOfResponseFunctions() );
 
-  d_phase_space_discretization.calculateBinIndicesOfPoint( phase_space_point,
-                                                           bin_indices );
+  ParticleObserverDiscretizationInterface::calculateBinIndicesOfPoint<PointType>( phase_space_point,
+                                         bin_indices );
 
   // Add the response function index to each phase space bin index
   for( size_t i = 0; i < bin_indices.size(); ++i )
@@ -70,14 +70,13 @@ template<typename Archive>
 void Estimator::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleObserverDiscretizationInterface );
 
   // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
-  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
   ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   // Do not save d_has_uncommited_history_contribution because it is thread
   // specific data - all data should be committed before saving the estimator
@@ -88,14 +87,13 @@ template<typename Archive>
 void Estimator::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleObserverDiscretizationInterface );
 
   // Load the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
-  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
   ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   
   // Initialize the thread data

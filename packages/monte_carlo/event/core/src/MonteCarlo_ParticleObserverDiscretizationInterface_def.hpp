@@ -66,6 +66,14 @@ inline bool ParticleObserverDiscretizationInterface::isPointInObserverPhaseSpace
                                                            phase_space_point );
 }
 
+template<typename PointType>
+void ParticleObserverDiscretizationInterface::calculateBinIndicesOfPoint( const PointType& phase_space_point,
+                                  ObserverPhaseSpaceDimensionDiscretization::BinIndexArray& bin_indices) const
+{
+  d_phase_space_discretization.calculateBinIndicesOfPoint(phase_space_point,
+                                                          bin_indices);
+}
+
 }; // End MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_DEF_HPP

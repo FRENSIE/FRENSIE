@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_ParticleObserverDiscretizationInterface.hpp"
 #include "Utility_OpenMPProperties.hpp"
 
@@ -50,6 +51,17 @@ size_t ParticleObserverDiscretizationInterface::getNumberOfBins() const
   return d_phase_space_discretization.getNumberOfBins();
 }
 
+std::string ParticleObserverDiscretizationInterface::getBinName( const size_t bin_index ) const
+{
+  return d_phase_space_discretization.getBinName(bin_index);
+}
+
+void ParticleObserverDiscretizationInterface::calculateBinIndicesAndWeightsOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,
+                                                                                    BinIndexWeightPairArray& bin_indices_and_weights) const
+{
+  return d_phase_space_discretization.calculateBinIndicesAndWeightsOfRange( particle_state_wrapper, bin_indices_and_weights);
+}
+
 // Assign discretization to an observer dimension
 void ParticleObserverDiscretizationInterface::assignDiscretization(
   const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins,
@@ -74,7 +86,16 @@ void ParticleObserverDiscretizationInterface::printObserverDiscretization( std::
   d_phase_space_discretization.print( os );
 }
 
+  void ParticleObserverDiscretizationInterface::print( std::ostream& os,
+              const ObserverPhaseSpaceDimension dimension,
+              const size_t index ) const
+{
+  return d_phase_space_discretization.print( os, dimension, index);
+}
+
 } // End MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ParticleObserverDiscretizationInterface );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleObserverDiscretizationInterface.cpp
