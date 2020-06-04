@@ -21,7 +21,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleObserverDiscretizationInterface.hpp"
+#include "MonteCarlo_DiscretizableParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "MonteCarlo_ParticleResponse.hpp"
@@ -42,7 +42,7 @@
 namespace MonteCarlo{
 
 //! The estimator base class
-class Estimator : public ParticleObserverDiscretizationInterface
+class Estimator : public DiscretizableParticleHistoryObserver
 {
 
 protected:

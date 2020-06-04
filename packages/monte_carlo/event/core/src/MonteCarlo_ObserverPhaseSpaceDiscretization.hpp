@@ -133,9 +133,8 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_VERSION( ObserverPhaseSpaceDiscretization , MonteCarlo, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ObserverPhaseSpaceDiscretization, MonteCarlo );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ObserverPhaseSpaceDiscretization);
+BOOST_CLASS_VERSION( MonteCarlo::ObserverPhaseSpaceDiscretization, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ObserverPhaseSpaceDiscretization );
 
 #endif // end MONTE_CARLO_OBSERVER_PHASE_SPACE_DISCRETIZATION_HPP
 

@@ -21,7 +21,7 @@
 
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
-#include "MonteCarlo_ParticleObserverDiscretizationInterface.hpp"
+#include "MonteCarlo_DiscretizableParticleHistoryObserver.hpp"
 #include "MonteCarlo_Estimator.hpp"
 #include "MonteCarlo_EntityEstimator.hpp"
 #include "MonteCarlo_StandardEntityEstimator.hpp"
@@ -170,26 +170,26 @@ typedef long unsigned int uint64_t;
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
-%shared_ptr( MonteCarlo::ParticleObserverDiscretizationInterface )
-%include "MonteCarlo_ParticleObserverDiscretizationInterface.hpp"
+%shared_ptr( MonteCarlo::DiscretizableParticleHistoryObserver )
+%include "MonteCarlo_DiscretizableParticleHistoryObserver.hpp"
 
 // Add setDiscretization function templates
-%template(setEnergyDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION, std::vector<double> >;
-%template(setTimeDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION, std::vector<double> >;
-%template(setSourceEnergyDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, std::vector<double> >;
-%template(setSourceTimeDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
-%template(setCollisionNumberDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
-%template(setCosineDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
-%template(setSourceIdDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::setDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
+%template(setEnergyDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION, std::vector<double> >;
+%template(setTimeDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION, std::vector<double> >;
+%template(setSourceEnergyDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, std::vector<double> >;
+%template(setSourceTimeDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
+%template(setCollisionNumberDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
+%template(setCosineDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
+%template(setSourceIdDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::setDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
 
 // Add getDiscretization function templates
-%template(getEnergyDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION, std::vector<double> >;
-%template(getTimeDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION, std::vector<double> >;
-%template(getSourceEnergyDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, std::vector<double> >;
-%template(getSourceTimeDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
-%template(getCollisionNumberDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
-%template(getCosineDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
-%template(getSourceIdDiscretization) MonteCarlo::ParticleObserverDiscretizationInterface::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
+%template(getEnergyDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION, std::vector<double> >;
+%template(getTimeDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_TIME_DIMENSION, std::vector<double> >;
+%template(getSourceEnergyDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ENERGY_DIMENSION, std::vector<double> >;
+%template(getSourceTimeDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_SOURCE_TIME_DIMENSION, std::vector<double> >;
+%template(getCollisionNumberDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION, std::vector<unsigned> >;
+%template(getCosineDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_COSINE_DIMENSION, std::vector<double> >;
+%template(getSourceIdDiscretization) MonteCarlo::DiscretizableParticleHistoryObserver::getDiscretization<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION, std::vector<std::set<uint32_t> > >;
 
 //---------------------------------------------------------------------------//
 // Add Estimator support

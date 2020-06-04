@@ -31,7 +31,7 @@ void Estimator::calculateBinIndicesOfPoint(
   testPrecondition( response_function_index <
                     this->getNumberOfResponseFunctions() );
 
-  ParticleObserverDiscretizationInterface::calculateBinIndicesOfPoint<PointType>( phase_space_point,
+  DiscretizableParticleHistoryObserver::calculateBinIndicesOfPoint<PointType>( phase_space_point,
                                          bin_indices );
 
   // Add the response function index to each phase space bin index
@@ -70,7 +70,7 @@ template<typename Archive>
 void Estimator::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleObserverDiscretizationInterface );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DiscretizableParticleHistoryObserver );
 
   // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
@@ -87,7 +87,7 @@ template<typename Archive>
 void Estimator::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleObserverDiscretizationInterface );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DiscretizableParticleHistoryObserver );
 
   // Load the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );

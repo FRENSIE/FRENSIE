@@ -1189,7 +1189,7 @@ std::string Estimator::getBinName( const size_t bin_index ) const
   // Make sure the bin index is valid
   testPrecondition( bin_index < this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
 
-  return ParticleObserverDiscretizationInterface::getBinName( bin_index % this->getNumberOfBins() ) + ", " +
+  return DiscretizableParticleHistoryObserver::getBinName( bin_index % this->getNumberOfBins() ) + ", " +
     this->getResponseFunctionName( this->calculateResponseFunctionIndex( bin_index ) );
 }
 
@@ -1225,7 +1225,7 @@ void Estimator::calculateBinIndicesAndWeightsOfRange(
   testPrecondition( response_function_index <
                     this->getNumberOfResponseFunctions() );
 
-  ParticleObserverDiscretizationInterface::calculateBinIndicesAndWeightsOfRange(
+  DiscretizableParticleHistoryObserver::calculateBinIndicesAndWeightsOfRange(
                                                      particle_state_wrapper,
                                                      bin_indices_and_weights );
 
@@ -1430,7 +1430,7 @@ void Estimator::printEstimatorBinData(
 
   // Get the dimension ordering
   std::vector<ObserverPhaseSpaceDimension> dimension_ordering;
-  ParticleObserverDiscretizationInterface::getDiscretizedDimensions( dimension_ordering );
+  DiscretizableParticleHistoryObserver::getDiscretizedDimensions( dimension_ordering );
 
   std::map<ObserverPhaseSpaceDimension,size_t> dimension_index_step_size_map;
   
@@ -1478,7 +1478,7 @@ void Estimator::printEstimatorBinData(
 	  for( size_t s = 0u; s < dimension_ordering.size()-d; ++s )
 	    os << " ";
 
-          ParticleObserverDiscretizationInterface::print(os, dimension_ordering[d], bin_index );
+          DiscretizableParticleHistoryObserver::print( os, dimension_ordering[d], bin_index );
 
 	  // Print a new line character for all but the first dimension
 	  if( d != 0 )

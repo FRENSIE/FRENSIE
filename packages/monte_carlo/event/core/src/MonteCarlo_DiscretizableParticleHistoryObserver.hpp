@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleObserverDiscretizationInterface.hpp
+//! \file   MonteCarlo_DiscretizableParticleHistoryObserver.hpp
 //! \author Philip Britt
 //! \brief  Particle observer discretization interface class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_HPP
-#define MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_HPP
+#ifndef MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_HPP
+#define MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_HPP
 
 // FRENSIE includes
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
@@ -28,7 +28,7 @@
 namespace MonteCarlo{
 
 //! The particle observer discretization interface base class
-class ParticleObserverDiscretizationInterface : public ParticleHistoryObserver
+class DiscretizableParticleHistoryObserver : public ParticleHistoryObserver
 {
 
 protected:
@@ -42,10 +42,10 @@ protected:
 public: 
 
   //! Constructor
-  ParticleObserverDiscretizationInterface();
+  DiscretizableParticleHistoryObserver();
 
   //! Destructor
-  ~ParticleObserverDiscretizationInterface()
+  ~DiscretizableParticleHistoryObserver()
   {/* ... */}
 
   //! Check if a discretization has been set for a dimension of the phase space
@@ -112,7 +112,8 @@ protected:
   void serialize( Archive& ar, const unsigned version )
   {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
-    ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization ); }
+    ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization ); 
+  }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -121,18 +122,18 @@ protected:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_VERSION( ParticleObserverDiscretizationInterface , MonteCarlo, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ParticleObserverDiscretizationInterface, MonteCarlo );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleObserverDiscretizationInterface);
+BOOST_SERIALIZATION_CLASS_VERSION( DiscretizableParticleHistoryObserver , MonteCarlo, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( DiscretizableParticleHistoryObserver, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, DiscretizableParticleHistoryObserver);
 
 //---------------------------------------------------------------------------//
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_ParticleObserverDiscretizationInterface_def.hpp"
+#include "MonteCarlo_DiscretizableParticleHistoryObserver_def.hpp"
 
-#endif // end MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_HPP
+#endif // end MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleObserverDiscretizationInterface.hpp
+// end MonteCarlo_DiscretizableParticleHistoryObserver.hpp
 //---------------------------------------------------------------------------//

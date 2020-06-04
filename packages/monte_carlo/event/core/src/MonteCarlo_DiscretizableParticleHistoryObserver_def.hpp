@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleObserverDiscretizationInterface_def.hpp
+//! \file   MonteCarlo_DiscretizableParticleHistoryObserver_def.hpp
 //! \author Philip Britt
 //! \brief  Particle observer discretization interface base class template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_DEF_HPP
-#define MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_DEF_HPP
+#ifndef MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_DEF_HPP
+#define MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_DEF_HPP
 
 // FRENSIE includes
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * in cell observers).
  */
 template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-void ParticleObserverDiscretizationInterface::setDiscretization( const InputDataType& bin_data )
+void DiscretizableParticleHistoryObserver::setDiscretization( const InputDataType& bin_data )
 {
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
@@ -43,7 +43,7 @@ void ParticleObserverDiscretizationInterface::setDiscretization( const InputData
  * previously set dimension discretization.
  */
 template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-void ParticleObserverDiscretizationInterface::getDiscretization( InputDataType& bin_data )
+void DiscretizableParticleHistoryObserver::getDiscretization( InputDataType& bin_data )
 {
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
@@ -59,7 +59,7 @@ void ParticleObserverDiscretizationInterface::getDiscretization( InputDataType& 
  * ObserverPhaseSpaceDiscretization::DimensionValueMap.
  */
 template<typename PointType>
-inline bool ParticleObserverDiscretizationInterface::isPointInObserverPhaseSpace(
+inline bool DiscretizableParticleHistoryObserver::isPointInObserverPhaseSpace(
 		              const PointType& phase_space_point ) const
 {
   return d_phase_space_discretization.isPointInDiscretization(
@@ -67,7 +67,7 @@ inline bool ParticleObserverDiscretizationInterface::isPointInObserverPhaseSpace
 }
 
 template<typename PointType>
-void ParticleObserverDiscretizationInterface::calculateBinIndicesOfPoint( const PointType& phase_space_point,
+void DiscretizableParticleHistoryObserver::calculateBinIndicesOfPoint( const PointType& phase_space_point,
                                   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray& bin_indices) const
 {
   d_phase_space_discretization.calculateBinIndicesOfPoint(phase_space_point,
@@ -76,8 +76,8 @@ void ParticleObserverDiscretizationInterface::calculateBinIndicesOfPoint( const 
 
 }; // End MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PARTICLE_OBSERVER_DISCRETIZATION_INTERFACE_DEF_HPP
+#endif // end MONTE_CARLO_DISCRETIZABLE_PARTICLE_HISTORY_OBSERVER_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleObserverDiscretizationInterface_def.hpp
+// end MonteCarlo_DiscretizableParticleHistoryObserver_def.hpp
 //---------------------------------------------------------------------------//
