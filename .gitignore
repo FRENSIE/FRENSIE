@@ -34,3 +34,4 @@ GTAGS
 GRTAGS
 GPATH
 .vscode/
+build/
