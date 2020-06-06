@@ -107,7 +107,7 @@ public:
   void printSummary( std::ostream& os ) const final override
   {
     this->printEstimatorResponseFunctionNames( os );
-    this->printEstimatorDiscretization( os );
+    this->printObserverDiscretization( os );
   }
 
   void commitHistoryContribution() final override

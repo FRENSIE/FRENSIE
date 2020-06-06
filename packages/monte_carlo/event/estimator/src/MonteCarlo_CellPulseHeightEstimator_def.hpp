@@ -183,7 +183,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
     thread_dimension_values[OBSERVER_ENERGY_DIMENSION] =
       boost::any( Utility::get<0>(cell_data->second)*source_weight );
 
-    if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
+    if( this->isPointInObserverPhaseSpace( thread_dimension_values ) )
     {
       ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
 
@@ -219,7 +219,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::commitHistoryContri
     boost::any( energy_deposition_in_all_cells*source_weight );
 
   // Determine the pulse bin for the combination of all cells
-  if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
+  if( this->isPointInObserverPhaseSpace( thread_dimension_values ) )
   {
     ObserverPhaseSpaceDimensionDiscretization::BinIndexArray bin_indices;
 
