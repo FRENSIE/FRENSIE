@@ -16,56 +16,6 @@
 
 namespace MonteCarlo{
 
-// Set the discretization for a dimension of the phase space
-/*! \details This method is a factory method that will create
- * a phase space dimension discretization and assign it to the underlying
- * phase space discretization. Before it is added to the phase space 
- * discretization the object will determine if discretizations of the
- * phase space dimension are supported (e.g. cosine binning is not supported
- * in cell estimators).
- */
-template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-void Estimator::setDiscretization( const InputDataType& bin_data )
-{
-  // Make sure the DimensionType matches the type associated with the dimension
-  testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
-
-  std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>
-    dimension_discretization(
-          new DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>(
-                                                                  bin_data ) );
-
-  this->setDiscretization( dimension_discretization );
-}
-
-// Get the discretization for a dimension of the phase space
-/*! \details This method will extract the discretization data from a 
- * previously set dimension discretization.
- */
-template<ObserverPhaseSpaceDimension dimension, typename InputDataType>
-void Estimator::getDiscretization( InputDataType& bin_data )
-{
-  // Make sure the DimensionType matches the type associated with the dimension
-  testStaticPrecondition((boost::is_same<typename DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>::InputDataType,InputDataType>::value));
-
-  const ObserverPhaseSpaceDimensionDiscretization& base_discretization =
-    d_phase_space_discretization.getDimensionDiscretization( dimension );
-
-  bin_data = dynamic_cast<const DefaultTypedObserverPhaseSpaceDimensionDiscretization<dimension>&>( base_discretization ).getBinBoundaries();
-}
-
-// Check if the point is in the estimator phase space
-/*! \details The PointType should be either EstimatorParticleStateWrapper or
- * ObserverPhaseSpaceDiscretization::DimensionValueMap.
- */
-template<typename PointType>
-inline bool Estimator::isPointInEstimatorPhaseSpace(
-		              const PointType& phase_space_point ) const
-{
-  return d_phase_space_discretization.isPointInDiscretization(
-                                                           phase_space_point );
-}
-
 // Calculate the bin index for the desired response function
 /*! \details The PointType should be either EstimatorParticleStateWrapper or
  * ObserverPhaseSpaceDiscretization::DimensionValueMap.
@@ -81,8 +31,8 @@ void Estimator::calculateBinIndicesOfPoint(
   testPrecondition( response_function_index <
                     this->getNumberOfResponseFunctions() );
 
-  d_phase_space_discretization.calculateBinIndicesOfPoint( phase_space_point,
-                                                           bin_indices );
+  DiscretizableParticleHistoryObserver::calculateBinIndicesOfPoint<PointType>( phase_space_point,
+                                         bin_indices );
 
   // Add the response function index to each phase space bin index
   for( size_t i = 0; i < bin_indices.size(); ++i )
@@ -120,14 +70,13 @@ template<typename Archive>
 void Estimator::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DiscretizableParticleHistoryObserver );
 
   // Save the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
-  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
   ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   // Do not save d_has_uncommited_history_contribution because it is thread
   // specific data - all data should be committed before saving the estimator
@@ -138,14 +87,13 @@ template<typename Archive>
 void Estimator::load( Archive& ar, const unsigned version )
 {
   // Load the base class data
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleHistoryObserver );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DiscretizableParticleHistoryObserver );
 
   // Load the local data
   ar & BOOST_SERIALIZATION_NVP( d_id );
   ar & BOOST_SERIALIZATION_NVP( d_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_particle_types );
   ar & BOOST_SERIALIZATION_NVP( d_response_functions );
-  ar & BOOST_SERIALIZATION_NVP( d_phase_space_discretization );
   ar & BOOST_SERIALIZATION_NVP( d_sample_moment_histogram_bins );
   
   // Initialize the thread data

@@ -781,7 +781,7 @@ void StandardEntityEstimator::addPartialHistoryPointContribution(
   const size_t thread_id = Utility::OpenMPProperties::getThreadId();
 
   // Only add the contribution if the particle state is in the phase space
-  if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
+  if( this->isPointInObserverPhaseSpace( particle_state_wrapper ) )
   {
     typename ObserverPhaseSpaceDimensionDiscretization::BinIndexArray
       bin_indices;
@@ -833,7 +833,7 @@ void StandardEntityEstimator::addPartialHistoryRangeContribution(
   const size_t thread_id = Utility::OpenMPProperties::getThreadId();
 
   // Only add the contribution if the particle state is in the phase space
-  if( this->doesRangeIntersectEstimatorPhaseSpace( particle_state_wrapper ) )
+  if( this->doesRangeIntersectObserverPhaseSpace( particle_state_wrapper ) )
   {
     typename ObserverPhaseSpaceDimensionDiscretization::BinIndexWeightPairArray
       bin_indices_and_weights;
