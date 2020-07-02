@@ -38,6 +38,22 @@ void DiscretizableParticleHistoryObserver::setDiscretization( const InputDataTyp
   this->setDiscretization( dimension_discretization );
 }
 
+// Set a discretization for the direction dimension
+/*! \details This method is used specifically to set a discretization
+ * for the direction dimension specifically, assuming that the user selects
+ * a type of direction quadrature that they want to use to bin over.
+ * Right now, only PQLA is available.
+ */
+template<ObserverDirectionQuadratureBinType quadrature>
+void setDirectionDiscretization( QuadratureNumber number_of_nodes)
+{
+
+  std::shared_ptr<const ObserverDirectionDiscretizationQuadrature> 
+    direction_discretization(new ObserverDirectionDiscretization<quadrature>(number_of_nodes));
+
+  d_phase_space_discretization.assignDirectionDiscretization(direction_discretization);
+}
+
 // Get the discretization for a dimension of the phase space
 /*! \details This method will extract the discretization data from a 
  * previously set dimension discretization.

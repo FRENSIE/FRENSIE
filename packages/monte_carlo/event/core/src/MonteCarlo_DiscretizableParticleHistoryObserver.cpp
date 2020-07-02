@@ -24,6 +24,12 @@ void DiscretizableParticleHistoryObserver::setDiscretization( const std::shared_
   this->assignDiscretization( bins, false );
 }
 
+// Set a direction discretization for an observer
+void DiscretizableParticleHistoryObserver::setDirectionDiscretization( const std::shared_ptr<const ObserverDirectionDimensionDiscretization>& direction_discretization)
+{
+  
+}
+
 // Check if a discretization has been set for a dimension of the phase space
 bool DiscretizableParticleHistoryObserver::doesDimensionHaveDiscretization(
                             const ObserverPhaseSpaceDimension dimension ) const
