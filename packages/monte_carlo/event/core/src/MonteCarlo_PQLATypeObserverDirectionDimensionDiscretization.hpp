@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PQLAObserverDirectionDimensionDiscretization.hpp
+//! \file   MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp
 //! \author Philip Britt
 //! \brief  PQLA Direction Discretization declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PQLA_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
-#define MONTE_CARLO_PQLA_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
+#ifndef MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
+#define MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
 
 // FRENSIE includes
 #include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
@@ -15,16 +15,16 @@
 
 namespace MonteCarlo{
 
-class PQLAObserverDirectionDimensionDiscretization: public ObserverDirectionDimensionDiscretization
+class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirectionDimensionDiscretization
 {
 
   public:
 
   //! Constructor
-  PQLAObserverDirectionDimensionDiscretization(unsigned quadrature_order);
+  PQLATypeObserverDirectionDimensionDiscretization(unsigned quadrature_order);
 
   //! Destructor
-  ~PQLAObserverDirectionDimensionDiscretization()
+  ~PQLATypeObserverDirectionDimensionDiscretization()
   { /* ... */ }
 
   //! Return number of bins
@@ -35,28 +35,28 @@ class PQLAObserverDirectionDimensionDiscretization: public ObserverDirectionDime
 
   //! calculate bin index for direction
   void calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
-                                          BinIndexArray& bin_indices) final override;
+                                          BinIndexArray& bin_indices) const final override;
                                       
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
-                                          BinIndexWeightPairArray& bin_indices_and_weights ) final override;
+                                          BinIndexWeightPairArray& bin_indices_and_weights ) const final override;
 
   //! Calculate the index of bins that the value falls in
   void calculateBinIndicesOfValue(  const boost::any& any_value,
-                                            BinIndexArray& bin_indices ) final override;
+                                            BinIndexArray& bin_indices ) const final override;
 
     //! Calculate the index of bins that the value range falls in
   void calculateBinIndicesOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,
-                                  BinIndexWeightPairArray& bin_indices_and_weights )final override;
+                                  BinIndexWeightPairArray& bin_indices_and_weights ) const final override;
 
   //! Print the boundaries of a bin
   void printBoundariesOfBin( std::ostream& os,
-				                             const size_t bin_index )final override;
+				                             const size_t bin_index ) const final override;
 
   //! Print the dimension discretization
-  void print( std::ostream& os ) final override;
+  void print( std::ostream& os ) const final override;
 
-  utility::PQLAQuadrature d_pqla_quadrature_handler;
+  Utility::PQLAQuadrature d_pqla_quadrature_handler;
 };
 
 } // end MonteCarlo namespace
@@ -64,5 +64,5 @@ class PQLAObserverDirectionDimensionDiscretization: public ObserverDirectionDime
 #endif // end MONTE_CARLO_PQLA_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PQLAObserverDirectionDimensionDiscretization.hpp
+// end MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp
 //---------------------------------------------------------------------------//

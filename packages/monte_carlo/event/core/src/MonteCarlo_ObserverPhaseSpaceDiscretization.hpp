@@ -24,6 +24,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDiscretizationImpl.hpp"
+#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
 
@@ -54,6 +55,9 @@ public:
         const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&
         discretization,
         const bool range_dimension = false );
+
+  void setDirectionDiscretization(ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
+                                  unsigned quadrature_order);
 
   //! Check if a dimension has a discretization
   bool doesDimensionHaveDiscretization(
@@ -129,6 +133,9 @@ private:
 
   // The observer phase space dimension implementation
   std::unique_ptr<ObserverPhaseSpaceDiscretizationImpl> d_impl;
+
+  // Direction dimension discretization pointer
+  std::unique_ptr<ObserverDirectionDimensionDiscretization> d_direction_discretization;
 };
 
 } // end MonteCarlo namespace

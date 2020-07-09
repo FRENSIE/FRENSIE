@@ -59,8 +59,8 @@ public:
   void setDiscretization( const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>& bins );
 
   //! Set a discretization for the direction dimension
-  template<ObserverDirectionQuadratureBinType quadrature>
-  void setDirectionDiscretization( QuadratureNumber number_of_nodes);
+  void setDirectionDiscretization( const ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
+                                   const unsigned quadrature_order);
 
   //! Return the number of bins for a dimension of the phase space
   size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;

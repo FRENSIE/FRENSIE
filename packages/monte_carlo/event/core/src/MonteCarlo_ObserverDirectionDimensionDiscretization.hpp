@@ -10,7 +10,7 @@
 #define MONTE_CARLO_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION_HPP
 
 // FRENSIE includes
-#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
+#include "MonteCarlo_ObserverPhaseSpaceDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
 
@@ -18,6 +18,11 @@ class ObserverDirectionDimensionDiscretization : public ObserverPhaseSpaceDimens
 {
 
 public: 
+
+  //! The direction dimension discretization type enumeration
+  enum ObserverDirectionDiscretizationType{
+    PQLA = 0,
+  };
 
   //! Constructor
   ObserverDirectionDimensionDiscretization()
@@ -38,6 +43,8 @@ public:
 
   //! Always returns true. Direction discretizations currently cover entire direction unit sphere
   bool isValueInDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const final override;
+
+  bool isValueInDiscretization( const boost::any& any_value ) const final override;
 
   //! Check if range intersects discretization - shouldn't be applicable for direction
   virtual bool doesRangeIntersectDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const = 0;

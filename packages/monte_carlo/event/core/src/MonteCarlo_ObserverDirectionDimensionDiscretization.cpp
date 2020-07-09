@@ -11,18 +11,23 @@
 
 namespace MonteCarlo{
 
-ObserverPhaseSpaceDimension ObserverDirectionDimensionDiscretization::getDimension() const final override
+ObserverPhaseSpaceDimension ObserverDirectionDimensionDiscretization::getDimension() const 
 {
   return ObserverPhaseSpaceDimension::OBSERVER_DIRECTION_DIMENSION;
 }
 
-std::string ObserverDirectionDimensionDiscretization::getDimensionName() const final override
+std::string ObserverDirectionDimensionDiscretization::getDimensionName() const
 {
   return "Direction";
 }
 
 // Presumably this will only be called after other dimensions are checked for intersection, so this should always return true.
-bool ObserverDirectionDimensionDiscretization::isValueInDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const final override
+bool ObserverDirectionDimensionDiscretization::isValueInDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const
+{
+  return true;
+}
+
+bool ObserverDirectionDimensionDiscretization::isValueInDiscretization( const boost::any& any_value ) const
 {
   return true;
 }

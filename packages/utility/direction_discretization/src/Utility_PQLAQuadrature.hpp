@@ -12,6 +12,7 @@
 // FRENSIE includes
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Array.hpp"
 
 namespace Utility{
 
@@ -28,12 +29,21 @@ class PQLAQuadrature
   { /* ... */ }
 
   //! Find which triangle bin a direction vector is in
-  unsigned findTriangleBin( const double[3]& direction) const;
+  unsigned findTriangleBin( const std::array<double, 3>& direction);
 
   //! Find which triangle bin a direction vector is in
-  unsigned findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
+  unsigned findTriangleBin( const double x_direction, const double y_direction, const double z_direction);
+
+  //! Return the order of the quadrature
+  unsigned getQuadratureOrder() const;
 
   private:
+
+  //! Converts direction vector to 1-norm normalized vector
+  std::array<double, 3> normalizeVectorToOneNorm( std::array<double, 3> direction_2_norm);
+  
+  //! Converts direction vector to 1-norm normalized vector
+  std::array<double, 3> normalizeVectorToOneNorm(double x_direction, double y_direction, double z_direction);
 
   //! Take lower bounding plane indices of direction vector to form triangle index
   unsigned calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;
@@ -48,7 +58,7 @@ class PQLAQuadrature
   std::vector<double> d_planes;
 
   //! Tuple that contains all relevant bin information (planes, nodes)
-  std::vector<std::tuple<double[3], std::vector<double[3]>>> d_triangle_parameters
+  std::vector<std::tuple<double[3], std::vector<double[3]>>> d_triangle_parameters;
 
 };
 
