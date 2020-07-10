@@ -69,8 +69,8 @@ are described.
 ### Checking out FRENSIE
 1. create a working directory where FRENSIE will be built (e.g. software/frensie)
 2. move to the frensie directory
-3. run `git clone git@github.com:FRENSIE/FRENSIE.git`
-4. run `ln -s FRENSIE src`
+3. clone the repository: `git clone git@github.com:FRENSIE/FRENSIE.git`
+4. make a symbolic link to the new directory: `ln -s FRENSIE src`
 
 ### Building Git
 1. run `sudo apt-get install git`
@@ -79,22 +79,22 @@ are described.
 **Basic:**
 
 1. run `sudo apt-get install cmake`
-2. run `cmake --version` and verify that the output is >= 3.17.1. If the output
+2. prompt for the cmake version with `cmake --version` and verify that the output is >= 3.17.1. If the output
         is less than 3.17.1 proceed to the advanced build instructions
 
 **Advanced:**
 
-1. download the latest source release [CMake 3.17.1+ source](https://cmake.org/download/)
+1. download the latest source release of cmake [CMake 3.17.1+ source](https://cmake.org/download/)
 2. move the cmake-3.x.tar.gz file to the cmake directory (e.g. software/cmake)
 3. move to the cmake directory
-4. run `tar -xvf cmake-3.x.tar.gz`
-5. run `ln -s cmake-x src`
-6. run `mkdir build`
+4. extract the files from the tar file with `tar -xvf cmake-3.x.tar.gz`
+5. make a symbolic link to the new directory: `ln -s cmake-x src`
+6. create a build directory: `mkdir build`
 7. move to the build directory (e.g. software/cmake/build)
 8. run `../src/configure --prefix=absolute-path-to_software/cmake`
-9. run `make -j n`, where n is the number of threads to use while building
-10. run `make test`
-11. run `make install`
+9. launch the build of CMake `make -j n`, where n is the number of threads to use while building
+10. test the build with `make test`
+11. install CMake with `make install`
 12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:$PATH`
 13. run `exec bash`
 14. run `cmake --version` and verify that the output is 3.x
@@ -110,12 +110,12 @@ are described.
 1. download the [Doxygen 1.8.8 source](http://sourceforge.net/projects/doxygen/files/)
 2. move the `doxygen-1.8.8.src.tar.gz` file to the doxygen directory (e.g. software/doxygen)
 3. move to the doxygen directory
-4. run `tar -xvf doxygen-1.8.8.src.tar.gz`
+4. extract the files from the tar file with `tar -xvf doxygen-1.8.8.src.tar.gz`
 5. move to the doxygen-1.8.8 directory
 6. run `./configure --prefix=absolute-path-to_software/doxygen`
-7. run `make -j n`
-8. run `make test`
-9. run `make install`
+7. launch the build of Doxygen with `make -j n`, where n is the number of threads to use while building
+8. test the build with `make test`
+9. install Doxygen with `make install`
 10. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
 
@@ -127,17 +127,17 @@ are described.
 
 **Advanced:**
 
-1. download the [Open MPI 1.8.2 source](http://www.open-mpi.org/software/ompi/v1.8/)
-2. move the openmpi-1.8.2.tar.gz file to the mpi directory (e.g. software/mpi)
+1. download the [Open MPI 2.1.x source](https://www.open-mpi.org/software/ompi/v2.1/)
+2. move the openmpi-2.1.x.tar.gz file to the mpi directory (e.g. software/mpi)
 3. move to the mpi directory
-4. run `tar -xvf openmpi-1.8.2.tar.gz`
-5. run `ln -s openmpi-1.8.2 src`
-6. run `mkdir build`
+4. extract the files from the tar file with `tar -xvf openmpi-2.1.x.tar.gz`
+5. make a symbolic link to the new directory: `ln -s openmpi-2.1.x src`
+6. create a build directory: `mkdir build`
 7. move to the build directory (e.g. software/mpi/build)
 8. run `../src/configure --prefix=absolute-path-to_software/mpi`
-9. run `make -j n`
+9. launch the build of MPI with `make -j n`, where n is the number of threads to use while building
 10. run `make check`
-11. run `make install`
+11. install MPI with `make install`
 12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/mpi/bin:$PATH`
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
@@ -150,17 +150,17 @@ are described.
 
 **Advanced:**
 
-1. download the [HDF5 1.8.13 source](http://www.hdfgroup.org/HDF5/release/obtainsrc.html)
+1. download the [HDF5 1.8.13 source](https://www.hdfgroup.org/downloads/hdf5/source-code/)
 2. move the hdf5-1.8.13.tar.gz file to the hdf5 directory (e.g. software/hdf5)
 3. move to the hdf5 directory
-4. run `tar -xvf hdf5-1.8.13.tar.gz`
-5. run `ln -s hdf5-1.8.13 src`
-6. run `mkdir build`
+4. extract the files from the tar file with `tar -xvf hdf5-1.8.13.tar.gz`
+5. make a symbolic link to the new directory: `ln -s hdf5-1.8.13 src`
+6. create a build directory: `mkdir build`
 7. move to the build directory (e.g. software/hdf5/build)
-10. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug --prefix=absolute-path-to_software/hdf5`
-11. run `make -j n`
-12. run `make test`
-13. run `make install`
+10. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl ----enable-build-mode=production --prefix=absolute-path-to_software/hdf5`
+11. launch the build of HDF5 with `make -j n`, where n is the number of threads to use while building
+12. test the build with `make test`
+13. install HDF5 with `make install`
 14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/hdf5/bin:$PATH`
 15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/hdf5/lib:$LD_LIBRARY_PATH`
 16. run `exec bash`
@@ -178,14 +178,15 @@ are described.
 
 1. create a swig directory (e.g. software/swig)
 2. move to the swig directory
-3. run `git clone git@github.com:swig/swig.git`
-4. run `ln -s swig src`
-5. run `mkdir build`
+3. clone the repository: `git clone git@github.com:swig/swig.git`
+4. make a symbolic link to the new directory: `ln -s swig src`
+5. create a build directory: `mkdir build`
 6. move to the build directory (e.g. software/swig/build)
 7. run `../src/configure --prefix=absolute-path-to_software/swig`
-8. run `make -j n`
-9. run `make install`
+8. launch the build of SWIG with `make -j n`, where n is the number of threads desired
+9. install SWIG with `make install`
 10. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
+11. run `exec bash`
 
 ### Building Boost
 **Basic:**
@@ -197,7 +198,7 @@ are described.
 1. download the [Boost 1.72.0 source](http://sourceforge.net/projects/boost/files/boost/1.72.0/)
 2. move the boost_1_72_0.tar.gz file to the boost directory (e.g. software/boost)
 3. move to the boost directory
-4. run `tar -xvf boost_1_72_0.tar.gz`
+4. extract the files from the tar file with `tar -xvf boost_1_72_0.tar.gz`
 5. move to the boost_1_72_0 directory (e.g. software/boost/boost_1_72_0)
 6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
 7. if OpenMPI has been built, run `sed -i "$ a using mpi ;" project-config.jam`
@@ -211,20 +212,20 @@ are described.
 3. run `git clone https://bitbucket.org/aprobinson/moab.git`
 4. move to the moab directory (e.g. software/moab/moab)
 5. run `git checkout Version5.1.0`
-6. run `autoreconf -fi`
+6. configure MOAB with `autoreconf -fi`
 7. move up a directory (e.g. software/moab)
-8. run `ln -s moab src`
-9. run `mkdir build`
+8. make a symbolic link to the new directory: `ln -s moab src`
+9. create a build directory: `mkdir build`
 10. move to the build directory (e.g. software/moab/build)
 11. run `sudo apt-get install libeigen3-dev`
 12.
   * **Basic HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-13. run `make -j n`
+    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+13. launch the build of MOAB with `make -j n`, where n is the number of threads desired
 14. run `make check`
-15. run `make install`
+15. install MOAB with `make install`
 16. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
 17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
 18. run `exec bash`
@@ -232,20 +233,20 @@ are described.
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc)
 2. move to the dagmc directory
-3. run `git clone https://github.com/FRENSIE/DAGMC.git`
+3. clone the repository: `git clone https://github.com/FRENSIE/DAGMC.git`
 4. move to the DAGMC directory (e.g. software/dagmc/DAGMC)
 5. run `git checkout develop`
 6. move up a directory (e.g. software/dagmc)
-7. run `ln -s DAGMC src`
-7. run `mkdir build`
-8. move to the build directory (e.g. software/dagmc/build)
-9. if HDF5 was built from source, run `env HDF5_ROOT=absolute-path-to_software/hdf5`
-10. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=absolute-path-to_software/moab`
-11. run `make -j n`
-12. run `make install`
-13. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/dagmc/lib:$LD_LIBRARY_PATH`
-14. run `exec bash`
+7. make a symbolic link to the new directory: `ln -s DAGMC src`
+8. create a build directory: `mkdir build`
+9. move to the build directory (e.g. software/dagmc/build)
+10. if HDF5 was built from source, run `env HDF5_ROOT=absolute-path-to_software/hdf5`
+11. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to_software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=absolute-path-to_software/moab`
+12. launch the build of of DagMC `make -j n`, where n is the number of threads desired
+13. install DagMC with `make install`
+14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/dagmc/bin:$PATH`
+15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/dagmc/lib:$LD_LIBRARY_PATH`
+16. run `exec bash`
 
 ### Building ROOT - optional
 **Basic:**
@@ -265,16 +266,16 @@ instructions below instead.
 1. download the [ROOT 6.04/16 source](https://root.cern.ch/download/root_v6.04.16.source.tar.gz)
 2. move the root_v6.04.16.source.tar.gz file to the root directory (e.g. software/root)
 3. move to the root directory
-4. run `tar -xvf root_v6.04.16.source.tar.gz`
-5. run `ln -s root_v6.04.16 src`
-6. run `mkdir build`
+4. extract the files from the tar file with `tar -xvf root_v6.04.16.source.tar.gz`
+5. make a symbolic link to the new directory: `ln -s root_v6.04.16 src`
+6. create a build directory: `mkdir build`
 7. move to the build directory (e.g. software/root/build)
-8. copy `FRENSIE/scripts/root.sh` into the build directory
+8. copy the configuration script `FRENSIE/scripts/root.sh` into the build directory
 9. change the variables in the script to reflect the desired system paths
 10. run `sudo apt-get install libx11-dev libxpm-dev libxft-dev libxext-dev`
-11. run `./root.sh`
-12. run `make -j n`
-13. run `make install`
+11. configure with `./root.sh`
+12. launch the build of ROOT with `make -j n`, where n is the number of threads desired
+13. install ROOT with `make install`
 14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
 15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
 
@@ -282,17 +283,17 @@ instructions below instead.
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
 
 1. move to the frensie working directory - not the repo itself (e.g. software/frensie)
-2. run `mkdir build`
+2. create a build directory: `mkdir build`
 3. move to the build directory (e.g. software/frensie/build)
-4. copy the `FRENSIE/scripts/frensie.sh`
+4. copy the configuration script `FRENSIE/scripts/frensie.sh` to the build directory
 5. change the variables in the script to reflect the desired system paths (if
    the basic build instructions where use for a package the PACKAGE_PREFIX
    variable can be left blank in the script).
 6. run `./frensie.sh` to configure FRENSIE
-7. run `make -j n`
-8. run `make test`
-9. run `make manual`
-10. run `make install`
+7. launch the build of FRENSIE with `make -j n`, where n is the number of threads desired
+8. test the build with `make test`
+9. create the frensie manual `make manual`. it can be accessed by entering the command `open index.html` when in the directory `/path-to-frensie/build/doc/manual`
+10. install FRENSIE with `make install`
 11. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/frensie/bin:$PATH`
 12. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/frensie/bin:$PYTHONPATH`
 13. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/frensie/lib/python2.7/site-packages:$PYTHONPATH`
