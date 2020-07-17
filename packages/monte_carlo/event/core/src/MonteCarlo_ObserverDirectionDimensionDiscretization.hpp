@@ -46,8 +46,8 @@ public:
 
   bool isValueInDiscretization( const boost::any& any_value ) const final override;
 
-  //! Check if range intersects discretization - shouldn't be applicable for direction
-  virtual bool doesRangeIntersectDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const = 0;
+  //! Check if range intersects discretization - always returns true
+  bool doesRangeIntersectDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const final override;
 
   //! calculate bin index for direction
   virtual void calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,

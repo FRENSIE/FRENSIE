@@ -29,9 +29,6 @@ class EmptyTypeObserverDirectionDimensionDiscretization: public ObserverDirectio
   //! Return number of bins
   size_t getNumberOfBins() const final override;
 
-  //! Check if range intersects discretization - shouldn't be applicable for direction
-  bool doesRangeIntersectDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const final override;
-
   //! calculate bin index for direction
   void calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
                                           BinIndexArray& bin_indices) const final override;

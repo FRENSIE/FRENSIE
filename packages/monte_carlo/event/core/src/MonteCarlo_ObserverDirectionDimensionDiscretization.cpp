@@ -32,6 +32,11 @@ bool ObserverDirectionDimensionDiscretization::isValueInDiscretization( const bo
   return true;
 }
 
+bool ObserverDirectionDimensionDiscretization::doesRangeIntersectDiscretization(const ObserverParticleStateWrapper& particle_state_wrapper ) const
+{
+  return true;
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

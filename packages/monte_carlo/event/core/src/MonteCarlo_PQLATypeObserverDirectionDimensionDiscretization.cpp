@@ -8,21 +8,19 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
-PQLATypeObserverDirectionDimensionDiscretization::PQLATypeObserverDirectionDimensionDiscretization( unsigned quadrature_order)
-: d_pqla_quadrature_handler(quadrature_order)
+PQLATypeObserverDirectionDimensionDiscretization::PQLATypeObserverDirectionDimensionDiscretization( unsigned quadrature_order,
+                                                                                                    bool forward_bin)
+: d_pqla_quadrature_handler(quadrature_order),
+  d_forward_bin(forward_bin)
 { /* ... */ }
 
 size_t PQLATypeObserverDirectionDimensionDiscretization::getNumberOfBins() const
 {
-  return 8*(d_pqla_quadrature_handler.getQuadratureOrder()^2);
-}
-
-bool PQLATypeObserverDirectionDimensionDiscretization::doesRangeIntersectDiscretization(const ObserverParticleStateWrapper& particle_state_wrapper ) const
-{
-  return true;
+  return 8*(pow(d_pqla_quadrature_handler.getQuadratureOrder(),2));
 }
 
 void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
@@ -31,9 +29,22 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValu
   // There will only ever be one bin that the value falls in
   bin_indices.resize( 1 );
 
-  bin_indices[0] = d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
-                                                              particle_state_wrapper.getParticleState().getYDirection(),
-                                                              particle_state_wrapper.getParticleState().getZDirection() );
+  if( d_forward_bin)
+  {  bin_indices[0] = d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
+                                                                 particle_state_wrapper.getParticleState().getYDirection(),
+                                                                 particle_state_wrapper.getParticleState().getZDirection() );
+  }else if(!d_forward_bin)
+  {
+    bin_indices[0] = d_pqla_quadrature_handler.findTriangleBin( -particle_state_wrapper.getParticleState().getXDirection(),
+                                                                -particle_state_wrapper.getParticleState().getYDirection(),
+                                                                -particle_state_wrapper.getParticleState().getZDirection() );
+  }else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                       "Standard/Reverse direction binning not defined" );
+  }
+  
+
 }
 
 void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValue(const ObserverParticleStateWrapper& particle_state_wrapper,
@@ -43,9 +54,22 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValu
   // There will only ever be one bin that the value falls in
   bin_indices_and_weights.resize( 1 );
 
-  bin_indices_and_weights[0] = d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
-                                                                          particle_state_wrapper.getParticleState().getYDirection(),
-                                                                          particle_state_wrapper.getParticleState().getZDirection() );
+  if( d_forward_bin )
+  {  
+    bin_indices_and_weights[0].first = d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
+                                                                                   particle_state_wrapper.getParticleState().getYDirection(),
+                                                                                   particle_state_wrapper.getParticleState().getZDirection() );
+  }else if( d_forward_bin )
+  {
+    bin_indices_and_weights[0].first = d_pqla_quadrature_handler.findTriangleBin( -particle_state_wrapper.getParticleState().getXDirection(),
+                                                                                  -particle_state_wrapper.getParticleState().getYDirection(),
+                                                                                  -particle_state_wrapper.getParticleState().getZDirection() );
+  }else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Standard/Reverse direction binning not defined" );
+  }
+  
   bin_indices_and_weights[0].second = 1.0;
 }
 

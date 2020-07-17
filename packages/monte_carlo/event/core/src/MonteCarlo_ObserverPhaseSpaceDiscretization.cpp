@@ -81,13 +81,15 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
 
 void ObserverPhaseSpaceDiscretization::setDirectionDiscretization(
                                   ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                  unsigned quadrature_order)
+                                  unsigned quadrature_order,
+                                  bool forward_direction_binning)
 {
   testPrecondition(quadrature_order > 0);
 
   if(discretization_type == ObserverDirectionDimensionDiscretization::PQLA)
   {
-    d_direction_discretization.reset(new PQLATypeObserverDirectionDimensionDiscretization(quadrature_order));
+    d_direction_discretization.reset(new PQLATypeObserverDirectionDimensionDiscretization(quadrature_order,
+                                                                                          forward_direction_binning));
   }else
   {
       THROW_EXCEPTION( std::logic_error,

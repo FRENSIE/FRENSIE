@@ -57,7 +57,8 @@ public:
         const bool range_dimension = false );
 
   void setDirectionDiscretization(ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                  unsigned quadrature_order);
+                                  unsigned quadrature_order,
+                                  bool forward_binning = true);
 
   //! Check if a dimension has a discretization
   bool doesDimensionHaveDiscretization(

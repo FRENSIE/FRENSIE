@@ -21,7 +21,8 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
   public:
 
   //! Constructor
-  PQLATypeObserverDirectionDimensionDiscretization(unsigned quadrature_order);
+  PQLATypeObserverDirectionDimensionDiscretization(unsigned quadrature_order,
+                                                   bool forward_bin);
 
   //! Destructor
   ~PQLATypeObserverDirectionDimensionDiscretization()
@@ -29,9 +30,6 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
 
   //! Return number of bins
   size_t getNumberOfBins() const final override;
-
-  //! Check if range intersects discretization - shouldn't be applicable for direction
-  bool doesRangeIntersectDiscretization( const ObserverParticleStateWrapper& particle_state_wrapper ) const final override;
 
   //! calculate bin index for direction
   void calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
@@ -49,14 +47,20 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
   void calculateBinIndicesOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,
                                   BinIndexWeightPairArray& bin_indices_and_weights ) const final override;
 
-  //! Print the boundaries of a bin
+  //! Print the boundaries of a bin. Will be implemented with source biasing changes due to needing the same information for both.
   void printBoundariesOfBin( std::ostream& os,
 				                             const size_t bin_index ) const final override;
 
-  //! Print the dimension discretization
+  //! Print the dimension discretization. Will be implemented with source biasing changes due to needing the same information for both.
   void print( std::ostream& os ) const final override;
+  
+  private: 
 
+  //! PQLA object that handles PQLA math
   Utility::PQLAQuadrature d_pqla_quadrature_handler;
+
+  //! Stores whether or not we're reverse binning (for VR purposes)
+  bool d_forward_bin;
 };
 
 } // end MonteCarlo namespace

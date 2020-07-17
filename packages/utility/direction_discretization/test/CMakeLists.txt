@@ -1,0 +1,6 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_direction_discretization)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PQLAQuadrature DEPENDS tstPQLAQuadrature.cpp)
+FRENSIE_ADD_TEST(PQLAQuadrature)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_direction_discretization)
