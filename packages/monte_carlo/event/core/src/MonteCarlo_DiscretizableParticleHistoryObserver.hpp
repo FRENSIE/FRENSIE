@@ -14,6 +14,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_ObserverParticleStateWrapper.hpp"
+#include "MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -60,7 +61,8 @@ public:
 
   //! Set a discretization for the direction dimension
   void setDirectionDiscretization( const ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                   const unsigned quadrature_order);
+                                   const unsigned quadrature_order,
+                                   const bool forward_binning = true);
 
   //! Return the number of bins for a dimension of the phase space
   size_t getNumberOfBins( const ObserverPhaseSpaceDimension dimension ) const;

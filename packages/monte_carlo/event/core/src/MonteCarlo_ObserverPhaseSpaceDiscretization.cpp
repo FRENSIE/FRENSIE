@@ -16,8 +16,6 @@
 #include "MonteCarlo_SingleObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "MonteCarlo_RangedSingleObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "MonteCarlo_DetailedObserverPhaseSpaceDiscretizationImpl.hpp"
-#include "MonteCarlo_EmptyTypeObserverDirectionDimensionDiscretization.hpp"
-#include "MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -26,8 +24,7 @@ namespace MonteCarlo{
 
 // Constructor
 ObserverPhaseSpaceDiscretization::ObserverPhaseSpaceDiscretization()
-  : d_impl( new EmptyObserverPhaseSpaceDiscretizationImpl ),
-    d_direction_discretization( new EmptyTypeObserverDirectionDimensionDiscretization )
+  : d_impl( new EmptyObserverPhaseSpaceDiscretizationImpl )
 { /* ... */ }
 
 // Check if a dimension has a discretization
@@ -77,25 +74,6 @@ void ObserverPhaseSpaceDiscretization::assignDiscretizationToDimension(
   }
   else
     d_impl->assignDiscretizationToDimension( discretization, range_dimension );
-}
-
-void ObserverPhaseSpaceDiscretization::setDirectionDiscretization(
-                                  ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                  unsigned quadrature_order,
-                                  bool forward_direction_binning)
-{
-  testPrecondition(quadrature_order > 0);
-
-  if(discretization_type == ObserverDirectionDimensionDiscretization::PQLA)
-  {
-    d_direction_discretization.reset(new PQLATypeObserverDirectionDimensionDiscretization(quadrature_order,
-                                                                                          forward_direction_binning));
-  }else
-  {
-      THROW_EXCEPTION( std::logic_error,
-                       "Direction discretization type given is not valid." );
-  }
-  
 }
 
 // Get a dimension discretization

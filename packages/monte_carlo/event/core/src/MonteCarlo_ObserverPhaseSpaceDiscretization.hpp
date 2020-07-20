@@ -56,10 +56,6 @@ public:
         discretization,
         const bool range_dimension = false );
 
-  void setDirectionDiscretization(ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                  unsigned quadrature_order,
-                                  bool forward_binning = true);
-
   //! Check if a dimension has a discretization
   bool doesDimensionHaveDiscretization(
                            const ObserverPhaseSpaceDimension dimension ) const;
@@ -135,8 +131,6 @@ private:
   // The observer phase space dimension implementation
   std::unique_ptr<ObserverPhaseSpaceDiscretizationImpl> d_impl;
 
-  // Direction dimension discretization pointer
-  std::unique_ptr<ObserverDirectionDimensionDiscretization> d_direction_discretization;
 };
 
 } // end MonteCarlo namespace

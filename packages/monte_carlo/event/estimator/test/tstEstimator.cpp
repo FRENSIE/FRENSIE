@@ -14,8 +14,10 @@
 #include "MonteCarlo_Estimator.hpp"
 #include "MonteCarlo_DefaultTypedObserverPhaseSpaceDimensionDiscretization.hpp"
 #include "MonteCarlo_SinglePhaseSpaceDimensionParticleResponseFunction.hpp"
+#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
 #include "MonteCarlo_StandardParticleResponse.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
@@ -371,6 +373,18 @@ FRENSIE_UNIT_TEST( Estimator, setDiscretization )
     estimator.setDiscretization( dimension_discretization );
     
     FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION ), 4u );
+  }
+
+  // Test PQLA direction discretization implementation
+  {
+    TestEstimator estimator( 0, 1.0 );
+
+    estimator.setDirectionDiscretization( MonteCarlo::ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType::PQLA,
+                                          2,
+                                          true );
+
+    FRENSIE_CHECK_EQUAL( estimator.getNumberOfBins( MonteCarlo::OBSERVER_DIRECTION_DIMENSION ),
+                         8*4 );
   }
 }
 

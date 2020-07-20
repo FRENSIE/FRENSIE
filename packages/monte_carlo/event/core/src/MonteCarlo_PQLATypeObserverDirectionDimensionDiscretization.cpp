@@ -59,7 +59,7 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValu
     bin_indices_and_weights[0].first = d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
                                                                                    particle_state_wrapper.getParticleState().getYDirection(),
                                                                                    particle_state_wrapper.getParticleState().getZDirection() );
-  }else if( d_forward_bin )
+  }else if( !d_forward_bin )
   {
     bin_indices_and_weights[0].first = d_pqla_quadrature_handler.findTriangleBin( -particle_state_wrapper.getParticleState().getXDirection(),
                                                                                   -particle_state_wrapper.getParticleState().getYDirection(),

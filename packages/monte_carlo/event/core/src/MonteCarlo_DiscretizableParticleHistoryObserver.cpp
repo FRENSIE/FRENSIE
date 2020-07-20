@@ -26,9 +26,26 @@ void DiscretizableParticleHistoryObserver::setDiscretization( const std::shared_
 
 // Set a direction discretization for an observer
 void DiscretizableParticleHistoryObserver::setDirectionDiscretization( const ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType discretization_type,
-                                                                       const unsigned quadrature_order)
+                                                                       const unsigned quadrature_order,
+                                                                       const bool forward_binning)
 {
-  d_phase_space_discretization.setDirectionDiscretization(discretization_type, quadrature_order);
+  std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization> dimension_discretization;
+
+  switch(discretization_type)
+  {
+    case ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType::PQLA:
+
+      dimension_discretization.reset(new PQLATypeObserverDirectionDimensionDiscretization(quadrature_order, forward_binning));
+
+      break;
+
+    default:
+
+      THROW_EXCEPTION(std::logic_error, "Direction discretization given not defined");
+      
+  }
+
+  this->setDiscretization( dimension_discretization );
 }
 
 // Check if a discretization has been set for a dimension of the phase space
