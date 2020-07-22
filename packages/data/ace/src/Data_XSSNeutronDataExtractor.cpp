@@ -184,7 +184,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractNUBlock() const
 {
   if( d_jxs[1] >= 0 )
+  {
+    testInvariant(d_jxs[2]>d_jxs[1]);
     return d_xss_view( d_jxs[1], d_jxs[2]-d_jxs[1] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -260,7 +263,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGBlock() const
 {
   if( d_nxs[3] != 0 )
+  {
+    testInvariant(d_jxs[7]>d_jxs[6]);
     return d_xss_view( d_jxs[6], d_jxs[7]-d_jxs[6] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -279,6 +285,7 @@ XSSNeutronDataExtractor::extractLANDBlock() const
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDBlock() const
 {
+  testInvariant(d_jxs[9]>d_jxs[8]);
   return d_xss_view( d_jxs[8], d_jxs[9]-d_jxs[8] );
 }
 
@@ -313,7 +320,14 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWBlock() const
 {
   if( d_nxs[4] != 0 )
-    return d_xss_view( d_jxs[10], d_jxs[11]-d_jxs[10] );
+  {
+    // If photon data is not present, d_jxs[11] <= 0 which means DLWBlock is the last block
+    // In this case, use the size of the entire array (d_nxs[0]) to find the correct size
+    if( d_jxs[11] > 0 )
+      return d_xss_view( d_jxs[10], d_jxs[11]-d_jxs[10] );
+    else
+      return d_xss_view( d_jxs[10], d_nxs[0]-d_jxs[10] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -323,7 +337,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
+  {
+    testInvariant(d_jxs[19]>d_jxs[18]);
     return d_xss_view( d_jxs[18], d_jxs[19]-d_jxs[18] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -337,7 +354,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractGPDBlock() const
 {
   if( d_jxs[11] >= 0 )
+  {
+    testInvariant(d_jxs[12]>d_jxs[11]);
     return d_xss_view( d_jxs[11], d_jxs[12]-d_jxs[11] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -347,7 +367,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
+  {
+    testInvariant(d_jxs[15]>d_jxs[14]);
     return d_xss_view( d_jxs[14], d_jxs[15]-d_jxs[14] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -375,7 +398,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDPBlock() const
 {
   if( d_nxs[5] != 0 )
+  {
+    testInvariant(d_jxs[17]>d_jxs[16]);
     return d_xss_view( d_jxs[16], d_jxs[17]-d_jxs[16] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -413,7 +439,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
+  {
+    testInvariant(d_jxs[23]>d_jxs[22]);
     return d_xss_view( d_jxs[22], d_jxs[23]-d_jxs[22] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -423,7 +452,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNUBlock() const
 {
   if( this->hasDelayedNeutronData() )
+  {
+    testInvariant( d_jxs[24] > d_jxs[23] );
     return d_xss_view( d_jxs[23], d_jxs[24]-d_jxs[23] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -433,7 +465,10 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractBDDBlock() const
 {
   if( this->hasDelayedNeutronData() )
+  {
+    testInvariant( d_jxs[25] > d_jxs[24] );
     return d_xss_view( d_jxs[24], d_jxs[25] - d_jxs[24] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
@@ -456,7 +491,12 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNEDBlock() const
 {
   if( d_nxs[7] != 0 )
+  {
+    //! \todo Look into if this is a special case or works generallly
+    testInvariant( d_jxs[12] <= 0 );
+    testInvariant( d_jxs[11] > d_jxs[26] );
     return d_xss_view( d_jxs[26], d_jxs[11] - d_jxs[26] );
+  }
   else
     return Utility::ArrayView<const double>();
 }
