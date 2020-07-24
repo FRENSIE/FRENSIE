@@ -33,14 +33,14 @@ void DiscretizableParticleHistoryObserver::setDirectionDiscretization( const Obs
 
   switch(discretization_type)
   {
+    /* PQLA is a spherical surface quadrature defined in "Discrete ordinates quadrature schemes based on the angular 
+       interpolation of radiation intensity" by S.A. Rukolaine, V.S. Yuferev, Journal of Quantitative Spectroscopy &
+       Radiative Transfer 69 (2001) 257*/
+
     case ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType::PQLA:
-
       dimension_discretization.reset(new PQLATypeObserverDirectionDimensionDiscretization(quadrature_order, forward_binning));
-
       break;
-
     default:
-
       THROW_EXCEPTION(std::logic_error, "Direction discretization given not defined");
       
   }

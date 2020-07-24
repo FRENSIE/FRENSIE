@@ -94,7 +94,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfValue(photon_wrapper, bin_indices);
 
   FRENSIE_CHECK_EQUAL(bin_indices.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(4*9));
+  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*9));
 
   direction[0] = 1;
   direction[1] = 1;
@@ -107,7 +107,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfValue(photon_wrapper, bin_indices);
 
   FRENSIE_CHECK_EQUAL(bin_indices.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(4*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*9)); 
 
 }
 
@@ -129,7 +129,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfValue(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(4*9));
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9));
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
   direction[0] = 1;
@@ -143,7 +143,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfValue(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(4*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9)); 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
 }
@@ -166,7 +166,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfRange(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(4*9));
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9));
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
   direction[0] = 1;
@@ -180,7 +180,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfRange(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(4*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9)); 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
 }

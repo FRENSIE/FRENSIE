@@ -58,8 +58,8 @@ public:
                                           BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
     //! Calculate the index of bins that the value falls in
-  virtual void calculateBinIndicesOfValue(  const boost::any& any_value,
-                                            BinIndexArray& bin_indices ) const = 0;
+  virtual void calculateBinIndicesOfValue( const boost::any& any_value,
+                                           BinIndexArray& bin_indices ) const = 0;
 
     //! Calculate the index of bins that the value range falls in
   virtual void calculateBinIndicesOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,

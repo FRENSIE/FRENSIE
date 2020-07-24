@@ -104,53 +104,16 @@ unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, c
   return sum;
 }
 
+// Returns the index for the octant that a direction is in
 unsigned PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const
 {
-  if( !x_sign && !y_sign && !z_sign )
-  { 
+  unsigned secondary_index = 0;
 
-    return 0;
+  if (x_sign) secondary_index += 1;
+  if (y_sign) secondary_index += 2;
+  if (z_sign) secondary_index += 4;
 
-  }else if( x_sign && !y_sign && !z_sign )
-  {
-
-    return 1;
-
-  }else if( !x_sign && y_sign && !z_sign )
-  {
-
-    return 2;
-
-  }else if( !x_sign && !y_sign && z_sign )
-  {
-
-    return 3;
-
-  }else if( x_sign && y_sign && !z_sign )
-  {
-
-    return 4;
-
-  }else if( x_sign && !y_sign && z_sign )
-  {
-
-    return 5;
-
-  }else if( !x_sign && y_sign && z_sign)
-  {
-
-    return 6;
-
-  }else if( x_sign && y_sign && z_sign)
-  {
-
-    return 7;
-
-  }else
-  {
-      THROW_EXCEPTION( std::logic_error,
-                       "Sign paradox detected in PQLA direction secondary indexing" );
-  }
+  return secondary_index;
   
 }
 
