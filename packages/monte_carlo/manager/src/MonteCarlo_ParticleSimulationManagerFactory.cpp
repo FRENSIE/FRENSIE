@@ -27,7 +27,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<const FilledGeometryModel>& model,
                 const std::shared_ptr<ParticleSource>& source,
                 const std::shared_ptr<EventHandler>& event_handler,
-                const std::shared_ptr<const WeightWindow>& weight_windows,
+                const std::vector<std::shared_ptr<const PopulationControl>>& population_controllers,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
                 const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
@@ -40,7 +40,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_model( model ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( weight_windows ),
+    d_population_controllers( population_controllers ),
     d_collision_forcer( collision_forcer ),
     d_properties( properties ),
     d_next_history( next_history ),
@@ -71,13 +71,15 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_model( model ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( MonteCarlo::WeightWindow::getDefault() ),
     d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
     d_properties( properties ),
     d_next_history( 0 ),
     d_rendezvous_number( 0 ),
     d_use_single_rendezvous_file( true )
 {
+
+  d_population_controllers[0] = MonteCarlo::WeightWindow::getDefault()
+
   // Make sure that the model pointer is valid
   testPrecondition( model.get() );
   // Make sure that the source pointer is valid
@@ -238,20 +240,13 @@ void ParticleSimulationManagerFactory::saveToFileImpl(
   this->restoreBposPointer<Data::ZAID>( extension, zaid_bpos );
 }
 
-// Set the weight windows that will be used by the manager
-void ParticleSimulationManagerFactory::setWeightWindows(
-                    const std::shared_ptr<const WeightWindow>& weight_windows )
+// Set the population control VR methods that will be used by the manager
+void ParticleSimulationManagerFactory::setPopulationControllers(
+                    const std::vector<std::shared_ptr<const PopulationControl>>& population_controllers )
 {
-  if( weight_windows )
+  if( population_controllers[0] )
   {
-    if( d_next_history > 0 || d_simulation_manager )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
-                                  "Setting weight windows after a simulation "
-                                  "has been started is not allowed!" );
-    }
-    else
-      d_weight_windows = weight_windows;
+      d_population_controllers = population_controllers;
   }
 }
 
@@ -291,7 +286,7 @@ struct ParticleSimulationManagerFactoryCreateHelper
                                           factory.d_model,
                                           factory.d_source,
                                           factory.d_event_handler,
-                                          factory.d_weight_windows,
+                                          factory.d_population_controllers,
                                           factory.d_collision_forcer,
                                           factory.d_properties,
                                           factory.d_next_history,
@@ -308,7 +303,7 @@ struct ParticleSimulationManagerFactoryCreateHelper
                                       factory.d_model,
                                       factory.d_source,
                                       factory.d_event_handler,
-                                      factory.d_weight_windows,
+                                      factory.d_population_controllers,
                                       factory.d_collision_forcer,
                                       factory.d_properties,
                                       factory.d_next_history,
