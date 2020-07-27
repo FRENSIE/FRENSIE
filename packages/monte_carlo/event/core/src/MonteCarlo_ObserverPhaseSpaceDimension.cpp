@@ -38,7 +38,7 @@ std::string ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toString(
     case MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION:
       return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>::name();
     case MonteCarlo::OBSERVER_DIRECTION_DIMENSION:
-      return "Direction";
+      return MonteCarlo::ObserverDirectionDimensionDiscretization::name();
     default:
     {
       THROW_EXCEPTION( std::logic_error,

@@ -38,6 +38,11 @@ public:
   //! Always returns Direction as name
   std::string getDimensionName() const final override;
 
+  static std::string name() const
+  {
+    return "Direction";
+  };
+
   //! Return number of bins - depends on discretization type
   virtual size_t getNumberOfBins() const = 0;
 

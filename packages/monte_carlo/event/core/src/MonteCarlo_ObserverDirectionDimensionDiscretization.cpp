@@ -18,7 +18,7 @@ ObserverPhaseSpaceDimension ObserverDirectionDimensionDiscretization::getDimensi
 
 std::string ObserverDirectionDimensionDiscretization::getDimensionName() const
 {
-  return "Direction";
+  return ObserverDirectionDimensionDiscretization::name();
 }
 
 // Presumably this will only be called after other dimensions are checked for intersection, so this should always return true.
