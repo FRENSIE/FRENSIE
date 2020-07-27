@@ -194,8 +194,8 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  unsigned PQLA_order = 3;
-  unsigned number_of_triangles_per_side = PQLA_order*PQLA_order;
+  PQLA_order = 3;
+  number_of_triangles_per_side = PQLA_order*PQLA_order;
   direction_discretization_forward.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(PQLA_order, true));
   // Reverse binning used for VR purposes
   direction_discretization_reverse.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(PQLA_order, false));
