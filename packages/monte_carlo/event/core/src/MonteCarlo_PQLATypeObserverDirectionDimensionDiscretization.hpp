@@ -54,7 +54,7 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
 
   //! Print the boundaries of a bin. Will be implemented with source biasing changes due to needing the same information for both.
   void printBoundariesOfBin( std::ostream& os,
-				                             const size_t bin_index ) const final override;
+                             const size_t bin_index ) const final override;
 
   //! Print the dimension discretization. Will be implemented with source biasing changes due to needing the same information for both.
   void print( std::ostream& os ) const final override;
