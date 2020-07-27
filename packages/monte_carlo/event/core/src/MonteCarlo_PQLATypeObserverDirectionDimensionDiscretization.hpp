@@ -20,9 +20,14 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
 
   public:
 
+  //! Default constructor (should throw DBC error)
+  PQLATypeObserverDirectionDimensionDiscretization()
+  :d_pqla_quadrature_handler(0)
+  { /* ... */ }
+
   //! Constructor
   PQLATypeObserverDirectionDimensionDiscretization(unsigned quadrature_order,
-                                                   bool forward_bin);
+                                                   bool forward_bin = true);
 
   //! Destructor
   ~PQLATypeObserverDirectionDimensionDiscretization()

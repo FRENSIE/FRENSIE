@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_PQLAQuadrature.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_DesignByContract.hpp"
 
 // std includes
 #include <cmath>
@@ -21,6 +21,7 @@ namespace Utility{
 PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
   : d_quadrature_order(quadrature_order)
 {
+  testPrecondition(quadrature_order > 0);
     // Fill in later with information needed for direction source biasing.
 }
 
@@ -92,14 +93,10 @@ unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, c
     if( i_z > 0 )
     {
       sum = sum - 1;
-    }else if ( i_x == d_quadrature_order)
-    {
-      // do nothing. If this is hit, the above for loop gives the right answer.
-    }else
+    }else if (i_x != d_quadrature_order)
     {
       sum = sum + 1;
     }
-    
   }
   return sum;
 }
