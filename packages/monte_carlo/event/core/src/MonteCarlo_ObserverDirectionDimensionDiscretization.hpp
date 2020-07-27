@@ -38,7 +38,7 @@ public:
   //! Always returns Direction as name
   std::string getDimensionName() const final override;
 
-  static std::string name() const
+  static std::string name()
   {
     return "Direction";
   };
@@ -72,7 +72,7 @@ public:
 
   //! Print the boundaries of a bin
   virtual void printBoundariesOfBin( std::ostream& os,
-				                             const size_t bin_index ) const = 0;
+                                     const size_t bin_index ) const = 0;
 
   //! Print the dimension discretization
   virtual void print( std::ostream& os ) const = 0;
