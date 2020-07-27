@@ -71,7 +71,7 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfRang
 }
 
 void PQLATypeObserverDirectionDimensionDiscretization::printBoundariesOfBin( std::ostream& os,
-				                                                                     const size_t bin_index ) const
+                                                                             const size_t bin_index ) const
 {
  /* design later with (x1,y1,z1,x2,y2,z2) being the bounding plane locations for a bin, not important for now */
 }
