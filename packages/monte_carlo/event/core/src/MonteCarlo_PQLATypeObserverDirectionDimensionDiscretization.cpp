@@ -35,6 +35,8 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValu
 void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
                                                                                    BinIndexWeightPairArray& bin_indices_and_weights) const
 {
+  bin_indices_and_weights.resize( 1 );
+
   bin_indices_and_weights[0].first = this->returnTriangleBin( particle_state_wrapper );
 
   bin_indices_and_weights[0].second = 1.0;
