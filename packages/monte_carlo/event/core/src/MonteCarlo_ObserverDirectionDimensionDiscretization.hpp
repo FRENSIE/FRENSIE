@@ -63,7 +63,7 @@ public:
 
     //! Calculate the index of bins that the value range falls in
   virtual void calculateBinIndicesOfRange( const ObserverParticleStateWrapper& particle_state_wrapper,
-                                  BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
+                                           BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
   //! Print the boundaries of a bin
   virtual void printBoundariesOfBin( std::ostream& os,

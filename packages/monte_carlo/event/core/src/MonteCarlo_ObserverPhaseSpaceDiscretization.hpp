@@ -24,7 +24,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverPhaseSpaceDiscretizationImpl.hpp"
-#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
 

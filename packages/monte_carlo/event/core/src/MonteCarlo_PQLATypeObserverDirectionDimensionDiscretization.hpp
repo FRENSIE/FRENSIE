@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
-#define MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIEMNSION_DISCRETIZATION
+#ifndef MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION
+#define MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION
 
 // FRENSIE includes
 #include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
@@ -55,6 +55,9 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
   void print( std::ostream& os ) const final override;
   
   private: 
+
+  //! Return the triangle bin index
+  unsigned returnTriangleBin( const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   //! PQLA object that handles PQLA math
   Utility::PQLAQuadrature d_pqla_quadrature_handler;

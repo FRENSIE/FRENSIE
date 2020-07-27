@@ -13,6 +13,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
 
 namespace Utility{
 

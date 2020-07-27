@@ -24,6 +24,8 @@
 std::shared_ptr<const MonteCarlo::ObserverPhaseSpaceDimensionDiscretization>
 direction_discretization_forward, direction_discretization_reverse;
 
+unsigned PQLA_order, number_of_triangles_per_side;
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -72,8 +74,8 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, doesRangeIntersectD
 // PQLA get number of bins check
 FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, getNumberOfBins)
 {
-  FRENSIE_CHECK_EQUAL(direction_discretization_forward->getNumberOfBins(), 8*9)
-  FRENSIE_CHECK_EQUAL(direction_discretization_reverse->getNumberOfBins(), 8*9)
+  FRENSIE_CHECK_EQUAL(direction_discretization_forward->getNumberOfBins(), 8*number_of_triangles_per_side)
+  FRENSIE_CHECK_EQUAL(direction_discretization_reverse->getNumberOfBins(), 8*number_of_triangles_per_side)
 }
 
 // PQLA get number of bins check
@@ -94,7 +96,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfValue(photon_wrapper, bin_indices);
 
   FRENSIE_CHECK_EQUAL(bin_indices.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*9));
+  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*number_of_triangles_per_side));
 
   direction[0] = 1;
   direction[1] = 1;
@@ -107,7 +109,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfValue(photon_wrapper, bin_indices);
 
   FRENSIE_CHECK_EQUAL(bin_indices.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices.front(), 3+(3*number_of_triangles_per_side)); 
 
 }
 
@@ -129,7 +131,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfValue(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9));
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*number_of_triangles_per_side));
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
   direction[0] = 1;
@@ -143,7 +145,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfValue(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*number_of_triangles_per_side)); 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
 }
@@ -166,7 +168,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_forward->calculateBinIndicesOfRange(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9));
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*number_of_triangles_per_side));
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
   direction[0] = 1;
@@ -180,7 +182,7 @@ FRENSIE_UNIT_TEST( ObserverDirectionDimensionDiscretization, calculateBinIndices
   direction_discretization_reverse->calculateBinIndicesOfRange(photon_wrapper, bin_indices_and_weights);
 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.size(), 1);
-  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*9)); 
+  FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().first, 3+(3*number_of_triangles_per_side)); 
   FRENSIE_CHECK_EQUAL(bin_indices_and_weights.front().second, 1.0);
 
 }
@@ -192,10 +194,11 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-
-  direction_discretization_forward.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(3, true));
+  unsigned PQLA_order = 3;
+  unsigned number_of_triangles_per_side = PQLA_order*PQLA_order;
+  direction_discretization_forward.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(PQLA_order, true));
   // Reverse binning used for VR purposes
-  direction_discretization_reverse.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(3, false));
+  direction_discretization_reverse.reset(new MonteCarlo::PQLATypeObserverDirectionDimensionDiscretization(PQLA_order, false));
 
 }
 
