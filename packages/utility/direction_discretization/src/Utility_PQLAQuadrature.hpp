@@ -40,10 +40,14 @@ class PQLAQuadrature
   private:
 
   //! Converts direction vector to 1-norm normalized vector
-  std::array<double, 3> normalizeVectorToOneNorm( std::array<double, 3> direction_2_norm) const;
+  void normalizeVectorToOneNorm( const std::array<double, 3> direction_2_norm,
+                                 std::array<double, 3>& direction_1_norm) const;
   
   //! Converts direction vector to 1-norm normalized vector
-  std::array<double, 3> normalizeVectorToOneNorm(double x_direction, double y_direction, double z_direction) const;
+  void normalizeVectorToOneNorm(  const double x_direction, 
+                                  const double y_direction, 
+                                  const double z_direction,
+                                  std::array<double, 3>& direction_1_norm) const;
 
   //! Take lower bounding plane indices of direction vector to form triangle index
   unsigned calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;

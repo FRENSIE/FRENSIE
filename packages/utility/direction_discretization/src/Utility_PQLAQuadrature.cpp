@@ -30,7 +30,10 @@ unsigned PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction)
 {
 
   // Convert direction vector to 1-norm vector
-  std::array<double, 3> direction_normalized_1_norm = normalizeVectorToOneNorm(direction);
+  std::array<double, 3> direction_normalized_1_norm;
+  
+  normalizeVectorToOneNorm(direction,
+                           direction_normalized_1_norm);
 
   return this->calculatePositiveTriangleBinIndex(static_cast<int>(fabs(direction_normalized_1_norm[0])*d_quadrature_order),
                                                  static_cast<int>(fabs(direction_normalized_1_norm[1])*d_quadrature_order),
@@ -54,23 +57,26 @@ unsigned PQLAQuadrature::getQuadratureOrder() const
 }
 
 // Converts direction vector to 1-norm normalized vector
-std::array<double, 3> PQLAQuadrature::normalizeVectorToOneNorm( std::array<double, 3> direction_normalized_2_norm) const
+void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3> direction_normalized_2_norm,
+                                               std::array<double, 3>& direction_normalized_1_norm ) const
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
 
-  std::array<double, 3> direction_normalized_1_norm {direction_normalized_2_norm[0]/normalization_constant,
-                                                     direction_normalized_2_norm[1]/normalization_constant,
-                                                     direction_normalized_2_norm[2]/normalization_constant};
-
-  return direction_normalized_1_norm;
+  direction_normalized_1_norm[0] = direction_normalized_2_norm[0]/normalization_constant;
+  direction_normalized_1_norm[1] = direction_normalized_2_norm[1]/normalization_constant;
+  direction_normalized_1_norm[2] = direction_normalized_2_norm[2]/normalization_constant;
 }
 
 // Converts direction vector to 1-norm normalized vector
-std::array<double, 3> PQLAQuadrature::normalizeVectorToOneNorm(double x_direction, double y_direction, double z_direction) const
+void PQLAQuadrature::normalizeVectorToOneNorm(  const double x_direction,
+                                                const double y_direction, 
+                                                const double z_direction,
+                                                std::array<double, 3>& direction_normalized_1_norm) const
 {
   std::array<double, 3> direction_normalized_2_norm {x_direction, y_direction, z_direction};
 
-  return this->normalizeVectorToOneNorm(direction_normalized_2_norm);
+  this->normalizeVectorToOneNorm( direction_normalized_2_norm,
+                                  direction_normalized_1_norm );
 }
 
 // Take lower bounding plane indices of direction vector to form triangle index
