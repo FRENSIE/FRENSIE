@@ -652,12 +652,7 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
   // progeny
   if( particle )
   {
-    //! Check with all population controllers if splitting/terminating must take place
-    for(i = 0; i < d_population_controllers.size(), i++)
-    {
-      d_population_controllers[i]->checkParticleWithWeightWindow( particle, bank );
-    }
-    
+    d_weight_windows->updateParticleState( particle, bank );
   }
 
   while( !local_bank.isEmpty() )
@@ -666,12 +661,8 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
 
     if( local_bank.top() )
     {
-      for(i = 0; i < d_population_controllers.size(), i++)
-      {
-        d_population_controllers[i]->checkParticleWithWeightWindow( local_bank.top(),
-                                                      split_particle_bank );
-      }
-
+      d_weight_windows->updateParticleState( local_bank.top(),
+                                             split_particle_bank );
     }
 
     std::shared_ptr<ParticleState> local_particle;
