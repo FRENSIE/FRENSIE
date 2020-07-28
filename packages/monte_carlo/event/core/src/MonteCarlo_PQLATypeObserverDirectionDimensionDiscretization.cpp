@@ -9,18 +9,19 @@
 // FRENSIE Includes
 #include "MonteCarlo_PQLATypeObserverDirectionDimensionDiscretization.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_PQLAQuadrature.hpp"
 
 namespace MonteCarlo{
 
 PQLATypeObserverDirectionDimensionDiscretization::PQLATypeObserverDirectionDimensionDiscretization( unsigned quadrature_order,
                                                                                                     bool forward_bin)
-: d_pqla_quadrature_handler(quadrature_order),
+: d_pqla_quadrature_handler(std::make_shared<Utility::PQLAQuadrature>(quadrature_order)),
   d_forward_bin(forward_bin)
 { /* ... */ }
 
 size_t PQLATypeObserverDirectionDimensionDiscretization::getNumberOfBins() const
 {
-  return 8*(pow(d_pqla_quadrature_handler.getQuadratureOrder(),2));
+  return 8*(pow(d_pqla_quadrature_handler->getQuadratureOrder(),2));
 }
 
 void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValue( const ObserverParticleStateWrapper& particle_state_wrapper,
@@ -50,14 +51,14 @@ void PQLATypeObserverDirectionDimensionDiscretization::calculateBinIndicesOfValu
   bin_indices.resize( 1 );
   if( d_forward_bin )
   {
-    bin_indices[0] = d_pqla_quadrature_handler.findTriangleBin( boost::any_cast<std::array<double, 3>>( any_value ) );
+    bin_indices[0] = d_pqla_quadrature_handler->findTriangleBin( boost::any_cast<std::array<double, 3>>( any_value ) );
   }else
   {
     std::array<double, 3> reverse_vector = boost::any_cast<std::array<double, 3>>( any_value );
     reverse_vector[0] = -reverse_vector[0];
     reverse_vector[1] = -reverse_vector[1];
     reverse_vector[2] = -reverse_vector[2];
-    bin_indices[0] = d_pqla_quadrature_handler.findTriangleBin( reverse_vector );
+    bin_indices[0] = d_pqla_quadrature_handler->findTriangleBin( reverse_vector );
   }
 
   
@@ -85,12 +86,12 @@ unsigned PQLATypeObserverDirectionDimensionDiscretization::returnTriangleBin( co
 {
   if(d_forward_bin)
   {
-    return d_pqla_quadrature_handler.findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
+    return d_pqla_quadrature_handler->findTriangleBin( particle_state_wrapper.getParticleState().getXDirection(),
                                                       particle_state_wrapper.getParticleState().getYDirection(),
                                                       particle_state_wrapper.getParticleState().getZDirection() );
   }else
   {
-    return d_pqla_quadrature_handler.findTriangleBin( -particle_state_wrapper.getParticleState().getXDirection(),
+    return d_pqla_quadrature_handler->findTriangleBin( -particle_state_wrapper.getParticleState().getXDirection(),
                                                       -particle_state_wrapper.getParticleState().getYDirection(),
                                                       -particle_state_wrapper.getParticleState().getZDirection() );
   }

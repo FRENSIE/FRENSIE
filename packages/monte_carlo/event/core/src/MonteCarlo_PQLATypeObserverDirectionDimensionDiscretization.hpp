@@ -9,11 +9,21 @@
 #ifndef MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION
 #define MONTE_CARLO_PQLA_TYPE_OBSERVER_DIRECTION_DIMENSION_DISCRETIZATION
 
+// STD includes
+#include <memory>
+
 // FRENSIE includes
 #include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
-#include "Utility_PQLAQuadrature.hpp"
+
+// Forward declaration of PQLA handler class
+namespace Utility{
+
+class PQLAQuadrature;
+
+}
 
 namespace MonteCarlo{
+
 
 class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirectionDimensionDiscretization
 {
@@ -65,7 +75,7 @@ class PQLATypeObserverDirectionDimensionDiscretization: public ObserverDirection
   unsigned returnTriangleBin( const ObserverParticleStateWrapper& particle_state_wrapper ) const;
 
   //! PQLA object that handles PQLA math
-  Utility::PQLAQuadrature d_pqla_quadrature_handler;
+  std::shared_ptr<Utility::PQLAQuadrature> d_pqla_quadrature_handler;
 
   //! Stores whether or not we're reverse binning (for VR purposes)
   bool d_forward_bin;
