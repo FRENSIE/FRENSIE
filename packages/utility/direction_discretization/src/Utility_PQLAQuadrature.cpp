@@ -44,7 +44,7 @@ unsigned PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction)
 }  
 
 // Find which triangle bin a direction vector is in (takes 2-norm vector)
-unsigned PQLAQuadrature::findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const
+unsigned PQLAQuadrature::findTriangleBin( const double& x_direction, const double& y_direction, const double& z_direction) const
 {
   std::array<double, 3> direction_array {x_direction, y_direction, z_direction};
 
@@ -57,7 +57,7 @@ unsigned PQLAQuadrature::getQuadratureOrder() const
 }
 
 // Converts direction vector to 1-norm normalized vector
-void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3> direction_normalized_2_norm,
+void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3>& direction_normalized_2_norm,
                                                std::array<double, 3>& direction_normalized_1_norm ) const
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
@@ -68,9 +68,9 @@ void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3> direc
 }
 
 // Converts direction vector to 1-norm normalized vector
-void PQLAQuadrature::normalizeVectorToOneNorm(  const double x_direction,
-                                                const double y_direction, 
-                                                const double z_direction,
+void PQLAQuadrature::normalizeVectorToOneNorm(  const double& x_direction,
+                                                const double& y_direction, 
+                                                const double& z_direction,
                                                 std::array<double, 3>& direction_normalized_1_norm) const
 {
   std::array<double, 3> direction_normalized_2_norm {x_direction, y_direction, z_direction};
@@ -80,7 +80,7 @@ void PQLAQuadrature::normalizeVectorToOneNorm(  const double x_direction,
 }
 
 // Take lower bounding plane indices of direction vector to form triangle index
-unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const
+unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned& i_x, const unsigned& i_y, const unsigned& i_z) const
 {
 
   unsigned sum = 0;
@@ -108,7 +108,7 @@ unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, c
 }
 
 // Returns the index for the octant that a direction is in
-unsigned PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const
+unsigned PQLAQuadrature::findSecondaryIndex(const bool& x_sign, const bool& y_sign, const bool& z_sign) const
 {
   unsigned secondary_index = 0;
 

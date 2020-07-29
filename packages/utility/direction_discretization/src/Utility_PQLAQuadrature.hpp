@@ -32,7 +32,7 @@ class PQLAQuadrature
   unsigned findTriangleBin( const std::array<double, 3>& direction) const;
 
   //! Find which triangle bin a direction vector is in
-  unsigned findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
+  unsigned findTriangleBin( const double& x_direction, const double& y_direction, const double& z_direction) const;
 
   //! Return the order of the quadrature
   unsigned getQuadratureOrder() const;
@@ -40,20 +40,20 @@ class PQLAQuadrature
   private:
 
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm( const std::array<double, 3> direction_2_norm,
+  void normalizeVectorToOneNorm( const std::array<double, 3>& direction_2_norm,
                                  std::array<double, 3>& direction_1_norm) const;
   
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm(  const double x_direction, 
-                                  const double y_direction, 
-                                  const double z_direction,
+  void normalizeVectorToOneNorm(  const double& x_direction, 
+                                  const double& y_direction, 
+                                  const double& z_direction,
                                   std::array<double, 3>& direction_1_norm) const;
 
   //! Take lower bounding plane indices of direction vector to form triangle index
-  unsigned calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;
+  unsigned calculatePositiveTriangleBinIndex(const unsigned& i_x, const unsigned& i_y, const unsigned& i_z) const;
 
   //! Take direction signs to calculate secondary index
-  unsigned findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
+  unsigned findSecondaryIndex(const bool& x_sign, const bool& y_sign, const bool& z_sign) const;
 
   //! Quadrature order
   unsigned d_quadrature_order;
