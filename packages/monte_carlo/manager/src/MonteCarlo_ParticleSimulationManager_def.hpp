@@ -648,8 +648,9 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
   }
   CATCH_LOST_PARTICLE( particle );
 
-  // Apply the weight windows to the original particle and to each of its
-  // progeny
+  // Apply the population managers to the original particle and to each of its
+  // progeny. Multiple particle mode will result in all different particle types using the same
+  // population manager for now. Needs to be fixed later if desired.
   if( particle )
   {
     d_population_controller->checkParticleWithPopulationController( particle, bank );
