@@ -129,6 +129,7 @@ private:
 
   // The observer phase space dimension implementation
   std::unique_ptr<ObserverPhaseSpaceDiscretizationImpl> d_impl;
+
 };
 
 } // end MonteCarlo namespace

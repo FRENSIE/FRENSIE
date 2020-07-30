@@ -17,7 +17,19 @@ SET(GLOBAL_ROOT_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files/root
 # Set up the packages directory hierarchy
 ADD_SUBDIRECTORY(utility)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/utility/core/src
-utility/core/src utility/archive/src utility/archive/test utility/system/src utility/mpi/src utility/prng/src utility/interpolation/src utility/distribution/src utility/stats/src utility/integrator/src utility/grid/src utility/mesh/src)
+  utility/core/src 
+  utility/archive/src 
+  utility/archive/test 
+  utility/system/src 
+  utility/mpi/src 
+  utility/prng/src 
+  utility/interpolation/src 
+  utility/direction_discretization/src 
+  utility/distribution/src 
+  utility/stats/src 
+  utility/integrator/src 
+  utility/grid/src 
+  utility/mesh/src)
 
 ADD_SUBDIRECTORY(geometry)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src)
@@ -124,7 +136,23 @@ ADD_CUSTOM_TARGET(${COLLISION_DATABASE_XML_FILE_TARGET} ALL
   DEPENDS ${COLLISION_DATABASE_XML_FILE})
 
 ADD_SUBDIRECTORY(monte_carlo)
-INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/neutron/src monte_carlo/collision/photon/src monte_carlo/collision/electron/src monte_carlo/collision/kernel/src monte_carlo/active_region/core/src monte_carlo/active_region/response/src monte_carlo/active_region/source/src monte_carlo/event/core/src monte_carlo/event/estimator/src monte_carlo/event/particle_tracker/src monte_carlo/event/dispatcher/src monte_carlo/event/weight_windows/src monte_carlo/event/weight_cutoff/src monte_carlo/event/forced_collisions/src monte_carlo/manager/src )
+INCLUDE_DIRECTORIES(monte_carlo/core/src 
+  monte_carlo/collision/core/src 
+  monte_carlo/collision/neutron/src 
+  monte_carlo/collision/photon/src 
+  monte_carlo/collision/electron/src 
+  monte_carlo/collision/kernel/src 
+  monte_carlo/active_region/core/src 
+  monte_carlo/active_region/response/src 
+  monte_carlo/active_region/source/src 
+  monte_carlo/event/core/src 
+  monte_carlo/event/estimator/src 
+  monte_carlo/event/particle_tracker/src 
+  monte_carlo/event/dispatcher/src 
+  monte_carlo/event/weight_windows/src 
+  monte_carlo/event/weight_cutoff/src 
+  monte_carlo/event/forced_collisions/src 
+  monte_carlo/manager/src )
 
 ADD_SUBDIRECTORY(data_gen)
 INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
