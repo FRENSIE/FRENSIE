@@ -89,7 +89,7 @@ are described.
 3. move the cmake-3.x.tar.gz file to the cmake directory: `mv cmake-3.x.tar.gz /software/cmake/`
 4. move to the cmake directory: `cd /software/cmake/`
 5. extract the files from the tar file with `tar -xvf cmake-3.x.tar.gz`
-6. make a symbolic link to the new directory: `ln -s cmake-x src`
+6. make a symbolic link to the new directory: `ln -s cmake-3.x src`
 7. create a build directory: `mkdir build`
 8. move to the build directory (e.g. software/cmake/build): `cd build`
 9. configure software build for this system `../src/configure --prefix=absolute-path-to/software/cmake`
