@@ -47,6 +47,7 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
+  ar & BOOST_SERIALIZATION_NVP( d_importance_pair );
   ar & boost::serialization::make_nvp( "d_x_position", d_navigator->getPosition()[0] );
   ar & boost::serialization::make_nvp( "d_y_position", d_navigator->getPosition()[1] );
   ar & boost::serialization::make_nvp( "d_z_position", d_navigator->getPosition()[2] );
@@ -79,6 +80,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_source_cell );
   ar & BOOST_SERIALIZATION_NVP( d_lost );
   ar & BOOST_SERIALIZATION_NVP( d_gone );
+  ar & BOOST_SERIALIZATION_NVP( d_importance_pair );
 
   Geometry::Navigator::Length position[3];
 

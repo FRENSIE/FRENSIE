@@ -106,6 +106,15 @@ public:
   //! Return the particle type
   ParticleType getParticleType() const;
 
+  //! Set the initial value of the importance pair (when emerging from source only)
+  void setInitialImportance( const double initial_importance );
+
+  //! Set the new importance value of the importance pair (immediately after it's traveled from its first source emission)
+  void setNewImportance( const double new_importance );
+
+  //! Update importance pair based on new phase space transition (only used after both have been set)
+  void updateImportance( const double new_importance );
+
   //! Return the id of the source that created the particle (history)
   sourceIdType getSourceId() const;
 
@@ -350,6 +359,9 @@ private:
 
   // The weight of the particle
   weightType d_weight;
+
+  // The importance pair of the phase space transitions of a particle <old_importance, new_importance>
+  std::pair<double, double> d_importance_pair;
 
   // The ray safety distance (i.e. distance to the closest boundary)
   raySafetyDistanceType d_ray_safety_distance;

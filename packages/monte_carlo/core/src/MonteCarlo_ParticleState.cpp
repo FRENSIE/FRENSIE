@@ -38,7 +38,8 @@ ParticleState::ParticleState()
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) ),
+    d_importance_pair( std::make_pair(1.0, 1.0))
 { /* ... */ }
 
 // Constructor
@@ -63,7 +64,8 @@ ParticleState::ParticleState(
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) ),
+    d_importance_pair( std::make_pair(1.0, 1.0))
 { /* ... */ }
 
 // Copy constructor
@@ -95,7 +97,8 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_lost( false ),
     d_gone( false ),
     d_model( existing_base_state.d_model ),
-    d_navigator( existing_base_state.d_navigator->clone( this->createAdvanceCompleteCallback() ) )
+    d_navigator( existing_base_state.d_navigator->clone( this->createAdvanceCompleteCallback() ) ),
+    d_importance_pair( existing_base_state.d_importance_pair )
 {
   // Increment the generation number if requested
   if( increment_generation_number )
@@ -132,6 +135,25 @@ ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 ParticleType ParticleState::getParticleType() const
 {
   return d_particle_type;
+}
+
+// Set the initial value of the importance pair (when emerging from source only)
+void setInitialImportance( const double initial_importance )
+{
+  d_importance_pair.first = initial_importance;
+}
+
+// Set the new importance value of the importance pair (immediately after it's traveled from its first source emission)
+void setNewImportance( const double new_importance )
+{
+  d_importance_pair.second = new_importance);
+}
+
+// Update importance pair based on new phase space transition (only used after both have been set)
+void updateImportance( const double new_importance )
+{
+  d_importance_pair.first = d_importance_pair.second;
+  d_importance_pair.second = new_importance;
 }
 
 // Return the source id that created the particle (history)
