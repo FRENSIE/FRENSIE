@@ -100,7 +100,32 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 				     table_name,
 				     reaction,
 				     distribution );
+    break;
 
+  case 7u:
+    createAceLaw7EnergyDistribution( dlw_block_array,
+                                     dlw_block_array_start_index,
+				     table_name,
+				     reaction,
+				     distribution );
+    break;
+
+  case 9u:
+    createAceLaw9EnergyDistribution( dlw_block_array,
+                                     dlw_block_array_start_index,
+				     table_name,
+				     reaction,
+				     distribution );
+    break;
+    
+  case 11u:
+    createAceLaw11EnergyDistribution( dlw_block_array,
+                                      dlw_block_array_start_index,
+                                      table_name,
+                                      reaction,
+                                      distribution );
+    break;
+    
   default:
     // This law is not currently supported
     TEST_FOR_EXCEPTION( true,

@@ -18,6 +18,7 @@
 #include "MonteCarlo_DetailedObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 

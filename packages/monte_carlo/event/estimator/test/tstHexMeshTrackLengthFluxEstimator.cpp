@@ -118,6 +118,15 @@ FRENSIE_UNIT_TEST_TEMPLATE( HexMeshTrackLengthFluxEstimator,
   FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins( MonteCarlo::OBSERVER_COSINE_DIMENSION ),
                        1 );
   FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 8 );
+
+
+  estimator->setDirectionDiscretization( MonteCarlo::ObserverDirectionDimensionDiscretization::ObserverDirectionDiscretizationType::PQLA,
+                                        2,
+                                        true );
+
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins( MonteCarlo::OBSERVER_DIRECTION_DIMENSION ),
+                       8*4 );
+  FRENSIE_CHECK_EQUAL( estimator->getNumberOfBins(), 8*8*4 );
 }
 
 //---------------------------------------------------------------------------//

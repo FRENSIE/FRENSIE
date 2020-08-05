@@ -13,6 +13,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDimension.hpp"
 #include "MonteCarlo_ObserverPhaseSpaceDimensionTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "MonteCarlo_ObserverDirectionDimensionDiscretization.hpp"
 
 namespace Utility{
 
@@ -36,6 +37,8 @@ std::string ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toString(
       return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_COLLISION_NUMBER_DIMENSION>::name();
     case MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION:
       return MonteCarlo::ObserverPhaseSpaceDimensionTraits<MonteCarlo::OBSERVER_SOURCE_ID_DIMENSION>::name();
+    case MonteCarlo::OBSERVER_DIRECTION_DIMENSION:
+      return MonteCarlo::ObserverDirectionDimensionDiscretization::name();
     default:
     {
       THROW_EXCEPTION( std::logic_error,
@@ -57,5 +60,5 @@ void ToStringTraits<MonteCarlo::ObserverPhaseSpaceDimension>::toStream(
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhaseSpaceDimension.cpp
+// end MonteCarlo_ObserverPhaseSpaceDimension.cpp
 //---------------------------------------------------------------------------//

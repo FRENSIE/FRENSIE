@@ -32,3 +32,6 @@ INCLUDE_DIRECTORIES(integrator/src)
 
 ADD_SUBDIRECTORY(mesh)
 INCLUDE_DIRECTORIES(mesh/src)
+
+ADD_SUBDIRECTORY(direction_discretization)
+INCLUDE_DIRECTORIES(direction_discretization/src)
