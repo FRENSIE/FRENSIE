@@ -138,19 +138,19 @@ ParticleType ParticleState::getParticleType() const
 }
 
 // Set the initial value of the importance pair (when emerging from source only)
-void setInitialImportance( const double initial_importance )
+void ParticleState::setInitialImportance( const double initial_importance )
 {
   d_importance_pair.first = initial_importance;
 }
 
 // Set the new importance value of the importance pair (immediately after it's traveled from its first source emission)
-void setNewImportance( const double new_importance )
+void ParticleState::setNewImportance( const double new_importance )
 {
-  d_importance_pair.second = new_importance);
+  d_importance_pair.second = new_importance;
 }
 
 // Update importance pair based on new phase space transition (only used after both have been set)
-void updateImportance( const double new_importance )
+void ParticleState::updateImportance( const double new_importance )
 {
   d_importance_pair.first = d_importance_pair.second;
   d_importance_pair.second = new_importance;

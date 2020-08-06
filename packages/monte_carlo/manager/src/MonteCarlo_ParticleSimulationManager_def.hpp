@@ -660,23 +660,23 @@ void ParticleSimulationManager::collideWithCellMaterial( State& particle,
 
   while( !local_bank.isEmpty() )
   {
+    ParticleBank split_particle_bank;
+
+    if( local_bank.top() )
+    {
+      d_population_controller->checkParticleWithPopulationController( local_bank.top(),
+                                                                      split_particle_bank );
+    }
 
     std::shared_ptr<ParticleState> local_particle;
 
     local_bank.pop( local_particle );
 
-    ParticleBank split_particle_bank;
-
+    // If the particle wasn't terminated, add it to the bank
     if( local_particle )
     {
-      d_population_controller->checkParticleWithPopulationController( local_particle,
-                                                                      split_particle_bank );
-      // If the particle wasn't Rouletted, add it to the bank
-      if( local_particle )
-      {
-        bank.push( local_particle );
-        bank.splice( split_particle_bank );
-      }
+      bank.push( local_particle );
+      bank.splice( split_particle_bank );
     }
   }
 }
