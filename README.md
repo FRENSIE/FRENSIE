@@ -51,20 +51,33 @@ installation guide can be found
 [here](http://svalinn.github.io/DAGMC/install/plugin.html).
 
 ## Building Dependent Software Libraries
-Before any of the software libraries are built, verify that the system has
-CMake version 3.17.1 or greater installed. If CMake is not installed or an
-older version is present, build CMake using the instructions below.
+During this process of installing dependencies, there are two important paths for 
+the FRENSIE user to decide. For every package, there will be a `/path/to/build/package/`,
+where compressed source files will be unpacked and built. There will also be a 
+`/path/to/install/package`, which will be used during the configuration step. Inside 
+`/path/to/build/package/`, a few more directories will be created. For example, after 
+unpacking "package.xx.xx.xx", where the x's signify the version used, there would be a
+`/path/to/build/package/package.xx.xx.xx` directory created. A `build` directory will 
+typically be created inside `/path/to/build/package/`, where cmake commands will be run. 
+There will also be a `src` directory created via soft-link to the the directory unpacked 
+from the compressed source files. This standard `src` soft-link helps the build process 
+be generalized for different versions of packages. Finally during configuration, the 
+`/path/to/install/package` will be decided. This is the location of installation and
+does not have to be the same as `/path/to/build/package`, though it can be. There 
+may be reasons why a user will wish to make these different. After installing, an 
+environment variable will be set inside a user's `.bashrc` script. This will use the
+`/path/to/install/package` path.
 
-When building software libraries and executables from source, the following
-directory structure should be adopted: software/package/package.xx.xx.xx,
-software/package/build, software/package/src. "package" will be the name of the
-particular software package. "package.xx.xx.xx" comes from unpacking the
-compressed source files (e.g. package.tar.gz). The src directory is created by
-making a softlink to the package.xx.xx.xx directory. This is done to make the
-build a bit easier.
+Throughout these instructions, we have chosen the `/path/to/build/` to be a directory called
+`/software/`. Thus, for these instructions all dependency packages will be built in
+`/software/package/`. These instructions will also choose to make the `/path/to/install/package`
+to be the same as `/path/to/build/package/`, namely `/software/package/`. For this choice,
+inside `/software/package/`, there will be the standard `build` and `src` directories mentioned
+before along with all directories created during installation. Some examples of directories
+created during installation include a `/bin/`, `/lib/`, or `doc` directory.
 
-Please note that the software libraries should be built in the order that they
-are described.
+**Please note that the software libraries should be built in the order that they
+are described.**
 
 ### Checking out FRENSIE
 1. create a working directory where FRENSIE will be built (e.g. software/frensie): `mkdir /software/frensie`
@@ -74,6 +87,10 @@ are described.
 
 ### Building Git
 1. run `sudo apt-get install git`
+
+**Before any of the software libraries are built, verify that the system has
+CMake version 3.17.1 or greater installed. If CMake is not installed or an
+older version is present, build CMake using the instructions below.**
 
 ### Building CMake
 **Basic:**
@@ -92,11 +109,11 @@ are described.
 6. make a symbolic link to the new directory: `ln -s cmake-3.x src`
 7. create a build directory: `mkdir build`
 8. move to the build directory (e.g. software/cmake/build): `cd build`
-9. configure software build for this system `../src/configure --prefix=absolute-path-to/software/cmake`
+9. configure software build for this system `../src/configure --prefix=/path/to/install/cmake`
 10. launch the build of CMake `make -j n`, where n is the number of threads to use while building
 11. test the build with `make test`
 12. install CMake with `make install`
-13. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/cmake/bin:$PATH`
+13. add the following line to the .bashrc file: `export PATH=/path/to/install/cmake/bin:$PATH`
 14. run `exec bash`
 15. run `cmake --version` and verify that the output is 3.x
 
@@ -114,11 +131,11 @@ are described.
 4. move to the doxygen directory: `cd doxygen`
 5. extract the files from the tar file with `tar -xvf doxygen-1.8.8.src.tar.gz`
 6. move to the doxygen-1.8.8 directory: `cd doxygen-1.8.8`
-7. run `./configure --prefix=absolute-path-to-software/doxygen`
+7. run `./configure --prefix=/path/to/install/doxygen`
 8. launch the build of Doxygen with `make -j n`, where n is the number of threads to use while building
 9. test the build with `make test`
 10. install Doxygen with `make install`
-11. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/doxygen/bin:$PATH`
+11. add the following line to the .bashrc file: `export PATH=/path/to/install/doxygen/bin:$PATH`
 12. run `exec bash`
 
 ### Building Open MPI - optional
@@ -137,12 +154,12 @@ are described.
 6. make a symbolic link to the new directory: `ln -s openmpi-2.1.x src`
 7. create a build directory: `mkdir build`
 8. move to the build directory (e.g. software/mpi/build): `cd mpi/build`
-9. run `../src/configure --prefix=absolute-path-to-software/mpi`
+9. run `../src/configure --prefix=/path/to/install/mpi`
 10. launch the build of MPI with `make -j n`, where n is the number of threads to use while building
 11. run `make check`
 12. install MPI with `make install`
-13. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/mpi/bin:$PATH`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/mpi/lib:$LD_LIBRARY_PATH`
+13. add the following line to the .bashrc file: `export PATH=/path/to/install/mpi/bin:$PATH`
+14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/mpi/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
 
 ### Building HDF5 - optional
@@ -161,12 +178,12 @@ are described.
 6. make a symbolic link to the new directory: `ln -s hdf5-1.8.13 src`
 7. create a build directory: `mkdir build`
 8. move to the build directory (e.g. software/hdf5/build): `cd /hdf5/build`
-9. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl --enable-build-mode=production --prefix=absolute-path-to-software/hdf5`
+9. run `../src/configure --enable-optimized --enable-shared --enable-cxx --enable-hl --enable-build-mode=production --prefix=/path/to/install/hdf5`
 10. launch the build of HDF5 with `make -j n`, where n is the number of threads to use while building
 11. test the build with `make test`
 12. install HDF5 with `make install`
-13. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/hdf5/bin:$PATH`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/hdf5/lib:$LD_LIBRARY_PATH`
+13. add the following line to the .bashrc file: `export PATH=/path/to/install/hdf5/bin:$PATH`
+14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/hdf5/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
 
 ### Building Python and NumPy
@@ -186,10 +203,10 @@ are described.
 4. make a symbolic link to the new directory: `ln -s swig src`
 5. create a build directory: `mkdir build`
 6. move to the build directory (e.g. software/swig/build): `cd /swig/build`
-7. run `../src/configure --prefix=absolute-path-to-software/swig`
+7. run `../src/configure --prefix=/path/to/install/swig`
 8. launch the build of SWIG with `make -j n`, where n is the number of threads desired
 9. install SWIG with `make install`
-10. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/swig/bin:$PATH`
+10. add the following line to the .bashrc file: `export PATH=/path/to/install/swig/bin:$PATH`
 11. run `exec bash`
 
 ### Building Boost
@@ -205,10 +222,10 @@ are described.
 4. move to the boost directory: `cd /software/boost`
 5. extract the files from the tar file with `tar -xvf boost_1_72_0.tar.gz`
 6. move to the boost_1_72_0 directory (e.g. software/boost/boost_1_72_0): `cd boost_1_72_0`
-7. run `./bootstrap.sh --prefix=absolute-path-to-software/boost`
+7. run `./bootstrap.sh --prefix=/path/to/install/boost`
 8. if OpenMPI has been built, run `sed -i "$ a using mpi ;" project-config.jam`
-9. run `./b2 -jn --prefix=absolute-path-to-software/boost -s NO_BZIP2=1 link=shared runtime-link=shared install`, where n is the number of threads to use while building
-10. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/boost/lib:$LD_LIBRARY_PATH`
+9. run `./b2 -jn --prefix=/path/to/install/boost -s NO_BZIP2=1 link=shared runtime-link=shared install`, where n is the number of threads to use while building
+10. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/boost/lib:$LD_LIBRARY_PATH`
 11. run `exec bash`
 
 ### Building MOAB - optional
@@ -223,16 +240,16 @@ are described.
 9. create a build directory: `mkdir build`
 10. move to the build directory (e.g. software/moab/build): `cd build`
 11. run `sudo apt-get install libeigen3-dev`
-12.
+12. configure moab with either the basic or advanced options regarding HDF5
   * **Basic HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5 --prefix=absolute-path-to-software/moab/`
+    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5 --prefix=/path/to/install/moab/`
   * **Advanced HDF5 Build:**
-    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5=absolute-path-to-software/hdf5 --prefix=absolute-path-to-software/moab/`
+    * run `../src/configure --enable-optimize --enable-shared --enable-build-mode=production --with-hdf5=/path/to/install/hdf5 --prefix=/path/to/install/moab/`
 13. launch the build of MOAB with `make -j n`, where n is the number of threads desired
 14. run `make check`
 15. install MOAB with `make install`
-16. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/moab/bin:$PATH`
-17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/moab/lib:$LD_LIBRARY_PATH`
+16. add the following line to the .bashrc file: `export PATH=/path/to/install/moab/bin:$PATH`
+17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/moab/lib:$LD_LIBRARY_PATH`
 18. run `exec bash`
 
 ### Building DagMC - optional
@@ -245,12 +262,12 @@ are described.
 7. make a symbolic link to the new directory: `ln -s DAGMC src`
 8. create a build directory: `mkdir build`
 9. move to the build directory (e.g. software/dagmc/build): `cd build`
-10. if HDF5 was built from source, run `env HDF5_ROOT=absolute-path-to-software/hdf5`
-11. run `cmake ../src -DCMAKE_INSTALL_PREFIX=absolute-path-to-software/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=absolute-path-to-software/moab`
+10. if HDF5 was built from source, run `env HDF5_ROOT=/path/to/install/hdf5`
+11. run `cmake ../src -DCMAKE_INSTALL_PREFIX=/path/to/install/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=/path/to/install/moab`
 12. launch the build of of DagMC `make -j n`, where n is the number of threads desired
 13. install DagMC with `make install`
-14. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/dagmc/bin:$PATH`
-15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/dagmc/lib:$LD_LIBRARY_PATH`
+14. add the following line to the .bashrc file: `export PATH=/path/to/install/dagmc/bin:$PATH`
+15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/dagmc/lib:$LD_LIBRARY_PATH`
 16. run `exec bash`
 
 ### Building ROOT - optional
@@ -259,8 +276,8 @@ are described.
 1. download the appropriate [ROOT 6.04/02 binaries](https://root.cern.ch/content/release-60402)
 2. move the binary file to the software directory (e.g. software)
 4. run `tar -xvf root_v6.04.02*` - Note: This will create a directory called root.
-5. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/root/bin:$PATH`
-6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/root/lib:$LD_LIBRARY_PATH`
+5. add the following line to the .bashrc file: `export PATH=/path/to/install/root/bin:$PATH`
+6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/root/lib:$LD_LIBRARY_PATH`
 
 If you are using g++ 5.3+ these precompiled binaries will no longer work
 (using the root executable will result in an error). Use the advanced build
@@ -282,8 +299,8 @@ instructions below instead.
 12. configure with `./root.sh`
 13. launch the build of ROOT with `make -j n`, where n is the number of threads desired
 14. install ROOT with `make install`
-15. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/root/bin:$PATH`
-16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to-software/root/lib:$LD_LIBRARY_PATH`
+15. add the following line to the .bashrc file: `export PATH=/path/to/install/root/bin:$PATH`
+16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/root/lib:$LD_LIBRARY_PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
@@ -300,9 +317,9 @@ At this point all of the dependent software libraries should have been built. If
 8. test the build with `make test`
 9. create the frensie manual `make manual`. it can be accessed by entering the command `open index.html` when in the directory `/path-to-frensie/build/doc/manual`
 10. install FRENSIE with `make install`
-11. add the following line to the .bashrc file: `export PATH=absolute-path-to-software/frensie/bin:$PATH`
-12. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to-software/frensie/bin:$PYTHONPATH`
-13. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to-software/frensie/lib/python2.7/site-packages:$PYTHONPATH`
+11. add the following line to the .bashrc file: `export PATH=/path/to/install/frensie/bin:$PATH`
+12. add the following line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/bin:$PYTHONPATH`
+13. add the following line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/lib/python2.7/site-packages:$PYTHONPATH`
 
 **Note 1**: There are several other configure options that can be changed in
 the frensie.sh script:
