@@ -310,149 +310,48 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
 
-  // Indep dimension value outside of distribution bounds
-  setCoordinate<IndepDimension>( point, 0.05 );
-  setCoordinate<DepDimension>( point, 0.1 );
+  double vals_to_test[27][3] = {
+      // Indep dimension value outside of distribution bounds
+      {0.5, 0.1, 0.0},
+      {0.5, 0.5, 0.0},
+      {0.5, 0.9, 0.0},
+      // Indep dimension value on first bin
+      {0.1, 0.1, 0.0},
+      {0.1, 0.5, 0.25},
+      {0.1, 0.9, 0.25},
+      {0.1, 1.0, 0.0},
+      // Indep dimension value inside of first bin
+      {0.3, 0.1, 0.0},
+      {0.3, 0.5, 0.25},
+      {0.3, 0.9, 0.25},
+      {0.3, 1.0, 0.0},
+      // Indep dimension value on second bin
+      {0.5, 0.1, 0.0},
+      {0.5, 0.6, 0.2},
+      {0.5, 0.8, 0.2},
+      {0.5, 1.0, 0.0},
+      // Indep dimension value in second bin
+      {0.7, 0.1, 0.0},
+      {0.7, 0.6, 0.2},
+      {0.7, 0.8, 0.2},
+      {0.7, 1.0, 0.0},
+      // Indep dimension value on distribution upper bound
+      {0.9, 0.1, 0.0},
+      {0.9, 0.6, 0.2},
+      {0.9, 0.8, 0.2},
+      {0.9, 1.0, 0.0},
+      // Indep dimension value outside of distribution bounds
+      {1.0, 0.1, 0.0},
+      {1.0, 0.5, 0.0},
+      {1.0, 0.9, 0.0},
+      {1.0, 1.0, 0.0}};
 
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.9 );
-  
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value on first bin
-  setCoordinate<IndepDimension>( point, 0.1 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.25 );
-
-  setCoordinate<DepDimension>( point, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.25 );
-
-  setCoordinate<DepDimension>( point, 1.0 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value inside of first bin
-  setCoordinate<IndepDimension>( point, 0.3 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.25 );
-
-  setCoordinate<DepDimension>( point, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.25 );
-
-  setCoordinate<DepDimension>( point, 1.0 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value on second bin
-  setCoordinate<IndepDimension>( point, 0.5 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.6 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 0.8 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 1.0 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value in second bin
-  setCoordinate<IndepDimension>( point, 0.7 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.6 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 0.8 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 1.0 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value on distribution upper bound
-  setCoordinate<IndepDimension>( point, 0.9 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.6 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 0.8 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.2 );
-
-  setCoordinate<DepDimension>( point, 1.0 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  // Indep dimension value outside of distribution bounds
-  setCoordinate<IndepDimension>( point, 1.0 );
-  setCoordinate<DepDimension>( point, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
-
-  setCoordinate<DepDimension>( point, 0.9 );
-  
-  FRENSIE_CHECK_EQUAL( indep_dimension_distribution->evaluateWithCascade( point ),
-                       0.0 );
+  for (auto vals : vals_to_test) {
+    setCoordinate<IndepDimension>(point, vals[0]);
+    setCoordinate<DepDimension>(point, vals[1]);
+    FRENSIE_CHECK_EQUAL(
+        indep_dimension_distribution->evaluateWithCascade(point), vals[2]);
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -483,136 +382,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
 
-  // Indep dimension value on first bin
-  std::vector<double> fake_stream( 6 );
-  fake_stream[0] = 0.0; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0-1e-15;
+  std::vector<std::vector<double>> fake_stream = {
+      // Indep dimension value on first bin
+      {0.0, 0.0, 0.0, 0.5, 0.0, 1.0 - 1e-15},
+      // Indep dimension in first bin
+      {0.25, 0.0, 0.25, 0.5, 0.25, 1.0 - 1e-15},
+      // Indep dimension on second bin
+      {0.5, 0.0, 0.5, 0.5, 0.5, 1.0 - 1e-15},
+      // Parent dimension value in second bin
+      {0.75, 0.0, 0.75, 0.5, 0.75, 1.0 - 1e-15},
+      // Parent dimension value in second bin
+      {1.0 - 1e-15, 0.0, 1.0 - 1e-15, 0.5, 1.0 - 1e-15, 1.0 - 1e-15}};
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  double vals_to_test[5][3][2] = {
+      // Indep dimension value on first bin
+      {{0.1, 0.5}, {0.1, 0.7}, {0.1, 0.9}},
+      // Indep dimension in first bin
+      {{0.3, 0.5}, {0.3, 0.7}, {0.3, 0.9}},
+      // Indep dimension on second bin
+      {{0.5, 0.6}, {0.5, 0.7}, {0.5, 0.8}},
+      // Parent dimension value in second bin
+      {{0.7, 0.6}, {0.7, 0.7}, {0.7, 0.8}},
+      // Parent dimension value in second bin
+      {{0.9, 0.6}, {0.9, 0.7}, {0.9, 0.8}},
+  };
 
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-
-  // Indep dimension in first bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.25; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.25;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.25;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-
-  // Indep dimension on second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.5; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.5;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-
-  // Parent dimension value in second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.75; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.75;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.75;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-
-  // Parent dimension value in second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 1.0-1e-15; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 1.0-1e-15;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 1.0-1e-15;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-
-  indep_dimension_distribution->sampleWithCascade( point );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-
+  for (int i = 0; i < 5; i++) {
+    Utility::RandomNumberGenerator::setFakeStream(fake_stream[i]);
+    for (auto vals : vals_to_test[i]) {
+      indep_dimension_distribution->sampleWithCascade(point);
+      FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point), vals[0], 1e-15);
+      FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[1], 1e-15);
+    }
+  }
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -648,166 +450,43 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
   trials[IndepDimension] = 0;
   trials[DepDimension] = 0;
 
-  // Indep dimension value on first bin
-  std::vector<double> fake_stream( 6 );
-  fake_stream[0] = 0.0; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0-1e-15;
+  std::vector<std::vector<double>> fake_stream = {
+      // Indep dimension value on first bin
+      {0.0, 0.0, 0.0, 0.5, 0.0, 1.0 - 1e-15},
+      // Indep dimension in first bin
+      {0.25, 0.0, 0.25, 0.5, 0.25, 1.0 - 1e-15},
+      // Indep dimension on second bin
+      {0.5, 0.0, 0.5, 0.5, 0.5, 1.0 - 1e-15},
+      // Parent dimension value in second bin
+      {0.75, 0.0, 0.75, 0.5, 0.75, 1.0 - 1e-15},
+      // Parent dimension value in second bin
+      {1.0 - 1e-15, 0.0, 1.0 - 1e-15, 0.5, 1.0 - 1e-15, 1.0 - 1e-15}};
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  double vals_to_test[5][3][3] = {
+      // Indep dimension value on first bin
+      {{0.1, 0.5, 1}, {0.1, 0.7, 2}, {0.1, 0.9, 3}},
+      // Indep dimension in first bin
+      {{0.3, 0.5, 4}, {0.3, 0.7, 5}, {0.3, 0.9, 6}},
+      // Indep dimension on second bin
+      {{0.5, 0.6, 7}, {0.5, 0.7, 8}, {0.5, 0.8, 9}},
+      // Parent dimension value in second bin
+      {{0.7, 0.6, 10}, {0.7, 0.7, 11}, {0.7, 0.8, 12}},
+      // Parent dimension value in second bin
+      {{0.9, 0.6, 13}, {0.9, 0.7, 14}, {0.9, 0.8, 15}},
+  };
 
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 1 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 1 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 2 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 2 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 3 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 3 );
-
-  // Indep dimension in first bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.25; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.25;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.25;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 4 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 4 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 5 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 5 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.3, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 6 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 6 );
-
-  // Indep dimension on second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.5; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.5;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.5;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 7 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 7 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 8 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 8 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.5, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 9 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 9 );
-
-  // Parent dimension value in second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 0.75; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.75;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.75;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 10 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 10 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 11 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 11 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.7, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 12 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 12 );
-
-  // Parent dimension value in second bin
-  fake_stream.resize( 6 );
-  fake_stream[0] = 1.0-1e-15; 
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 1.0-1e-15;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 1.0-1e-15;
-  fake_stream[5] = 1.0-1e-15;
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 13 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 13 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 14 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 14 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascade( point, trials );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 15 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 15 );
-
+  for (int i = 0; i < 5; i++) {
+    Utility::RandomNumberGenerator::setFakeStream(fake_stream[i]);
+    for (auto vals : vals_to_test[i]) {
+      indep_dimension_distribution->sampleAndRecordTrialsWithCascade(point,
+                                                                     trials);
+      FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point), vals[0], 1e-15);
+      FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[1], 1e-15);
+      FRENSIE_CHECK_FLOATING_EQUALITY(trials[IndepDimension], vals[2], 1e-15);
+      FRENSIE_CHECK_FLOATING_EQUALITY(trials[DepDimension], vals[2], 1e-15);
+    }
+  }
+ 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -840,198 +519,42 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
                                      directional_coord_conversion_policy );
 
   // Indep dimension value on first bin
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
+  std::vector<double> fake_stream = {0.0, 0.5, 1.0 - 1e-15};
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  double vals_to_test[18][5] = {
+      {0.1, 0.1, 1.25, 0.5, 1.0}, 
+      {0.1, 0.1, 1.25, 0.7, 1.0},
+      {0.1, 0.1, 1.25, 0.9, 1.0}, 
+      {0.3, 0.3, 1.25, 0.5, 1.0},
+      {0.3, 0.3, 1.25, 0.7, 1.0}, 
+      {0.3, 0.3, 1.25, 0.9, 1.0},
+      {0.5, 0.5, 1.25, 0.6, 1.0}, 
+      {0.5, 0.5, 1.25, 0.7, 1.0},
+      {0.5, 0.5, 1.25, 0.8, 1.0}, 
+      {0.7, 0.7, 1.25, 0.6, 1.0},
+      {0.7, 0.7, 1.25, 0.7, 1.0}, 
+      {0.7, 0.7, 1.25, 0.8, 1.0},
+      {0.9, 0.9, 1.25, 0.6, 1.0}, 
+      {0.9, 0.9, 1.25, 0.7, 1.0},
+      {0.9, 0.9, 1.25, 0.8, 1.0}, 
+      {0.5, 0.1, 1.00, 0.5, 2.5},
+      {0.6, 0.5, 1.00, 0.6, 5.0}, 
+      {0.8, 0.9, 1.00, 0.8, 5.0}};
 
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.1 );
+  Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                       1.25,
-                       1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  // Indep dimension value in first bin
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  // Indep dimension value on second bin
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  // Indep dimension value in second bin
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  // Parent dimension value on distribution upper bound
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                  point, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-
-  // Dependent dimension value fixed
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                    point, DepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          2.5,
-                          1e-15 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                    point, DepDimension, 0.6 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          5.0,
-                          1e-15 );
-
-  indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
-                                                    point, DepDimension, 0.8 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          5.0,
-                          1e-15 );
-  
+  for (auto vals : vals_to_test) {
+    indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
+        point, IndepDimension, vals[0]);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point),
+                                    vals[1], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<IndepDimension>(point),
+                                    vals[2], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[3],
+                                    1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<DepDimension>(point),
+                                    vals[4], 1e-15);
+  }
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -1069,234 +592,37 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   trials[DepDimension] = 0;
 
   // Indep dimension value on first bin
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
+  std::vector<double> fake_stream = {0.0, 0.5, 1.0 - 1e-15};
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  double vals_to_test[18][7] = {
 
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.1 );
+      {0.1, 0.1, 1.25, 0.5, 1.0, 0, 1},  {0.1, 0.1, 1.25, 0.7, 1.0, 0, 2},
+      {0.1, 0.1, 1.25, 0.9, 1.0, 0, 3},  {0.3, 0.3, 1.25, 0.5, 1.0, 0, 4},
+      {0.3, 0.3, 1.25, 0.7, 1.0, 0, 5},  {0.3, 0.3, 1.25, 0.9, 1.0, 0, 6},
+      {0.5, 0.5, 1.25, 0.6, 1.0, 0, 7},  {0.5, 0.5, 1.25, 0.7, 1.0, 0, 8},
+      {0.5, 0.5, 1.25, 0.8, 1.0, 0, 9},  {0.7, 0.7, 1.25, 0.6, 1.0, 0, 10},
+      {0.7, 0.7, 1.25, 0.7, 1.0, 0, 11}, {0.7, 0.7, 1.25, 0.8, 1.0, 0, 12},
+      {0.9, 0.9, 1.25, 0.6, 1.0, 0, 13}, {0.9, 0.9, 1.25, 0.7, 1.0, 0, 14},
+      {0.9, 0.9, 1.25, 0.8, 1.0, 0, 15}, {0.5, 0.1, 1.00, 0.5, 2.5, 1, 15},
+      {0.6, 0.5, 1.00, 0.6, 5.0, 2, 15}, {0.8, 0.9, 1.00, 0.8, 5.0, 3, 15}};
 
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 1 );
+  Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 2 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.1 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                       1.25,
-                       1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 3 );
-
-  // Indep dimension value in first bin
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 4 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 5 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.3 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.3 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 6 );
-
-  // Indep dimension value on second bin
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 7 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 8 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 9 );
-
-  // Indep dimension value in second bin
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 10 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 11 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.7 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 12 );
-
-  // Parent dimension value on distribution upper bound
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 13 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.7 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 14 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, IndepDimension, 0.9 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.9 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<IndepDimension>( point ),
-                          1.25,
-                          1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<DepDimension>( point ), 0.8, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<DepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 0 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 15 );
-
-  // Dependent dimension value fixed
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, DepDimension, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.1 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          2.5,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 1 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 15 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, DepDimension, 0.6 );
-
-  FRENSIE_CHECK_EQUAL( getCoordinate<IndepDimension>( point ), 0.5 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.6 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          5.0,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 2 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 15 );
-
-  indep_dimension_distribution->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
-                                          point, trials, DepDimension, 0.8 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<IndepDimension>( point ), 0.9, 1e-15 );
-  FRENSIE_CHECK_EQUAL( getCoordinateWeight<IndepDimension>( point ), 1.0 );
-  FRENSIE_CHECK_EQUAL( getCoordinate<DepDimension>( point ), 0.8 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinateWeight<DepDimension>( point ),
-                          5.0,
-                          1e-15 );
-  FRENSIE_CHECK_EQUAL( trials[IndepDimension], 3 );
-  FRENSIE_CHECK_EQUAL( trials[DepDimension], 15 );
-  
+  for (auto vals : vals_to_test) {
+    indep_dimension_distribution
+        ->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
+            point, trials, DepDimension, vals[0]);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point),
+                                    vals[1], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<IndepDimension>(point),
+                                    vals[2], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[3],
+                                    1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<DepDimension>(point),
+                                    vals[4], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(trials[IndepDimension], vals[5], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(trials[DepDimension], vals[6], 1e-15);
+  }
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
