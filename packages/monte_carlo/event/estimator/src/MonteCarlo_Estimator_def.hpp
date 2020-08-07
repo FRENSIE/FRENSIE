@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 // Calculate the bin index for the desired response function
-/*! \details The PointType should be either EstimatorParticleStateWrapper or
+/*! \details The PointType should be either ObserverParticleStateWrapper or
  * ObserverPhaseSpaceDiscretization::DimensionValueMap.
  */
 template<typename PointType>

@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <memory>
+#include <unordered_map>
 
 // FRENSIE Includes
 #include "MonteCarlo_WeightWindow.hpp"
@@ -20,10 +21,12 @@
 namespace MonteCarlo{
 
 //! The weight window mesh class
-class WeightWindowMesh : public WeightWindow
+class WeightWindowMesh : public WeightWindowBase
 {
 
 public:
+
+  typedef unsigned discretization_bin_index;
 
   //! Constructor
   WeightWindowMesh();
@@ -33,8 +36,18 @@ public:
   { /* ... */ }
 
   //! Set the mesh for a particle
-  void setMesh( const std::shared_ptr<const Utility::Mesh>& mesh,
-                const ParticleType particle_type );
+  void setMesh( const std::shared_ptr<const Utility::Mesh>& mesh );
+
+  std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle) const final override;
+
+  bool isParticleInWeightWindowDiscretization( ParticleState& particle ) const final override;
+
+private:
+
+  std::shared_ptr<const Utility::Mesh > d_mesh;
+
+  //! Map that contains weight windows. First key is the index of the mesh element, second key is the index of the discretization
+  std::unordered_map<Utility::Mesh::ElementHandle, std::unordered_map<discretization_bin_index, std::shared_ptr<WeightWindow>>> d_weight_window_map;
 
 };
   

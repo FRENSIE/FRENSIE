@@ -18,24 +18,39 @@
 
 namespace MonteCarlo{
 
+//! An actual weight window object.
+struct WeightWindow{
+  double upper_weight;
+  double survival_weight;
+  double lower_weight;
+};
+
 //! The weight window base class
-class WeightWindow: public PopulationControl
+class WeightWindowBase: public PopulationControl
 {
 
 public:
 
   //! Constructor
-  WeightWindow()
+  WeightWindowBase()
   { /* ... */ }
 
   //! Destructor
-  ~WeightWindow()
+  ~WeightWindowBase()
   { /* ... */ }
 
-  void checkParticleWithPopulationController( ParticleState& particle, ParticleBank& bank) const;
+  void checkParticleWithPopulationController( ParticleState& particle, 
+                                              ParticleBank& bank) const;
+
+  protected:
+
+  virtual std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle ) const = 0;
+
+  virtual bool isParticleInWeightWindowDiscretization( ParticleState& particle ) const = 0;
 
 };
-  
+
+
 
 } // end MonteCarlo namespace
 

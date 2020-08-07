@@ -19,14 +19,38 @@ WeightWindowMesh::WeightWindowMesh()
 { /* ... */ }
 
 // Set the mesh for a particle
-void WeightWindowMesh::setMesh(
-                              const std::shared_ptr<const Utility::Mesh>& mesh,
-                              const ParticleType particle_type )
+void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh>& mesh)
 {
+  d_mesh = mesh;
+}
+
+std::shared_ptr<WeightWindow> WeightWindowMesh::getWeightWindow( ParticleState& particle) const
+{
+  ObserverParticleStateWrapper observer_particle(particle);
+
+  ObserverPhaseSpaceDimensionDiscretization::BinIndexArray discretization_index;
+
+  this->calculateBinIndicesOfPoint(observer_particle, discretization_index);
+
+  return d_weight_window_map.at(d_mesh->whichElementIsPointIn(particle.getPosition())).at(discretization_index[0]);
+}
+
+bool WeightWindowMesh::isParticleInWeightWindowDiscretization( ParticleState& particle ) const
+{
+
+  ObserverParticleStateWrapper observer_particle(particle);
+
+  if(d_mesh->isPointInMesh(particle.getPosition()) && this->isPointInObserverPhaseSpace(observer_particle))
+  {
+    return true;
+  }else
+  {
+    return false;
+  }
+  
 
 }
 
-  
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

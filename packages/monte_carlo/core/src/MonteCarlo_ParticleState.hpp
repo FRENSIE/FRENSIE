@@ -90,7 +90,7 @@ public:
   virtual ~ParticleState()
   { /* ... */ }
 
-  /*! Clone the particle state (do not use to generate new particles!)
+  /*! Clone the particle state (do not use to generate new particles through reactions, VR is fine!)
    * \details This method returns a heap-allocated pointer. It is only safe
    * to call this method inside of a smart pointer constructor or reset
    * method.

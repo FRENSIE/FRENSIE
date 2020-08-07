@@ -50,8 +50,13 @@ protected:
 
   //! Terminate particle
   void terminateParticle( ParticleState& particle,
-                          ParticleBank& bank,
                          double termination_probability) const; 
+
+private:
+
+  void pushSplitParticlesToBank( ParticleState& particle,
+                                 ParticleBank& bank,
+                                 unsigned number_of_particles) const;
 
   /* The below methods are not used for weight windows but must be defined due to being pure virtual in the Particle History Observer
      class. At some point, this will need to be fixed and these methods removed */

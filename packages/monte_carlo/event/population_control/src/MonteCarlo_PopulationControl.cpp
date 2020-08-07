@@ -8,6 +8,7 @@
 
 // FRENSIE includes
 #include "MonteCarlo_PopulationControl.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
 
@@ -39,29 +40,59 @@ std::shared_ptr<const PopulationControl> PopulationControl::getDefault()
 
 // Method that splits particle into equal number of weights based on number of particles split into
 void PopulationControl::splitParticle( ParticleState& particle,
-                      ParticleBank& bank,
-                      unsigned number_of_particles ) const
+                                       ParticleBank& bank,
+                                       unsigned number_of_particles ) const
 {
-  
+  particle.multiplyWeight(1/number_of_particles);
+
+  this->pushSplitParticlesToBank(particle,
+                                 bank,
+                                 number_of_particles);
+
 }
 
 // Method that splits particles with weights based on the expectation weight of particles
 void PopulationControl::splitParticle( ParticleState& particle,
-                    ParticleBank& bank,
-                    unsigned number_of_particles,
-                    double expectation_weight) const
+                                       ParticleBank& bank,
+                                       unsigned number_of_particles,
+                                       double expectation_weight) const
 {
+
+  particle.setWeight(expectation_weight);
+
+  this->pushSplitParticlesToBank(particle,
+                                 bank,
+                                 number_of_particles);
 
 }
 
 // Method that terminates particle 
 void PopulationControl::terminateParticle( ParticleState& particle,
-                        ParticleBank& bank,
-                        double termination_probability) const
+                                           double termination_probability) const
 {
+  double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
+  if( random_number < termination_probability )
+  {
+    particle.setAsGone();
+  }
+  else
+  {
+    particle.multiplyWeight(1/(1-termination_probability));
+  }
 }
 
+void PopulationControl::pushSplitParticlesToBank( ParticleState& particle,
+                                                  ParticleBank& bank,
+                                                  unsigned number_of_particles) const
+{
+  for(unsigned i = 0; i < number_of_particles - 1; ++i)
+  {
+    std::shared_ptr<ParticleState> split_particle( particle.clone() );
+    
+    bank.push( split_particle );
+  }
+}
 
 /* The below functions should not be used */
 void PopulationControl::enableThreadSupport( const unsigned num_threads )

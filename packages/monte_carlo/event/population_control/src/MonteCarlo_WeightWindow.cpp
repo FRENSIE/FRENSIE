@@ -6,17 +6,53 @@
 //!
 //---------------------------------------------------------------------------//
 
+// std includes
+#include <math.h>
+
 // FRENSIE Includes
 #include "MonteCarlo_WeightWindow.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
 
 // Update the particle state and bank
-void WeightWindow::checkParticleWithPopulationController( ParticleState& particle,
-                                                          ParticleBank& bank ) const
+void WeightWindowBase::checkParticleWithPopulationController( ParticleState& particle,
+                                                              ParticleBank& bank ) const
 {
-  double weight = particle.getWeight();
+
+  //! Make sure there is a weight window where this particle is.
+  if(this->isParticleInWeightWindowDiscretization( particle ))
+  {
+
+    std::shared_ptr<WeightWindow> window = this->getWeightWindow(particle);
+
+    double weight = particle.getWeight();
+
+    if(weight > window->upper_weight)
+    {
+      // return number after decimal
+      double weight_fraction = fmod(weight/window->upper_weight,1);
+
+      unsigned number_of_particles;
+
+      if(Utility::RandomNumberGenerator::getRandomNumber<double>() < weight_fraction)
+      {
+        number_of_particles = static_cast<unsigned>(floor(weight_fraction));
+      }else
+      {
+        number_of_particles = static_cast<unsigned>(ceil(weight_fraction));
+      }
+
+      this->splitParticle(particle, bank, number_of_particles);
+
+    }else if(weight < window->lower_weight)
+    {
+      this->terminateParticle(particle, 
+                              1 - (weight/window->survival_weight));
+    }
+
+  }
 }
 
 
