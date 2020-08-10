@@ -38,6 +38,9 @@ public:
   //! Set the mesh for a particle
   void setMesh( const std::shared_ptr<const Utility::Mesh>& mesh );
 
+  //! Set the discretization map for the weight window mesh
+  void setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::unordered_map<discretization_bin_index, std::shared_ptr<WeightWindow>>> weight_window_map );
+
   std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle) const final override;
 
   bool isParticleInWeightWindowDiscretization( ParticleState& particle ) const final override;

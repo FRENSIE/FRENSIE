@@ -24,6 +24,11 @@ void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh>& mesh)
   d_mesh = mesh;
 }
 
+void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::unordered_map<discretization_bin_index, std::shared_ptr<WeightWindow>>> weight_window_map )
+{
+  d_weight_window_map = weight_window_map;
+}
+
 std::shared_ptr<WeightWindow> WeightWindowMesh::getWeightWindow( ParticleState& particle) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
