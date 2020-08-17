@@ -113,9 +113,9 @@ older version is present, build CMake using the instructions below.**
 10. launch the build of CMake `make -j n`, where n is the number of threads to use while building
 11. test the build with `make test`
 12. install CMake with `make install`
-13. add the following line to the .bashrc file: `export PATH=/path/to/install/cmake/bin:$PATH`
-14. run `exec bash`
-15. run `cmake --version` and verify that the output is 3.x
+13. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/cmake/bin:$PATH`
+14. make sure this variable is set by running `exec bash`
+15. Check the version of cmake with `cmake --version` and verify that the output is 3.x
 
 ### Building Doxygen - optional
 **Basic:**
@@ -135,8 +135,8 @@ older version is present, build CMake using the instructions below.**
 8. launch the build of Doxygen with `make -j n`, where n is the number of threads to use while building
 9. test the build with `make test`
 10. install Doxygen with `make install`
-11. add the following line to the .bashrc file: `export PATH=/path/to/install/doxygen/bin:$PATH`
-12. run `exec bash`
+11. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/doxygen/bin:$PATH`
+12. make sure this variable is set by running `exec bash`
 
 ### Building Open MPI - optional
 **Basic:**
@@ -158,9 +158,9 @@ older version is present, build CMake using the instructions below.**
 10. launch the build of MPI with `make -j n`, where n is the number of threads to use while building
 11. run `make check`
 12. install MPI with `make install`
-13. add the following line to the .bashrc file: `export PATH=/path/to/install/mpi/bin:$PATH`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/mpi/lib:$LD_LIBRARY_PATH`
-15. run `exec bash`
+13. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/mpi/bin:$PATH`
+14. set the environment variable for the library path by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/mpi/lib:$LD_LIBRARY_PATH`
+15. make sure this variable is set by running `exec bash`
 
 ### Building HDF5 - optional
 **Basic:**
@@ -182,9 +182,9 @@ older version is present, build CMake using the instructions below.**
 10. launch the build of HDF5 with `make -j n`, where n is the number of threads to use while building
 11. test the build with `make test`
 12. install HDF5 with `make install`
-13. add the following line to the .bashrc file: `export PATH=/path/to/install/hdf5/bin:$PATH`
-14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/hdf5/lib:$LD_LIBRARY_PATH`
-15. run `exec bash`
+13. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/hdf5/bin:$PATH`
+14. set the environment variable for the library path by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/hdf5/lib:$LD_LIBRARY_PATH`
+15. make sure this variable is set by running `exec bash`
 
 ### Building Python and NumPy
 1. run `sudo apt-get install python python-dev python-numpy`
@@ -206,8 +206,8 @@ older version is present, build CMake using the instructions below.**
 7. run `../src/configure --prefix=/path/to/install/swig`
 8. launch the build of SWIG with `make -j n`, where n is the number of threads desired
 9. install SWIG with `make install`
-10. add the following line to the .bashrc file: `export PATH=/path/to/install/swig/bin:$PATH`
-11. run `exec bash`
+10. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/swig/bin:$PATH`
+11. make sure this variable is set by running `exec bash`
 
 ### Building Boost
 **Basic:**
@@ -225,8 +225,8 @@ older version is present, build CMake using the instructions below.**
 7. run `./bootstrap.sh --prefix=/path/to/install/boost`
 8. if OpenMPI has been built, run `sed -i "$ a using mpi ;" project-config.jam`
 9. run `./b2 -jn --prefix=/path/to/install/boost -s NO_BZIP2=1 link=shared runtime-link=shared install`, where n is the number of threads to use while building
-10. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/boost/lib:$LD_LIBRARY_PATH`
-11. run `exec bash`
+10. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/boost/lib:$LD_LIBRARY_PATH`
+11. make sure this variable is set by running `exec bash`
 
 ### Building MOAB - optional
 1. create a moab directory (e.g. software/moab): `mkdir /software/moab`
@@ -248,9 +248,9 @@ older version is present, build CMake using the instructions below.**
 13. launch the build of MOAB with `make -j n`, where n is the number of threads desired
 14. run `make check`
 15. install MOAB with `make install`
-16. add the following line to the .bashrc file: `export PATH=/path/to/install/moab/bin:$PATH`
-17. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/moab/lib:$LD_LIBRARY_PATH`
-18. run `exec bash`
+16. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/moab/bin:$PATH`
+17. set the environment variable for the library path by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/moab/lib:$LD_LIBRARY_PATH`
+18. make sure this variable is set by running `exec bash`
 
 ### Building DagMC - optional
 1. create a dagmc directory (e.g. software/dagmc): `mkdir /software/dagmc`
@@ -266,9 +266,9 @@ older version is present, build CMake using the instructions below.**
 11. run `cmake ../src -DCMAKE_INSTALL_PREFIX=/path/to/install/dagmc -DCMAKE_BUILD_TYPE:STRING=Release -DMOAB_DIR=/path/to/install/moab`
 12. launch the build of of DagMC `make -j n`, where n is the number of threads desired
 13. install DagMC with `make install`
-14. add the following line to the .bashrc file: `export PATH=/path/to/install/dagmc/bin:$PATH`
-15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/dagmc/lib:$LD_LIBRARY_PATH`
-16. run `exec bash`
+14. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/dagmc/bin:$PATH`
+15. set the environment variable for the library path by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/dagmc/lib:$LD_LIBRARY_PATH`
+16. make sure this variable is set by running `exec bash`
 
 ### Building ROOT - optional
 **Basic:**
@@ -299,8 +299,9 @@ instructions below instead.
 12. configure with `./root.sh`
 13. launch the build of ROOT with `make -j n`, where n is the number of threads desired
 14. install ROOT with `make install`
-15. add the following line to the .bashrc file: `export PATH=/path/to/install/root/bin:$PATH`
-16. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/root/lib:$LD_LIBRARY_PATH`
+15. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/root/bin:$PATH`
+16. set the environment variable for the library path by adding this line to the .bashrc file: `export LD_LIBRARY_PATH=/path/to/install/root/lib:$LD_LIBRARY_PATH`
+17. make sure this variable is set by running `exec bash`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
@@ -317,9 +318,9 @@ At this point all of the dependent software libraries should have been built. If
 8. test the build with `make test`
 9. create the frensie manual `make manual`. it can be accessed by entering the command `open index.html` when in the directory `/path-to-frensie/build/doc/manual`
 10. install FRENSIE with `make install`
-11. add the following line to the .bashrc file: `export PATH=/path/to/install/frensie/bin:$PATH`
-12. add the following line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/bin:$PYTHONPATH`
-13. add the following line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/lib/python2.7/site-packages:$PYTHONPATH`
+11. set the environment variable for the `/path/to/install/package` by adding this line to the .bashrc file: `export PATH=/path/to/install/frensie/bin:$PATH`
+12. set the environment variable for the library path by adding this line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/bin:$PYTHONPATH`
+13. set the environment variable for the Python path by adding this line to the .bashrc file: `export PYTHONPATH=/path/to/install/frensie/lib/python2.7/site-packages:$PYTHONPATH`
 
 **Note 1**: There are several other configure options that can be changed in
 the frensie.sh script:
