@@ -388,7 +388,7 @@ size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationInde
 
   size_t discretization_index;
 
-  std::map<ObserverPhaseSpaceDimension, size_t> ordered_dimension_bin_indices;
+  std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>> ordered_dimension_bin_indices;
 
   for(auto i = d_dimension_ordering.begin(); i < d_dimension_ordering.end(); ++i)
   {
@@ -397,17 +397,18 @@ size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationInde
     // Make sure index isn't larger than the size of that discretized dimension index bounds
     TEST_FOR_EXCEPTION(dimension_bin_indices.at(*i) > d_dimension_index_step_size_map.at(*i)-1, std::invalid_argument, "Dimension index is out of bounds");
 
-    ordered_dimension_bin_indices.emplace(*i, dimension_bin_indices.at(*i));
+    ordered_dimension_bin_indices.push_back(std::make_pair(*i, dimension_bin_indices.at(*i)));
   }
   return this->calculateDiscretizationIndex(ordered_dimension_bin_indices);
 }
 
 // Same as above, but used by the code itself assuming the map is already in the same order as dimension order (private)
-size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( const std::map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices ) const
+size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( const std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>>& dimension_bin_indices ) const
 {
   size_t discretization_index;
   for(auto i = dimension_bin_indices.begin(); i != dimension_bin_indices.end(); ++i)
   {
+    //std::cout << "Dimension being input: " << i->first << std::endl;
     if( i == dimension_bin_indices.begin() )
     {
       discretization_index = i->second;
@@ -417,7 +418,6 @@ size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationInde
       discretization_index = discretization_index + d_dimension_index_step_size_map.at(i->first)*i->second;
     }
   }
-
   return discretization_index;
 }
 

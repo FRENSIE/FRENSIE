@@ -124,7 +124,7 @@ private:
   // The calculate indices of range method type
   typedef std::function<void(const ObserverParticleStateWrapper&,BinIndexWeightPairArray&)> CalculateLocalBinIndicesOfRangeMethod;
 
-  size_t calculateDiscretizationIndex( const std::map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const;
+  size_t calculateDiscretizationIndex( const std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>>& dimension_bin_indices) const;
 
   // Create a range intersection method
   static RangeIntersectionMethod createRangeIntersectionMethodObject(

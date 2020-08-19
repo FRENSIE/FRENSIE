@@ -35,7 +35,7 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
 
   // BinIndexArray is just a vector of size_t
   BinIndexArray local_bin_indices;
-  std::map<ObserverPhaseSpaceDimension, BinIndexArray> index_array_map;
+  std::vector<std::pair<ObserverPhaseSpaceDimension, BinIndexArray>> index_array_of_pairs;
 
   size_t number_of_indices = 1;
   for( auto i = d_dimension_ordering.begin(); i < d_dimension_ordering.end(); ++i )
@@ -46,8 +46,7 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
                                             local_bin_indices );
     
     // Put each vector of indices for a dimension into the index array map
-    index_array_map.emplace(*i, local_bin_indices);
-
+    index_array_of_pairs.push_back(std::make_pair(*i, local_bin_indices));
     // Multiply the number of indices by the local bin size such that it grows with the number of combinations of indices given
     number_of_indices = number_of_indices*local_bin_indices.size();
   }
@@ -57,7 +56,7 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
   /* Complicated loop that goes through the map created and calculates the index of every combination of bin indices.
    * Outer loop loops through the bin index vector.
    */
-  std::map<ObserverPhaseSpaceDimension, size_t> temp_map;
+  std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>> temp_index_vector;
   for(auto i = bin_indices.begin(); i < bin_indices.end(); ++i)
   {
     bool pop_completed = false;
@@ -65,9 +64,9 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
      * If the size of the vector was greater than zero, the first vector encountered with a size greater than zero is deleted. Each combination of
      * indices is only needed once, so deleting one of the elements ensures that a new combination is presented every time and that no combination is missed.
      */
-    for(auto j = index_array_map.begin(); j != index_array_map.end(); ++j)
+    for(auto j = index_array_of_pairs.begin(); j != index_array_of_pairs.end(); ++j)
     {
-      temp_map.emplace(j->first, j->second[0]);
+      temp_index_vector.push_back(std::make_pair(j->first, j->second[0]));
       if(!pop_completed)
       {
         if(j->second.size() > 1)
@@ -77,8 +76,8 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
         }
       }
     }
-    *i = this->calculateDiscretizationIndex(temp_map);
-    temp_map.clear();
+    *i = this->calculateDiscretizationIndex(temp_index_vector);
+    temp_index_vector.clear();
   }
 
   // Make sure that the bin indices are valid
