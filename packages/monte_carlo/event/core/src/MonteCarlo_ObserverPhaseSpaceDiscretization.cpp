@@ -193,6 +193,13 @@ void ObserverPhaseSpaceDiscretization::calculateBinIndicesAndWeightsOfRange(
                                                 bin_indices_and_weights );
 }
 
+// Calculate discretization index from individual dimension bin indices
+size_t ObserverPhaseSpaceDiscretization::calculateDiscretizationIndex(
+                    const std::unordered_map<ObserverPhaseSpaceDimension, size_t> dimension_bin_indices) const
+{
+  d_impl->calculateDiscretizationIndex(dimension_bin_indices);
+}
+
 } // end MonteCarlo namespace
 
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ObserverPhaseSpaceDiscretization );

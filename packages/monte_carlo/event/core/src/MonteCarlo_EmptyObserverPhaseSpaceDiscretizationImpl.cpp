@@ -144,6 +144,11 @@ void EmptyObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesAndWeightsOfR
   bin_indices_and_weights[0].first = 0;
   bin_indices_and_weights[0].second = 1.0;
 }
+
+size_t EmptyObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const
+{
+  return 0;
+}
   
 } // end MonteCarlo namespace
 
