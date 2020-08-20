@@ -15,7 +15,9 @@ RUN apt-get update; \
         # libboost-all-dev \
         # swig \
         libeigen3-dev \
-        hdf5-tools libhdf5-dev; \
+        hdf5-tools libhdf5-dev \
+        autoconf\
+        bison byacc; \
     pip install numpy cython
 
 RUN mkdir ~/temp; \
@@ -31,11 +33,12 @@ RUN mkdir ~/temp; \
 ENV LD_LIBRARY_PATH "/usr/local/lib/"
 
 RUN cd ~/temp;\
-    git clone git@github.com:swig/swig.git; \
+    git clone https://github.com/swig/swig.git; \
     cd swig; \
+    ./autogen.sh; \
     mkdir bld; \
     cd bld; \
-    cmake ..; \
+    ../configure; \
     make -j 8; \
     make install; \
     cd ../../; \
@@ -59,7 +62,7 @@ RUN mkdir /root/opt;\
             -DBUILD_SHARED_LIBS=ON \
             -DENABLE_BLASLAPACK=OFF \
             -DENABLE_FORTRAN=OFF \
-    && make -j 3 \
+    && make -j 8 \
     && make install \
     && cd .. \
     && rm -rf moab
