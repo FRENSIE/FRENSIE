@@ -82,7 +82,7 @@ are described.**
 ### Checking out FRENSIE
 1. create a working directory where FRENSIE will be built (e.g. software/frensie): `mkdir /software/frensie`
 2. move to the frensie directory: `cd /software/frensie`
-3. clone the repository: `git clone git@github.com:FRENSIE/FRENSIE.git`
+3. clone the repository: `git clone https://github.com/FRENSIE/FRENSIE.git`
 4. make a symbolic link to the new directory: `ln -s FRENSIE src`
 
 ### Building Git
@@ -199,7 +199,7 @@ older version is present, build CMake using the instructions below.**
 
 1. create a swig directory (e.g. software/swig): `mkdir /software/swig`
 2. move to the swig directory: `cd /software/swig`
-3. clone the repository: `git clone git@github.com:swig/swig.git`
+3. clone the repository: `git clone https://github.com/swig/swig.git`
 4. make a symbolic link to the new directory: `ln -s swig src`
 5. create a build directory: `mkdir build`
 6. move to the build directory (e.g. software/swig/build): `cd /swig/build`
