@@ -9,6 +9,13 @@
 #ifndef MONTE_CARLO_POPULATION_CONTROL_HPP
 #define MONTE_CARLO_POPULATION_CONTROL_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -76,10 +83,18 @@ private:
 
   void printSummary( std::ostream& os ) const final override;
                          
+  // Serialize the data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { /* ... */ }
 
 };
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::PopulationControl, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::PopulationControl );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, PopulationControl );
 
 #endif // end MONTE_CARLO_POPULATION_CONTROL_HPP
 

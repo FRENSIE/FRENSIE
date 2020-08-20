@@ -10,6 +10,7 @@
 #include <math.h>
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_WeightWindow.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -55,8 +56,9 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
   }
 }
 
-
 } // end MonteCarlo namespace
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindow );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp

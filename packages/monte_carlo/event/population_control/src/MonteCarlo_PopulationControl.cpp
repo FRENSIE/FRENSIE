@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_PopulationControl.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
@@ -29,6 +30,16 @@ public:
   //! Does nothing
   void checkParticleWithPopulationController( ParticleState&, ParticleBank& ) const final override
   { /* ... */ }
+
+private:
+
+  // Serialize the population controller data to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PopulationControl ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
 };
 
@@ -75,8 +86,7 @@ void PopulationControl::terminateParticle( ParticleState& particle,
   if( random_number < termination_probability )
   {
     particle.setAsGone();
-  }
-  else
+  }else
   {
     particle.multiplyWeight(1/(1-termination_probability));
   }
@@ -133,3 +143,10 @@ void PopulationControl::printSummary( std::ostream& os ) const
 }
 
 }// end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::DefaultPopulationControl, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DefaultPopulationController, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DefaultPopulationController, MonteCarlo );
+
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::PopulationControl );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::DefaultPopulationController );

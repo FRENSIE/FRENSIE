@@ -184,6 +184,7 @@ void ParticleSimulationManagerFactory::serialize( Archive& ar, const unsigned ve
   ar & BOOST_SERIALIZATION_NVP( d_next_history );
   ar & BOOST_SERIALIZATION_NVP( d_rendezvous_number );
   ar & BOOST_SERIALIZATION_NVP( d_use_single_rendezvous_file );
+  ar & BOOST_SERIALIZATION_NVP( d_population_controller );
 }
 
 } // end MonteCarlo namespace

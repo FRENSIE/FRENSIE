@@ -42,7 +42,6 @@ std::shared_ptr<WeightWindow> WeightWindowMesh::getWeightWindow( ParticleState& 
 
 bool WeightWindowMesh::isParticleInWeightWindowDiscretization( ParticleState& particle ) const
 {
-
   ObserverParticleStateWrapper observer_particle(particle);
 
   if(d_mesh->isPointInMesh(particle.getPosition()) && this->isPointInObserverPhaseSpace(observer_particle))
@@ -52,11 +51,12 @@ bool WeightWindowMesh::isParticleInWeightWindowDiscretization( ParticleState& pa
   {
     return false;
   }
-  
-
 }
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( WeightWindowMesh, MonteCarlo );
+EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::WeightWindowMesh );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp
