@@ -344,7 +344,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
 
   double pdf = distribution->evaluate( 1.1e-05, 0.08 );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 ); // Here
 
   bank.pop();
 
@@ -352,7 +352,7 @@ FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectronScatteringDistribution,
               1.1e-05, Utility::PhysicalConstants::electron_rest_mass_energy );
   FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(), pdf, 1e-15 ); //here
 
   bank.pop();
 
