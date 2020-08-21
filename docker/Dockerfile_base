@@ -15,7 +15,7 @@ RUN apt-get update; \
         # libboost-all-dev \
         # swig \
         libeigen3-dev \
-        hdf5-tools libhdf5-dev \
+        #hdf5-tools libhdf5-dev \
         autoconf\
         bison byacc; \
     pip install numpy cython
@@ -31,6 +31,21 @@ RUN mkdir ~/temp; \
     rm -rf boost*
 
 ENV LD_LIBRARY_PATH "/usr/local/lib/"
+
+
+RUN cd ~/temp;\
+    wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz; \
+    tar -xvf hdf5-1.8.13.tar.gz; \
+    cd hdf5-1.8.13; \
+    mkdir bld; \
+    cd bld; \
+    ../configure --prefix="/usr/local/" --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug;\
+    make -j 8; \
+    make install;\ 
+    cd ../../; \
+    rm -rf hdf5*
+
+
 
 RUN cd ~/temp;\
     git clone https://github.com/swig/swig.git; \

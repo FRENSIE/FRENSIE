@@ -3,7 +3,7 @@
 # 1.)
 MACRO(ENABLE_BOOST_SUPPORT)
 
-    SET(BOOST_MIN_VERSION 1.65.1)
+    SET(BOOST_MIN_VERSION 1.72.0)
 
     # Enable multithreading in boost (used by the log component)
     SET(Boost_USE_MULTITHREAD ON)
