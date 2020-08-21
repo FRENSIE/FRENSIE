@@ -47,7 +47,7 @@ std::shared_ptr<const Geometry::Model> unfilled_model;
 
 std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 
-std::shared_ptr<const MonteCarlo::PopulationControl> population_controller;
+std::shared_ptr<MonteCarlo::PopulationControl> population_controller;
 std::shared_ptr<const MonteCarlo::CollisionForcer> collision_forcer;
 
 int threads;

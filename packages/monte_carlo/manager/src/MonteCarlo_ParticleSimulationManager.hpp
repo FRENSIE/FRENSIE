@@ -117,7 +117,7 @@ protected:
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const PopulationControl> population_controller,
+                 const std::shared_ptr<PopulationControl> population_controller,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -297,7 +297,7 @@ private:
   std::shared_ptr<EventHandler> d_event_handler;
 
   // The weight windows
-  std::shared_ptr<const PopulationControl> d_population_controller;
+  std::shared_ptr<PopulationControl> d_population_controller;
 
   // The collision forcer
   std::shared_ptr<const CollisionForcer> d_collision_forcer;

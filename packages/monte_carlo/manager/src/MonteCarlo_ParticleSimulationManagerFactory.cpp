@@ -27,7 +27,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<const FilledGeometryModel>& model,
                 const std::shared_ptr<ParticleSource>& source,
                 const std::shared_ptr<EventHandler>& event_handler,
-                const std::shared_ptr<const PopulationControl>& population_controller,
+                const std::shared_ptr<PopulationControl>& population_controller,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
                 const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
@@ -240,7 +240,7 @@ void ParticleSimulationManagerFactory::saveToFileImpl(
 
 // Set the weight windows that will be used by the manager
 void ParticleSimulationManagerFactory::setPopulationControl(
-                    const std::shared_ptr<const PopulationControl>& population_controller )
+                    const std::shared_ptr<PopulationControl>& population_controller )
 {
   if( population_controller )
   {

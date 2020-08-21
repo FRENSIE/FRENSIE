@@ -2640,6 +2640,13 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, print )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a discretization index can be calculated from individual dimension bin indices.
+FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, calculateBinIndex )
+{
+    MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
+}
+
+//---------------------------------------------------------------------------//
 // Check that the phase space discretization can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ObserverPhaseSpaceDiscretization,
                                    archive,
