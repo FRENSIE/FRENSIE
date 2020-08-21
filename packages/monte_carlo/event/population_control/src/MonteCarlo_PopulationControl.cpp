@@ -44,9 +44,9 @@ private:
 };
 
 // Return the default weight window - used when there are no population controllers applied
-std::shared_ptr<const PopulationControl> PopulationControl::getDefault()
+std::shared_ptr<PopulationControl> PopulationControl::getDefault()
 {
-  return std::shared_ptr<const PopulationControl>( new DefaultPopulationController );
+  return std::shared_ptr<PopulationControl>( new DefaultPopulationController );
 }
 
 // Method that splits particle into equal number of weights based on number of particles split into
@@ -144,7 +144,7 @@ void PopulationControl::printSummary( std::ostream& os ) const
 
 }// end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::DefaultPopulationControl, 0 );
+BOOST_CLASS_VERSION( MonteCarlo::DefaultPopulationController, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DefaultPopulationController, MonteCarlo );
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DefaultPopulationController, MonteCarlo );
 

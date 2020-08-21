@@ -38,8 +38,8 @@ public:
   //! Set the mesh for a particle
   void setMesh( const std::shared_ptr<const Utility::Mesh>& mesh );
 
-  //! Set the discretization map for the weight window mesh
-  void setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::unordered_map<discretization_bin_index, std::shared_ptr<WeightWindow>>> weight_window_map );
+  //! Set the discretization map for the weight window mesh (vector index is discretization index)
+  void setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>> weight_window_map );
 
   std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle) const final override;
 
@@ -63,12 +63,10 @@ private:
   std::shared_ptr<const Utility::Mesh > d_mesh;
 
   //! Map that contains weight windows. First key is the index of the mesh element, second key is the index of the discretization
-  std::unordered_map<Utility::Mesh::ElementHandle, std::unordered_map<discretization_bin_index, std::shared_ptr<WeightWindow>>> d_weight_window_map;
+  std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>> d_weight_window_map;
 
 };
   
-} // end MonteCarlo namespace
-
 // Save the collision forcer data to an archive
 template<typename Archive>
 void WeightWindowMesh::save( Archive& ar, const unsigned version ) const
@@ -84,9 +82,10 @@ void WeightWindowMesh::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_mesh );
   ar & BOOST_SERIALIZATION_NVP( d_weight_window_map );
 }
-  
+
 } // end MonteCarlo namespace
 
+  
 BOOST_CLASS_VERSION( MonteCarlo::WeightWindowMesh, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( WeightWindowMesh, MonteCarlo );
 EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, WeightWindowMesh );

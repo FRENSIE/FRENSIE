@@ -20,6 +20,8 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_DiscretizableParticleHistoryObserver.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -40,7 +42,7 @@ public:
   virtual void checkParticleWithPopulationController( ParticleState& particle, 
                                                       ParticleBank& bank ) const = 0;
 
-  static std::shared_ptr<const PopulationControl> getDefault();
+  static std::shared_ptr<PopulationControl> getDefault();
 
 protected: 
 
@@ -87,6 +89,9 @@ private:
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
   { /* ... */ }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
 };
   

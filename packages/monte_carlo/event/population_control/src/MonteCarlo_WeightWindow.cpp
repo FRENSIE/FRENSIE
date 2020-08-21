@@ -58,7 +58,7 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
 
 } // end MonteCarlo namespace
 
-EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindow );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindowBase );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp
