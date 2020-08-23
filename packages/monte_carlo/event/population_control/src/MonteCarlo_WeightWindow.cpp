@@ -5,7 +5,7 @@
 //! \brief  Weight window mesh class definition
 //!
 //---------------------------------------------------------------------------//
-#include<iostream>
+
 // std includes
 #include <math.h>
 

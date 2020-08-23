@@ -5,7 +5,7 @@
 //! \brief  Weight window mesh class definition
 //!
 //---------------------------------------------------------------------------//
-#include <iostream>
+
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_WeightWindowMesh.hpp"
