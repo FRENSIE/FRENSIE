@@ -5,7 +5,7 @@
 //! \brief  Weight window mesh class definition
 //!
 //---------------------------------------------------------------------------//
-
+#include <iostream>
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_WeightWindowMesh.hpp"
@@ -19,12 +19,12 @@ WeightWindowMesh::WeightWindowMesh()
 { /* ... */ }
 
 // Set the mesh for a particle
-void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh>& mesh)
+void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh> mesh)
 {
   d_mesh = mesh;
 }
 
-void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>> weight_window_map )
+void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>>& weight_window_map )
 {
   testPrecondition(d_mesh);
   d_weight_window_map = weight_window_map;
@@ -33,11 +33,8 @@ void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::Ele
 std::shared_ptr<WeightWindow> WeightWindowMesh::getWeightWindow( ParticleState& particle) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
-
   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray discretization_index;
-
   this->calculateBinIndicesOfPoint(observer_particle, discretization_index);
-
   return d_weight_window_map.at(d_mesh->whichElementIsPointIn(particle.getPosition()))[discretization_index[0]];
 }
 

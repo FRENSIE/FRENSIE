@@ -36,10 +36,10 @@ public:
   { /* ... */ }
 
   //! Set the mesh for a particle
-  void setMesh( const std::shared_ptr<const Utility::Mesh>& mesh );
+  void setMesh( const std::shared_ptr<const Utility::Mesh> mesh );
 
   //! Set the discretization map for the weight window mesh (vector index is discretization index)
-  void setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>> weight_window_map );
+  void setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>>& weight_window_map );
 
   std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle) const final override;
 

@@ -395,10 +395,11 @@ size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationInde
     // Make sure dimension bin indices has the relevant discretized dimensions each time
     TEST_FOR_EXCEPTION(dimension_bin_indices.find(*i) == dimension_bin_indices.end(), std::invalid_argument, "Dimension is not discretized for this observer.");
     // Make sure index isn't larger than the size of that discretized dimension index bounds
-    TEST_FOR_EXCEPTION(dimension_bin_indices.at(*i) > d_dimension_index_step_size_map.at(*i)-1, std::invalid_argument, "Dimension index is out of bounds");
+    TEST_FOR_EXCEPTION(dimension_bin_indices.at(*i) > (d_dimension_discretization_map.at(*i))->getNumberOfBins()-1, std::invalid_argument, "Dimension index is out of bounds");
 
     ordered_dimension_bin_indices.push_back(std::make_pair(*i, dimension_bin_indices.at(*i)));
   }
+
   return this->calculateDiscretizationIndex(ordered_dimension_bin_indices);
 }
 

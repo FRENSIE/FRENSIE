@@ -5,7 +5,7 @@
 //! \brief  Weight window mesh class definition
 //!
 //---------------------------------------------------------------------------//
-
+#include<iostream>
 // std includes
 #include <math.h>
 
@@ -27,24 +27,22 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
   {
 
     std::shared_ptr<WeightWindow> window = this->getWeightWindow(particle);
-
     double weight = particle.getWeight();
 
     if(weight > window->upper_weight)
     {
       // return number after decimal
-      double weight_fraction = fmod(weight/window->upper_weight,1);
-
+      double weight_fraction = weight/window->upper_weight;
+      double probability_threshold = fmod(weight/window->upper_weight,1);
       unsigned number_of_particles;
 
-      if(Utility::RandomNumberGenerator::getRandomNumber<double>() < weight_fraction)
+      if(Utility::RandomNumberGenerator::getRandomNumber<double>() < probability_threshold)
       {
         number_of_particles = static_cast<unsigned>(floor(weight_fraction));
       }else
       {
         number_of_particles = static_cast<unsigned>(ceil(weight_fraction));
       }
-
       this->splitParticle(particle, bank, number_of_particles);
 
     }else if(weight < window->lower_weight)
