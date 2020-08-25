@@ -24,7 +24,7 @@ jobs:
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - restore_cache:
           keys:
-          key: v1-repo-<< parameters.build >>{{ checksum ".circle-sha" }}
+          key: v1-frensie-{{ checksum ".circle-sha" }}
       - run:
           name: Build
           command: circleci/test.sh
