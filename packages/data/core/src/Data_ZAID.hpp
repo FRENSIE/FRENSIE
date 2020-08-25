@@ -12,6 +12,8 @@
 // Std Lib Includes
 #include <functional>
 
+#include <boost/serialization/split_member.hpp>
+
 // FRENSIE Includes
 #include "Data_AtomType.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"

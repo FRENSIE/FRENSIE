@@ -1,0 +1,126 @@
+FROM ubuntu:18.04
+
+RUN apt-get update; \
+    apt-get install -y \
+        cmake \
+        vim \
+        git \
+        wget \
+        doxygen \
+        libpcre3 libpcre3-dev \
+        gfortran \
+        libssl-dev \
+        python-pip \
+        python-dev \
+        # libboost-all-dev \
+        # swig \
+        libeigen3-dev \
+        #hdf5-tools libhdf5-dev \
+        autoconf\
+        bison byacc; \
+    pip install numpy cython
+
+RUN mkdir ~/temp; \
+    cd ~/temp;\
+    wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz;\
+    tar -xvf boost_1_72_0.tar.gz; \
+    cd boost_1_72_0;\
+    ./bootstrap.sh;\
+    ./b2 install -s NO_BZIP2=1 link=shared runtime-link=shared install;\
+    cd ../ ;\
+    rm -rf boost*
+
+ENV LD_LIBRARY_PATH "/usr/local/lib/"
+
+
+RUN cd ~/temp;\
+    wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz; \
+    tar -xvf hdf5-1.8.13.tar.gz; \
+    cd hdf5-1.8.13; \
+    mkdir bld; \
+    cd bld; \
+    ../configure --prefix="/usr/local/" --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug;\
+    make -j 8; \
+    make install;\ 
+    cd ../../; \
+    rm -rf hdf5*
+
+
+
+RUN cd ~/temp;\
+    git clone https://github.com/swig/swig.git; \
+    cd swig; \
+    ./autogen.sh; \
+    mkdir bld; \
+    cd bld; \
+    ../configure; \
+    make -j 8; \
+    make install; \
+    cd ../../; \
+    rm -rf swig
+
+RUN mkdir /root/opt;\
+    cd /root/opt; \
+    mkdir moab; \
+    cd moab; \
+    git clone --single-branch -b Version5.1.0 https://bitbucket.org/fathomteam/moab; \
+    cd moab; \
+    mkdir build; \
+    cd build; \
+    ls ..\
+    # build/install shared lib
+    && cmake .. \
+            ${PYMOAB_FLAG} \
+            -DCMAKE_INSTALL_PREFIX=/root/opt/moab/ \
+            -DENABLE_HDF5=ON \
+            -DENABLE_PYMOAB=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DENABLE_BLASLAPACK=OFF \
+            -DENABLE_FORTRAN=OFF \
+    && make -j 8 \
+    && make install \
+    && cd .. \
+    && rm -rf moab
+# put MOAB on the path
+ENV LD_LIBRARY_PATH /root/opt/moab/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /root/opt/moab/lib:$LIBRARY_PATH
+ENV PYTHONPATH=/root/opt/moab/lib/python2.7/site-packages/
+
+
+RUN cd /root \
+    cd /root/opt; \
+    mkdir dagmc; \
+    git clone -b develop --single-branch https://github.com/svalinn/DAGMC.git; \
+    cd DAGMC; \
+    mkdir bld; \
+    cd bld; \
+    cmake .. -DMOAB_DIR=/root/opt/moab \
+             -DCMAKE_INSTALL_PREFIX=/root/opt/dagmc \
+             -DBUILD_STATIC_LIBS=OFF \
+             -DBUILD_UWUW=OFF \
+             -DBUILD_TALLY=OFF \
+             -DBUILD_MAKE_WATERTIGHT=OFF \
+             -DBUILD_OVERLAP_CHECK=OFF \
+             -DBUILD_TESTS=OFF;\
+    make -j 3;\
+    make install; \
+    cd ..; \
+    rm -rf DAGMC
+ENV LD_LIBRARY_PATH /root/opt/dagmc/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /root/opt/dagmc/lib:$LIBRARY_PATH
+ENV PYTHONPATH=/root/opt/dagmc/lib/python2.7/site-packages/
+
+# get frensie
+WORKDIR /root
+COPY ./ /root/FRENSIE/
+RUN mkdir FRENSIE_bld
+WORKDIR /root/FRENSIE_bld
+RUN cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie \
+          -D FRENSIE_ENABLE_DBC:BOOL=ON \
+          -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+          -D CMAKE_TIMING_VERBOSE:BOOL=ON \
+          -D FRENSIE_ENABLE_MOAB:BOOL=ON  -D MOAB_PREFIX:PATH=/root/opt/moab/ -D MOAB_USE_EIGEN:BOOL=ON\
+          -D FRENSIE_ENABLE_DAGMC:BOOL=ON -D DAGMC_PREFIX:PATH=/root/opt/dagmc \
+          ../FRENSIE
+RUN make -j 8
+RUN make install
