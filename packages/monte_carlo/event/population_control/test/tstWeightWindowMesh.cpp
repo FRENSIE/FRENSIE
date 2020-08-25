@@ -41,40 +41,21 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, getWeightWindow )
 
 FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split)
 {
-  // Fake probability stream
-  std::vector<double> fake_stream = {0.1, 0.0001};
-  Utility::RandomNumberGenerator::setFakeStream(fake_stream);
-  {
-    MonteCarlo::PhotonState photon(0);
+  MonteCarlo::PhotonState photon(0);
 
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
-    photon.setWeight(14.2);
+  photon.setEnergy( 1.0);
+  photon.setPosition(0.5, 0.5, 0.5);
+  photon.setWeight(14.2);
 
-    MonteCarlo::ParticleBank particle_bank;
+  MonteCarlo::ParticleBank particle_bank;
 
-    weight_window_mesh->checkParticleWithPopulationController(photon, particle_bank);
+  weight_window_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
-    FRENSIE_CHECK_EQUAL(particle_bank.size(), 2);
-    FRENSIE_CHECK_CLOSE(14.2/3, photon.getWeight(), 1e-14);
-    FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-14);
-  }
-  {
-    MonteCarlo::PhotonState photon(0);
-
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
-    photon.setWeight(14.2);
-
-    MonteCarlo::ParticleBank particle_bank;
-
-    weight_window_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    FRENSIE_CHECK_EQUAL(particle_bank.size(), 1);
-    FRENSIE_CHECK_CLOSE(14.2/2, photon.getWeight(),1e-14);
-    FRENSIE_CHECK_CLOSE(14.2/2, particle_bank.top().getWeight(),1e-14);
-  }
-  Utility::RandomNumberGenerator::unsetFakeStream();
+  FRENSIE_CHECK_EQUAL(particle_bank.size(), 2);
+  FRENSIE_CHECK_CLOSE(14.2/3, photon.getWeight(), 1e-14);
+  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-14);
+  particle_bank.pop();
+  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-14);  
 }
 
 FRENSIE_UNIT_TEST(WeightWindowMesh, checkParticleWithPopulationController_terminate)

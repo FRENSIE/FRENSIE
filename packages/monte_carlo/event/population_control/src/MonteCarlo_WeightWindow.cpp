@@ -13,7 +13,6 @@
 #include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_WeightWindow.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
 
@@ -33,18 +32,8 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
     {
       // return number after decimal
       double weight_fraction = weight/window->upper_weight;
-      double probability_threshold = fmod(weight/window->upper_weight,1);
-      unsigned number_of_particles;
-
-      if(Utility::RandomNumberGenerator::getRandomNumber<double>() < probability_threshold)
-      {
-        number_of_particles = static_cast<unsigned>(floor(weight_fraction));
-      }else
-      {
-        number_of_particles = static_cast<unsigned>(ceil(weight_fraction));
-      }
+      unsigned number_of_particles = static_cast<unsigned>(floor(weight/window->upper_weight) + 1);
       this->splitParticle(particle, bank, number_of_particles);
-
     }else if(weight < window->lower_weight)
     {
       this->terminateParticle(particle, 
