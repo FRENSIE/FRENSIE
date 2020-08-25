@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source draft.sh
-source detect_package.sh
+source /root/frensie/.circleci/draft.sh
+source /root/frensie/.circleci/detect_package.sh
 
 draft_pr=`is_draft`
 echo "Draft: $draft_pr"
