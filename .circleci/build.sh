@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source .circleci/draft.sh
-source .circleci/detect_package.sh
+source draft.sh
+source detect_package.sh
 
 draft_pr=`is_draft`
 
@@ -9,6 +9,7 @@ if [[ "${draft_pr}" == 1 ]]; then
     uniq_modified_pkg=`uniq_modified_pkg`
     for pkg in ${uniq_modified_pkg}; do
         make ${pkg}
+        make ${pkg}-test
     done
 else
     make test
