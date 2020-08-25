@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: frensie/frensie-required
+    working_directory: ~/frensie
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: circleci/build.sh
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+ 
+  buitestld:
+    docker:
+      - image: frensie/frensie-required
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-repo-<< parameters.build >>{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: circleci/test.sh
+
+
+workflows:
+  version: 2
+  draft_build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: develop
+            tags:
+              ignore: /.*/
+      - test:
+          requires:
+            - build
+
