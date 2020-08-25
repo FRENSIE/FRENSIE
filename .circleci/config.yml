@@ -7,9 +7,22 @@ jobs:
     working_directory: ~/frensie
     steps:
       - checkout
+      - run: mkdir bld
+      - run: 
+          name: Configure CMake
+          command: cd bld; cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie \
+                                 -D FRENSIE_ENABLE_DBC:BOOL=ON \
+                                 -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+                                 -D CMAKE_TIMING_VERBOSE:BOOL=ON \
+                                 -D FRENSIE_ENABLE_MOAB:BOOL=ON \
+                                 -D MOAB_PREFIX:PATH=/root/opt/moab/ \
+                                 -D MOAB_USE_EIGEN:BOOL=ON \
+                                 -D FRENSIE_ENABLE_DAGMC:BOOL=ON \
+                                 -D DAGMC_PREFIX:PATH=/root/opt/dagmc \
+                                 ../
       - run:
           name: Build
-          command: .circleci/build.sh
+          command: ../.circleci/build.sh
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-{{ checksum ".circle-sha" }}
@@ -27,7 +40,7 @@ jobs:
           key: v1-frensie-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: .circleci/test.sh
+          command: cd bld; ../.circleci/test.sh
 
 
 workflows:
