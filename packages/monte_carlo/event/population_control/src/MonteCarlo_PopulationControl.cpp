@@ -66,10 +66,10 @@ void PopulationControl::splitParticle( ParticleState& particle,
 void PopulationControl::splitParticle( ParticleState& particle,
                                        ParticleBank& bank,
                                        unsigned number_of_particles,
-                                       double expectation_weight) const
+                                       double weight_factor) const
 {
 
-  particle.setWeight(expectation_weight);
+  particle.multiplyWeight(weight_factor);
 
   this->pushSplitParticlesToBank(particle,
                                  bank,
@@ -82,7 +82,8 @@ void PopulationControl::terminateParticle( ParticleState& particle,
                                            double termination_probability) const
 {
   double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
-
+  std::cout << "Termination probability: " << termination_probability << std::endl;
+  std::cout << "Random number: " << random_number << std::endl;
   if( random_number < termination_probability )
   {
     particle.setAsGone();

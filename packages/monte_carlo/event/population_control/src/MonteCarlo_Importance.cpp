@@ -18,13 +18,14 @@
 namespace MonteCarlo{
 
 // Update the particle state and bank
-void WeightWindowBase::checkParticleWithPopulationController( ParticleState& particle,
+void Importance::checkParticleWithPopulationController( ParticleState& particle,
                                                               ParticleBank& bank ) const
 {
 
   //! Make sure there is a weight window where this particle is.
   if(this->isParticleInImportanceDiscretization( particle ))
   {
+    // Apply importances
     if(particle.getCollisionNumber() >= 1)
     {
       if(particle.getCollisionNumber() > 1)
@@ -37,15 +38,27 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
 
       double importance_fraction = particle.getImportancePair().second/particle.getImportancePair().first;
 
-      if(importance_fraction < 1)
+      if(importance_fraction > 1)
       {
-
+        // Split particle
+        if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 1-std::fmod(importance_fraction, 1))
+        {
+          this->splitParticle(particle,
+                              bank,
+                              static_cast<unsigned>(floor(importance_fraction)),
+                              1/importance_fraction);
+        }else
+        {
+          this->splitParticle(particle,
+                              bank,
+                              static_cast<unsigned>(ceil(importance_fraction)),
+                              1/importance_fraction);
+        }
       }else
       {
-        // Terminate
+        // Terminate particle
+        this->terminateParticle(particle, 1-importance_fraction);        
       }
-      
-
     }else
     {
       // Only initialize importance from source emission
@@ -56,7 +69,7 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
 
 } // end MonteCarlo namespace
 
-EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindowBase );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::Importance );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp
