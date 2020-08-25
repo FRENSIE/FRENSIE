@@ -9,14 +9,14 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: circleci/build.sh
+          command: .circleci/build.sh
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-{{ checksum ".circle-sha" }}
           paths:
             - ~/frensie
  
-  test:
+  tests:
     docker:
       - image: frensie/frensie-required
     working_directory: ~/frensie
@@ -27,12 +27,12 @@ jobs:
           key: v1-frensie-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: circleci/test.sh
+          command: .circleci/test.sh
 
 
 workflows:
   version: 2
-  draft_build:
+  build_and_tests:
     jobs:
       - build:
           filters:
@@ -40,7 +40,7 @@ workflows:
               ignore: develop
             tags:
               ignore: /.*/
-      - test:
+      - tests:
           requires:
             - build
 
