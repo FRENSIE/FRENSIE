@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source draft.sh
-source detect_package.sh
+source .circleci/draft.sh
+source .circleci/detect_package.sh
 
 draft_pr=`is_draft`
 
