@@ -21,7 +21,7 @@ jobs:
                                  -D DAGMC_PREFIX:PATH=/root/opt/dagmc ..
       - run:
           name: Build
-          command: ../.circleci/build.sh
+          command: cd bld; ../.circleci/build.sh
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-{{ checksum ".circle-sha" }}
