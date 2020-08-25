@@ -19,7 +19,7 @@ jobs:
                                  -D MOAB_USE_EIGEN:BOOL=ON \
                                  -D FRENSIE_ENABLE_DAGMC:BOOL=ON \
                                  -D DAGMC_PREFIX:PATH=/root/opt/dagmc \
-                                 ../
+                                 ~/frensie/
       - run:
           name: Build
           command: ../.circleci/build.sh
