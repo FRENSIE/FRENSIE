@@ -111,16 +111,16 @@ ENV LIBRARY_PATH /root/opt/dagmc/lib:$LIBRARY_PATH
 ENV PYTHONPATH=/root/opt/dagmc/lib/python2.7/site-packages/
 
 # get frensie
-WORKDIR /root
-COPY ./ /root/FRENSIE/
-RUN mkdir FRENSIE_bld
-WORKDIR /root/FRENSIE_bld
-RUN cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie \
-          -D FRENSIE_ENABLE_DBC:BOOL=ON \
-          -D CMAKE_BUILD_TYPE:STRING=RELEASE \
-          -D CMAKE_TIMING_VERBOSE:BOOL=ON \
-          -D FRENSIE_ENABLE_MOAB:BOOL=ON  -D MOAB_PREFIX:PATH=/root/opt/moab/ -D MOAB_USE_EIGEN:BOOL=ON\
-          -D FRENSIE_ENABLE_DAGMC:BOOL=ON -D DAGMC_PREFIX:PATH=/root/opt/dagmc \
-          ../FRENSIE
-RUN make -j 8
-RUN make install
+# WORKDIR /root
+# COPY ./ /root/FRENSIE/
+# RUN mkdir FRENSIE_bld
+# WORKDIR /root/FRENSIE_bld
+# RUN cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie \
+#           -D FRENSIE_ENABLE_DBC:BOOL=ON \
+#           -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+#           -D CMAKE_TIMING_VERBOSE:BOOL=ON \
+#           -D FRENSIE_ENABLE_MOAB:BOOL=ON  -D MOAB_PREFIX:PATH=/root/opt/moab/ -D MOAB_USE_EIGEN:BOOL=ON\
+#           -D FRENSIE_ENABLE_DAGMC:BOOL=ON -D DAGMC_PREFIX:PATH=/root/opt/dagmc \
+#           ../FRENSIE
+# RUN make -j 8
+# RUN make install
