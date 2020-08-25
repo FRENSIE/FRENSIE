@@ -7,6 +7,7 @@ jobs:
     working_directory: ~/frensie
     steps:
       - checkout
+      - run: export "PATH=/root/opt/frensie/.circleci:${PATH}"
       - run: mkdir bld
       - run: 
           name: Configure CMake
