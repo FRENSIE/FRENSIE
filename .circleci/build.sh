@@ -10,8 +10,8 @@ if [[ "${draft_pr}" == 1 ]]; then
     for pkg in ${uniq_modified_pkg}; do
         echo "make $pkg; make ${pkg}-test"
         make ${pkg}
-        make ${pkg}-test
+        make ${pkg}_tests
     done
 else
-    make test
+    make
 fi
