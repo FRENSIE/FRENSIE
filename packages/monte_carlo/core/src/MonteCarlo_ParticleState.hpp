@@ -115,6 +115,8 @@ public:
   //! Update importance pair based on new phase space transition (only used after both have been set)
   void updateImportance( const double new_importance );
 
+  std::pair<double, double>& getImportancePair() const;
+
   //! Return the id of the source that created the particle (history)
   sourceIdType getSourceId() const;
 
