@@ -10,14 +10,14 @@ jobs:
       - run: mkdir bld
       - run: 
           name: Configure CMake
-          command: cd bld; cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie \
-                                 -D FRENSIE_ENABLE_DBC:BOOL=ON \
-                                 -D CMAKE_BUILD_TYPE:STRING=RELEASE \
-                                 -D CMAKE_TIMING_VERBOSE:BOOL=ON \
-                                 -D FRENSIE_ENABLE_MOAB:BOOL=ON \
-                                 -D MOAB_PREFIX:PATH=/root/opt/moab/ \
-                                 -D MOAB_USE_EIGEN:BOOL=ON \
-                                 -D FRENSIE_ENABLE_DAGMC:BOOL=ON \
+          command: cd bld; cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie
+                                 -D FRENSIE_ENABLE_DBC:BOOL=ON
+                                 -D CMAKE_BUILD_TYPE:STRING=RELEASE
+                                 -D CMAKE_TIMING_VERBOSE:BOOL=ON
+                                 -D FRENSIE_ENABLE_MOAB:BOOL=ON
+                                 -D MOAB_PREFIX:PATH=/root/opt/moab/
+                                 -D MOAB_USE_EIGEN:BOOL=ON
+                                 -D FRENSIE_ENABLE_DAGMC:BOOL=ON
                                  -D DAGMC_PREFIX:PATH=/root/opt/dagmc ..
       - run:
           name: Build
