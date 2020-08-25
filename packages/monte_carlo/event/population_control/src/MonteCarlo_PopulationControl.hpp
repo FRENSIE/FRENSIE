@@ -55,7 +55,7 @@ protected:
   void splitParticle( ParticleState& particle,
                       ParticleBank& bank,
                       unsigned number_of_particles,
-                      double expectation_weight) const;
+                      double weight_factor) const;
 
   //! Terminate particle
   void terminateParticle( ParticleState& particle,
