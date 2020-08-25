@@ -2,12 +2,12 @@
 //!
 //! \file   MonteCarlo_WeightWindow.hpp
 //! \author Philip Britt
-//! \brief  Weight window class declaration
+//! \brief  Importance class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_WEIGHT_WINDOW_HPP
-#define MONTE_CARLO_WEIGHT_WINDOW_HPP
+#ifndef MONTE_CARLO_IMPORTANCE_HPP
+#define MONTE_CARLO_IMPORTANCE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PopulationControl.hpp"
@@ -52,9 +52,9 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::WeightWindowBase, 0 );
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::WeightWindowBase );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, WeightWindowBase );
+BOOST_CLASS_VERSION( MonteCarlo::Importance, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::Importance );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, Importance );
 
 #endif // end MONTE_CARLO_WEIGHT_WINDOW_HPP
 
