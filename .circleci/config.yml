@@ -16,7 +16,7 @@ jobs:
           paths:
             - ~/frensie
  
-  buitestld:
+  test:
     docker:
       - image: frensie/frensie-required
     working_directory: ~/frensie
