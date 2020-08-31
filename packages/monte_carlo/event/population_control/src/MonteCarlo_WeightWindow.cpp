@@ -25,19 +25,20 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
   if(this->isParticleInWeightWindowDiscretization( particle ))
   {
 
-    std::shared_ptr<WeightWindow> window = this->getWeightWindow(particle);
+    const WeightWindow window = this->getWeightWindow(particle);
     double weight = particle.getWeight();
 
-    if(weight > window->upper_weight)
+    if(weight > window.upper_weight)
     {
       // return number after decimal
-      double weight_fraction = weight/window->upper_weight;
-      unsigned number_of_particles = static_cast<unsigned>(floor(weight/window->upper_weight) + 1);
+      double weight_fraction = weight/window.upper_weight;
+      unsigned number_of_particles = static_cast<unsigned>(floor(weight/window.upper_weight) + 1);
       this->splitParticle(particle, bank, number_of_particles);
-    }else if(weight < window->lower_weight)
+    }
+    else if(weight < window.lower_weight)
     {
       this->terminateParticle(particle, 
-                              1 - (weight/window->survival_weight));
+                              1 - (weight/window.survival_weight));
     }
 
   }

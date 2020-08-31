@@ -49,9 +49,9 @@ public:
 
 protected:
 
-  virtual std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle ) const = 0;
+  virtual const WeightWindow& getWeightWindow( const ParticleState& particle ) const = 0;
 
-  virtual bool isParticleInWeightWindowDiscretization( ParticleState& particle ) const = 0;
+  virtual bool isParticleInWeightWindowDiscretization( const ParticleState& particle ) const = 0;
 
 private:
 

@@ -32,11 +32,11 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, getWeightWindow )
   photon.setEnergy( 1.0 );
   photon.setPosition(0.5, 0.5, 0.5);
 
-  std::shared_ptr<MonteCarlo::WeightWindow> weight_window = weight_window_mesh->getWeightWindow(photon);
+  MonteCarlo::WeightWindow weight_window = weight_window_mesh->getWeightWindow(photon);
 
-  FRENSIE_CHECK_EQUAL(6.0, weight_window->lower_weight);
-  FRENSIE_CHECK_EQUAL(7.0, weight_window->upper_weight);
-  FRENSIE_CHECK_EQUAL(6.0001, weight_window->survival_weight);
+  FRENSIE_CHECK_EQUAL(6.0, weight_window.lower_weight);
+  FRENSIE_CHECK_EQUAL(7.0, weight_window.upper_weight);
+  FRENSIE_CHECK_EQUAL(6.0001, weight_window.survival_weight);
 }
 
 FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split)
@@ -119,44 +119,44 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   weight_window_mesh->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(energy_bin_boundaries);
 
-  std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<MonteCarlo::WeightWindow>>> weight_window_mesh_map;
+  std::unordered_map<Utility::Mesh::ElementHandle, std::vector<MonteCarlo::WeightWindow>> weight_window_mesh_map;
 
-  std::vector<std::shared_ptr<MonteCarlo::WeightWindow>> weight_window_vector_1;
+  std::vector<MonteCarlo::WeightWindow> weight_window_vector_1;
 
   // Need 4 weight windows in total, 2 in each element
-  std::shared_ptr<MonteCarlo::WeightWindow> weight_window_1 = std::make_shared<MonteCarlo::WeightWindow>();
+  MonteCarlo::WeightWindow weight_window_1 = MonteCarlo::WeightWindow();
   
-  weight_window_1->lower_weight = 0.2;
-  weight_window_1->upper_weight = 20.0;
-  weight_window_1->survival_weight = 8.0;
+  weight_window_1.lower_weight = 0.2;
+  weight_window_1.upper_weight = 20.0;
+  weight_window_1.survival_weight = 8.0;
 
   weight_window_vector_1.push_back(weight_window_1);
 
-  std::shared_ptr<MonteCarlo::WeightWindow> weight_window_2 = std::make_shared<MonteCarlo::WeightWindow>();
+  MonteCarlo::WeightWindow weight_window_2 = MonteCarlo::WeightWindow();
   
-  weight_window_2->lower_weight = 6.0;
-  weight_window_2->upper_weight = 7.0;
-  weight_window_2->survival_weight = 6.0001;
+  weight_window_2.lower_weight = 6.0;
+  weight_window_2.upper_weight = 7.0;
+  weight_window_2.survival_weight = 6.0001;
 
   weight_window_vector_1.push_back(weight_window_2);
 
   weight_window_mesh_map.emplace(0, weight_window_vector_1);
 
-  std::vector<std::shared_ptr<MonteCarlo::WeightWindow>> weight_window_vector_2;
+  std::vector<MonteCarlo::WeightWindow> weight_window_vector_2;
 
-  std::shared_ptr<MonteCarlo::WeightWindow> weight_window_3 = std::make_shared<MonteCarlo::WeightWindow>();
+  MonteCarlo::WeightWindow weight_window_3 = MonteCarlo::WeightWindow();
   
-  weight_window_3->lower_weight = 1e-6;
-  weight_window_3->upper_weight = 0.5;
-  weight_window_3->survival_weight = 0.49;
+  weight_window_3.lower_weight = 1e-6;
+  weight_window_3.upper_weight = 0.5;
+  weight_window_3.survival_weight = 0.49;
 
   weight_window_vector_2.push_back(weight_window_3);
 
-  std::shared_ptr<MonteCarlo::WeightWindow> weight_window_4 = std::make_shared<MonteCarlo::WeightWindow>();
+  MonteCarlo::WeightWindow weight_window_4 = MonteCarlo::WeightWindow();
   
-  weight_window_4->lower_weight = 0.5;
-  weight_window_4->upper_weight = 0.6;
-  weight_window_4->survival_weight = 0.55;
+  weight_window_4.lower_weight = 0.5;
+  weight_window_4.upper_weight = 0.6;
+  weight_window_4.survival_weight = 0.55;
 
   weight_window_vector_2.push_back(weight_window_4);
 
