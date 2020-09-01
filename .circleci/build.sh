@@ -12,8 +12,13 @@ if [[ "${draft_pr}" == 1 ]]; then
     for pkg in ${uniq_modified_pkg}; do
         echo "make $pkg; make ${pkg}_test"
         make ${pkg}
-        make ${pkg}_tests
     done
 else
-    make
+    uniq_modified_pkg=`uniq_modified_pkg`
+    echo "package to be build: $uniq_modified_pkg"
+    for pkg in ${uniq_modified_pkg}; do
+        echo "make $pkg; make ${pkg}_test"
+        make ${pkg}
+        make ${pkg}_tests
+    done
 fi
