@@ -52,5 +52,5 @@ function modified_pkg() {
 # make it a list of unique packages
 function uniq_modified_pkg() {
     pkgs=`modified_pkg |sort -u |uniq`
-    echo $pkgs
+    echo "Package to be build: $pkgs"
 }
