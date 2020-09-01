@@ -27,7 +27,6 @@ function is_draft() {
     github_res=$(curl --silent --header "${headers}" "${api_endpoint}" | jq '{mergeable_state: .mergeable_state, title: .title}')
     mergeable_state=$(printf "${github_res}" | jq '.mergeable_state')
     title=$(printf "${github_res}" | jq '.title' | tr '[:upper:]' '[:lower:]')
-    echo "${title}"
     if [[ "${title}" == "null" && "${mergeable_state}" == "null" ]]; then
         printf "Couldn't fetch info on PR, but that doesn't mean we should skip CI.\n"
         exit 0
