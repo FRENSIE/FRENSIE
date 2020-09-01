@@ -36,13 +36,11 @@ function is_draft() {
     # Check for Draft
     draft_pr=0
     if [[ "${mergeable_state}" == "\"draft\"" ]]; then
-        printf "PR is a draft, skipping CI!\n"
         draft_pr=1
     fi
     # Check for Tittle SKIP Token
     for skip_token in '[wip]' '[WIP]'; do
         if [[ ${title} == *"${skip_token}"* ]]; then
-        printf "Found \"${skip_token}\" in PR title, skipping CI!\n"
         draft_pr=1
         fi
     done
