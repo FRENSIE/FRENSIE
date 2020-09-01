@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: frensie/frensie-required
+      - image: frensie/frensie-deps
     working_directory: ~/frensie
     steps:
       - checkout
@@ -31,7 +31,7 @@ jobs:
  
   tests:
     docker:
-      - image: frensie/frensie-required
+      - image: frensie/frensie-deps
     working_directory: ~/frensie
     steps:
       - run: echo $CIRCLE_SHA1 > .circle-sha
