@@ -27,12 +27,12 @@ jobs:
       - save_cache:
           key: v1-frensie-{{ checksum ".circle-sha" }}
           paths:
-            - ~/frensie
+            - ~/
  
   tests:
     docker:
       - image: frensie/frensie-deps
-    working_directory: ~/frensie
+    working_directory: ~/
     steps:
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - restore_cache:
@@ -40,7 +40,7 @@ jobs:
           key: v1-frensie-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: cd bld; /root/frensie/.circleci/test.sh
+          command: cd frensie/bld; /root/frensie/.circleci/test.sh
 
 
 workflows:
