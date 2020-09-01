@@ -38,6 +38,7 @@ jobs:
       - restore_cache:
           keys:
           key: v1-frensie-{{ checksum ".circle-sha" }}
+      - run: ls
       - run:
           name: Build
           command: cd frensie/bld; /root/frensie/.circleci/test.sh
