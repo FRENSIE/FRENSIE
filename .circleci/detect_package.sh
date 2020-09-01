@@ -14,7 +14,7 @@ function check_file_path()
 
 #retrieve the list of modified packages
 function modified_pkg() {
-    default main repo setup
+    # default main repo setup
     PR_NUMBER=$(echo "$CIRCLE_PULL_REQUEST" | sed "s/.*\/pull\///")
     API_GITHUB="https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME"
     PR_REQUEST_URL="$API_GITHUB/pulls/$PR_NUMBER"
