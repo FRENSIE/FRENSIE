@@ -17,7 +17,8 @@ RUN apt-get update; \
         libeigen3-dev \
         #hdf5-tools libhdf5-dev \
         autoconf\
-        bison byacc; \
+        bison byacc\ 
+        jq curl; \
     pip install numpy cython
 
 RUN mkdir ~/temp; \
@@ -109,6 +110,7 @@ RUN cd /root \
 ENV LD_LIBRARY_PATH /root/opt/dagmc/lib:$LD_LIBRARY_PATH
 ENV LIBRARY_PATH /root/opt/dagmc/lib:$LIBRARY_PATH
 ENV PYTHONPATH=/root/opt/dagmc/lib/python2.7/site-packages/
+
 
 # Get frensie
 # WORKDIR /root
