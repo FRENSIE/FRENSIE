@@ -53,9 +53,9 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split
 
   FRENSIE_CHECK_EQUAL(particle_bank.size(), 2);
   FRENSIE_CHECK_CLOSE(14.2/3, photon.getWeight(), 1e-14);
-  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-14);
+  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-15);
   particle_bank.pop();
-  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-14);  
+  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-15);  
 }
 
 FRENSIE_UNIT_TEST(WeightWindowMesh, checkParticleWithPopulationController_terminate)
@@ -76,7 +76,7 @@ FRENSIE_UNIT_TEST(WeightWindowMesh, checkParticleWithPopulationController_termin
 
     // Check particle weight against the survival weight. Should still exist.
     FRENSIE_CHECK(!photon.isGone());
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), 6.0001, 1e-13);
+    FRENSIE_CHECK_CLOSE(photon.getWeight(), 6.0001, 1e-15);
   }
   {
     MonteCarlo::PhotonState photon(0);
