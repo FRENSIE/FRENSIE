@@ -26,8 +26,6 @@ class WeightWindowMesh : public WeightWindowBase
 
 public:
 
-  typedef unsigned discretization_bin_index;
-
   //! Constructor
   WeightWindowMesh();
 
