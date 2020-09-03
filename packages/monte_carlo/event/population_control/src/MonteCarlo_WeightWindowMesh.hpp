@@ -71,6 +71,9 @@ void WeightWindowMesh::save( Archive& ar, const unsigned version ) const
 {
   ar & BOOST_SERIALIZATION_NVP( d_mesh );
   ar & BOOST_SERIALIZATION_NVP( d_weight_window_map );
+
+    // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( WeightWindowBase );
 }
 
 // Load the weight window mesh data from an archive
@@ -79,6 +82,9 @@ void WeightWindowMesh::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_mesh );
   ar & BOOST_SERIALIZATION_NVP( d_weight_window_map );
+
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( WeightWindowBase );
 }
 
 } // end MonteCarlo namespace
