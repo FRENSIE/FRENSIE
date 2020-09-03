@@ -1,13 +1,12 @@
 version: 2.1
 
 jobs:
-  build:
+  checkout_cmake:
     docker:
       - image: frensie/frensie-deps
     working_directory: ~/frensie
     steps:
       - checkout
-      - run: export "PATH=/root/opt/frensie/.circleci:${PATH}"
       - run: mkdir bld
       - run: 
           name: Configure CMake
@@ -20,6 +19,21 @@ jobs:
                                  -D MOAB_USE_EIGEN:BOOL=ON
                                  -D FRENSIE_ENABLE_DAGMC:BOOL=ON
                                  -D DAGMC_PREFIX:PATH=/root/opt/dagmc ..
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+    
+  build:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
       - run:
           name: Build
           command: cd bld; /root/frensie/.circleci/build.sh
@@ -27,12 +41,12 @@ jobs:
       - save_cache:
           key: v1-frensie-{{ checksum ".circle-sha" }}
           paths:
-            - ~/
+            - ~/frensie
  
   tests:
     docker:
       - image: frensie/frensie-deps
-    working_directory: ~/
+    working_directory: ~/frensie
     steps:
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - restore_cache:
@@ -40,20 +54,50 @@ jobs:
           key: v1-frensie-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: cd frensie/bld; /root/frensie/.circleci/tests.sh
+          command: cd bld; /root/frensie/.circleci/tests.sh
+  
+  build_test_all:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: cd bld; make
+      - run:
+          name: Test
+          command: cd bld; make test
 
 
 workflows:
   version: 2
   build_and_tests:
     jobs:
-      - build:
+      - cmake:
           filters:
             branches:
-              ignore: develop
+              ignore: master
             tags:
               ignore: /.*/
+      - build:
+          requires:
+            - cmake
       - tests:
           requires:
             - build
+
+  full_build_test:
+    jobs:
+      - cmake:
+        filters:
+          branches:
+            only:
+              - master
+      - build_test_all:
+          requires:
+            - cmake
 
