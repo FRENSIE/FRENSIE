@@ -44,16 +44,6 @@ public:
 
 private:
 
-  // Save the collision forcer data to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the collision forcer data from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
@@ -62,30 +52,24 @@ private:
   //! Map that contains importance windows. First key is the index of the mesh element, second key is the index of the discretization
   std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>> d_importance_map;
 
-};
-  
-// Save the collision forcer data to an archive
-template<typename Archive>
-void ImportanceMesh::save( Archive& ar, const unsigned version ) const
-{
-  ar & BOOST_SERIALIZATION_NVP( d_mesh );
-  ar & BOOST_SERIALIZATION_NVP( d_importance_map );
-}
+  // Serialize the data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {   
+    // Serialize the base class data
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Importance );
+    // Serialize the member data
+    ar & BOOST_SERIALIZATION_NVP( d_mesh );
+    ar & BOOST_SERIALIZATION_NVP( d_importance_map );
+  }
 
-// Load the collision forcer data from an archive
-template<typename Archive>
-void ImportanceMesh::load( Archive& ar, const unsigned version )
-{
-  ar & BOOST_SERIALIZATION_NVP( d_mesh );
-  ar & BOOST_SERIALIZATION_NVP( d_importance_map );
-}
+};
 
 } // end MonteCarlo namespace
 
   
 BOOST_CLASS_VERSION( MonteCarlo::ImportanceMesh, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ImportanceMesh, MonteCarlo );
-EXTERN_EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo, ImportanceMesh );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ImportanceMesh );
 
 #endif // end MONTE_CARLO_WEIGHT_WINDOW_MESH_HPP
 
