@@ -93,11 +93,15 @@ workflows:
   full_build_test:
     jobs:
       - checkout_cmake:
-        filters:
-          branches:
-            only:
-              - master
+          filters:
+            branches:
+              only:
+                - master
       - build_test_all:
           requires:
             - checkout_cmake
+          filters:
+            branches:
+              only:
+                - master
 
