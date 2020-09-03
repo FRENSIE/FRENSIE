@@ -53,8 +53,7 @@ bool ImportanceMesh::isParticleInImportanceDiscretization( ParticleState& partic
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ImportanceMesh, MonteCarlo );
-EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::ImportanceMesh );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ImportanceMesh );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ImportanceMesh.cpp
