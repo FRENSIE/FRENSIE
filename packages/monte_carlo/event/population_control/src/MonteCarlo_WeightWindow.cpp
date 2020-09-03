@@ -25,7 +25,7 @@ void WeightWindowBase::checkParticleWithPopulationController( ParticleState& par
   if(this->isParticleInWeightWindowDiscretization( particle ))
   {
 
-    const WeightWindow window = this->getWeightWindow(particle);
+    const WeightWindow& window = this->getWeightWindow(particle);
     double weight = particle.getWeight();
 
     if(weight > window.upper_weight)

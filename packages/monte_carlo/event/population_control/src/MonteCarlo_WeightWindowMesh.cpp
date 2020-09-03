@@ -54,8 +54,7 @@ bool WeightWindowMesh::isParticleInWeightWindowDiscretization( const ParticleSta
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( WeightWindowMesh, MonteCarlo );
-EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::WeightWindowMesh );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindowMesh );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp
