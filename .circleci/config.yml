@@ -85,7 +85,7 @@ workflows:
               ignore: /.*/
       - build:
           requires:
-            - cmake
+            - checkout_cmake
       - tests:
           requires:
             - build
@@ -99,5 +99,5 @@ workflows:
               - master
       - build_test_all:
           requires:
-            - cmake
+            - checkout_cmake
 
