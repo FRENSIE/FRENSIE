@@ -82,7 +82,12 @@ bool areFractionValuesNormalized( Iterator start, Iterator end )
 
   sum = std::fabs( sum );
 
+<<<<<<< HEAD
   if( std::fabs( sum - 1.0 ) < Utility::QuantityTraits<double>::comparisonTolerance() )
+=======
+//  if( std::fabs( sum - 1.0 ) < Utility::QuantityTraits<double>::epsilon() )
+  if( std::fabs( sum - 1.0 ) < 1e-6 )
+>>>>>>> d7904052b103ded42a21f32fae1d2f2caf7dbf4f
     return true;
   else
     return false;
