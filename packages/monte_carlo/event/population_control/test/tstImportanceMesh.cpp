@@ -211,8 +211,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
         std::vector<double> importance_vector;
         for(int j = 0; j < 2; ++j)
         {
-          importance_vector.push_back(static_cast<double>(2*i + j) + i + 1.0);
-          std::cout << "Importance value" <<  static_cast<double>(2*i + j) + i + 1.0 << std::endl;
+          importance_vector.push_back(static_cast<double>(2*i + j) + 1.0);
+          std::cout << "Importance value" <<  static_cast<double>(2*i + j) + 1.0 << std::endl;
         }
         importance_mesh_map.emplace(i, importance_vector);
       }
