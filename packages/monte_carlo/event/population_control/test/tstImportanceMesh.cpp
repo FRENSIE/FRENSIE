@@ -17,8 +17,17 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "ArchiveTestHelpers.hpp"
 
-// Weight window mesh pointer
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
+
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
 std::shared_ptr<MonteCarlo::ImportanceMesh> importance_mesh;
 
 //---------------------------------------------------------------------------//
@@ -150,6 +159,99 @@ FRENSIE_UNIT_TEST(ImportanceMesh, checkParticleWithPopulationController_terminat
   
   Utility::RandomNumberGenerator::unsetFakeStream();
   
+}
+
+//---------------------------------------------------------------------------//
+// Check that an estimator can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_importance_mesh" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<MonteCarlo::ImportanceMesh> mesh_archive_test;
+    std::shared_ptr<MonteCarlo::Importance> base_archive_test;
+
+    { 
+      mesh_archive_test = std::make_shared<MonteCarlo::ImportanceMesh>();
+      base_archive_test = mesh_archive_test;
+      // Set up spatial plane vectors
+      std::vector<double> x_planes = {0.0, 1.0};
+      std::vector<double> y_planes = {0.0, 0.5, 1.0};
+      std::vector<double> z_planes = {0.0, 1.0};
+
+      // Set up hex mesh
+      std::shared_ptr<Utility::StructuredHexMesh> mesh = std::make_shared<Utility::StructuredHexMesh>(x_planes, y_planes, z_planes);
+      mesh_archive_test->setMesh(mesh);
+
+      // Set up discretization
+      std::vector<double> energy_bin_boundaries( 3 );
+      energy_bin_boundaries[0] = 0.0;
+      energy_bin_boundaries[1] = 1.0;
+      energy_bin_boundaries[2] = 2.0;
+
+      base_archive_test->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(energy_bin_boundaries);
+
+      std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>> importance_mesh_map;
+
+      for(int i = 0; i < 2; ++i)
+      {
+        std::vector<double> importance_vector;
+        for(int j = 0; j < 2; ++j)
+        {
+          importance_vector.push_back(static_cast<double>(2*i + j) + i + 1.0);
+          std::cout << "Importance value" <<  static_cast<double>(2*i + j) + i + 1.0 << std::endl;
+        }
+        importance_mesh_map.emplace(i, importance_vector);
+      }
+
+      mesh_archive_test->setImportanceMap(importance_mesh_map);
+
+
+    }
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( mesh_archive_test ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( base_archive_test ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<MonteCarlo::ImportanceMesh> mesh_archive_test;
+  std::shared_ptr<MonteCarlo::Importance> base_archive_test;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( mesh_archive_test ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_archive_test ) );
+
+  iarchive.reset();
+  {
+    FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
+
+    MonteCarlo::PhotonState photon(0);
+
+    photon.setEnergy( 0.5 );
+    photon.setPosition(0.25, 0.75, 0.25);
+
+    FRENSIE_CHECK_EQUAL(base_archive_test->getImportance(photon), 3.0);
+  }
+
 }
 
 //---------------------------------------------------------------------------//

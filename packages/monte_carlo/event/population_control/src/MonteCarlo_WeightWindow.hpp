@@ -53,8 +53,6 @@ public:
 
   virtual const WeightWindow& getWeightWindow( const ParticleState& particle ) const = 0;
 
-protected:
-
   virtual bool isParticleInWeightWindowDiscretization( const ParticleState& particle ) const = 0;
 
 private:

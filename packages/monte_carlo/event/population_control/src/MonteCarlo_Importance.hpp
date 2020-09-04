@@ -32,8 +32,6 @@ public:
   void checkParticleWithPopulationController( ParticleState& particle, 
                                               ParticleBank& bank) const;
 
-protected:
-
   virtual double getImportance( ParticleState& particle ) const = 0;
 
   virtual bool isParticleInImportanceDiscretization( ParticleState& particle ) const = 0;
@@ -46,7 +44,12 @@ private:
   // Serialize the data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { /* ... */ }
+  { 
+
+    // Serialize the base class data
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PopulationControl );
+
+  }
 
 };
 
