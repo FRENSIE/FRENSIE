@@ -15,7 +15,7 @@
 
 namespace MonteCarlo{
 
-//! The weight window base class
+//! The importance base class
 class Importance: public PopulationControl
 {
 
