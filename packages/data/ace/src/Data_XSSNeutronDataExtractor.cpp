@@ -86,6 +86,32 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
     return false;
 }
 
+// Find next non-zero value in d_jxs array to ensure size parameter in ___ is positive via recursion
+// const so we don't alter the arrays
+int XSSNeutronDataExtractor::findNextBlocksIndex( int start_index ) const
+{
+  return XSSNeutronDataExtractor::findNextIndex( start_index );
+}
+
+// recursive helper method
+int XSSNeutronDataExtractor::findNextIndex( int start_index) const
+{
+  // base case, encountered end of block, stop incrementing to prevent array index out of bounds error
+  if(start_index==31)
+    // do something to indicate that the block of interest is the last block of data.
+    // correct size is likely d_nxs[0] - d_jxs[start index]
+    // maybe logic in block extractors to interpret zero as reached end and to use above size
+    return 0;
+  if( d_jxs[ start_index +1 ]==0 )
+    // if next value in d_jxs array is zero, call again to go to one further
+    return XSSNeutronDataExtractor::findNextIndex( start_index + 1 ) ;
+  else
+    // base case, if next value in d_jxs array is NOT zero, you have found the next block's start position
+    // this is the desired index to give for the size parameter
+    return start_index ;
+    
+}
+
 // Extract the ESZ block from the XSS array
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractESZBlock() const
