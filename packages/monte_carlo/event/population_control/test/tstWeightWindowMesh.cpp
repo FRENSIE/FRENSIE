@@ -45,9 +45,9 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, getWeightWindow )
 
   MonteCarlo::WeightWindow weight_window = weight_window_mesh->getWeightWindow(photon);
 
-  FRENSIE_CHECK_EQUAL(6.0, weight_window.lower_weight);
-  FRENSIE_CHECK_EQUAL(7.0, weight_window.upper_weight);
-  FRENSIE_CHECK_EQUAL(6.0001, weight_window.survival_weight);
+  FRENSIE_CHECK_EQUAL(weight_window.lower_weight, 6.0);
+  FRENSIE_CHECK_EQUAL(weight_window.upper_weight, 7.0);
+  FRENSIE_CHECK_EQUAL(weight_window.survival_weight, 6.0001);
 }
 
 FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split)
@@ -62,11 +62,12 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split
 
   weight_window_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
+  double split_weight = 14.2/3;
   FRENSIE_CHECK_EQUAL(particle_bank.size(), 2);
-  FRENSIE_CHECK_CLOSE(14.2/3, photon.getWeight(), 1e-14);
-  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-15);
+  FRENSIE_CHECK_CLOSE(photon.getWeight(), split_weight,  1e-14);
+  FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), split_weight, 1e-15);
   particle_bank.pop();
-  FRENSIE_CHECK_CLOSE(14.2/3, particle_bank.top().getWeight(),1e-15);  
+  FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), split_weight, 1e-15);  
 }
 
 FRENSIE_UNIT_TEST(WeightWindowMesh, checkParticleWithPopulationController_terminate)
@@ -152,20 +153,20 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( WeightWindowMesh,
 
       std::unordered_map<Utility::Mesh::ElementHandle, std::vector<MonteCarlo::WeightWindow>> weight_window_mesh_map;
 
-      for(int i = 0; i < 2; ++i)
+      for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
       {
         std::vector<MonteCarlo::WeightWindow> weight_window_vector;
-        for(int j = 0; j < 2; ++j)
+        for(int energy_element = 0; energy_element < 2; ++energy_element)
         {
           MonteCarlo::WeightWindow weight_window = MonteCarlo::WeightWindow();
-          weight_window.lower_weight = static_cast<double>(2*i + j) + i + 1.0;
-          weight_window.survival_weight = static_cast<double>(2*i + j) + i + 2.0;   
-          weight_window.upper_weight = static_cast<double>(2*i + j) + i + 3.0;
+          weight_window.lower_weight = static_cast<double>(2*spatial_element + energy_element) + spatial_element + 1.0;
+          weight_window.survival_weight = static_cast<double>(2*spatial_element + energy_element) + spatial_element + 2.0;   
+          weight_window.upper_weight = static_cast<double>(2*spatial_element + energy_element) + spatial_element + 3.0;
  
 
           weight_window_vector.push_back(weight_window);
         }
-        weight_window_mesh_map.emplace(i, weight_window_vector);
+        weight_window_mesh_map.emplace(spatial_element, weight_window_vector);
       }
 
       mesh_archive_test->setWeightWindowMap(weight_window_mesh_map);
