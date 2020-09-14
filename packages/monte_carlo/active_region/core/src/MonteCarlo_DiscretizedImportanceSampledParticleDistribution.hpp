@@ -3,6 +3,8 @@
 //! \file   MonteCarlo_DiscretizedImportanceSampledParticleDistribution.hpp
 //! \author Philip Britt
 //! \brief  Discretized Importance Sampled Particle distribution class declaration (strictly for my thesis).
+//!         Conversion policies are always cartesian, must have space, energy, and direction defined to use.
+//!         This class assumes independent space, energy, and direction source dimensions (for now)
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,17 +20,38 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Utility_TypeNameTraits.hpp"
 #include "Utility_Set.hpp"
+#include "Utility_Mesh.hpp"
+#include "Utility_PQLAQuadrature.hpp"
+#include "MonteCarlo_ParticleDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The particle distribution base class
-class DiscretizedImportanceSampledParticleDistribution
+class DiscretizedImportanceSampledParticleDistribution: public ParticleDistribution
 {
+
+  //! Typedef for the phase space dimension distribution map
+  typedef std::map<PhaseSpaceDimension,std::shared_ptr<PhaseSpaceDimensionDistribution> > DimensionDistributionMap;
 
 public:
 
-  //! Constructor
-  DiscretizedImportanceSampledParticleDistribution( const std::string& name );
+  //! The dimension trial counter map
+  typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
+
+  // (for now only use cartesian coordinate policies for space and direction)
+
+  //! Constructor (without specifics of which mesh elements are to be considered source)
+  DiscretizedImportanceSampledParticleDistribution( const std::string& name,
+                                                    const std::shared_ptr<const Utility::Mesh>& mesh,
+                                                    const std::vector<double>& energy_bin_bounds,
+                                                    const std::shared_ptr<const Utility::PQLAQuadrature>& direction_discretization);
+
+  //! Constructor (with specifics of which mesh elements are to be considered source)
+  DiscretizedImportanceSampledParticleDistribution(const std::string& name,
+                                                   const std::shared_ptr<const Utility::Mesh>& mesh,
+                                                   const std::vector<Utility::Mesh::ElementHandle>& mesh_source_elements,
+                                                   const std::vector<double>& energy_bin_bounds,
+                                                   const std::shared_ptr<const Utility::PQLAQuadrature>& direction_discretization);
 
   //! Destructor
   ~DiscretizedImportanceSampledParticleDistribution()
@@ -67,6 +90,18 @@ public:
                                       DimensionCounterMap& trials,
                                       const PhaseSpaceDimension dimension,
                                       const double dimension_value ) const override;
+
+  private:
+
+  //! Mesh that covers the source
+  std::shared_ptr<const Utility::Mesh> d_mesh;
+
+  //! Direction discretization
+  std::shared_ptr<const Utility::PQLAQuadrature> d_direction_discretization;
+
+  //! Energy boundaries
+  std::vector<double> d_energy_discretization_boundaries;
+
 };
 
 } // end MonteCarlo namespace
