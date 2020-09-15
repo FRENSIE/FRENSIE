@@ -64,7 +64,7 @@ FRENSIE_UNIT_TEST( WeightWindowMesh, checkParticleWithPopulationController_split
 
   double split_weight = 14.2/3;
   FRENSIE_CHECK_EQUAL(particle_bank.size(), 2);
-  FRENSIE_CHECK_CLOSE(photon.getWeight(), split_weight,  1e-14);
+  FRENSIE_CHECK_CLOSE(photon.getWeight(), split_weight,  1e-15);
   FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), split_weight, 1e-15);
   particle_bank.pop();
   FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), split_weight, 1e-15);  
@@ -196,19 +196,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( WeightWindowMesh,
   {
     FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
 
-    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<MonteCarlo::WeightWindow>>& weight_window_map = mesh_archive_test->getWeightWindowMap();
-    
-    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
-    {
-      for(int energy_element = 0; energy_element < 2; ++energy_element)
-      {
-        MonteCarlo::WeightWindow weight_window = weight_window_map.at(spatial_element)[energy_element];
-        FRENSIE_CHECK_EQUAL(weight_window.lower_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 1.0);
-        FRENSIE_CHECK_EQUAL(weight_window.survival_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 2.0);   
-        FRENSIE_CHECK_EQUAL(weight_window.upper_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 3.0);
-      }
-    }
-
     std::shared_ptr<const Utility::StructuredHexMesh> underlying_mesh = std::dynamic_pointer_cast<const Utility::StructuredHexMesh>(mesh_archive_test->getMesh());
 
     FRENSIE_CHECK_EQUAL(underlying_mesh->getNumberOfElements(), 2);
@@ -237,6 +224,19 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( WeightWindowMesh,
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[0], 0.0);
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[1], 1.0);
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[2], 2.0);
+    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<MonteCarlo::WeightWindow>>& weight_window_map = mesh_archive_test->getWeightWindowMap();
+    
+    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
+    {
+      for(int energy_element = 0; energy_element < 2; ++energy_element)
+      {
+        MonteCarlo::WeightWindow weight_window = weight_window_map.at(spatial_element)[energy_element];
+        FRENSIE_CHECK_EQUAL(weight_window.lower_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 1.0);
+        FRENSIE_CHECK_EQUAL(weight_window.survival_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 2.0);   
+        FRENSIE_CHECK_EQUAL(weight_window.upper_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 3.0);
+      }
+    }
+
   }
 
 }
