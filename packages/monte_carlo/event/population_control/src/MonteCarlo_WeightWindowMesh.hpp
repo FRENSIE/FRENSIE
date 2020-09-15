@@ -43,6 +43,12 @@ public:
 
   bool isParticleInWeightWindowDiscretization( const ParticleState& particle ) const final override;
 
+  //! Get the mesh (for viewing purposes only)
+  std::shared_ptr<const Utility::Mesh> getMesh() const;
+
+  //! Get the weight window map (for viewing purposes only)
+  const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<WeightWindow>>& getWeightWindowMap() const;
+
 private:
 
   // Declare the boost serialization access object as a friend

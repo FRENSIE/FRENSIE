@@ -196,14 +196,47 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( WeightWindowMesh,
   {
     FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
 
-    MonteCarlo::PhotonState photon(0);
+    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<MonteCarlo::WeightWindow>>& weight_window_map = mesh_archive_test->getWeightWindowMap();
+    
+    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
+    {
+      for(int energy_element = 0; energy_element < 2; ++energy_element)
+      {
+        MonteCarlo::WeightWindow weight_window = weight_window_map.at(spatial_element)[energy_element];
+        FRENSIE_CHECK_EQUAL(weight_window.lower_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 1.0);
+        FRENSIE_CHECK_EQUAL(weight_window.survival_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 2.0);   
+        FRENSIE_CHECK_EQUAL(weight_window.upper_weight , static_cast<double>(2*spatial_element + energy_element) + spatial_element + 3.0);
+      }
+    }
 
-    photon.setEnergy( 0.5 );
-    photon.setPosition(0.25, 0.75, 0.25);
+    std::shared_ptr<const Utility::StructuredHexMesh> underlying_mesh = std::dynamic_pointer_cast<const Utility::StructuredHexMesh>(mesh_archive_test->getMesh());
 
-    FRENSIE_CHECK_EQUAL(base_archive_test->getWeightWindow(photon).lower_weight, 4.0);
-    FRENSIE_CHECK_EQUAL(base_archive_test->getWeightWindow(photon).survival_weight, 5.0);
-    FRENSIE_CHECK_EQUAL(base_archive_test->getWeightWindow(photon).upper_weight, 6.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getNumberOfElements(), 2);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(1), 1.0);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(1), 0.5);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(2), 1.0);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(1), 1.0);
+
+    std::vector<MonteCarlo::ObserverPhaseSpaceDimension> dimensions_discretized;
+    base_archive_test->getDiscretizedDimensions(dimensions_discretized);
+
+
+    FRENSIE_CHECK_EQUAL(dimensions_discretized.size(), 1);
+    FRENSIE_CHECK_EQUAL(dimensions_discretized[0], MonteCarlo::ObserverPhaseSpaceDimension::OBSERVER_ENERGY_DIMENSION);
+
+    std::vector<double> energy_discretization_bounds;
+
+    base_archive_test->getDiscretization<MonteCarlo::ObserverPhaseSpaceDimension::OBSERVER_ENERGY_DIMENSION>(energy_discretization_bounds);
+
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[0], 0.0);
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[1], 1.0);
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[2], 2.0);
   }
 
 }

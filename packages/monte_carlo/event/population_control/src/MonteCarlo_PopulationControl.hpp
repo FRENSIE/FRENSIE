@@ -88,7 +88,9 @@ private:
   // Serialize the data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { /* ... */ }
+  { 
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( DiscretizableParticleHistoryObserver );
+  }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;

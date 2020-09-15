@@ -24,12 +24,14 @@ void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh> mesh)
   d_mesh = mesh;
 }
 
+// Set the weight windows
 void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<WeightWindow>>& weight_window_map )
 {
   testPrecondition(d_mesh);
   d_weight_window_map = weight_window_map;
 }
 
+// Get a specific weight window
 const WeightWindow& WeightWindowMesh::getWeightWindow( const ParticleState& particle) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
@@ -39,6 +41,7 @@ const WeightWindow& WeightWindowMesh::getWeightWindow( const ParticleState& part
   return d_weight_window_map.at(d_mesh->whichElementIsPointIn(particle.getPosition()))[discretization_index[0]];
 }
 
+// Check if a particle is under the weight window phase space
 bool WeightWindowMesh::isParticleInWeightWindowDiscretization( const ParticleState& particle ) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
@@ -50,6 +53,18 @@ bool WeightWindowMesh::isParticleInWeightWindowDiscretization( const ParticleSta
   {
     return false;
   }
+}
+
+// Return pointer to weight window mesh
+std::shared_ptr<const Utility::Mesh> WeightWindowMesh::getMesh() const
+{
+  return d_mesh;
+}
+
+// Return the weight window map
+const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<WeightWindow>>& WeightWindowMesh::getWeightWindowMap() const
+{
+  return d_weight_window_map;
 }
 
 } // end MonteCarlo namespace
