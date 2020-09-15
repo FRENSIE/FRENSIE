@@ -42,6 +42,10 @@ public:
 
   bool isParticleInImportanceDiscretization( ParticleState& particle ) const final override;
 
+  std::shared_ptr<const Utility::Mesh> getMesh() const;
+
+  const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>>& getImportanceMap() const;
+
 private:
 
   // Declare the boost serialization access object as a friend

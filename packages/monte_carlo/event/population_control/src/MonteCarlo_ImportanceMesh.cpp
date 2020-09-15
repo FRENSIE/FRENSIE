@@ -51,6 +51,16 @@ bool ImportanceMesh::isParticleInImportanceDiscretization( ParticleState& partic
   }
 }
 
+std::shared_ptr<const Utility::Mesh> ImportanceMesh::getMesh() const
+{
+  return d_mesh;
+}
+
+const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>>& ImportanceMesh::getImportanceMap() const
+{
+  return d_importance_map;
+}
+
 } // end MonteCarlo namespace
 
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::ImportanceMesh );

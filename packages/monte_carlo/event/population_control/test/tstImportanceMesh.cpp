@@ -206,15 +206,14 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
 
       std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>> importance_mesh_map;
 
-      for(int i = 0; i < 2; ++i)
+      for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
       {
         std::vector<double> importance_vector;
-        for(int j = 0; j < 2; ++j)
+        for(int energy_element = 0; energy_element < 2; ++energy_element)
         {
-          importance_vector.push_back(static_cast<double>(2*i + j) + 1.0);
-          std::cout << "Importance value" <<  static_cast<double>(2*i + j) + 1.0 << std::endl;
+          importance_vector.push_back(static_cast<double>(2*spatial_element + energy_element) + 1.0);
         }
-        importance_mesh_map.emplace(i, importance_vector);
+        importance_mesh_map.emplace(spatial_element, importance_vector);
       }
 
       mesh_archive_test->setImportanceMap(importance_mesh_map);
@@ -244,12 +243,43 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
   {
     FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
 
-    MonteCarlo::PhotonState photon(0);
+    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>>& underlying_importance_map = mesh_archive_test->getImportanceMap();
+    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
+    {
+      for(int energy_element = 0; energy_element < 2; ++energy_element)
+      {
+        FRENSIE_CHECK_EQUAL(underlying_importance_map.at(spatial_element)[energy_element], static_cast<double>(2*spatial_element + energy_element) + 1.0);
+      }
+    }
 
-    photon.setEnergy( 0.5 );
-    photon.setPosition(0.25, 0.75, 0.25);
+    std::shared_ptr<const Utility::StructuredHexMesh> underlying_mesh = std::dynamic_pointer_cast<const Utility::StructuredHexMesh>(mesh_archive_test->getMesh());
 
-    FRENSIE_CHECK_EQUAL(base_archive_test->getImportance(photon), 3.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getNumberOfElements(), 2);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(1), 1.0);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(1), 0.5);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getYPlaneLocation(2), 1.0);
+
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(0), 0.0);
+    FRENSIE_CHECK_EQUAL(underlying_mesh->getXPlaneLocation(1), 1.0);
+
+    std::vector<MonteCarlo::ObserverPhaseSpaceDimension> dimensions_discretized;
+    base_archive_test->getDiscretizedDimensions(dimensions_discretized);
+
+
+    FRENSIE_CHECK_EQUAL(dimensions_discretized.size(), 1);
+    FRENSIE_CHECK_EQUAL(dimensions_discretized[0], MonteCarlo::ObserverPhaseSpaceDimension::OBSERVER_ENERGY_DIMENSION);
+
+    std::vector<double> energy_discretization_bounds;
+
+    base_archive_test->getDiscretization<MonteCarlo::ObserverPhaseSpaceDimension::OBSERVER_ENERGY_DIMENSION>(energy_discretization_bounds);
+
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[0], 0.0);
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[1], 1.0);
+    FRENSIE_CHECK_EQUAL(energy_discretization_bounds[2], 2.0);
   }
 
 }
