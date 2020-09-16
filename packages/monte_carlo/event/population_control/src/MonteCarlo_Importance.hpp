@@ -45,10 +45,8 @@ private:
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
   { 
-
     // Serialize the base class data
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PopulationControl );
-
   }
 
 };

@@ -72,7 +72,7 @@ FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_split)
 
     double updated_weight = 14.2*(2.0/3.5);
 
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), updated_weight, 1e-14);
+    FRENSIE_CHECK_CLOSE(photon.getWeight(), updated_weight, 1e-15);
     FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, 3.5);
     FRENSIE_CHECK(particle_bank.isEmpty());
     FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 1);
@@ -100,8 +100,8 @@ FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_split)
 
     double updated_weight = 14.2*(2.0/3.5);
 
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), updated_weight, 1e-14);
-    FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), updated_weight, 1e-14);
+    FRENSIE_CHECK_CLOSE(photon.getWeight(), updated_weight, 1e-15);
+    FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), updated_weight, 1e-15);
     FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, 3.5);
     FRENSIE_CHECK_EQUAL(particle_bank.size(), 1);
     FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 1);
@@ -133,7 +133,7 @@ FRENSIE_UNIT_TEST(ImportanceMesh, checkParticleWithPopulationController_terminat
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
     FRENSIE_CHECK(!photon.isGone());
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), 3.0*(3.5/2.0), 1e-14);
+    FRENSIE_CHECK_CLOSE(photon.getWeight(), 3.0*(3.5/2.0), 1e-15;
 
   }
 
@@ -241,17 +241,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
 
   iarchive.reset();
   {
-    FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
-
-    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>>& underlying_importance_map = mesh_archive_test->getImportanceMap();
-    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
-    {
-      for(int energy_element = 0; energy_element < 2; ++energy_element)
-      {
-        FRENSIE_CHECK_EQUAL(underlying_importance_map.at(spatial_element)[energy_element], static_cast<double>(2*spatial_element + energy_element) + 1.0);
-      }
-    }
-
     std::shared_ptr<const Utility::StructuredHexMesh> underlying_mesh = std::dynamic_pointer_cast<const Utility::StructuredHexMesh>(mesh_archive_test->getMesh());
 
     FRENSIE_CHECK_EQUAL(underlying_mesh->getNumberOfElements(), 2);
@@ -280,6 +269,16 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ImportanceMesh,
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[0], 0.0);
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[1], 1.0);
     FRENSIE_CHECK_EQUAL(energy_discretization_bounds[2], 2.0);
+    FRENSIE_CHECK( mesh_archive_test.get() == base_archive_test.get() );
+
+    const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>>& underlying_importance_map = mesh_archive_test->getImportanceMap();
+    for(int spatial_element = 0; spatial_element < 2; ++spatial_element)
+    {
+      for(int energy_element = 0; energy_element < 2; ++energy_element)
+      {
+        FRENSIE_CHECK_EQUAL(underlying_importance_map.at(spatial_element)[energy_element], static_cast<double>(2*spatial_element + energy_element) + 1.0);
+      }
+    }
   }
 
 }
