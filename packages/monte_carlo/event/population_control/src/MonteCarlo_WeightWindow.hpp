@@ -27,7 +27,11 @@ struct WeightWindow{
   // Serialize the data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { /* ... */ }
+  { 
+    ar & BOOST_SERIALIZATION_NVP( upper_weight );
+    ar & BOOST_SERIALIZATION_NVP( survival_weight );
+    ar & BOOST_SERIALIZATION_NVP( lower_weight );
+  }
 };
 
 //! The weight window base class
@@ -47,11 +51,9 @@ public:
   void checkParticleWithPopulationController( ParticleState& particle, 
                                               ParticleBank& bank) const;
 
-protected:
+  virtual const WeightWindow& getWeightWindow( const ParticleState& particle ) const = 0;
 
-  virtual std::shared_ptr<WeightWindow> getWeightWindow( ParticleState& particle ) const = 0;
-
-  virtual bool isParticleInWeightWindowDiscretization( ParticleState& particle ) const = 0;
+  virtual bool isParticleInWeightWindowDiscretization( const ParticleState& particle ) const = 0;
 
 private:
 
@@ -61,7 +63,10 @@ private:
   // Serialize the data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  { /* ... */ }
+  {     
+    // Serialize the base class data
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PopulationControl ); 
+  }
 
 };
 

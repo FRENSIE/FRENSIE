@@ -46,7 +46,7 @@ private:
 // Return the default weight window - used when there are no population controllers applied
 std::shared_ptr<PopulationControl> PopulationControl::getDefault()
 {
-  return std::shared_ptr<PopulationControl>( new DefaultPopulationController );
+  return std::make_shared<DefaultPopulationController>();
 }
 
 // Method that splits particle into equal number of weights based on number of particles split into

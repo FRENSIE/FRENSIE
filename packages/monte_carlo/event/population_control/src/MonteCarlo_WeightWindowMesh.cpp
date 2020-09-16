@@ -24,21 +24,25 @@ void WeightWindowMesh::setMesh(const std::shared_ptr<const Utility::Mesh> mesh)
   d_mesh = mesh;
 }
 
-void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<std::shared_ptr<WeightWindow>>>& weight_window_map )
+// Set the weight windows
+void WeightWindowMesh::setWeightWindowMap( std::unordered_map<Utility::Mesh::ElementHandle, std::vector<WeightWindow>>& weight_window_map )
 {
   testPrecondition(d_mesh);
   d_weight_window_map = weight_window_map;
 }
 
-std::shared_ptr<WeightWindow> WeightWindowMesh::getWeightWindow( ParticleState& particle) const
+// Get a specific weight window
+const WeightWindow& WeightWindowMesh::getWeightWindow( const ParticleState& particle) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
   ObserverPhaseSpaceDimensionDiscretization::BinIndexArray discretization_index;
   this->calculateBinIndicesOfPoint(observer_particle, discretization_index);
+
   return d_weight_window_map.at(d_mesh->whichElementIsPointIn(particle.getPosition()))[discretization_index[0]];
 }
 
-bool WeightWindowMesh::isParticleInWeightWindowDiscretization( ParticleState& particle ) const
+// Check if a particle is under the weight window phase space
+bool WeightWindowMesh::isParticleInWeightWindowDiscretization( const ParticleState& particle ) const
 {
   ObserverParticleStateWrapper observer_particle(particle);
 
@@ -51,10 +55,21 @@ bool WeightWindowMesh::isParticleInWeightWindowDiscretization( ParticleState& pa
   }
 }
 
+// Return pointer to weight window mesh
+std::shared_ptr<const Utility::Mesh> WeightWindowMesh::getMesh() const
+{
+  return d_mesh;
+}
+
+// Return the weight window map
+const std::unordered_map<Utility::Mesh::ElementHandle, std::vector<WeightWindow>>& WeightWindowMesh::getWeightWindowMap() const
+{
+  return d_weight_window_map;
+}
+
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( WeightWindowMesh, MonteCarlo );
-EXPLICIT_CLASS_SAVE_LOAD_INST( MonteCarlo::WeightWindowMesh );
+EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::WeightWindowMesh );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_WeightWindowMesh.cpp
