@@ -130,6 +130,10 @@ public:
                   const ObserverParticleStateWrapper& particle_state_wrapper,
                   BinIndexWeightPairArray& bin_indices_and_weights ) const = 0;
 
+  /*! Takes a vector of pairs that contains all discretized dimensions and individual dimension bin indices and finds the actual discretization index.
+   *  Function is presumed to only be used by user for post-run analysis to be able to relate discretization bins to relevant information they set. */
+  virtual size_t calculateDiscretizationIndex( const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const = 0;
+
 private:
   
   // Serialize the data

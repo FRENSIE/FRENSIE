@@ -11,8 +11,8 @@ INCLUDE_DIRECTORIES(particle_tracker/src)
 ADD_SUBDIRECTORY(forced_collisions)
 INCLUDE_DIRECTORIES(forced_collisions/src)
 
-ADD_SUBDIRECTORY(weight_windows)
-INCLUDE_DIRECTORIES(weight_windows/src)
+ADD_SUBDIRECTORY(population_control)
+INCLUDE_DIRECTORIES(population_control/src)
 
 ADD_SUBDIRECTORY(weight_cutoff)
 INCLUDE_DIRECTORIES(weight_cutoff/src)

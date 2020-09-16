@@ -9,7 +9,7 @@ ADD_SUBDIRECTORY(active_region)
 INCLUDE_DIRECTORIES(active_region/core/src active_region/source/src active_region/response/src)
 
 ADD_SUBDIRECTORY(event)
-INCLUDE_DIRECTORIES(event/core/src event/estimator/src event/particle_tracker/src event/weight_windows/src event/weight_cutoff/src event/forced_collisions/src event/dispatcher/src)
+INCLUDE_DIRECTORIES(event/core/src event/estimator/src event/particle_tracker/src event/population_control/src event/weight_cutoff/src event/forced_collisions/src event/dispatcher/src)
 
 ADD_SUBDIRECTORY(manager)
 INCLUDE_DIRECTORIES(manager/src)

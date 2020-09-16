@@ -110,6 +110,9 @@ public:
              const ObserverParticleStateWrapper& particle_state_wrapper,
              BinIndexWeightPairArray& bin_indices_and_weights ) const override;
 
+  //! Return the overall discretization index from individual dimension discretization indices
+  size_t calculateDiscretizationIndex( const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const override;
+
 private:
   
   // Serialize the data

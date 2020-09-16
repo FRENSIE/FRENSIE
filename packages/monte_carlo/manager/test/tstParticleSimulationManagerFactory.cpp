@@ -47,7 +47,7 @@ std::shared_ptr<const Geometry::Model> unfilled_model;
 
 std::shared_ptr<const MonteCarlo::ParticleDistribution> particle_distribution;
 
-std::shared_ptr<const MonteCarlo::WeightWindow> weight_windows;
+std::shared_ptr<MonteCarlo::PopulationControl> population_controller;
 std::shared_ptr<const MonteCarlo::CollisionForcer> collision_forcer;
 
 int threads;
@@ -813,7 +813,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
 // Check that a particle simulation manager factory can be constructed and
 // weight windows can be set
 FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
-                   constructor_set_weight_windows )
+                   constructor_set_population_controller )
 {
   std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -853,9 +853,9 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
                                                               event_handler,
                                                               properties ) ) );
 
-  factory->setWeightWindows( weight_windows );
+  factory->setPopulationControl( population_controller );
 
-  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 2 );
+  FRENSIE_CHECK_EQUAL( population_controller.use_count(), 2 );
 
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
   
@@ -877,7 +877,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
   FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
-  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 3 );
+  FRENSIE_CHECK_EQUAL( population_controller.use_count(), 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -955,7 +955,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
 // Check that a particle simulation manager factory can be constructed and
 // both weight windows and a collision forcer can be set
 FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
-                   constructor_set_weight_windows_collision_forcer )
+                   constructor_set_population_controller_collision_forcer )
 {
   std::shared_ptr<MonteCarlo::SimulationProperties> properties(
                                         new MonteCarlo::SimulationProperties );
@@ -995,10 +995,10 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
                                                               event_handler,
                                                               properties ) ) );
 
-  factory->setWeightWindows( weight_windows );
+  factory->setPopulationControl( population_controller );
   factory->setCollisionForcer( collision_forcer );
 
-  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 2 );
+  FRENSIE_CHECK_EQUAL( population_controller.use_count(), 2 );
   FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 2 );
 
   std::shared_ptr<MonteCarlo::ParticleSimulationManager> manager;
@@ -1021,7 +1021,7 @@ FRENSIE_UNIT_TEST( ParticleSimulationManagerFactory,
   FRENSIE_CHECK_EQUAL( manager->getSimulationName(), "simulation" );
   FRENSIE_CHECK_EQUAL( manager->getSimulationArchiveType(), "xml" );
   FRENSIE_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
-  FRENSIE_CHECK_EQUAL( weight_windows.use_count(), 3 );
+  FRENSIE_CHECK_EQUAL( population_controller.use_count(), 3 );
   FRENSIE_CHECK_EQUAL( collision_forcer.use_count(), 3 );
 }
 
@@ -1105,7 +1105,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     particle_distribution = tmp_particle_distribution;
   }                              
 
-  weight_windows = MonteCarlo::WeightWindow::getDefault();
+  population_controller = MonteCarlo::PopulationControl::getDefault();
  
   collision_forcer = MonteCarlo::CollisionForcer::getDefault();
 }

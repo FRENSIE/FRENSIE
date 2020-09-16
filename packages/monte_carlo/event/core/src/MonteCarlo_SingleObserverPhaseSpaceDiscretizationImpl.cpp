@@ -190,6 +190,21 @@ void SingleObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesAndWeightsOf
                                                           bin_indices_and_weights );
 }
 
+size_t SingleObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( 
+                    const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const
+{
+  // Make sure the dimension being sought is the correct dimension that's discretized
+  testPrecondition( dimension_bin_indices.begin()->first == d_dimension_discretization->getDimension());
+
+  // Make sure the value isn't greater than the number of bins set
+  testPrecondition( dimension_bin_indices.begin()->second <= this->getNumberOfBins()-1);
+
+  testPrecondition(dimension_bin_indices.begin()->second >= 0);
+
+  // Only single discretization exists, no need to calculate it.
+  return dimension_bin_indices.begin()->second;
+}
+
 // Set the dimension discretization
 void SingleObserverPhaseSpaceDiscretizationImpl::setDimensionDiscretization(
         const std::shared_ptr<const ObserverPhaseSpaceDimensionDiscretization>&

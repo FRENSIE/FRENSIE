@@ -77,7 +77,7 @@ public:
                       const unsigned threads = 1 );    
 
   //! Set the weight windows that will be used by the manager
-  void setWeightWindows( const std::shared_ptr<const WeightWindow>& weight_windows );
+  void setPopulationControl( const std::shared_ptr<PopulationControl>& population_controller );
 
   //! Set the collision forcer that will be used by the manager
   void setCollisionForcer( const std::shared_ptr<const CollisionForcer>& collision_forcer );
@@ -101,7 +101,7 @@ private:
                 const std::shared_ptr<const FilledGeometryModel>& model,
                 const std::shared_ptr<ParticleSource>& source,
                 const std::shared_ptr<EventHandler>& event_handler,
-                const std::shared_ptr<const WeightWindow>& weight_windows,
+                const std::shared_ptr<PopulationControl>& population_controller,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
                 const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
@@ -145,7 +145,7 @@ private:
   std::shared_ptr<EventHandler> d_event_handler;
 
   // The weight windows
-  std::shared_ptr<const WeightWindow> d_weight_windows;
+  std::shared_ptr<PopulationControl> d_population_controller;
 
   // The collision forcer
   std::shared_ptr<const CollisionForcer> d_collision_forcer;
@@ -178,7 +178,7 @@ void ParticleSimulationManagerFactory::serialize( Archive& ar, const unsigned ve
   ar & BOOST_SERIALIZATION_NVP( d_model );
   ar & BOOST_SERIALIZATION_NVP( d_source );
   ar & BOOST_SERIALIZATION_NVP( d_event_handler );
-  ar & BOOST_SERIALIZATION_NVP( d_weight_windows );
+  ar & BOOST_SERIALIZATION_NVP( d_population_controller );
   ar & BOOST_SERIALIZATION_NVP( d_collision_forcer );
   ar & BOOST_SERIALIZATION_NVP( d_properties );
   ar & BOOST_SERIALIZATION_NVP( d_next_history );

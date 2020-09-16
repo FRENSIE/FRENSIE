@@ -27,7 +27,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
                 const std::shared_ptr<const FilledGeometryModel>& model,
                 const std::shared_ptr<ParticleSource>& source,
                 const std::shared_ptr<EventHandler>& event_handler,
-                const std::shared_ptr<const WeightWindow>& weight_windows,
+                const std::shared_ptr<PopulationControl>& population_controller,
                 const std::shared_ptr<const CollisionForcer>& collision_forcer,
                 const std::shared_ptr<const SimulationProperties>& properties,
                 const std::string& simulation_name,
@@ -40,7 +40,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_model( model ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( weight_windows ),
+    d_population_controller( population_controller ),
     d_collision_forcer( collision_forcer ),
     d_properties( properties ),
     d_next_history( next_history ),
@@ -71,7 +71,7 @@ ParticleSimulationManagerFactory::ParticleSimulationManagerFactory(
     d_model( model ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( MonteCarlo::WeightWindow::getDefault() ),
+    d_population_controller( MonteCarlo::PopulationControl::getDefault() ),
     d_collision_forcer( MonteCarlo::CollisionForcer::getDefault() ),
     d_properties( properties ),
     d_next_history( 0 ),
@@ -239,19 +239,12 @@ void ParticleSimulationManagerFactory::saveToFileImpl(
 }
 
 // Set the weight windows that will be used by the manager
-void ParticleSimulationManagerFactory::setWeightWindows(
-                    const std::shared_ptr<const WeightWindow>& weight_windows )
+void ParticleSimulationManagerFactory::setPopulationControl(
+                    const std::shared_ptr<PopulationControl>& population_controller )
 {
-  if( weight_windows )
+  if( population_controller )
   {
-    if( d_next_history > 0 || d_simulation_manager )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "ParticleSimulationManagerFactory",
-                                  "Setting weight windows after a simulation "
-                                  "has been started is not allowed!" );
-    }
-    else
-      d_weight_windows = weight_windows;
+    d_population_controller = population_controller;
   }
 }
 
@@ -291,7 +284,7 @@ struct ParticleSimulationManagerFactoryCreateHelper
                                           factory.d_model,
                                           factory.d_source,
                                           factory.d_event_handler,
-                                          factory.d_weight_windows,
+                                          factory.d_population_controller,
                                           factory.d_collision_forcer,
                                           factory.d_properties,
                                           factory.d_next_history,
@@ -308,7 +301,7 @@ struct ParticleSimulationManagerFactoryCreateHelper
                                       factory.d_model,
                                       factory.d_source,
                                       factory.d_event_handler,
-                                      factory.d_weight_windows,
+                                      factory.d_population_controller,
                                       factory.d_collision_forcer,
                                       factory.d_properties,
                                       factory.d_next_history,

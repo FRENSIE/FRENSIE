@@ -32,47 +32,52 @@ inline void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesOfP
                       const DimensionValueContainer& dimension_value_container,
                       BinIndexArray& bin_indices ) const
 {
-  // Clear the bin indices array
-  bin_indices.resize( 1, 0 );
 
-  BinIndexArray previous_bin_indices, local_bin_indices;
+  // BinIndexArray is just a vector of size_t
+  BinIndexArray local_bin_indices;
+  std::vector<std::pair<ObserverPhaseSpaceDimension, BinIndexArray>> index_array_of_pairs;
 
-  for( size_t i = 0; i < d_dimension_ordering.size(); ++i )
+  size_t number_of_indices = 1;
+  for( auto i = d_dimension_ordering.begin(); i < d_dimension_ordering.end(); ++i )
   {
-    if( i != 0 )
+    // Calculate the local bin indices for a dimension
+    this->calculateLocalBinIndicesOfValue(  *i,
+                                            dimension_value_container,
+                                            local_bin_indices );
+    
+    // Put each vector of indices for a dimension into the index array map
+    index_array_of_pairs.push_back(std::make_pair(*i, local_bin_indices));
+    // Multiply the number of indices by the local bin size such that it grows with the number of combinations of indices given
+    number_of_indices = number_of_indices*local_bin_indices.size();
+  }
+
+  bin_indices.resize(number_of_indices);
+
+  /* Complicated loop that goes through the map created and calculates the index of every combination of bin indices.
+   * Outer loop loops through the bin index vector.
+   */
+  std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>> temp_index_vector;
+  for(auto i = bin_indices.begin(); i < bin_indices.end(); ++i)
+  {
+    bool pop_completed = false;
+    /* Second loop takes the first elements of each vector combined with its respective dimension and places that into the temporary map.
+     * If the size of the vector was greater than zero, the first vector encountered with a size greater than zero is deleted. Each combination of
+     * indices is only needed once, so deleting one of the elements ensures that a new combination is presented every time and that no combination is missed.
+     */
+    for(auto j = index_array_of_pairs.begin(); j != index_array_of_pairs.end(); ++j)
     {
-      // Calculate the local bin indices
-      this->calculateLocalBinIndicesOfValue( d_dimension_ordering[i],
-                                             dimension_value_container,
-                                             local_bin_indices );      
-
-      const size_t dimension_index_step_size =
-        d_dimension_index_step_size_map.find(d_dimension_ordering[i])->second;
-      
-      // Cache the current bin indices
-      previous_bin_indices = bin_indices;
-        
-      // Calculate the number of bins that have been intersected
-      bin_indices.resize(
-                        previous_bin_indices.size()*local_bin_indices.size() );
-
-      // Calculate the bin indices that have been intersected
-      for( size_t i = 0; i < previous_bin_indices.size(); ++i )
+      temp_index_vector.push_back(std::make_pair(j->first, j->second[0]));
+      if(!pop_completed)
       {
-        for( size_t j = 0; j < local_bin_indices.size(); ++j )
+        if(j->second.size() > 1)
         {
-          bin_indices[i*local_bin_indices.size()+j] =
-            previous_bin_indices[i] +
-              local_bin_indices[j]*dimension_index_step_size;
+          j->second.erase(j->second.begin());
+          pop_completed = true;
         }
       }
     }
-    else
-    {
-      this->calculateLocalBinIndicesOfValue( d_dimension_ordering[i],
-                                             dimension_value_container,
-                                             bin_indices );
-    }
+    *i = this->calculateDiscretizationIndex(temp_index_vector);
+    temp_index_vector.clear();
   }
 
   // Make sure that the bin indices are valid

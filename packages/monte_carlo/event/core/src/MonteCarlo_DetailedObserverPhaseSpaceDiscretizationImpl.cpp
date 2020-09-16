@@ -14,6 +14,7 @@
 #include "MonteCarlo_DetailedObserverPhaseSpaceDiscretizationImpl.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -377,6 +378,48 @@ void DetailedObserverPhaseSpaceDiscretizationImpl::calculateBinIndicesAndWeights
 
   // Make sure that the bin indices are valid
   testPostcondition( this->isBinIndexWeightPairArrayValid( bin_indices_and_weights ) );
+}
+
+// Use this function for post processing to determine bin indices
+size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices ) const
+{
+  // Test if the given vector is the same size as the number of dimensions discretized
+  testPrecondition( dimension_bin_indices.size() == d_dimension_ordering.size() );
+
+  size_t discretization_index;
+
+  std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>> ordered_dimension_bin_indices;
+
+  for(auto i = d_dimension_ordering.begin(); i < d_dimension_ordering.end(); ++i)
+  {
+    // Make sure dimension bin indices has the relevant discretized dimensions each time
+    TEST_FOR_EXCEPTION(dimension_bin_indices.find(*i) == dimension_bin_indices.end(), std::invalid_argument, "Dimension is not discretized for this observer.");
+    // Make sure index isn't larger than the size of that discretized dimension index bounds
+    TEST_FOR_EXCEPTION(dimension_bin_indices.at(*i) > (d_dimension_discretization_map.at(*i))->getNumberOfBins()-1, std::invalid_argument, "Dimension index is out of bounds");
+
+    ordered_dimension_bin_indices.push_back(std::make_pair(*i, dimension_bin_indices.at(*i)));
+  }
+
+  return this->calculateDiscretizationIndex(ordered_dimension_bin_indices);
+}
+
+// Same as above, but used by the code itself assuming the map is already in the same order as dimension order (private)
+size_t DetailedObserverPhaseSpaceDiscretizationImpl::calculateDiscretizationIndex( const std::vector<std::pair<ObserverPhaseSpaceDimension, size_t>>& dimension_bin_indices ) const
+{
+  size_t discretization_index;
+  for(auto i = dimension_bin_indices.begin(); i != dimension_bin_indices.end(); ++i)
+  {
+    //std::cout << "Dimension being input: " << i->first << std::endl;
+    if( i == dimension_bin_indices.begin() )
+    {
+      discretization_index = i->second;
+    }
+    else
+    {
+      discretization_index = discretization_index + d_dimension_index_step_size_map.at(i->first)*i->second;
+    }
+  }
+  return discretization_index;
 }
 
 // Create a range intersection method

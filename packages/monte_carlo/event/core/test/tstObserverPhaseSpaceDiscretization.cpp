@@ -2640,6 +2640,34 @@ FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, print )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a discretization index can be calculated from individual dimension bin indices.
+FRENSIE_UNIT_TEST( ObserverPhaseSpaceDiscretization, calculateBinIndex )
+{
+  MonteCarlo::ObserverPhaseSpaceDiscretization phase_space_discretization;
+
+  phase_space_discretization.assignDiscretizationToDimension( energy_dimension_discretization );
+  phase_space_discretization.assignDiscretizationToDimension( cosine_dimension_discretization );
+
+  std::unordered_map<MonteCarlo::ObserverPhaseSpaceDimension, size_t> index_map;
+
+
+  index_map.emplace(std::make_pair(MonteCarlo::OBSERVER_COSINE_DIMENSION, 1));
+  index_map.emplace(std::make_pair(MonteCarlo::OBSERVER_ENERGY_DIMENSION, 2));
+
+  // 3 bins in each dimension total 
+  /*  energy bins:  0 1 2
+   *  cosine bin 0: 0 1 2
+   *  cosine bin 1: 3 4 5 (bin should be 5)
+   *  cosine bin 2: 6 7 8 
+   */
+
+  size_t index = phase_space_discretization.calculateDiscretizationIndex(index_map);
+
+  FRENSIE_CHECK_EQUAL(index, 5);
+
+}
+
+//---------------------------------------------------------------------------//
 // Check that the phase space discretization can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ObserverPhaseSpaceDiscretization,
                                    archive,

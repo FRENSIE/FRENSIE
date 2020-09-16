@@ -62,6 +62,11 @@ void DiscretizableParticleHistoryObserver::getDiscretizedDimensions(
   return d_phase_space_discretization.getDiscretizedDimensions( discretized_dimensions );
 }
 
+size_t DiscretizableParticleHistoryObserver::calculateDiscretizationIndex(const std::unordered_map<ObserverPhaseSpaceDimension, size_t> dimension_bin_indices) const
+{
+  return d_phase_space_discretization.calculateDiscretizationIndex(dimension_bin_indices);
+}
+
 // Return the number of bins for a dimension of the phase space
 size_t DiscretizableParticleHistoryObserver::getNumberOfBins(
                             const ObserverPhaseSpaceDimension dimension ) const

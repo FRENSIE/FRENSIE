@@ -46,7 +46,7 @@ ParticleSimulationManager::ParticleSimulationManager(
                  const std::shared_ptr<const FilledGeometryModel>& model,
                  const std::shared_ptr<ParticleSource>& source,
                  const std::shared_ptr<EventHandler>& event_handler,
-                 const std::shared_ptr<const WeightWindow> weight_windows,
+                 const std::shared_ptr<PopulationControl> population_controller,
                  const std::shared_ptr<const CollisionForcer> collision_forcer,
                  const std::shared_ptr<const SimulationProperties>& properties,
                  const uint64_t next_history,
@@ -59,7 +59,7 @@ ParticleSimulationManager::ParticleSimulationManager(
     d_transport_kernel( new TransportKernel( model ) ),
     d_source( source ),
     d_event_handler( event_handler ),
-    d_weight_windows( weight_windows ),
+    d_population_controller( population_controller ),
     d_collision_forcer( collision_forcer ),
     d_weight_roulette( std::make_shared<StandardWeightCutoffRoulette>() ),
     d_properties( properties ),
@@ -82,7 +82,7 @@ ParticleSimulationManager::ParticleSimulationManager(
   // Make sure that the event handler is valid
   testPrecondition( event_handler.get() );
   // Make sure that the weight windows pointer is valid
-  testPrecondition( weight_windows.get() );
+  testPrecondition( population_controller.get() );
   // Make sure that the collision forcer pointer is valid
   testPrecondition( collision_forcer.get() );
   // Make sure that the properties pointer is valid
@@ -545,7 +545,7 @@ void ParticleSimulationManager::basicRendezvous() const
     tmp_factory( d_model,
                  d_source,
                  d_event_handler,
-                 d_weight_windows,
+                 d_population_controller,
                  d_collision_forcer,
                  d_properties,
                  d_simulation_name,
