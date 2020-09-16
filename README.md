@@ -372,7 +372,7 @@ FRENSIE has the following packages:
  * monte_carlo_event_estimator
  * monte_carlo_event_particle_tracker
  * monte_carlo_event_forced_collisions
- * monte_carlo_event_population_control
+ * monte_carlo_event_weight_windows
  * monte_carlo_event_dispatcher
  * monte_carlo_manager
  * data_gen_endl

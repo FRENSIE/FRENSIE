@@ -13,7 +13,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_LoggingMacros.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -39,8 +38,7 @@ ParticleState::ParticleState()
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) ),
-    d_importance_pair( std::make_pair(1.0, 1.0))
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
 { /* ... */ }
 
 // Constructor
@@ -65,8 +63,7 @@ ParticleState::ParticleState(
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) ),
-    d_importance_pair( std::make_pair(1.0, 1.0))
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
 { /* ... */ }
 
 // Copy constructor
@@ -98,8 +95,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_lost( false ),
     d_gone( false ),
     d_model( existing_base_state.d_model ),
-    d_navigator( existing_base_state.d_navigator->clone( this->createAdvanceCompleteCallback() ) ),
-    d_importance_pair( existing_base_state.d_importance_pair )
+    d_navigator( existing_base_state.d_navigator->clone( this->createAdvanceCompleteCallback() ) )
 {
   // Increment the generation number if requested
   if( increment_generation_number )
@@ -136,47 +132,6 @@ ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 ParticleType ParticleState::getParticleType() const
 {
   return d_particle_type;
-}
-
-// Set the initial value of the importance pair (when emerging from source only)
-void ParticleState::setInitialImportance( const double initial_importance )
-{
-  if(this->getCollisionNumber() == 0)
-  {
-    d_importance_pair.first = initial_importance;
-  }
-  else
-  {
-    THROW_EXCEPTION(std::runtime_error, "setInitialImportance method used with non-zero collision number");
-  }
-  
-}
-
-// Set the new importance value of the importance pair (immediately after it's traveled from its first source emission)
-void ParticleState::setNewImportance( const double new_importance )
-{
-  if(this->getCollisionNumber() == 1)
-  {
-    d_importance_pair.second = new_importance;
-  }
-  else
-  {
-    THROW_EXCEPTION(std::runtime_error, "setNewImportance method used with collision number != 1");
-  }
-}
-
-// Update importance pair based on new phase space transition (only used after both have been set)
-void ParticleState::updateImportance( const double new_importance )
-{
-  if (this->getCollisionNumber() > 1)
-  {
-    d_importance_pair.first = d_importance_pair.second;
-    d_importance_pair.second = new_importance;
-  }
-  else
-  {
-    THROW_EXCEPTION(std::runtime_error, "updateImportance method used with collision number < 1");
-  }
 }
 
 // Return the source id that created the particle (history)

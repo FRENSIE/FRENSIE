@@ -78,8 +78,6 @@ public:
   void getDiscretizedDimensions(
       std::vector<ObserverPhaseSpaceDimension>& discretized_dimensions ) const;
 
-  size_t calculateDiscretizationIndex(const std::unordered_map<ObserverPhaseSpaceDimension, size_t> dimension_bin_indices) const;
-
 private:
 
   // The observer phase space discretization

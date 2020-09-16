@@ -1,9 +1,0 @@
- FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_population_control)
-
-FRENSIE_ADD_TEST_EXECUTABLE(DefaultPopulationController DEPENDS tstDefaultPopulationController.cpp)
-FRENSIE_ADD_TEST(DefaultPopulationController)
-
-FRENSIE_ADD_TEST_EXECUTABLE(WeightWindowMesh DEPENDS tstWeightWindowMesh.cpp)
-FRENSIE_ADD_TEST(WeightWindowMesh)
-
-FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_population_control)

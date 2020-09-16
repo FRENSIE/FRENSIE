@@ -109,8 +109,6 @@ public:
   void calculateBinIndicesAndWeightsOfRange(
              const ObserverParticleStateWrapper& particle_state_wrapper,
              BinIndexWeightPairArray& bin_indices_and_weights ) const override;
-  
-  size_t calculateDiscretizationIndex( const std::unordered_map<ObserverPhaseSpaceDimension, size_t>& dimension_bin_indices) const override;
 
 protected:
 
