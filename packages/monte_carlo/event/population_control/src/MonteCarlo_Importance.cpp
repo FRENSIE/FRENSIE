@@ -25,41 +25,50 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
   //! Make sure there is a weight window where this particle is.
   if(this->isParticleInImportanceDiscretization( particle ))
   {
-    // Apply importances
+    // Importances are applied in this statement
     if(particle.getCollisionNumber() >= 1)
     {
+      // Particle has already had both importance members initialized, update to new importances
       if(particle.getCollisionNumber() > 1)
       {
         particle.updateImportance(this->getImportance(particle));
-      }else if(particle.getCollisionNumber() == 1)
+      }
+      // Particle has underwent its first collision, update second importance member only
+      else
       {
         particle.setNewImportance(this->getImportance(particle));
       }
 
+      // Apply importances from here
       double importance_fraction = particle.getImportancePair().second/particle.getImportancePair().first;
 
       if(importance_fraction > 1)
       {
-        // Split particle
+        // Split particle into lower possible number of emergent particles
         if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 1-std::fmod(importance_fraction, 1))
         {
           this->splitParticle(particle,
                               bank,
                               static_cast<unsigned>(floor(importance_fraction)),
                               1/importance_fraction);
-        }else
+        }
+        // Split particle into greater possible number of emergent particles
+        else
         {
           this->splitParticle(particle,
                               bank,
                               static_cast<unsigned>(ceil(importance_fraction)),
                               1/importance_fraction);
         }
-      }else
+      }
+      else
       {
         // Terminate particle
         this->terminateParticle(particle, 1-importance_fraction);        
       }
-    }else
+    }
+    // If particle has not collided yet, initialize the first importance.
+    else
     {
       // Only initialize importance from source emission
       particle.setInitialImportance(this->getImportance(particle));

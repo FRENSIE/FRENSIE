@@ -133,7 +133,7 @@ FRENSIE_UNIT_TEST(ImportanceMesh, checkParticleWithPopulationController_terminat
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
     FRENSIE_CHECK(!photon.isGone());
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), 3.0*(3.5/2.0), 1e-15;
+    FRENSIE_CHECK_CLOSE(photon.getWeight(), 3.0*(3.5/2.0), 1e-15);
 
   }
 
