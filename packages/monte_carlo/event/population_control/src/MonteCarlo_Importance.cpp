@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_WeightWindowMesh.cpp
+//! \file   MonteCarlo_Importance.cpp
 //! \author Philip Britt
-//! \brief  Weight window mesh class definition
+//! \brief  Importance mesh class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -22,10 +22,10 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
                                                               ParticleBank& bank ) const
 {
 
-  //! Make sure there is a weight window where this particle is.
+  //! Make sure the particle is inside the importance discretization.
   if(this->isParticleInImportanceDiscretization( particle ))
   {
-    // Importances are applied in this statement
+    // Importances are only applied after first collision
     if(particle.getCollisionNumber() >= 1)
     {
       // Particle has already had both importance members initialized, update to new importances
@@ -33,7 +33,7 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
       {
         particle.updateImportance(this->getImportance(particle));
       }
-      // Particle has underwent its first collision, update second importance member only
+      // Particle has undergone its first collision, update second importance member only
       else
       {
         particle.setNewImportance(this->getImportance(particle));
@@ -63,7 +63,7 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
       }
       else
       {
-        // Terminate particle
+        // Stochastically terminate particle
         this->terminateParticle(particle, 1-importance_fraction);        
       }
     }
@@ -81,5 +81,5 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
 EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo::Importance );
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_WeightWindowMesh.cpp
+// end MonteCarlo_Importance.cpp
 //---------------------------------------------------------------------------//

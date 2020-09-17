@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_WeightWindow.hpp
+//! \file   MonteCarlo_Importance.hpp
 //! \author Philip Britt
 //! \brief  Importance class declaration
 //!
@@ -60,5 +60,5 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, Importance );
 #endif // end MONTE_CARLO_WEIGHT_WINDOW_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_WeightWindow.hpp
+// end MonteCarlo_Importance.hpp
 //---------------------------------------------------------------------------//
