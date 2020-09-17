@@ -7,7 +7,8 @@
 //---------------------------------------------------------------------------//
 
 // std includes
-#include <math.h>
+#include <cmath>
+#include <functional>
 
 // FRENSIE Includes
 #include "FRENSIE_Archives.hpp"
@@ -44,22 +45,22 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
 
       if(importance_fraction > 1)
       {
+        std::function<double(double)> particle_number_operator;
         // Split particle into lower possible number of emergent particles
         if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 1-std::fmod(importance_fraction, 1))
         {
-          this->splitParticle(particle,
-                              bank,
-                              static_cast<unsigned>(floor(importance_fraction)),
-                              1/importance_fraction);
+          particle_number_operator = static_cast<double(*)(double)>(&std::floor);
         }
         // Split particle into greater possible number of emergent particles
         else
         {
-          this->splitParticle(particle,
-                              bank,
-                              static_cast<unsigned>(ceil(importance_fraction)),
-                              1/importance_fraction);
+          particle_number_operator = static_cast<double(*)(double)>(&std::ceil);
         }
+        this->splitParticle(particle,
+                            bank,
+                            static_cast<unsigned>(particle_number_operator(importance_fraction)),
+                            1/importance_fraction);
+
       }
       else
       {
