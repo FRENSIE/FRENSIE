@@ -29,7 +29,24 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 // Testing Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<MonteCarlo::ImportanceMesh> importance_mesh;
+double initial_weight;
 
+//---------------------------------------------------------------------------//
+// Testing Functions
+//---------------------------------------------------------------------------//
+void initializePhotonSplit(MonteCarlo::PhotonState& photon)
+{
+  photon.setEnergy( 1.0);
+  photon.setPosition(0.5, 0.5, 0.5);
+  photon.setWeight(initial_weight);
+}
+
+void initializePhotonTerminate(MonteCarlo::PhotonState& photon)
+{    
+  photon.setEnergy(1e-2);
+  photon.setPosition(1.5, 0.5, 0.5);
+  photon.setWeight(initial_weight);
+}
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -46,67 +63,59 @@ FRENSIE_UNIT_TEST( ImportanceMesh, getImportance )
   FRENSIE_CHECK_EQUAL(2.0, importance);
 }
 
+FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_initialize)
+{
+    MonteCarlo::PhotonState photon(0);
+    MonteCarlo::ParticleBank particle_bank;
+    photon.setEnergy( 1.0);
+    photon.setPosition(0.5, 0.5, 0.5);
+    photon.setWeight(initial_weight);
+
+    importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
+
+    FRENSIE_CHECK_EQUAL(photon.getWeight(), initial_weight);
+    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, 2.0);
+    FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 0);
+}
+
 FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_split)
 {
   // 25% probability of 1 particle emerging, 75% probability of 2 with threshold at 0.25
   std::vector<double> fake_stream = {0.249, 0.251};
-  double initial_weight = 14.2;
+
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
+
+  for(int i = 0; i < 2; ++i)
   {
     MonteCarlo::PhotonState photon(0);
     MonteCarlo::ParticleBank particle_bank;
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
-    photon.setWeight(initial_weight);
+    initializePhotonSplit(photon);
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    FRENSIE_CHECK_EQUAL(photon.getWeight(), initial_weight);
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, 2.0);
-    FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 0);
 
     photon.setEnergy(1e-2);
     photon.setPosition(1.5, 0.5, 0.5);
     photon.incrementCollisionNumber();
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
     double expected_updated_weight = initial_weight*(2.0/3.5);
 
     FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
     FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, 3.5);
-    FRENSIE_CHECK(particle_bank.isEmpty());
     FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 1);
+    if(i == 0)
+    {
+      FRENSIE_CHECK(particle_bank.isEmpty());
+    }
+    else if( i == 1)
+    {
+      FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
+      FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), expected_updated_weight, 1e-15);
+      FRENSIE_CHECK_EQUAL(particle_bank.size(), 1);
+    }
+
   }
-
-  {
-    MonteCarlo::PhotonState photon(0);
-    MonteCarlo::ParticleBank particle_bank;
-
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
-    photon.setWeight(initial_weight);
-
-    importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    FRENSIE_CHECK_EQUAL(photon.getWeight(), initial_weight);
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, 2.0);
-    FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 0);
-
-    photon.setEnergy(1e-2);
-    photon.setPosition(1.5, 0.5, 0.5);
-    photon.incrementCollisionNumber();
-
-    importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    double expected_updated_weight = initial_weight*(2.0/3.5);
-
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
-    FRENSIE_CHECK_CLOSE(particle_bank.top().getWeight(), expected_updated_weight, 1e-15);
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, 3.5);
-    FRENSIE_CHECK_EQUAL(particle_bank.size(), 1);
-    FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 1);
-  }
+  
   
   Utility::RandomNumberGenerator::unsetFakeStream(); 
 }
@@ -117,51 +126,31 @@ FRENSIE_UNIT_TEST(ImportanceMesh, checkParticleWithPopulationController_terminat
   // Fake probability stream
   std::vector<double> fake_stream = {0.44, 0.42};
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
-  double initial_weight = 3.0;
+
+  for(int i = 0; i < 2; ++i)
   {
     MonteCarlo::PhotonState photon(0);
     MonteCarlo::ParticleBank particle_bank;
-    photon.setEnergy( 1e-2);
-    photon.setPosition(1.5, 0.5, 0.5);
-    photon.setWeight(initial_weight);
+    initializePhotonTerminate(photon);
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
     photon.setEnergy( 1.0);
     photon.setPosition(0.5, 0.5, 0.5);
     photon.incrementCollisionNumber();
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, 3.5);
- 
+
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    FRENSIE_CHECK(!photon.isGone());
-
-    double expected_updated_weight = initial_weight*(3.5/2.0);
-
-    FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
-
+    if(i == 0)
+    {
+      FRENSIE_CHECK(!photon.isGone());
+      double expected_updated_weight = initial_weight*(3.5/2.0);
+      FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
+    }
+    else
+    {
+      FRENSIE_CHECK(photon.isGone());
+    }
   }
-
-  {
-    MonteCarlo::PhotonState photon(0);
-    MonteCarlo::ParticleBank particle_bank;
-
-    photon.setEnergy( 1e-2);
-    photon.setPosition(1.5, 0.5, 0.5);
-    photon.setWeight(initial_weight);
-
-    importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
-    photon.incrementCollisionNumber();
- 
-    importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-
-    FRENSIE_CHECK(photon.isGone());
-  }
-
-  
   Utility::RandomNumberGenerator::unsetFakeStream();
   
 }
@@ -295,6 +284,8 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
+
+  initial_weight = 14.2;
 
   std::vector<double> x_planes = {0, 1, 2};
   std::vector<double> y_planes = {0, 1};
