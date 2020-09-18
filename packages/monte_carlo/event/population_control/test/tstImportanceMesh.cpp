@@ -30,18 +30,26 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 //---------------------------------------------------------------------------//
 std::shared_ptr<MonteCarlo::ImportanceMesh> importance_mesh;
 double initial_weight;
+// Mesh variables
+std::vector<double> x_planes;
+std::vector<double> y_planes;
+std::vector<double> z_planes;
+std::shared_ptr<Utility::StructuredHexMesh> mesh;
+std::vector<double> energy_bin_boundaries( 3 );
+// Importance variables
+std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>> importance_mesh_map;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
-void initializePhotonSplit(MonteCarlo::PhotonState& photon)
+void moveParticleToLowImportance(MonteCarlo::PhotonState& photon)
 {
   photon.setEnergy( 1.0);
   photon.setPosition(0.5, 0.5, 0.5);
   photon.setWeight(initial_weight);
 }
 
-void initializePhotonTerminate(MonteCarlo::PhotonState& photon)
+void moveParticleToHighImportance(MonteCarlo::PhotonState& photon)
 {    
   photon.setEnergy(1e-2);
   photon.setPosition(1.5, 0.5, 0.5);
@@ -74,7 +82,7 @@ FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_initial
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
     FRENSIE_CHECK_EQUAL(photon.getWeight(), initial_weight);
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, 2.0);
+    FRENSIE_CHECK_EQUAL(photon.getImportancePair().first, importance_mesh_map.at(0)[1]);
     FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 0);
 }
 
@@ -89,19 +97,18 @@ FRENSIE_UNIT_TEST( ImportanceMesh, checkParticleWithPopulationController_split)
   {
     MonteCarlo::PhotonState photon(0);
     MonteCarlo::ParticleBank particle_bank;
-    initializePhotonSplit(photon);
+    moveParticleToLowImportance(photon);
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
-    photon.setEnergy(1e-2);
-    photon.setPosition(1.5, 0.5, 0.5);
+    moveParticleToHighImportance(photon);
     photon.incrementCollisionNumber();
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
-    double expected_updated_weight = initial_weight*(2.0/3.5);
+    double expected_updated_weight = initial_weight*(importance_mesh_map.at(0)[1]/importance_mesh_map.at(1)[0]);
 
     FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
-    FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, 3.5);
+    FRENSIE_CHECK_EQUAL(photon.getImportancePair().second, importance_mesh_map.at(1)[0]);
     FRENSIE_CHECK_EQUAL(photon.getCollisionNumber(), 1);
     if(i == 0)
     {
@@ -131,19 +138,18 @@ FRENSIE_UNIT_TEST(ImportanceMesh, checkParticleWithPopulationController_terminat
   {
     MonteCarlo::PhotonState photon(0);
     MonteCarlo::ParticleBank particle_bank;
-    initializePhotonTerminate(photon);
+    moveParticleToHighImportance(photon);
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
 
-    photon.setEnergy( 1.0);
-    photon.setPosition(0.5, 0.5, 0.5);
+    moveParticleToLowImportance(photon);
     photon.incrementCollisionNumber();
 
     importance_mesh->checkParticleWithPopulationController(photon, particle_bank);
     if(i == 0)
     {
       FRENSIE_CHECK(!photon.isGone());
-      double expected_updated_weight = initial_weight*(3.5/2.0);
+      double expected_updated_weight = initial_weight*(importance_mesh_map.at(1)[0]/importance_mesh_map.at(0)[1]);
       FRENSIE_CHECK_CLOSE(photon.getWeight(), expected_updated_weight, 1e-15);
     }
     else
@@ -287,22 +293,20 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   initial_weight = 14.2;
 
-  std::vector<double> x_planes = {0, 1, 2};
-  std::vector<double> y_planes = {0, 1};
-  std::vector<double> z_planes = {0, 1};
+  x_planes = {0, 1, 2};
+  y_planes = {0, 1};
+  z_planes = {0, 1};
 
-  std::shared_ptr<Utility::StructuredHexMesh> mesh = std::make_shared<Utility::StructuredHexMesh>(x_planes, y_planes, z_planes);
+  mesh = std::make_shared<Utility::StructuredHexMesh>(x_planes, y_planes, z_planes);
+
   importance_mesh = std::make_shared<MonteCarlo::ImportanceMesh>();
   importance_mesh->setMesh(mesh);
   
-  std::vector<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 1e-1;
   energy_bin_boundaries[2] = 20.0;
 
   importance_mesh->setDiscretization<MonteCarlo::OBSERVER_ENERGY_DIMENSION>(energy_bin_boundaries);
-
-  std::unordered_map<Utility::Mesh::ElementHandle, std::vector<double>> importance_mesh_map;
 
   std::vector<double> importance_vector_1;
 
