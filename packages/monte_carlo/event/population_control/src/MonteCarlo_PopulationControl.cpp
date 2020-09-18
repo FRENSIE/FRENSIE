@@ -82,8 +82,7 @@ void PopulationControl::terminateParticle( ParticleState& particle,
                                            double termination_probability) const
 {
   double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
-  std::cout << "Termination probability: " << termination_probability << std::endl;
-  std::cout << "Random number: " << random_number << std::endl;
+
   if( random_number < termination_probability )
   {
     particle.setAsGone();

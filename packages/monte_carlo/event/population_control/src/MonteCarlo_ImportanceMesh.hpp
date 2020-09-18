@@ -78,5 +78,5 @@ EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ImportanceMesh );
 #endif // end MONTE_CARLO_WEIGHT_WINDOW_MESH_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_WeightWindowMesh.hpp
+// end MonteCarlo_ImportanceMesh.hpp
 //---------------------------------------------------------------------------//

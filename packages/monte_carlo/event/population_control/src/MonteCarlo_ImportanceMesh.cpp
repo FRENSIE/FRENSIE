@@ -42,13 +42,8 @@ bool ImportanceMesh::isParticleInImportanceDiscretization( ParticleState& partic
 {
   ObserverParticleStateWrapper observer_particle(particle);
 
-  if(d_mesh->isPointInMesh(particle.getPosition()) && this->isPointInObserverPhaseSpace(observer_particle))
-  {
-    return true;
-  }else
-  {
-    return false;
-  }
+  return(d_mesh->isPointInMesh(particle.getPosition()) && this->isPointInObserverPhaseSpace(observer_particle));
+
 }
 
 std::shared_ptr<const Utility::Mesh> ImportanceMesh::getMesh() const
