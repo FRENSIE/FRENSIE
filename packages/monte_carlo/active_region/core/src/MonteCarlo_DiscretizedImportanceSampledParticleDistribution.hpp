@@ -23,6 +23,7 @@
 #include "Utility_Mesh.hpp"
 #include "Utility_PQLAQuadrature.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -56,6 +57,9 @@ public:
   //! Destructor
   ~DiscretizedImportanceSampledParticleDistribution()
   { /* ... */ }
+
+  //! set the energy distribution (which initializes the other distributions, assumed to be isotropic and spatially uniform)
+  void setEnergyDistribution( const std::shared_ptr<PhaseSpaceDimensionDistribution>& dimension_distribution);
 
   //! Return the dimension distribution type name
   std::string getDimensionDistributionTypeName( const PhaseSpaceDimension dimension ) const override;
@@ -93,6 +97,9 @@ public:
 
   private:
 
+  //! Contains the actual energy source distribution given (not integrated);
+  std::shared_ptr<PhaseSpaceDimensionDistribution> actual_energy_distribution;
+
   //! Mesh that covers the source
   std::shared_ptr<const Utility::Mesh> d_mesh;
 
@@ -100,8 +107,15 @@ public:
   std::shared_ptr<const Utility::PQLAQuadrature> d_direction_discretization;
 
   //! Energy boundaries
-  std::vector<double> d_energy_discretization_boundaries;
+  std::vector<const double> d_energy_discretization_boundaries;
+  
+  //! Linearization formula: space_index*(number_of_energy_elements*number_of_direction_elements) + energy_index*(number_of_direction_elements) + direction_index
 
+  //! Actual integrated distribution information (linearized) 
+  Utility::HistogramDistribution actual_integrated_distribution;
+
+  //! Importance integrated distribution information (linearized)
+  Utility::HistogramDistribution importance_integrated_distribution;
 };
 
 } // end MonteCarlo namespace
