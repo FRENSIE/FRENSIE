@@ -6,4 +6,7 @@ FRENSIE_ADD_TEST(DefaultPopulationController)
 FRENSIE_ADD_TEST_EXECUTABLE(WeightWindowMesh DEPENDS tstWeightWindowMesh.cpp)
 FRENSIE_ADD_TEST(WeightWindowMesh)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ImportanceMesh DEPENDS tstImportanceMesh.cpp)
+FRENSIE_ADD_TEST(ImportanceMesh)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_population_control)

@@ -179,6 +179,11 @@ void ParticleState::updateImportance( const double new_importance )
   }
 }
 
+const std::pair<double, double>& ParticleState::getImportancePair() const
+{
+  return d_importance_pair;
+}
+
 // Return the source id that created the particle (history)
 ParticleState::sourceIdType ParticleState::getSourceId() const
 {

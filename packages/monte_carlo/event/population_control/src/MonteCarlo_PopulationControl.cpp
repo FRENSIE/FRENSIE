@@ -66,10 +66,10 @@ void PopulationControl::splitParticle( ParticleState& particle,
 void PopulationControl::splitParticle( ParticleState& particle,
                                        ParticleBank& bank,
                                        unsigned number_of_particles,
-                                       double expectation_weight) const
+                                       double weight_factor) const
 {
 
-  particle.setWeight(expectation_weight);
+  particle.multiplyWeight(weight_factor);
 
   this->pushSplitParticlesToBank(particle,
                                  bank,
