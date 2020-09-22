@@ -45,20 +45,20 @@ void Importance::checkParticleWithPopulationController( ParticleState& particle,
 
       if(importance_fraction > 1)
       {
-        std::function<double(double)> particle_number_operator;
+        double rounded_importance_fraction;
         // Split particle into lower possible number of emergent particles
         if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 1-std::fmod(importance_fraction, 1))
         {
-          particle_number_operator = static_cast<double(*)(double)>(&std::floor);
+          rounded_importance_fraction = std::floor(importance_fraction);
         }
         // Split particle into greater possible number of emergent particles
         else
         {
-          particle_number_operator = static_cast<double(*)(double)>(&std::ceil);
+          rounded_importance_fraction = std::ceil(importance_fraction);
         }
         this->splitParticle(particle,
                             bank,
-                            static_cast<unsigned>(particle_number_operator(importance_fraction)),
+                            static_cast<unsigned>(rounded_importance_fraction),
                             1/importance_fraction);
 
       }
