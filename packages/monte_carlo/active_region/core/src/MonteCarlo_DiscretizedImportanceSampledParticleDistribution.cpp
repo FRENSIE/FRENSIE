@@ -8,10 +8,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DiscretizedImportanceSampledParticleDistribution.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
-  //! Constructor (without specifics of which mesh elements are to be considered source)
+  // Constructor (without specifics of which mesh elements are to be considered source)
   DiscretizedImportanceSampledParticleDistribution::DiscretizedImportanceSampledParticleDistribution( const std::string& name,
                                                                                                       const std::shared_ptr<const Utility::Mesh>& mesh,
                                                                                                       const std::vector<double>& energy_bin_bounds,
@@ -22,7 +23,7 @@ namespace MonteCarlo{
    d_energy_discretization_boundaries(energy_bin_bounds)
   { /* ... */ }
 
-    //! Constructor (with specifics of which mesh elements are to be considered source)
+  // Constructor (with specifics of which mesh elements are to be considered source)
   DiscretizedImportanceSampledParticleDistribution::DiscretizedImportanceSampledParticleDistribution(const std::string& name,
                                                    const std::shared_ptr<const Utility::Mesh>& mesh,
                                                    const std::vector<Utility::Mesh::ElementHandle>& mesh_source_elements,
@@ -30,9 +31,18 @@ namespace MonteCarlo{
                                                    const std::shared_ptr<const Utility::PQLAQuadrature>& direction_discretization)
   :ParticleDistribution(name),
    d_mesh(mesh),
+   d_mesh_space_histogram_conversion_vector(mesh_source_elements),
    d_direction_discretization(direction_discretization),
    d_energy_discretization_boundaries(energy_bin_bounds)
-  { /* ... */ }
+  { /* ... */ } 
+
+  void DiscretizedImportanceSampledParticleDistribution::setEnergyDistribution( const std::shared_ptr<PhaseSpaceDimensionDistribution>& dimension_distribution)
+  {
+    // Make sure this is an energy distribution being set
+    testPrecondition(dimension_distribution->getDimension() == PhaseSpaceDimension::ENERGY_DIMENSION);
+
+    d_actual_energy_distribution = dimension_distribution;
+  }
 
   std::string DiscretizedImportanceSampledParticleDistribution::getDimensionDistributionTypeName( const PhaseSpaceDimension dimension ) const
   {
@@ -82,6 +92,11 @@ namespace MonteCarlo{
                                       DiscretizedImportanceSampledParticleDistribution::DimensionCounterMap& trials,
                                       const PhaseSpaceDimension dimension,
                                       const double dimension_value ) const
+  {
+
+  }
+  
+  void DiscretizedImportanceSampledParticleDistribution::initializeDistributions()
   {
 
   }

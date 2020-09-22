@@ -12,7 +12,6 @@
 #define MONTE_CARLO_DISCRETIZED_IMPORTANCE_SAMPLED_PARTICLE_DISTRIBUTION_HPP
 
 // Std Lib Includes
-#include <iostream>
 #include <memory>
 
 // FRENSIE Includes
@@ -97,25 +96,31 @@ public:
 
   private:
 
-  //! Contains the actual energy source distribution given (not integrated);
-  std::shared_ptr<PhaseSpaceDimensionDistribution> actual_energy_distribution;
+  //! Initialize all other distributions apart from underlying energy distribution
+  void initializeDistributions();
 
   //! Mesh that covers the source
   std::shared_ptr<const Utility::Mesh> d_mesh;
+
+  //! Vector of histogram spatial index to actual spatial index conversions
+  const std::vector<Utility::Mesh::ElementHandle> d_mesh_space_histogram_conversion_vector;
 
   //! Direction discretization
   std::shared_ptr<const Utility::PQLAQuadrature> d_direction_discretization;
 
   //! Energy boundaries
-  std::vector<const double> d_energy_discretization_boundaries;
+  const std::vector<double> d_energy_discretization_boundaries;
   
   //! Linearization formula: space_index*(number_of_energy_elements*number_of_direction_elements) + energy_index*(number_of_direction_elements) + direction_index
 
   //! Actual integrated distribution information (linearized) 
-  Utility::HistogramDistribution actual_integrated_distribution;
+  Utility::HistogramDistribution d_actual_integrated_distribution;
 
   //! Importance integrated distribution information (linearized)
-  Utility::HistogramDistribution importance_integrated_distribution;
+  Utility::HistogramDistribution d_importance_integrated_distribution;
+
+  //! Contains the actual energy source distribution given (not integrated);
+  std::shared_ptr<PhaseSpaceDimensionDistribution> d_actual_energy_distribution;
 };
 
 } // end MonteCarlo namespace
