@@ -78,6 +78,9 @@ public:
   //! Returns the volumes of each mesh element
   void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const final override;
 
+  //! Returns the volume of a specific mesh element
+  double getElementVolume( ElementHandle element ) const final override;
+
   //! Check if a point is inside of the mesh
   bool isPointInMesh( const double point[3] ) const final override;
 
