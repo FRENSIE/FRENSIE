@@ -132,6 +132,23 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolumes )
 }
 
 //---------------------------------------------------------------------------//
+// Test the getElementVolume method
+FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolume )
+{
+  std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
+  y_planes( {0.0, 0.5, 1.0} ),
+  z_planes( {0.0, 0.5, 1.0} );
+
+  std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
+              new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
+
+  for( size_t i = 0; i < hex_mesh->getNumberOfElements(); ++i)
+  {
+    FRENSIE_CHECK_FLOATING_EQUALITY(hex_mesh->getElementVolume(i), 0.125, 1e-15);
+  }
+}
+
+//---------------------------------------------------------------------------//
 // test whether or not the point in mesh method works
 FRENSIE_UNIT_TEST( StructuredHexMesh, isPointInMesh )
 {

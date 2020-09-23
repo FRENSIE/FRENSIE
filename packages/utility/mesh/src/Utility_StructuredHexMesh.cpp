@@ -105,9 +105,8 @@ void StructuredHexMesh::getHexPlaneIndices(
   size_t y_size = (d_y_planes.size() - 1);
 
   hex_parameter_indices[2] = h/(x_size*y_size);
-  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_size * Y_DIMENSION) / x_size;
-  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_size
-    - hex_parameter_indices[2] * x_size * y_size;
+  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_size * y_size) / x_size;
+  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_size - hex_parameter_indices[2] * x_size * y_size;
 }
 
 // Returns the volumes of the hex elements for the estimator class.
