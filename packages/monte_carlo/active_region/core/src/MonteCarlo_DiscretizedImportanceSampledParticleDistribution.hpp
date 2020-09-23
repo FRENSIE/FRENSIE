@@ -96,8 +96,14 @@ public:
 
   private:
 
-  //! Initialize all other distributions apart from underlying energy distribution
+  //! Initialize all other distributions apart from underlying energy distribution. Assumes independent dimension distributions and that energy is the only distribution that needs actual integration
   void initializeIntegratedDistributions();
+
+  //! Function that lets me evaluate energy distribution at a given energy due to the constraints of the integrator and distribution classes
+  double integrationHelper(double energy);
+
+  //! Initialize this point as member data for distribution class so that it's not repeatedly created (makes for less overhead)
+  void initializeIntegratorPoint();
 
   //! Mesh that covers the source
   std::shared_ptr<const Utility::Mesh> d_mesh;
@@ -121,6 +127,9 @@ public:
 
   //! Contains the actual energy source distribution given (not integrated);
   std::shared_ptr<PhaseSpaceDimensionDistribution> d_actual_energy_distribution;
+
+  //! An object to help with the integration
+  std::shared_ptr<PhaseSpacePoint> d_integrator_point;
 };
 
 } // end MonteCarlo namespace
