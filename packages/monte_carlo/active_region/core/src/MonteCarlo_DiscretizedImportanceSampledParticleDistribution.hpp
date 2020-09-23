@@ -97,7 +97,7 @@ public:
   private:
 
   //! Initialize all other distributions apart from underlying energy distribution
-  void initializeDistributions();
+  void initializeIntegratedDistributions();
 
   //! Mesh that covers the source
   std::shared_ptr<const Utility::Mesh> d_mesh;

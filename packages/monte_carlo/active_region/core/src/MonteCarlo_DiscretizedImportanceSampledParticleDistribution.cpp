@@ -42,6 +42,8 @@ namespace MonteCarlo{
     testPrecondition(dimension_distribution->getDimension() == PhaseSpaceDimension::ENERGY_DIMENSION);
 
     d_actual_energy_distribution = dimension_distribution;
+
+    this->initializeIntegratedDistributions();
   }
 
   std::string DiscretizedImportanceSampledParticleDistribution::getDimensionDistributionTypeName( const PhaseSpaceDimension dimension ) const
@@ -96,9 +98,10 @@ namespace MonteCarlo{
 
   }
   
-  void DiscretizedImportanceSampledParticleDistribution::initializeDistributions()
+  void DiscretizedImportanceSampledParticleDistribution::initializeIntegratedDistributions()
   {
-
+    // Make sure necessary distribution information exists
+    testPrecondition(d_mesh && d_direction_discretization && d_actual_energy_distribution)
   }
 } // end MonteCarlo namespace
 
