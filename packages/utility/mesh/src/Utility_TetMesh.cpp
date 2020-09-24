@@ -488,6 +488,7 @@ double TetMesh::getElementVolume( ElementHandle element ) const
 // Returns the volume of a specific element
 double TetMeshImpl::getElementVolume( ElementHandle element ) const
 {
+#ifdef HAVE_FRENSIE_MOAB
   moab::EntityHandle tet_handle = element;
 
   // Extract the vertex data for the given tet
@@ -508,6 +509,7 @@ double TetMeshImpl::getElementVolume( ElementHandle element ) const
                                               vertices[1].data(),
                                               vertices[2].data(),
                                               vertices[3].data() );
+#endif
 }
 
 // Returns the moab interface pointer (obfuscated)
