@@ -11,6 +11,7 @@
 #include <array>
 #include <iostream>
 #include <utility>
+#include <cmath>
 
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
@@ -89,6 +90,28 @@ FRENSIE_UNIT_TEST( PQLAQuadrature, findTriangleBin )
     FRENSIE_CHECK_EQUAL( PQLAQuadrature->findTriangleBin(normalize_direction), it->second);
   }
  
+}
+
+//---------------------------------------------------------------------------//
+// Test the getQuadratureOrder method
+FRENSIE_UNIT_TEST( PQLAQuadrature, getQuadratureOrder )
+{
+  std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
+              new Utility::PQLAQuadrature( quadrature_order ) );
+
+  FRENSIE_CHECK_EQUAL(PQLAQuadrature->getQuadratureOrder(), quadrature_order);
+
+}
+
+//---------------------------------------------------------------------------//
+// Test the getNumberOfTriangles method
+FRENSIE_UNIT_TEST( PQLAQuadrature, getNumberOfTriangles )
+{
+  std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
+              new Utility::PQLAQuadrature( quadrature_order ) );
+
+  FRENSIE_CHECK_EQUAL(PQLAQuadrature->getNumberOfTriangles(), 8*pow(quadrature_order,2));
+
 }
 
 //---------------------------------------------------------------------------//

@@ -16,6 +16,22 @@
 
 namespace Utility{
 
+struct SphericalTriangle
+{
+  /*! Vector that contains a tuple representing spherical triangle parameters.
+   * \details First element of the tuple is an array that contains the
+   * 2-norm direction representing a vertex of the triangle. 
+   * Second is the length of the spherical triangle side opposite from that vertex
+   * (or angle that the 2 other vertices of the triangle make with each other).
+   * Third is the angle made from the sides of the spherical triangle from that vertex.
+   * Note their order does NOT matter so long as they are consistent with the above definition
+   */
+  std::vector<std::tuple<std::array<double, 3>, double, double>> triangle_parameter_vector;
+
+  //! Area of the triangle
+  double area;
+};
+
 class PQLAQuadrature
 {
 
@@ -37,6 +53,12 @@ class PQLAQuadrature
   //! Return the order of the quadrature
   unsigned getQuadratureOrder() const;
 
+  size_t getNumberOfTriangles() const;
+
+  double getTriangleArea(size_t triangle_index) const;
+
+  void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector);
+
   private:
 
   //! Converts direction vector to 1-norm normalized vector
@@ -57,6 +79,9 @@ class PQLAQuadrature
 
   //! Quadrature order
   unsigned d_quadrature_order;
+
+  // Vector that stores POSITIVE DOMAIN spherical triangles
+  std::vector<SphericalTriangle> d_spherical_triangle_vector;
 
 };
 
