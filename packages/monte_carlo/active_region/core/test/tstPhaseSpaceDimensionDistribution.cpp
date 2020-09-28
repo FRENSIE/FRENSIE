@@ -521,7 +521,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
   // Indep dimension value on first bin
   std::vector<double> fake_stream = {0.0, 0.5, 1.0 - 1e-15};
 
-  double vals_to_test[18][5] = {
+  double vals_to_test_InDep[15][5] = {
       {0.1, 0.1, 1.25, 0.5, 1.0}, 
       {0.1, 0.1, 1.25, 0.7, 1.0},
       {0.1, 0.1, 1.25, 0.9, 1.0}, 
@@ -536,16 +536,30 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimensionDistribution,
       {0.7, 0.7, 1.25, 0.8, 1.0},
       {0.9, 0.9, 1.25, 0.6, 1.0}, 
       {0.9, 0.9, 1.25, 0.7, 1.0},
-      {0.9, 0.9, 1.25, 0.8, 1.0}, 
+      {0.9, 0.9, 1.25, 0.8, 1.0}};
+
+    double vals_to_test_Dep[3][5] = {   
       {0.5, 0.1, 1.00, 0.5, 2.5},
       {0.6, 0.5, 1.00, 0.6, 5.0}, 
       {0.8, 0.9, 1.00, 0.8, 5.0}};
 
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  for (auto vals : vals_to_test) {
+  for (auto vals : vals_to_test_InDep) {
     indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
         point, IndepDimension, vals[0]);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point),
+                                    vals[1], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<IndepDimension>(point),
+                                    vals[2], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[3],
+                                    1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<DepDimension>(point),
+                                    vals[4], 1e-15);
+  }
+  for (auto vals : vals_to_test_Dep) {
+    indep_dimension_distribution->sampleWithCascadeUsingDimensionValue(
+        point, DepDimension, vals[0]);
     FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point),
                                     vals[1], 1e-15);
     FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<IndepDimension>(point),
@@ -594,21 +608,48 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
   // Indep dimension value on first bin
   std::vector<double> fake_stream = {0.0, 0.5, 1.0 - 1e-15};
 
-  double vals_to_test[18][7] = {
+  double vals_to_test_InDep[15][7] = {
+      {0.1, 0.1, 1.25, 0.5, 1.0, 0, 1},
+      {0.1, 0.1, 1.25, 0.7, 1.0, 0, 2},
+      {0.1, 0.1, 1.25, 0.9, 1.0, 0, 3},
+      {0.3, 0.3, 1.25, 0.5, 1.0, 0, 4},
+      {0.3, 0.3, 1.25, 0.7, 1.0, 0, 5},
+      {0.3, 0.3, 1.25, 0.9, 1.0, 0, 6},
+      {0.5, 0.5, 1.25, 0.6, 1.0, 0, 7},
+      {0.5, 0.5, 1.25, 0.7, 1.0, 0, 8},
+      {0.5, 0.5, 1.25, 0.8, 1.0, 0, 9},
+      {0.7, 0.7, 1.25, 0.6, 1.0, 0, 10},
+      {0.7, 0.7, 1.25, 0.7, 1.0, 0, 11},
+      {0.7, 0.7, 1.25, 0.8, 1.0, 0, 12},
+      {0.9, 0.9, 1.25, 0.6, 1.0, 0, 13},
+      {0.9, 0.9, 1.25, 0.7, 1.0, 0, 14},
+      {0.9, 0.9, 1.25, 0.8, 1.0, 0, 15}
+      };
 
-      {0.1, 0.1, 1.25, 0.5, 1.0, 0, 1},  {0.1, 0.1, 1.25, 0.7, 1.0, 0, 2},
-      {0.1, 0.1, 1.25, 0.9, 1.0, 0, 3},  {0.3, 0.3, 1.25, 0.5, 1.0, 0, 4},
-      {0.3, 0.3, 1.25, 0.7, 1.0, 0, 5},  {0.3, 0.3, 1.25, 0.9, 1.0, 0, 6},
-      {0.5, 0.5, 1.25, 0.6, 1.0, 0, 7},  {0.5, 0.5, 1.25, 0.7, 1.0, 0, 8},
-      {0.5, 0.5, 1.25, 0.8, 1.0, 0, 9},  {0.7, 0.7, 1.25, 0.6, 1.0, 0, 10},
-      {0.7, 0.7, 1.25, 0.7, 1.0, 0, 11}, {0.7, 0.7, 1.25, 0.8, 1.0, 0, 12},
-      {0.9, 0.9, 1.25, 0.6, 1.0, 0, 13}, {0.9, 0.9, 1.25, 0.7, 1.0, 0, 14},
-      {0.9, 0.9, 1.25, 0.8, 1.0, 0, 15}, {0.5, 0.1, 1.00, 0.5, 2.5, 1, 15},
-      {0.6, 0.5, 1.00, 0.6, 5.0, 2, 15}, {0.8, 0.9, 1.00, 0.8, 5.0, 3, 15}};
+  double vals_to_test_Dep[3][7] = { 
+    {0.5, 0.1, 1.00, 0.5, 2.5, 1, 15}, 
+    {0.6, 0.5, 1.00, 0.6, 5.0, 2, 15}, 
+    {0.8, 0.9, 1.00, 0.8, 5.0, 3, 15}
+    };
 
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  for (auto vals : vals_to_test) {
+  for (auto vals : vals_to_test_InDep) {
+    indep_dimension_distribution
+        ->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
+            point, trials, IndepDimension, vals[0]);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<IndepDimension>(point),
+                                    vals[1], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<IndepDimension>(point),
+                                    vals[2], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinate<DepDimension>(point), vals[3],
+                                    1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(getCoordinateWeight<DepDimension>(point),
+                                    vals[4], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(trials[IndepDimension], vals[5], 1e-15);
+    FRENSIE_CHECK_FLOATING_EQUALITY(trials[DepDimension], vals[6], 1e-15);
+  }
+  for (auto vals : vals_to_test_Dep) {
     indep_dimension_distribution
         ->sampleAndRecordTrialsWithCascadeUsingDimensionValue(
             point, trials, DepDimension, vals[0]);
@@ -623,6 +664,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND(
     FRENSIE_CHECK_FLOATING_EQUALITY(trials[IndepDimension], vals[5], 1e-15);
     FRENSIE_CHECK_FLOATING_EQUALITY(trials[DepDimension], vals[6], 1e-15);
   }
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
