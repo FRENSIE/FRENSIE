@@ -45,21 +45,30 @@ class PQLAQuadrature
   { /* ... */ }
 
   //! Find which triangle bin a direction vector is in
-  unsigned findTriangleBin( const std::array<double, 3>& direction) const;
+  size_t findTriangleBin( const std::array<double, 3>& direction) const;
 
   //! Find which triangle bin a direction vector is in
-  unsigned findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
+  size_t findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
 
   //! Return the order of the quadrature
   unsigned getQuadratureOrder() const;
 
+  //! Get the total number of triangles
   size_t getNumberOfTriangles() const;
+  
+  //! Get the area of a specific spherical triangle
+  double getTriangleArea(const size_t triangle_index) const;
 
-  double getTriangleArea(size_t triangle_index) const;
-
-  void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector);
+  //! Get a random direction from within a spherical triangle (evenly distributed probability)
+  void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector, 
+                                       const size_t triangle_index) const;
 
   private:
+
+  //! Vector operation for the purpose of sampleIsotropicallyFromTriangle
+  void isotropicSamplingVectorOperation(const std::array<double, 3>& vertex_1,
+                                        const std::array<double, 3>& vertex_2,
+                                        std::array<double, 3>& result_vector) const;
 
   //! Converts direction vector to 1-norm normalized vector
   void normalizeVectorToOneNorm( const std::array<double, 3>& direction_2_norm,
@@ -72,10 +81,14 @@ class PQLAQuadrature
                                   std::array<double, 3>& direction_1_norm) const;
 
   //! Take lower bounding plane indices of direction vector to form triangle index
-  unsigned calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;
+  size_t calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;
 
   //! Take direction signs to calculate secondary index
-  unsigned findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
+  size_t findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
+
+  //! Get a specific reference to a spherical triangle
+  void getSphericalTriangle(const size_t triangle_index,
+                            SphericalTriangle& triangle) const ;
 
   //! Quadrature order
   unsigned d_quadrature_order;

@@ -10,6 +10,7 @@
 #include "Utility_PQLAQuadrature.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 // std includes
 #include <cmath>
@@ -118,10 +119,48 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
     d_spherical_triangle_vector.push_back(local_triangle);
     // if triangle is pointing up
   }
+
+  int triangle_stride = d_quadrature_order*d_quadrature_order;
+  for(int i = 1; i < 7; ++i)
+  {
+    // Index to figure out which octant I'm in.
+    int octant = i;
+    int x_multiplier = 1;
+    int y_multiplier = 1;
+    int z_multiplier = 1;
+
+    if(octant > 4)
+    {
+      z_multiplier = -1;
+      octant -= 4;
+    }
+    if(octant > 2)
+    {
+      y_multiplier = -1;
+      octant -= 2;
+    }
+    if(octant > 1)
+    {
+      x_multiplier = -1;
+    }
+
+    for(int j = 0; j < triangle_stride; ++j)
+    {
+      SphericalTriangle local_triangle = d_spherical_triangle_vector[j];
+      for(int k = 0; k < 3; ++k)
+      {
+        std::get<0>(local_triangle.triangle_parameter_vector[k])[0] *= x_multiplier;
+        std::get<0>(local_triangle.triangle_parameter_vector[k])[1] *= y_multiplier;
+        std::get<0>(local_triangle.triangle_parameter_vector[k])[2] *= z_multiplier;
+      }
+      d_spherical_triangle_vector.push_back(local_triangle);
+    }
+
+  }
 }
 
 // Find which triangle bin a direction vector is in
-unsigned PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction) const
+size_t PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction) const
 {
 
   // Convert direction vector to 1-norm vector
@@ -139,7 +178,7 @@ unsigned PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction)
 }  
 
 // Find which triangle bin a direction vector is in (takes 2-norm vector)
-unsigned PQLAQuadrature::findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const
+size_t PQLAQuadrature::findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const
 {
   std::array<double, 3> direction_array {x_direction, y_direction, z_direction};
 
@@ -159,22 +198,61 @@ size_t PQLAQuadrature::getNumberOfTriangles() const
 }
 
 // Return the area of a triangle
-double PQLAQuadrature::getTriangleArea(size_t triangle_index) const
+double PQLAQuadrature::getTriangleArea(const size_t triangle_index) const
 {
   testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
-  // Convert to positive domain triangle index
-  if(triangle_index > pow(d_quadrature_order, 2)-1)
-  {
-    triangle_index = triangle_index%(d_quadrature_order*d_quadrature_order);
-  }
-
   return d_spherical_triangle_vector[triangle_index].area;
 }
 
 // Return a random direction from within a spherical triangle
-void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector)
+void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector,
+                                                     const size_t triangle_index) const
 {
-  
+  SphericalTriangle triangle;
+  this->getSphericalTriangle(triangle_index,
+                             triangle);
+
+  double random_area = RandomNumberGenerator::getRandomNumber<double>()*triangle.area;
+
+  double s = sin(random_area - std::get<1>(triangle.triangle_parameter_vector[0]));
+  double t = cos(random_area - std::get<1>(triangle.triangle_parameter_vector[0]));
+
+  double u = t - cos(std::get<1>(triangle.triangle_parameter_vector[0]));
+  double v = s + sin(std::get<1>(triangle.triangle_parameter_vector[0]))*cos(std::get<1>(triangle.triangle_parameter_vector[3]));
+
+  double q = ((v*t - u*s)*cos(std::get<1>(triangle.triangle_parameter_vector[0])) - v)/((v*s+u*t)*sin(std::get<1>(triangle.triangle_parameter_vector[0])));
+
+  std::array<double, 3> C_hat;
+  std::array<double, 3> vector_operation_result;
+  this->isotropicSamplingVectorOperation(std::get<0>(triangle.triangle_parameter_vector[2]),
+                                         std::get<0>(triangle.triangle_parameter_vector[0]),
+                                         vector_operation_result);
+  for(int i = 0; i < 3; ++i)
+  {
+    C_hat[i] = q*std::get<0>(triangle.triangle_parameter_vector[0])[i]+sqrt(1-q*q)*vector_operation_result[i];
+  }
+
+  double z = 1-RandomNumberGenerator::getRandomNumber<double>()*(1-calculateCosineOfAngleBetweenUnitVectors(C_hat.data(), std::get<0>(triangle.triangle_parameter_vector[1]).data()));
+
+  this->isotropicSamplingVectorOperation(C_hat,
+                                         std::get<0>(triangle.triangle_parameter_vector[1]),
+                                         vector_operation_result);
+  for(int i = 0; i < 3; ++i)
+  {
+    direction_vector[i] = z*std::get<0>(triangle.triangle_parameter_vector[1])[i] + sqrt(1-z*z)*vector_operation_result[i];
+  }
+}
+
+// Method for a vector operation in support of above isotropic sampling method
+void PQLAQuadrature::isotropicSamplingVectorOperation(const std::array<double, 3>& vertex_1,
+                                      const std::array<double, 3>& vertex_2,
+                                      std::array<double, 3>& result_vector) const
+{
+  for(int i = 0; i < 3; ++i)
+  {
+    result_vector[i] = vertex_1[i] - (vertex_1[i]*vertex_2[i])*vertex_2[i];
+  }
+  normalizeVector(result_vector.data());
 }
 
 // Converts direction vector to 1-norm normalized vector
@@ -183,9 +261,11 @@ void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3>& dire
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
 
-  direction_normalized_1_norm[0] = direction_normalized_2_norm[0]/normalization_constant;
-  direction_normalized_1_norm[1] = direction_normalized_2_norm[1]/normalization_constant;
-  direction_normalized_1_norm[2] = direction_normalized_2_norm[2]/normalization_constant;
+  for(int i = 0; i < 3; ++i)
+  {
+    direction_normalized_1_norm[i] = direction_normalized_2_norm[i]/normalization_constant;
+  }
+
 }
 
 // Converts direction vector to 1-norm normalized vector
@@ -201,7 +281,7 @@ void PQLAQuadrature::normalizeVectorToOneNorm(  const double x_direction,
 }
 
 // Take lower bounding plane indices of direction vector to form triangle index
-unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const
+size_t PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const
 {
 
   unsigned sum = 0;
@@ -229,9 +309,9 @@ unsigned PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, c
 }
 
 // Returns the index for the octant that a direction is in
-unsigned PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const
+size_t PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const
 {
-  unsigned secondary_index = 0;
+  size_t secondary_index = 0;
 
   if (x_sign) secondary_index += 1;
   if (y_sign) secondary_index += 2;
@@ -239,6 +319,14 @@ unsigned PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign
 
   return secondary_index;
   
+}
+
+// Return a spherical triangle struct
+void PQLAQuadrature::getSphericalTriangle(const size_t triangle_index,
+                                                             SphericalTriangle& triangle) const
+{
+  testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
+  triangle = d_spherical_triangle_vector[triangle_index];
 }
 
 } // end Utility namespace
