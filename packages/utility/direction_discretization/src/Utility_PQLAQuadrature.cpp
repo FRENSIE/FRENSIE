@@ -28,100 +28,95 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
 
   // Initialize triangle vertex indices at lower left corner of positive domain octahedron face
   // This point is always either at lower left end of right-side-up triangle or upper left of up-side-down triangle
-  double i_x = static_cast<double>(quadrature_order);
-  double i_y = 0.0;
-  double i_z = 0.0;
+  double i_x;
+  double i_y;
+  double i_z;
 
   // Used for iteration purposes (to tell where you are in use of conditionals)
-  unsigned x_index = quadrature_order;
-  unsigned y_index = 0;
-  unsigned z_index = 0;
+  unsigned x_index;
+  unsigned y_index;
+  unsigned z_index;
 
-  // Triangle row index (used for row iteration)
-  unsigned row_index = quadrature_order;
-
-  for(size_t triangle = 0; triangle < this->getNumberOfTriangles(); ++triangle)
+  size_t number_of_rows = quadrature_order;
+  size_t number_of_triangles_in_row = 2*d_quadrature_order-1;
+  for(size_t row = 0; row < number_of_rows; ++row)
   {
-    // Array vector (for triangle formation later)
-    std::vector<std::array<double, 3>> vertex_vector;
+    // Initialize to bottom of row
+    x_index = number_of_rows - row;
+    y_index = row;
+    z_index = 0;
 
-    double quad_order_divisor = static_cast<double>(quadrature_order);
-    vertex_vector.push_back({i_x/quad_order_divisor, i_y/quad_order_divisor, i_z/quad_order_divisor});
-    if(triangle % 2 == 0)
+    i_x = static_cast<double>(x_index);
+    i_y = static_cast<double>(y_index);
+    i_z = 0.0;
+
+    for(size_t row_triangle = 0; row_triangle < number_of_triangles_in_row; ++row_triangle)
     {
-      // Always go counter-clockwise with vertices around triangle (start lower left vertex)
-      vertex_vector.push_back({(i_x-1.0)/quad_order_divisor, (i_y+1.0)/quad_order_divisor, i_z/quad_order_divisor});
-      vertex_vector.push_back({(i_x-1.0)/quad_order_divisor, i_y/quad_order_divisor, (i_z+1.0)/quad_order_divisor});
-
-      // Set info for next triangle (not used in calculations below if blocks)
-      if(x_index > 0)
+      // Array vector (for triangle formation later)
+      std::vector<std::array<double, 3>> vertex_vector;
+      vertex_vector.push_back({i_x, i_y, i_z});
+      if(row_triangle % 2 == 0)
       {
+        // Always go counter-clockwise with vertices around triangle (start lower left vertex)
+        vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
+        vertex_vector.push_back({i_x-1.0, i_y    , i_z+1.0});
+
         x_index = x_index - 1;
         z_index = z_index + 1;
         // y _index doesn't change;
 
         i_x = vertex_vector[2][0];
-        i_z = vertex_vector[2][1];
+        i_z = vertex_vector[2][2];
+
       }
-      else // reset to next row
+      else
       {
-        row_index = row_index - 1;
-        x_index = row_index;
-        y_index = quadrature_order - row_index;
-        z_index = 0;
-
-        i_x = static_cast<double>(x_index);
-        i_y = static_cast<double>(y_index);
-        i_z = 0.0;
+        // Always go counter-clockwise with vertices around triangle (start upper left vertex)
+        vertex_vector.push_back({i_x    , i_y+1.0, i_z-1.0});
+        vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
+        // Do nothing for next triangle if triangle is pointing down (same vertex starting point for next triangle)
       }
-    }
-    else
-    {
-      // Always go counter-clockwise with vertices around triangle (start upper left vertex)
-      vertex_vector.push_back({i_x/quad_order_divisor, (i_y+1.0)/quad_order_divisor, (i_z-1.0)/quad_order_divisor});
-      vertex_vector.push_back({(i_x-1.0)/quad_order_divisor, (i_y+1.0)/quad_order_divisor, i_z/quad_order_divisor});
-
-      // Do nothing for next triangle if triangle is pointing down (same vertex starting point for next triangle)
-    }
-    // normalize vectors to 2-norm (currently in 1-norm)
-
-    for(size_t i = 0; i < 3; ++i)
-    {
-      normalizeVector(vertex_vector[i].data());
-    }
+      // normalize vectors to 2-norm (currently in 1-norm)
+      
+      for(size_t i = 0; i < 3; ++i)
+      {
+        normalizeVector(vertex_vector[i].data());
+      }
 
 
-    
-    // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
-    std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
-                                             calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
-                                             calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
+      
+      // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
+      std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
+                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
+                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
 
-    // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
-    std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
+      // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
+      std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
 
-    std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
-                                     acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
-                                     acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
+      std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
+                                      acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
+                                      acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
 
-    // Store triangle area
-    double triangle_area = opposite_side_length_vector[0]+opposite_side_length_vector[1]+opposite_side_length_vector[2]-M_PI;
+      // Store triangle area
+      double triangle_area = angle_vector[0]+angle_vector[1]+angle_vector[2]-M_PI;
 
-    SphericalTriangle local_triangle;
+      SphericalTriangle local_triangle;
 
-    for(size_t i = 0; i < 3; ++i)
-    {
-      local_triangle.triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[i], opposite_side_length_vector[i], angle_vector[i]));
+      for(size_t i = 0; i < 3; ++i)
+      {
+        local_triangle.triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[i], opposite_side_length_vector[i], angle_vector[i]));
+      }
+
+      local_triangle.area = triangle_area;
+      // Store triangle info
+      d_spherical_triangle_vector.push_back(local_triangle);
     }
 
-    local_triangle.area = triangle_area;
-    // Store triangle info
-    d_spherical_triangle_vector.push_back(local_triangle);
-    // if triangle is pointing up
+    number_of_triangles_in_row -= 2;
   }
 
   int triangle_stride = d_quadrature_order*d_quadrature_order;
-  for(int i = 1; i < 7; ++i)
+  for(int i = 1; i < 8; ++i)
   {
     // Index to figure out which octant I'm in.
     int octant = i;
@@ -201,6 +196,7 @@ size_t PQLAQuadrature::getNumberOfTriangles() const
 double PQLAQuadrature::getTriangleArea(const size_t triangle_index) const
 {
   testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
+  std::cout << "Triangle index: " << triangle_index << std::endl;
   return d_spherical_triangle_vector[triangle_index].area;
 }
 
@@ -214,13 +210,13 @@ void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& dire
 
   double random_area = RandomNumberGenerator::getRandomNumber<double>()*triangle.area;
 
-  double s = sin(random_area - std::get<1>(triangle.triangle_parameter_vector[0]));
-  double t = cos(random_area - std::get<1>(triangle.triangle_parameter_vector[0]));
+  double s = sin(random_area - std::get<2>(triangle.triangle_parameter_vector[0]));
+  double t = cos(random_area - std::get<2>(triangle.triangle_parameter_vector[0]));
 
-  double u = t - cos(std::get<1>(triangle.triangle_parameter_vector[0]));
-  double v = s + sin(std::get<1>(triangle.triangle_parameter_vector[0]))*cos(std::get<1>(triangle.triangle_parameter_vector[3]));
+  double u = t - cos(std::get<2>(triangle.triangle_parameter_vector[0]));
+  double v = s + sin(std::get<2>(triangle.triangle_parameter_vector[0]))*cos(std::get<1>(triangle.triangle_parameter_vector[2]));
 
-  double q = ((v*t - u*s)*cos(std::get<1>(triangle.triangle_parameter_vector[0])) - v)/((v*s+u*t)*sin(std::get<1>(triangle.triangle_parameter_vector[0])));
+  double q = ((v*t - u*s)*cos(std::get<2>(triangle.triangle_parameter_vector[0])) - v)/((v*s+u*t)*sin(std::get<2>(triangle.triangle_parameter_vector[0])));
 
   std::array<double, 3> C_hat;
   std::array<double, 3> vector_operation_result;
@@ -248,9 +244,10 @@ void PQLAQuadrature::isotropicSamplingVectorOperation(const std::array<double, 3
                                       const std::array<double, 3>& vertex_2,
                                       std::array<double, 3>& result_vector) const
 {
+  double dot_product_result = calculateCosineOfAngleBetweenUnitVectors( vertex_1.data(), vertex_2.data() );
   for(int i = 0; i < 3; ++i)
   {
-    result_vector[i] = vertex_1[i] - (vertex_1[i]*vertex_2[i])*vertex_2[i];
+    result_vector[i] = vertex_1[i] - dot_product_result*vertex_2[i];
   }
   normalizeVector(result_vector.data());
 }

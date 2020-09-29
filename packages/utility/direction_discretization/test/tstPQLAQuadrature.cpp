@@ -12,6 +12,7 @@
 #include <iostream>
 #include <utility>
 #include <cmath>
+#include <iostream>
 
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
@@ -19,6 +20,7 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "FRENSIE_config.hpp"
 #include "ArchiveTestHelpers.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -32,6 +34,8 @@ typedef TestArchiveHelper::TestArchives TestArchives;
 
 unsigned quadrature_order;
 unsigned number_of_triangles_per_side;
+double type_1_triangle_area;
+double type_2_triangle_area;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -115,6 +119,63 @@ FRENSIE_UNIT_TEST( PQLAQuadrature, getNumberOfTriangles )
 }
 
 //---------------------------------------------------------------------------//
+// Test the getTriangleArea method
+FRENSIE_UNIT_TEST(PQLAQuadrature, getTriangleArea)
+{
+  std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
+              new Utility::PQLAQuadrature( quadrature_order ) );
+
+  std::vector<double> positive_domain_triangle_area {type_1_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_1_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_2_triangle_area,
+                                                      type_1_triangle_area};
+
+  size_t triangles_per_octant = PQLAQuadrature->getQuadratureOrder()*PQLAQuadrature->getQuadratureOrder();
+  // Iterate over octants of 3-d cartesian space
+  for(size_t octant = 0; octant < 8; ++octant)
+  {
+    // Iterate over triangles in that octant
+    for(size_t triangle = 0; triangle < triangles_per_octant; ++triangle)
+    {
+      size_t local_triangle_index = octant*triangles_per_octant + triangle;
+      FRENSIE_CHECK_FLOATING_EQUALITY(PQLAQuadrature->getTriangleArea(local_triangle_index), positive_domain_triangle_area[triangle], 1e-14);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+// Test the sampleIsotropicallyFromTriangle method
+FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle)
+{
+  std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
+              new Utility::PQLAQuadrature( quadrature_order ) );
+
+  std::vector<double> fake_stream = {0.32, 0.45, 0.83, 0.92};
+  Utility::RandomNumberGenerator::setFakeStream(fake_stream);
+
+  std::array<size_t, 3> desired_triangles_to_sample_from = {5, 64};
+  std::vector<std::array<double, 3>> precalculated_results_array = {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {0.730188313787608, 0.669484176934741, 0.136440328503061}};
+
+  for(int i = 0; i < 2; ++i)
+  {
+    std::array<double, 3> direction_vector;
+    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, desired_triangles_to_sample_from[i]);
+    for(int j = 0; j < 3; ++j)
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY(direction_vector[j], precalculated_results_array[i][j], 1e-14);
+    }
+    FRENSIE_CHECK_EQUAL(PQLAQuadrature->findTriangleBin(direction_vector), desired_triangles_to_sample_from[i]);
+  }
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Custom Setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
@@ -123,6 +184,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   quadrature_order = 3;
   number_of_triangles_per_side = quadrature_order*quadrature_order;
+
+  // Set type 1 triangle area (hand-calculated values based on knowledge of triangles)
+  type_1_triangle_area = 0.111341014340963;
+
+  // Set type 2 triangle area (hand-calculated values based on knowledge of triangles)
+  type_2_triangle_area = 0.206128880628667;
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
