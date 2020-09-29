@@ -28,10 +28,8 @@ jobs:
                                 -D MOAB_PREFIX:PATH="/home/docker/opt/moab"
                                 -D DAGMC_PREFIX:PATH="/home/docker/opt/dagmc"
                                 -D HDF5_PREFIX:PATH="/usr/lib/x86_64-linux-gnu/hdf5/serial"
-                                -D BOOST_ROOT:PATH="/usr/lib/x86_64-linux-gnu"
-                                -D BOOST_INCLUDEDIR:PATH="/home/docker/opt/boost/"
+                                -D BOOST_ROOT:PATH="/home/docker/opt/boost"
                                 -D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON
-                                -D XSDIR:PATH="/data/xsdir_mcnp6.1_endfb-7.1"
                                 -D BUILDNAME_PREFIX:STRING="Ubuntu-18.04"
                                 ../
       - run: echo $CIRCLE_SHA1 > .circle-sha
