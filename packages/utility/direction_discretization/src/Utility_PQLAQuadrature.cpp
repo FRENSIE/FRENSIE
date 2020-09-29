@@ -14,7 +14,6 @@
 
 // std includes
 #include <cmath>
-#include <iostream>
 
 namespace Utility{
 
@@ -198,7 +197,6 @@ size_t PQLAQuadrature::getNumberOfTriangles() const
 double PQLAQuadrature::getTriangleArea(const size_t triangle_index) const
 {
   testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
-  std::cout << "Triangle index: " << triangle_index << std::endl;
   return d_spherical_triangle_vector[triangle_index].area;
 }
 
