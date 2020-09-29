@@ -64,25 +64,38 @@ FRENSIE_UNIT_TEST( PQLAQuadrature, findTriangleBin )
   std::array<double, 3> direction_2 {-1, -1, -2};
   std::array<double, 3> direction_3 {-1, 1, 2};
   std::array<double, 3> direction_4 {2, 1, 1};
+  std::array<double, 3> direction_5 {-0.670743813270348,  -0.494811928758853,  -0.552506915900151};
   // Begin edge cases
-  std::array<double, 3> direction_5 {1, 1, 1};
-  std::array<double, 3> direction_6 {0, 1, 0};
-  std::array<double, 3> direction_7 {0, 0, 1};
-  std::array<double, 3> direction_8 {1, 0, 0};
-  std::array<double, 3> direction_9 {1, 2, 0};
+  std::array<double, 3> direction_6 {1, 1, 1};
+  std::array<double, 3> direction_7 {0, 1, 0};
+  std::array<double, 3> direction_8 {0, 0, 1};
+  std::array<double, 3> direction_9 {1, 0, 0};
+  std::array<double, 3> direction_10 {1, 2, 0};
+  std::array<double, 3> direction_11 {2, 1, 0};
+  std::array<double, 3> direction_12 {2, 0, 1};
+  std::array<double, 3> direction_13 {1, 0, 2};
+  std::array<double, 3> direction_14 {0, 2, 1};
+  std::array<double, 3> direction_15 {0, 1, 2};
 
-  std::array< std::pair< std::array<double, 3>, unsigned >, 9 > direction_index_array
+
+  std::array< std::pair< std::array<double, 3>, unsigned >, 15 > direction_index_array
   { 
     std::make_pair(direction_1, 3),
     std::make_pair(direction_2, 3+(number_of_triangles_per_side*7)),
     std::make_pair(direction_3, 3+(number_of_triangles_per_side*1)),
-    std::make_pair(direction_4, 6),
+    std::make_pair(direction_4, 1),
+    std::make_pair(direction_5, 64),
     // Begin edge cases
-    std::make_pair(direction_5, 5),
-    std::make_pair(direction_6, 0),
-    std::make_pair(direction_7, 4),
-    std::make_pair(direction_8, 8),
-    std::make_pair(direction_9, 5)
+    std::make_pair(direction_6, 5),
+    std::make_pair(direction_7, 8),
+    std::make_pair(direction_8, 4),
+    std::make_pair(direction_9, 0),
+    std::make_pair(direction_10, 8),
+    std::make_pair(direction_11, 5),
+    std::make_pair(direction_12, 0),
+    std::make_pair(direction_13, 2),
+    std::make_pair(direction_14, 8),
+    std::make_pair(direction_15, 7)
   };
 
   for(auto it = direction_index_array.begin(); it != direction_index_array.end(); ++it)
@@ -158,8 +171,8 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle)
   std::vector<double> fake_stream = {0.32, 0.45, 0.83, 0.92};
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  std::array<size_t, 3> desired_triangles_to_sample_from = {5, 64};
-  std::vector<std::array<double, 3>> precalculated_results_array = {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {0.730188313787608, 0.669484176934741, 0.136440328503061}};
+  std::array<size_t, 2> desired_triangles_to_sample_from = {5, 64};
+  double precalculated_results_array[2][3]= {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {-0.670743813270348,  -0.494811928758853,  -0.552506915900151}};
 
   for(int i = 0; i < 2; ++i)
   {
@@ -169,10 +182,24 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle)
     {
       FRENSIE_CHECK_FLOATING_EQUALITY(direction_vector[j], precalculated_results_array[i][j], 1e-14);
     }
-    FRENSIE_CHECK_EQUAL(PQLAQuadrature->findTriangleBin(direction_vector), desired_triangles_to_sample_from[i]);
   }
 
   Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Integration test for sampleIsotrpicallyFromTriangle method and findTriangleBin method
+FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle_and_findTriangleBin)
+{
+  std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
+              new Utility::PQLAQuadrature( quadrature_order ) );
+  for(size_t i = 0; i < 8*quadrature_order*quadrature_order; ++i)
+  {
+    std::array<double, 3> direction_vector;
+    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, i);
+
+    FRENSIE_CHECK_EQUAL(PQLAQuadrature->findTriangleBin(direction_vector), i);
+  }
 }
 
 //---------------------------------------------------------------------------//

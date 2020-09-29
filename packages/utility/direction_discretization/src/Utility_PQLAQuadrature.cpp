@@ -124,19 +124,20 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
     int y_multiplier = 1;
     int z_multiplier = 1;
 
-    if(octant > 4)
+    if(octant >= 4)
     {
       z_multiplier = -1;
       octant -= 4;
     }
-    if(octant > 2)
+    if(octant >= 2)
     {
       y_multiplier = -1;
       octant -= 2;
     }
-    if(octant > 1)
+    if(octant >= 1)
     {
       x_multiplier = -1;
+      octant -= 1;
     }
 
     for(int j = 0; j < triangle_stride; ++j)
@@ -164,12 +165,13 @@ size_t PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction) c
   normalizeVectorToOneNorm(direction,
                            direction_normalized_1_norm);
 
-  return this->calculatePositiveTriangleBinIndex(static_cast<int>(fabs(direction_normalized_1_norm[0])*d_quadrature_order),
+  size_t result =  this->calculatePositiveTriangleBinIndex(static_cast<int>(fabs(direction_normalized_1_norm[0])*d_quadrature_order),
                                                  static_cast<int>(fabs(direction_normalized_1_norm[1])*d_quadrature_order),
                                                  static_cast<int>(fabs(direction_normalized_1_norm[2])*d_quadrature_order))
          +this->findSecondaryIndex(std::signbit(direction_normalized_1_norm[0]), 
                                     std::signbit(direction_normalized_1_norm[1]),
                                     std::signbit(direction_normalized_1_norm[2]))*std::pow(d_quadrature_order, 2);
+  return result;
 }  
 
 // Find which triangle bin a direction vector is in (takes 2-norm vector)
@@ -216,7 +218,8 @@ void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& dire
   double u = t - cos(std::get<2>(triangle.triangle_parameter_vector[0]));
   double v = s + sin(std::get<2>(triangle.triangle_parameter_vector[0]))*cos(std::get<1>(triangle.triangle_parameter_vector[2]));
 
-  double q = ((v*t - u*s)*cos(std::get<2>(triangle.triangle_parameter_vector[0])) - v)/((v*s+u*t)*sin(std::get<2>(triangle.triangle_parameter_vector[0])));
+  double q = ((v*t - u*s)*cos(std::get<2>(triangle.triangle_parameter_vector[0])) - v)/
+             ((v*s + u*t)*sin(std::get<2>(triangle.triangle_parameter_vector[0])));
 
   std::array<double, 3> C_hat;
   std::array<double, 3> vector_operation_result;
@@ -250,6 +253,7 @@ void PQLAQuadrature::isotropicSamplingVectorOperation(const std::array<double, 3
     result_vector[i] = vertex_1[i] - dot_product_result*vertex_2[i];
   }
   normalizeVector(result_vector.data());
+  testPostcondition(isUnitVector(result_vector.data()));
 }
 
 // Converts direction vector to 1-norm normalized vector
@@ -284,7 +288,7 @@ size_t PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, con
   unsigned sum = 0;
   /* If not on the first row (first i_x plane), first row has 2N-1 triangles, and 2 less with every row from there.
     Calculate the sum of these elements until the relevant row is found*/
-  for(unsigned i = 0; i<i_x; i++)
+  for(unsigned i = 0; i<i_y; ++i)
   {
     sum = sum + 2*(d_quadrature_order - i) - 1;
   }
@@ -297,7 +301,7 @@ size_t PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, con
     if( i_z > 0 )
     {
       sum = sum - 1;
-    }else if (i_x != d_quadrature_order)
+    }else if (i_y != d_quadrature_order)
     {
       sum = sum + 1;
     }
