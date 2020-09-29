@@ -54,10 +54,10 @@ jobs:
           key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: cd bld; make << parameters.img >>
+          command: cd bld; make << parameters.package >>
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
-          key: v1-frensie-<< parameters.img >>-{{ checksum ".circle-sha" }}
+          key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
           paths:
             - ~/frensie
  
@@ -72,10 +72,10 @@ jobs:
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - restore_cache:
           keys:
-          key: v1-frensie-<< parameters.img >>-{{ checksum ".circle-sha" }}
+          key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: d bld; make test-<< parameters.img >>
+          command: d bld; make test-<< parameters.package >>
   
 
 workflows:
