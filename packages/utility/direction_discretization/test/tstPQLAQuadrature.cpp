@@ -12,7 +12,6 @@
 #include <iostream>
 #include <utility>
 #include <cmath>
-#include <iostream>
 
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
