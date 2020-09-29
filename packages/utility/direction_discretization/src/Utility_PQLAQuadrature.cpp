@@ -164,13 +164,12 @@ size_t PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction) c
   normalizeVectorToOneNorm(direction,
                            direction_normalized_1_norm);
 
-  size_t result =  this->calculatePositiveTriangleBinIndex(static_cast<int>(fabs(direction_normalized_1_norm[0])*d_quadrature_order),
+  return this->calculatePositiveTriangleBinIndex(static_cast<int>(fabs(direction_normalized_1_norm[0])*d_quadrature_order),
                                                  static_cast<int>(fabs(direction_normalized_1_norm[1])*d_quadrature_order),
                                                  static_cast<int>(fabs(direction_normalized_1_norm[2])*d_quadrature_order))
          +this->findSecondaryIndex(std::signbit(direction_normalized_1_norm[0]), 
                                     std::signbit(direction_normalized_1_norm[1]),
                                     std::signbit(direction_normalized_1_norm[2]))*std::pow(d_quadrature_order, 2);
-  return result;
 }  
 
 // Find which triangle bin a direction vector is in (takes 2-norm vector)
