@@ -11,7 +11,7 @@ jobs:
       - run: 
           name: Configure CMake
           command: cd bld; cmake 
-                                -D CMAKE_INSTALL_PREFIX:PATH="/home/docker/opt/FRENSIE"
+                                -D CMAKE_INSTALL_PREFIX:PATH="/home/docker/.local"
                                 -D CMAKE_BUILD_TYPE:STRING=DEBUG
                                 -D CMAKE_VERBOSE_CONFIGURE:BOOL=OFF
                                 -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
@@ -33,7 +33,7 @@ jobs:
                                 -D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON
                                 -D XSDIR:PATH="/data/xsdir_mcnp6.1_endfb-7.1"
                                 -D BUILDNAME_PREFIX:STRING="Ubuntu-18.04"
-                                ../FRENSIE
+                                ../
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
