@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_XSSNeutronDataExtractor.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson (primary), additions by Lewis Gross
 //! \brief  XSS array (from ace table) neutron data extractor class definition.
 //!
 //---------------------------------------------------------------------------//
@@ -50,13 +50,23 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 
   // Adjust the indices in the JXS array so that they correspond to a C-array
   for( size_t i = 0; i < d_jxs.size(); ++i )
-    d_jxs[i] -= 1;
+    d_jxs[i] -= 1; 
+
+  // Locator key list
+  esz = d_jxs[0];
+  nu = d_jxs[1];
+  //...
+  ldlw = d_jxs[9];
+  dlw = d_jxs[10];
+  gpd = d_jxs[11];
+  end = d_jxs[22];
+  iurpt = d_jxs[23];
 
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
   // Extract and cache the ESZ block
-  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] );
+  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] ); //LOOKHERE
 }
 
 // Check if the nuclide is fissionable
@@ -86,35 +96,27 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
     return false;
 }
 
-// Find next non-zero value in d_jxs array to ensure size parameter in ___ is positive via recursion
-// const so we don't alter the arrays
-int XSSNeutronDataExtractor::findNextBlocksIndex( int start_index ) const
-{
-  return XSSNeutronDataExtractor::findNextIndex( start_index );
-}
+// LOOKHERE, why not syntax highlighting?
+// Find next non-zero value in d_jxs array to ensure size parameter in ___ is positive
+// const so we don't alter the arrays, static since it isn't in the header file, according to 
+// https://stackoverflow.com/questions/42775004/in-c-class-do-i-always-need-to-declare-function-in-the-header-file
 
-// recursive helper method
-int XSSNeutronDataExtractor::findNextIndex( int start_index) const
+static int XSSNeutronDataExtractor::findNextIndex( int start_index ) const
 {
-  // base case, encountered end of block, stop incrementing to prevent array index out of bounds error
-  if(start_index==31)
-    // do something to indicate that the block of interest is the last block of data.
-    // correct size is likely d_nxs[0] - d_jxs[start index]
-    // maybe logic in block extractors to interpret zero as reached end and to use above size
-    return 0;
-  if( d_jxs[ start_index +1 ]==0 )
-    // if next value in d_jxs array is zero, call again to go to one further
-    return XSSNeutronDataExtractor::findNextIndex( start_index + 1 ) ;
-  else
-    // base case, if next value in d_jxs array is NOT zero, you have found the next block's start position
-    // this is the desired index to give for the size parameter
-    return start_index ;
-    
+  // start index is the index corresponding to the location of the start of
+  // next block to be extracted
+  // jxs[21] contains the locator for the end of the table, so if there are all zeros until
+  // jxs[21], then this is the next locator needed to be passed into size 
+  int final_index = start_index;
+  while(final_index!=21 && d_jxs[final_index]==-1)
+  {
+    final_index++;
+  }
+  return final_index;
 }
 
 // Extract the ESZ block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractESZBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() const
 {
   return d_esz_block;
 }
@@ -123,6 +125,10 @@ XSSNeutronDataExtractor::extractESZBlock() const
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractEnergyGrid() const
 {
   Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
+  // LOOKHERE
+  // jxs[0] = 0 usually, but better to not have magic numbers, see table F.4
+  // could add jxs[0] to total xs, total abs xs, elastic xs, heating numbers, worth it for consistency?
+  // Utility::ArrayView<const double> energy_grid = d_esz_block( jxs[0] , d_nxs[2] - jxs[0] );
 
   // Make sure the extracted energy grid is sorted
   TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -205,52 +211,57 @@ auto XSSNeutronDataExtractor::extractAverageHeatingNumbersInMeV() const -> Utili
        Utility::ArrayView<const Energy>::size_type(d_nxs[2]) );
 }
 
-// Extract the NU block form the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractNUBlock() const
+// Extract the NU (neutrons emitted from fission) block form the XSS array
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractNUBlock() const
 {
   if( d_jxs[1] >= 0 )
-  {
-    testInvariant(d_jxs[2]>d_jxs[1]);
+  //if( d_jxs[1] != 0 ) LOOKHERE
+  { 
+    //findNextIndex(1), expected to be 2
     return d_xss_view( d_jxs[1], d_jxs[2]-d_jxs[1] );
   }
   else
     return Utility::ArrayView<const double>();
 }
 
-// Extract the MTR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractMTRBlock() const
+// Extract the MTR (list of ENDF MT numbers) block from the XSS array
+/*! \details  nxs[3] is number of neutron reactions excluding elastic, list of MT numbers */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractMTRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[2], d_nxs[3] );
+    return d_xss_view( d_jxs[2], d_nxs[3] ); //LOOKHERE (okay), 
   else
     return Utility::ArrayView<const double>();
 }
 
-// Extract the MTRP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractMTRPBlock() const
+// Extract the MTRP (list of ENDF MT numbers) block from the XSS array
+/*! \details  nxs[5] is number of photon production reactions
+* MTRP is list of MT numbers for photon rections */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractMTRPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[12], d_nxs[5] );
+    return d_xss_view( d_jxs[12], d_nxs[5] ); 
   else
     return Utility::ArrayView<const double>();
 }
 
-// Extract the LQR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLQRBlock() const
+// Extract the LQR (list kinematic Q-Values) block from the XSS array
+/*! \details  nxs[3] is number of neutron reactions excluding elastic
+ * list of MT numbers
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLQRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[3], d_nxs[3] );
+    return d_xss_view( d_jxs[3], d_nxs[3] ); 
   else
     return Utility::ArrayView<const double>();
 }
 
-// Extract the TYR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractTYRBlock() const
+// Extract the TYR (neutron reactions other than elastic scattering ) block from the XSS array
+/*! \details  nxs[3] is number of neutron reactions excluding elastic
+ * secondary neutron information for reatctions 
+*/
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTYRBlock() const
 {
   if( d_nxs[3] != 0 )
     return d_xss_view( d_jxs[4], d_nxs[3] );
@@ -261,9 +272,9 @@ XSSNeutronDataExtractor::extractTYRBlock() const
 // Extract the LSIG block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
+ * nxs[3] is number of neutron reactions excluding elastic
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLSIGBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGBlock() const
 {
   if( d_nxs[3] != 0 )
     return d_xss_view( d_jxs[5], d_nxs[3] );
@@ -271,12 +282,12 @@ XSSNeutronDataExtractor::extractLSIGBlock() const
     return Utility::ArrayView<const double>();
 }
 
-// Extract the LSIGP block from the XSS array
+// Extract the LSIGP (list of locators for photon production reactions) block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
+ * nxs[5] is number of photon production reactions
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLSIGPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
     return d_xss_view( d_jxs[13], d_nxs[5] );
@@ -285,42 +296,43 @@ XSSNeutronDataExtractor::extractLSIGPBlock() const
 }
 
 // Extract the SIG block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractSIGBlock() const
+/*! \details cross sections for all reactions other than elastic scattering
+*/
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractSIGBlock() const
 {
   if( d_nxs[3] != 0 )
   {
-    testInvariant(d_jxs[7]>d_jxs[6]);
+    //findNextIndex(6), expected to be 7, note jxs[7] always exists, so maybe this one isn't necessary
     return d_xss_view( d_jxs[6], d_jxs[7]-d_jxs[6] );
   }
   else
     return Utility::ArrayView<const double>();
 }
 
-// Extract the LAND block from the XSS array
+// Extract the LAND (list of locators for angular distributions) block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLANDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLANDBlock() const
 {
   return d_xss_view( d_jxs[7], d_nxs[4]+1 );
 }
 
 // Extract the AND block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractANDBlock() const
+/*! \details Angular distributions for all reactions producing secondary neutrons
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDBlock() const
 {
-  testInvariant(d_jxs[9]>d_jxs[8]);
+    //findNextIndex(8), expected to be 9
   return d_xss_view( d_jxs[8], d_jxs[9]-d_jxs[8] );
 }
 
 // Extract the LDLW block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
+ * nxs[4] is the number of reations excluding elastic that produce secondary neutrons
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLDLWBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLDLWBlock() const
 {
   if( d_nxs[4] != 0 )
     return d_xss_view( d_jxs[9], d_nxs[4] );
@@ -331,9 +343,9 @@ XSSNeutronDataExtractor::extractLDLWBlock() const
 // Extract the LDLWP block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
+ * nxs[5] is number of photon production reactions
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLDLWPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
     return d_xss_view( d_jxs[17], d_nxs[5] );
@@ -341,9 +353,9 @@ XSSNeutronDataExtractor::extractLDLWPBlock() const
     return Utility::ArrayView<const double>();
 }
 
+/* old fix with alex, not good
 // Extract the DLW block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDLWBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWBlock() const
 {
   if( d_nxs[4] != 0 )
   {
@@ -356,15 +368,44 @@ XSSNeutronDataExtractor::extractDLWBlock() const
   }
   else
     return Utility::ArrayView<const double>();
+} */
+
+// THIS JUSTIFICATION, CHECK 430999.710NC SEQUENTIAL ORDER OF LOCATORS IN JXS ARRAY
+// noticed jxs[11] < jxs[23] < jxs[22]
+// Extract the DLW block from the XSS array
+/*! \details contains energy distributions for all reactions producing secondary 
+ *  neutrons except for elastic scattering
+ */
+
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWBlock() const
+{
+  int dlw_start = dlw;
+  int dlw_end;
+  if( iurpt != 0)
+  {
+    dlw_end = iurpt;
+  }
+  else if(gpd!=0)
+  {
+    dlw_end = gpd;
+  }
+
+  if( d_nxs[4] != 0 )
+  { 
+    return d_xss_view( dlw_start, dlw_end - dlw_start );
+  }
+  else
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the DLWP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDLWPBlock() const
+/*! \details contains photon energy distributions for all photon production reactions
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
   {
-    testInvariant(d_jxs[19]>d_jxs[18]);
+    //findNextIndex(18)
     return d_xss_view( d_jxs[18], d_jxs[19]-d_jxs[18] );
   }
   else
@@ -376,12 +417,11 @@ XSSNeutronDataExtractor::extractDLWPBlock() const
  * photon production cross section (size=nxs[2]). For older evaluations, the
  * block also contains the 30*20 matrix of secondary photon energies.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractGPDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractGPDBlock() const
 {
   if( d_jxs[11] >= 0 )
   {
-    testInvariant(d_jxs[12]>d_jxs[11]);
+    //findNextIndex(11)
     return d_xss_view( d_jxs[11], d_jxs[12]-d_jxs[11] );
   }
   else
@@ -389,8 +429,9 @@ XSSNeutronDataExtractor::extractGPDBlock() const
 }
 
 // Extract the SIGP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractSIGPBlock() const
+/*! \details ontains cross sections for all photon production reactions.
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
   {
@@ -404,9 +445,9 @@ XSSNeutronDataExtractor::extractSIGPBlock() const
 // Extract the LANDP block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
+ * List of angular distribution locators for all photon production reactions
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLANDPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLANDPBlock() const
 {
   if( d_nxs[5] != 0 )
     return d_xss_view( d_jxs[15], d_nxs[5] );
@@ -420,12 +461,11 @@ XSSNeutronDataExtractor::extractLANDPBlock() const
  * entry in the LANDP block is 0 (indicating that the outgoing photon angle is
  * isotropic in the lab frame).
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractANDPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDPBlock() const
 {
   if( d_nxs[5] != 0 )
   {
-    testInvariant(d_jxs[17]>d_jxs[16]);
+    //findNextIndex(16)
     return d_xss_view( d_jxs[16], d_jxs[17]-d_jxs[16] );
   }
   else
@@ -433,8 +473,10 @@ XSSNeutronDataExtractor::extractANDPBlock() const
 }
 
 // Extract the YP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractYPBlock() const
+/*! \details Contains a list of MT identifiers of neutron reaction cross sections 
+ *  required as photon production yield multipliers
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractYPBlock() const
 {
   if( d_nxs[5] != 0 )
   {
@@ -447,8 +489,9 @@ XSSNeutronDataExtractor::extractYPBlock() const
 }
 
 // Extract the FIS block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractFISBlock() const
+/*! \details Contains the total fission cross section tabulated on the ESZ energy grid
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractFISBlock() const
 {
   if( d_jxs[20] >= 0 )
   {
@@ -460,9 +503,13 @@ XSSNeutronDataExtractor::extractFISBlock() const
     return Utility::ArrayView<const double>();
 }
 
+// LOOKHERE, THINGS BELOW NOT IN MY VERSION OF THE MANUAL, IS THIS PERHAPS WHY THERE ARE
+// ENTRIES AFTER JXS[26]
+
 // Extract the UNR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractUNRBlock() const
+/*! \details Contains the unresolved resonance range probability tables
+ */
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
   {
@@ -474,8 +521,7 @@ XSSNeutronDataExtractor::extractUNRBlock() const
 }
 
 // Extract the DNU (delayed NU) block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDNUBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNUBlock() const
 {
   if( this->hasDelayedNeutronData() )
   {
@@ -487,8 +533,7 @@ XSSNeutronDataExtractor::extractDNUBlock() const
 }
 
 // Extract the BDD (basic delayed data) block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractBDDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractBDDBlock() const
 {
   if( this->hasDelayedNeutronData() )
   {
@@ -513,8 +558,7 @@ XSSNeutronDataExtractor::extractDNEDLBlock() const
 }
 
 // Extract the delayed neutron DLW block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDNEDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNEDBlock() const
 {
   if( d_nxs[7] != 0 )
   {
