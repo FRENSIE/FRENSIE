@@ -31,22 +31,13 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
   double i_y;
   double i_z;
 
-  // Used for iteration purposes (to tell where you are in use of conditionals)
-  unsigned x_index;
-  unsigned y_index;
-  unsigned z_index;
-
   size_t number_of_rows = quadrature_order;
   size_t number_of_triangles_in_row = 2*d_quadrature_order-1;
   for(size_t row = 0; row < number_of_rows; ++row)
   {
     // Initialize to bottom of row
-    x_index = number_of_rows - row;
-    y_index = row;
-    z_index = 0;
-
-    i_x = static_cast<double>(x_index);
-    i_y = static_cast<double>(y_index);
+    i_x = static_cast<double>(number_of_rows - row);
+    i_y = static_cast<double>(row);
     i_z = 0.0;
 
     for(size_t row_triangle = 0; row_triangle < number_of_triangles_in_row; ++row_triangle)
@@ -60,10 +51,7 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
         vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
         vertex_vector.push_back({i_x-1.0, i_y    , i_z+1.0});
 
-        x_index = x_index - 1;
-        z_index = z_index + 1;
         // y _index doesn't change;
-
         i_x = vertex_vector[2][0];
         i_z = vertex_vector[2][2];
 
