@@ -201,6 +201,109 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle_and_findTriang
 }
 
 //---------------------------------------------------------------------------//
+// Check that an estimator can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PQLAQuadrature,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  // Define local quadrature order (smaller to make the discretization simpler)
+  unsigned local_quad_order = 2; 
+
+  std::string archive_base_name( "test_PQLA_Quadrature" );
+  std::ostringstream archive_ostream;
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<Utility::PQLAQuadrature> direction_discretization_archive_test;
+    { 
+      direction_discretization_archive_test = std::make_shared<Utility::PQLAQuadrature>(local_quad_order);
+    }
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( direction_discretization_archive_test ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<Utility::PQLAQuadrature> direction_discretization_archive_test;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( direction_discretization_archive_test ) );
+
+  iarchive.reset();
+  {
+    const std::vector<Utility::SphericalTriangle>& underlying_triangle_discretization = direction_discretization_archive_test->getSphericalTriangleVector();
+  
+    // Positive octant triangles (1/sqrt(2) used repeatedly due to intermediate vertices being at angle of pi/4 on their respective axis' plane)
+    std::vector<std::array<double, 3>> triangle_1 {{1, 0, 0}, 
+                                                   {1/sqrt(2), 1/sqrt(2), 0},
+                                                   {1/sqrt(2), 0, 1/sqrt(2)}};
+    std::vector<std::array<double, 3>> triangle_2 {{1/sqrt(2), 0, 1/sqrt(2)},
+                                                   {1/sqrt(2), 1/sqrt(2), 0},
+                                                   {0, 1/sqrt(2), 1/sqrt(2)}};
+    std::vector<std::array<double, 3>> triangle_3 {{1/sqrt(2), 0, 1/sqrt(2)},
+                                                   {0, 1/sqrt(2), 1/sqrt(2)},
+                                                   {0, 0, 1}};
+    std::vector<std::array<double, 3>> triangle_4 {{1/sqrt(2), 1/sqrt(2), 0},
+                                                   {0, 1, 0},
+                                                   {0, 1/sqrt(2), 1/sqrt(2)}};
+    std::vector<std::vector<std::array<double, 3>>> triangle_vector;
+    triangle_vector.push_back(triangle_1);
+    triangle_vector.push_back(triangle_2);
+    triangle_vector.push_back(triangle_3);
+    triangle_vector.push_back(triangle_4);
+
+    for(int octant = 0; octant < 8; ++octant)
+    {
+      int i = octant;
+      int x_multiplier = 1;
+      int y_multiplier = 1;
+      int z_multiplier = 1;
+      if(i >= 4)
+      {
+        i -= 4;
+        z_multiplier = -1;
+      }
+      if(i >= 2)
+      {
+        i -= 2;
+        y_multiplier = -1;
+      }
+      if(i >= 1)
+      {
+        i -= 1;
+        x_multiplier = -1;
+      }
+
+      for(int local_triangle = 0; local_triangle < local_quad_order*local_quad_order; ++local_triangle)
+      {
+        int total_index = local_triangle + octant * local_quad_order*local_quad_order;
+        Utility::SphericalTriangle triangle = underlying_triangle_discretization[total_index];
+        for(int vertex = 0; vertex < 3; ++vertex)
+        {
+          FRENSIE_CHECK_FLOATING_EQUALITY(std::get<0>(triangle.triangle_parameter_vector[vertex])[0], x_multiplier*triangle_vector[local_triangle][vertex][0], 1e-15 );
+          FRENSIE_CHECK_FLOATING_EQUALITY(std::get<0>(triangle.triangle_parameter_vector[vertex])[1], y_multiplier*triangle_vector[local_triangle][vertex][1], 1e-15 );
+          FRENSIE_CHECK_FLOATING_EQUALITY(std::get<0>(triangle.triangle_parameter_vector[vertex])[2], z_multiplier*triangle_vector[local_triangle][vertex][2], 1e-15 );
+        }
+      }
+    }
+  }
+
+}
+
+//---------------------------------------------------------------------------//
 // Custom Setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();

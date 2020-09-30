@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "Utility_PQLAQuadrature.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
@@ -315,7 +316,14 @@ void PQLAQuadrature::getSphericalTriangle(const size_t triangle_index,
   triangle = d_spherical_triangle_vector[triangle_index];
 }
 
+const std::vector<SphericalTriangle>& PQLAQuadrature::getSphericalTriangleVector() const
+{
+  return d_spherical_triangle_vector;
+}
+EXPLICIT_CLASS_SERIALIZE_INST( PQLAQuadrature );
 } // end Utility namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( PQLAQuadrature, Utility );
 
 //---------------------------------------------------------------------------//
 // end Utility_PQLAQuadrature.cpp

@@ -9,10 +9,17 @@
 #ifndef UTILITY_PQLA_QUADRATURE
 #define UTILITY_PQLA_QUADRATURE
 
+// Boost Includes
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE includes
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Array.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Utility{
 
@@ -30,6 +37,14 @@ struct SphericalTriangle
 
   //! Area of the triangle
   double area;
+
+  // Serialize the data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  { 
+    ar & BOOST_SERIALIZATION_NVP( triangle_parameter_vector );
+    ar & BOOST_SERIALIZATION_NVP( area );
+  }
 };
 
 class PQLAQuadrature
@@ -63,7 +78,13 @@ class PQLAQuadrature
   void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector, 
                                        const size_t triangle_index) const;
 
+  const std::vector<SphericalTriangle>& getSphericalTriangleVector() const;
+
   private:
+
+  //! Default constructor (for archiving)
+  PQLAQuadrature()
+  { /* ... */ }
 
   //! Vector operation for the purpose of sampleIsotropicallyFromTriangle
   void isotropicSamplingVectorOperation(const std::array<double, 3>& vertex_1,
@@ -96,9 +117,29 @@ class PQLAQuadrature
   // Vector that stores POSITIVE DOMAIN spherical triangles
   std::vector<SphericalTriangle> d_spherical_triangle_vector;
 
+  // Serialize the data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
 };
 
+// Serialize the data
+template<typename Archive>
+void PQLAQuadrature::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the member data
+  ar & BOOST_SERIALIZATION_NVP( d_quadrature_order );
+  ar & BOOST_SERIALIZATION_NVP( d_spherical_triangle_vector );
+}
+
 } // end Utility namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( PQLAQuadrature, Utility, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PQLAQuadrature, Utility );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, PQLAQuadrature );
 
 #endif // end UTILITY_PQLA_QUADRATURE
 
