@@ -73,7 +73,7 @@ jobs:
           key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
       - run:
           name: Build
-          command: d bld; make test-<< parameters.package >>
+          command: cd bld; make test-<< parameters.package >>
   
 
 workflows:
