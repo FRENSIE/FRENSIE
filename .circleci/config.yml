@@ -55,7 +55,7 @@ jobs:
           command: cd bld; make << parameters.package >>
       - run:
           name: Build test
-          command: cd bld; make tst-<< parameters.package >>
+          command: cd bld; make << parameters.package >>-test
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
