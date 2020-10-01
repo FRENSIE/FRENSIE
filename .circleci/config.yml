@@ -58,7 +58,8 @@ jobs:
           key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
           paths:
             - ~/frensie
-   build_tests:
+
+  build_tests:
     parameters:
       package:
         type: string
