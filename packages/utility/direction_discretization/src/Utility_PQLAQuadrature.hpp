@@ -20,6 +20,7 @@
 #include "Utility_Array.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 
 namespace Utility{
 
@@ -37,6 +38,31 @@ struct SphericalTriangle
 
   //! Area of the triangle
   double area;
+
+  void computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector)
+  {
+    // Put methods in struct to simplify this part.
+    
+    // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
+    std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
+                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
+                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
+
+    // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
+    std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
+
+    std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
+                                    acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
+                                    acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
+
+    for(size_t i = 0; i < 3; ++i)
+    {
+      triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[i], opposite_side_length_vector[i], angle_vector[i]));
+    }
+
+    // Store triangle area
+    area = angle_vector[0]+angle_vector[1]+angle_vector[2]-M_PI;
+  }
 
   // Serialize the data
   template<typename Archive>
@@ -74,7 +100,9 @@ class PQLAQuadrature
   //! Get the area of a specific spherical triangle
   double getTriangleArea(const size_t triangle_index) const;
 
-  //! Get a random direction from within a spherical triangle (evenly distributed probability)
+  /*! Get a random direction from within a spherical triangle (evenly distributed probability) - reference here
+   * \details reference: Stratified Sampling of Spherical Triangles, James Arvo, SIGGRAPH '95
+   */
   void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector, 
                                        const size_t triangle_index) const;
 
@@ -114,14 +142,14 @@ class PQLAQuadrature
   //! Quadrature order
   unsigned d_quadrature_order;
 
-  // Vector that stores POSITIVE DOMAIN spherical triangles
+  //! Vector that stores POSITIVE DOMAIN spherical triangles
   std::vector<SphericalTriangle> d_spherical_triangle_vector;
 
-  // Serialize the data
+  //! Serialize the data
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version );
 
-  // Declare the boost serialization access object as a friend
+  //! Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
 };

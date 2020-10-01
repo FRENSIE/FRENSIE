@@ -71,31 +71,9 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
         normalizeVector(vertex_vector[i].data());
       }
 
-
-      
-      // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
-      std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
-                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
-                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
-
-      // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
-      std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
-
-      std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
-                                      acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
-                                      acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
-
-      // Store triangle area
-      double triangle_area = angle_vector[0]+angle_vector[1]+angle_vector[2]-M_PI;
-
       SphericalTriangle local_triangle;
+      local_triangle.computeAndStoreTriangleParameters(vertex_vector);
 
-      for(size_t i = 0; i < 3; ++i)
-      {
-        local_triangle.triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[i], opposite_side_length_vector[i], angle_vector[i]));
-      }
-
-      local_triangle.area = triangle_area;
       // Store triangle info
       d_spherical_triangle_vector.push_back(local_triangle);
     }
