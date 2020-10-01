@@ -73,7 +73,7 @@ jobs:
           key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
       - run:
           name: Build Test
-          command: cd bld; make << parameters.package >>_test
+          command: cd bld; make << parameters.package >>_tests
       - run: echo $CIRCLE_SHA1 > .circle-sha
       - save_cache:
           key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
