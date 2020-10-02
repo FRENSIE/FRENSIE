@@ -19,8 +19,8 @@ RUN apt-get update; \
         hdf5-tools libhdf5-dev \
         autoconf\
         bison byacc \
-        libx11-dev libxpm-dev libxft-dev libxext-dev \
-        openmpi-bin libopenmpi-dev; \
+        libx11-dev libxpm-dev libxft-dev libxext-dev; \
+#        openmpi-bin libopenmpi-dev; \
     pip install numpy cython
 
 RUN apt-get update && \
@@ -85,7 +85,7 @@ RUN cd ~/temp; \
     tar -xvf boost_1_72_0.tar.gz; \
     cd boost_1_72_0;\
     ./bootstrap.sh  --prefix=/home/docker/opt/boost;\
-    sed -i "$ a using mpi ;" project-config.jam; \
+#    sed -i "$ a using mpi ;" project-config.jam; \
     ./b2 -j8 --prefix=/home/docker/opt/boost -s NO_BZIP2=1 link=shared runtime-link=shared install
 ENV LD_LIBRARY_PATH "/home/docker/opt/boost/lib/:$LD_LIBRARY_PATH"
 

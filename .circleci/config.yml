@@ -15,7 +15,7 @@ jobs:
                                 -D CMAKE_BUILD_TYPE:STRING=DEBUG
                                 -D CMAKE_VERBOSE_CONFIGURE:BOOL=OFF
                                 -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
-                                -D FRENSIE_ENABLE_MPI:BOOL=ON
+#                                -D FRENSIE_ENABLE_MPI:BOOL=ON
                                 -D FRENSIE_ENABLE_DBC:BOOL=ON
                                 -D FRENSIE_ENABLE_COLOR_OUTPUT:BOOL=ON
                                 -D FRENSIE_ENABLE_OPENMP:BOOL=ON
@@ -112,17 +112,20 @@ workflows:
             - checkout_cmake
           matrix:
             parameters:
-              package: [ "utility_core", "utility_mpi", "utility_archive", "utility_system", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              package: [ "utility_core", "utility_archive",, "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
       - build_tests:
           matrix:
             parameters:
-              package: [ "utility_core", "utility_mpi", "utility_archive", "utility_system", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              package: [ "utility_core", "utility_archive",, "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
           requires:
             - build-<< matrix.package >>
       - tests:
           matrix:
             parameters:
-              package: [ "utility_core", "utility_mpi", "utility_archive", "utility_system", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              package: [ "utility_core", "utility_archive",, "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collisoin_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
           requires:
             - build_tests-<< matrix.package >>
 
