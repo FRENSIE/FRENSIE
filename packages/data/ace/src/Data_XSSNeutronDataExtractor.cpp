@@ -55,18 +55,66 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   // Locator key list
   esz = d_jxs[0];
   nu = d_jxs[1];
-  //...
+  mtr = d_jxs[2];
+  lqr = d_jxs[3];
+  tyr = d_jxs[4];
+  lsig = d_jxs[5];
+  sig = d_jxs[6];
+  land = d_jxs[7];
+  and = d_jxs[8]; // maybe this keyword is reserved
   ldlw = d_jxs[9];
   dlw = d_jxs[10];
   gpd = d_jxs[11];
-  end = d_jxs[22];
-  iurpt = d_jxs[23];
+  mtpr = d_jxs[12];
+  lsigp = d_jxs[13];
+  sigp = d_jxs[14];
+  landp = d_jxs[15];
+  andp = d_jxs[16];
+  ldlwp = d_jxs[17];
+  dlwp = d_jxs[18];
+  yp = d_jxs[19];
+  fis = d_jxs[20];
+  end = d_jxs[21]; // after here is where weird things start happening
+  lunr = d_jxs[];
+  dnu  = d_jxs[];
+  bdd = d_jxs[];
+  dnedl = d_jxs[];
+  dned= d_jxs[];
 
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
   // Extract and cache the ESZ block
   d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] ); //LOOKHERE
+
+  // one time logic to create blockID enum, start vector, and length vector
+  // add to hpp
+
+  // names of each block, TODO SORT OUT DISCREPENCIES OR ONES NOT FOUND IN MCNPMANIII
+  // also need to sort in order of occurence to have matching functionality with vectors
+  enum blockId = {  
+  esz,
+  nu,
+  mtr,
+  lqr,
+  tyr,
+  lsig,
+  sig,
+  land,
+  and, //TODO FIND OUT IF THIS WORD IS RESERVED
+  ldlw,
+  dlw,
+  gpd,
+  mtpr,
+  lsigp,
+  sigp,
+  landp,
+  andp,
+  ldlwp,
+  dlwp,
+  yp,
+  fis,
+  end, others } 
 }
 
 // Check if the nuclide is fissionable
