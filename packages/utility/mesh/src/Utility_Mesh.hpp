@@ -76,6 +76,9 @@ public:
   //! Return the volumes of each mesh element
   virtual void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const = 0;
 
+  //! Return the volume of a specific mesh element
+  virtual double getElementVolume( ElementHandle element ) const = 0;
+
   //! Check if a point is inside of the mesh
   virtual bool isPointInMesh( const double point[3] ) const = 0;
 

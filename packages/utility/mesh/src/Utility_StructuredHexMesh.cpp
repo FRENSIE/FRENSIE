@@ -89,6 +89,26 @@ std::string StructuredHexMesh::getMeshElementTypeName() const
   return "Hex";
 }
 
+// Deconstruct a hex index into indices of planes on each dimension.
+/*! \details This method is used primarily with moab since the moab
+ * methods used in the estimator class require the parameter space over
+ * all three dimensions to form a structured mesh .
+ */
+void StructuredHexMesh::getHexPlaneIndices(
+                                       const ElementHandle h,
+                                       size_t hex_parameter_indices[3] ) const
+{
+  // Make sure that the hex index is valid
+  testPrecondition( h >= 0 && h < d_hex_elements.size() );
+
+  size_t x_size = (d_x_planes.size() - 1);
+  size_t y_size = (d_y_planes.size() - 1);
+
+  hex_parameter_indices[2] = h/(x_size*y_size);
+  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_size * y_size) / x_size;
+  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_size - hex_parameter_indices[2] * x_size * y_size;
+}
+
 // Returns the volumes of the hex elements for the estimator class.
 void StructuredHexMesh::getElementVolumes(
                                     ElementHandleVolumeMap& element_volumes ) const
@@ -108,6 +128,17 @@ void StructuredHexMesh::getElementVolumes(
       }
     }
   }
+}
+
+// Returns the volume of a specific mesh element
+double StructuredHexMesh::getElementVolume( ElementHandle element ) const
+{
+  size_t plane_indices [3];
+  this->getHexPlaneIndices(element, plane_indices);
+
+  return (d_x_planes[plane_indices[0]+1] - d_x_planes[plane_indices[0]]) *
+         (d_y_planes[plane_indices[1]+1] - d_y_planes[plane_indices[1]]) *
+         (d_z_planes[plane_indices[2]+1] - d_z_planes[plane_indices[2]]);
 }
 
 // Returns a bool that says whether or not a point is in the mesh.
@@ -300,27 +331,6 @@ double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)const
   testPrecondition( i < d_z_planes.size() && i >= 0);
 
   return d_z_planes[i];
-}
-
-// Deconstruct a hex index into indices of planes on each dimension.
-/*! \details This method is used primarily with moab since the moab
- * methods used in the estimator class require the parameter space over
- * all three dimensions to form a structured mesh .
- */
-void StructuredHexMesh::getHexPlaneIndices(
-                                       const ElementHandle h,
-                                       size_t hex_parameter_indices[3] ) const
-{
-  // Make sure that the hex index is valid
-  testPrecondition( h >= 0 && h < d_hex_elements.size() );
-
-  size_t x_size = (d_x_planes.size() - 1);
-  size_t y_size = (d_y_planes.size() - 1);
-
-  hex_parameter_indices[2] = h/(x_size*y_size);
-  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_size * Y_DIMENSION) / x_size;
-  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_size
-    - hex_parameter_indices[2] * x_size * y_size;
 }
 
 // Begin private functions
