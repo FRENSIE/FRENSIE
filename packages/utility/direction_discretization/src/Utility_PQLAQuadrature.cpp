@@ -64,7 +64,7 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
         vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
         // Do nothing for next triangle if triangle is pointing down (same vertex starting point for next triangle)
       }
-      // normalize vectors to 2-norm (currently in 1-norm)
+      // normalize vectors to 2-norm (currently indices of planes)
       
       for(size_t i = 0; i < 3; ++i)
       {
@@ -82,38 +82,26 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
   }
 
   int triangle_stride = d_quadrature_order*d_quadrature_order;
-  for(int i = 1; i < 8; ++i)
+  for(int octant = 1; octant < 8; ++octant)
   {
-    // Index to figure out which octant I'm in.
-    int octant = i;
+
     int x_multiplier = 1;
     int y_multiplier = 1;
     int z_multiplier = 1;
 
-    if(octant >= 4)
-    {
-      z_multiplier = -1;
-      octant -= 4;
-    }
-    if(octant >= 2)
-    {
-      y_multiplier = -1;
-      octant -= 2;
-    }
-    if(octant >= 1)
-    {
-      x_multiplier = -1;
-      octant -= 1;
-    }
+    // Bitwise operations to tell which octant this is
+    if(octant & 1) x_multiplier = -1;
+    if(octant & 2) y_multiplier = -1;
+    if(octant & 4) z_multiplier = -1;
 
-    for(int j = 0; j < triangle_stride; ++j)
+    for(int tri = 0; tri < triangle_stride; ++tri)
     {
-      SphericalTriangle local_triangle = d_spherical_triangle_vector[j];
-      for(int k = 0; k < 3; ++k)
+      SphericalTriangle local_triangle = d_spherical_triangle_vector[tri];
+      for(int vert = 0; vert < 3; ++vert)
       {
-        std::get<0>(local_triangle.triangle_parameter_vector[k])[0] *= x_multiplier;
-        std::get<0>(local_triangle.triangle_parameter_vector[k])[1] *= y_multiplier;
-        std::get<0>(local_triangle.triangle_parameter_vector[k])[2] *= z_multiplier;
+        std::get<0>(local_triangle.triangle_parameter_vector[vert])[0] *= x_multiplier;
+        std::get<0>(local_triangle.triangle_parameter_vector[vert])[1] *= y_multiplier;
+        std::get<0>(local_triangle.triangle_parameter_vector[vert])[2] *= z_multiplier;
       }
       d_spherical_triangle_vector.push_back(local_triangle);
     }
@@ -212,9 +200,9 @@ void PQLAQuadrature::isotropicSamplingVectorOperation(const std::array<double, 3
                                       std::array<double, 3>& result_vector) const
 {
   double dot_product_result = calculateCosineOfAngleBetweenUnitVectors( vertex_1.data(), vertex_2.data() );
-  for(int i = 0; i < 3; ++i)
+  for(int dimension = 0; dimension < 3; ++dimension)
   {
-    result_vector[i] = vertex_1[i] - dot_product_result*vertex_2[i];
+    result_vector[dimension] = vertex_1[dimension] - dot_product_result*vertex_2[dimension];
   }
   normalizeVector(result_vector.data());
   testPostcondition(isUnitVector(result_vector.data()));
@@ -226,9 +214,9 @@ void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3>& dire
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
 
-  for(int i = 0; i < 3; ++i)
+  for(int dimension = 0; dimension < 3; ++dimension)
   {
-    direction_normalized_1_norm[i] = direction_normalized_2_norm[i]/normalization_constant;
+    direction_normalized_1_norm[dimension] = direction_normalized_2_norm[dimension]/normalization_constant;
   }
 
 }

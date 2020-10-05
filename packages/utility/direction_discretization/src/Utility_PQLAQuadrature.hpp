@@ -55,9 +55,9 @@ struct SphericalTriangle
                                     acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
                                     acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
 
-    for(size_t i = 0; i < 3; ++i)
+    for(size_t vert = 0; vert < 3; ++vert)
     {
-      triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[i], opposite_side_length_vector[i], angle_vector[i]));
+      triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[vert], opposite_side_length_vector[vert], angle_vector[vert]));
     }
 
     // Store triangle area

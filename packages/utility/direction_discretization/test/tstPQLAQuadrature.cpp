@@ -172,13 +172,13 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle)
   std::array<size_t, 2> desired_triangles_to_sample_from = {5, 64};
   double precalculated_results_array[2][3]= {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {-0.670743813270348,  -0.494811928758853,  -0.552506915900151}};
 
-  for(int i = 0; i < 2; ++i)
+  for(int test_index = 0; test_index < 2; ++test_index)
   {
     std::array<double, 3> direction_vector;
-    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, desired_triangles_to_sample_from[i]);
-    for(int j = 0; j < 3; ++j)
+    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, desired_triangles_to_sample_from[test_index]);
+    for(int vert = 0; vert < 3; ++vert)
     {
-      FRENSIE_CHECK_FLOATING_EQUALITY(direction_vector[j], precalculated_results_array[i][j], 1e-14);
+      FRENSIE_CHECK_FLOATING_EQUALITY(direction_vector[vert], precalculated_results_array[test_index][vert], 1e-14);
     }
   }
 
@@ -191,12 +191,12 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle_and_findTriang
 {
   std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
               new Utility::PQLAQuadrature( quadrature_order ) );
-  for(size_t i = 0; i < 8*quadrature_order*quadrature_order; ++i)
+  for(size_t tri = 0; tri < 8*quadrature_order*quadrature_order; ++tri)
   {
     std::array<double, 3> direction_vector;
-    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, i);
+    PQLAQuadrature->sampleIsotropicallyFromTriangle(direction_vector, tri);
 
-    FRENSIE_CHECK_EQUAL(PQLAQuadrature->findTriangleBin(direction_vector), i);
+    FRENSIE_CHECK_EQUAL(PQLAQuadrature->findTriangleBin(direction_vector), tri);
   }
 }
 
@@ -246,19 +246,21 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PQLAQuadrature,
   {
     const std::vector<Utility::SphericalTriangle>& underlying_triangle_discretization = direction_discretization_archive_test->getSphericalTriangleVector();
   
+    double half_angle_coordinate = 1/sqrt(2);
+
     // Positive octant triangles (1/sqrt(2) used repeatedly due to intermediate vertices being at angle of pi/4 on their respective axis' plane)
     std::vector<std::array<double, 3>> triangle_1 {{1, 0, 0}, 
-                                                   {1/sqrt(2), 1/sqrt(2), 0},
-                                                   {1/sqrt(2), 0, 1/sqrt(2)}};
-    std::vector<std::array<double, 3>> triangle_2 {{1/sqrt(2), 0, 1/sqrt(2)},
-                                                   {1/sqrt(2), 1/sqrt(2), 0},
-                                                   {0, 1/sqrt(2), 1/sqrt(2)}};
-    std::vector<std::array<double, 3>> triangle_3 {{1/sqrt(2), 0, 1/sqrt(2)},
-                                                   {0, 1/sqrt(2), 1/sqrt(2)},
+                                                   {half_angle_coordinate, half_angle_coordinate, 0},
+                                                   {half_angle_coordinate, 0, half_angle_coordinate}};
+    std::vector<std::array<double, 3>> triangle_2 {{half_angle_coordinate, 0, half_angle_coordinate},
+                                                   {half_angle_coordinate, half_angle_coordinate, 0},
+                                                   {0, half_angle_coordinate, half_angle_coordinate}};
+    std::vector<std::array<double, 3>> triangle_3 {{half_angle_coordinate, 0, half_angle_coordinate},
+                                                   {0, half_angle_coordinate, half_angle_coordinate},
                                                    {0, 0, 1}};
-    std::vector<std::array<double, 3>> triangle_4 {{1/sqrt(2), 1/sqrt(2), 0},
+    std::vector<std::array<double, 3>> triangle_4 {{half_angle_coordinate, half_angle_coordinate, 0},
                                                    {0, 1, 0},
-                                                   {0, 1/sqrt(2), 1/sqrt(2)}};
+                                                   {0, half_angle_coordinate, half_angle_coordinate}};
     std::vector<std::vector<std::array<double, 3>>> triangle_vector;
     triangle_vector.push_back(triangle_1);
     triangle_vector.push_back(triangle_2);
@@ -267,6 +269,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PQLAQuadrature,
 
     for(int octant = 0; octant < 8; ++octant)
     {
+      // Leaving this the way it is so it can be tested using a separate method
       int i = octant;
       int x_multiplier = 1;
       int y_multiplier = 1;
