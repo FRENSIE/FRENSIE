@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolumes )
 {
   std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
     y_planes( {0.0, 0.5, 1.0} ),
-    z_planes( {0.0, 0.5, 1.0} );
+    z_planes( {0.0, 0.5, 1.5} );
 
   std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
               new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
@@ -125,10 +125,34 @@ FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolumes )
   FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[1], 0.125, 1e-12);
   FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[2], 0.125, 1e-12);
   FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[3], 0.125, 1e-12);
-  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[4], 0.125, 1e-12);
-  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[5], 0.125, 1e-12);
-  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[6], 0.125, 1e-12);
-  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[7], 0.125, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[4], 0.25, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[5], 0.25, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[6], 0.25, 1e-12);
+  FRENSIE_CHECK_FLOATING_EQUALITY( volume_map[7], 0.25, 1e-12);
+}
+
+//---------------------------------------------------------------------------//
+// Test the getElementVolume method
+FRENSIE_UNIT_TEST( StructuredHexMesh, getElementVolume )
+{
+  std::vector<double> x_planes( {0.0, 0.5, 1.0} ),
+  y_planes( {0.0, 0.5, 1.0} ),
+  z_planes( {0.0, 0.5, 2.0} );
+
+  std::shared_ptr<Utility::StructuredHexMesh> hex_mesh(
+              new Utility::StructuredHexMesh( x_planes, y_planes, z_planes ) );
+
+  for( size_t i = 0; i < hex_mesh->getNumberOfElements(); ++i)
+  {
+    if(i < 4)
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY(hex_mesh->getElementVolume(i), 0.125, 1e-15);
+    }
+    else
+    {
+      FRENSIE_CHECK_FLOATING_EQUALITY(hex_mesh->getElementVolume(i), 0.375, 1e-15);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------//

@@ -84,6 +84,9 @@ public:
   //! Returns the volumes of each mesh element
   void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const;
 
+  //! Returns the volume of a specific mesh element
+  double getElementVolume( ElementHandle element ) const;
+
   //! Returns the moab interface pointer (obfuscated)
   void* getMoabInterface() const;
 
@@ -471,30 +474,42 @@ void TetMeshImpl::getElementVolumes( ElementHandleVolumeMap& element_volumes ) c
 #ifdef HAVE_FRENSIE_MOAB
   for( auto&& element_handle : d_tets )
   {
-    moab::EntityHandle tet_handle = element_handle;
-
-    // Extract the vertex data for the given tet
-    std::vector<moab::EntityHandle> vertex_handles;
-
-    d_moab_interface->get_connectivity( &tet_handle, 1, vertex_handles );
-
-    std::array<double,3> vertices[4];
-
-    for( unsigned i = 0; i != vertex_handles.size(); ++i )
-    {
-      d_moab_interface->get_coords( &vertex_handles[i],
-				    1,
-				    vertices[i].data() );
-    }
-
-    // Calculate the volume
-    element_volumes[element_handle] =
-      Utility::calculateTetrahedronVolume( vertices[0].data(),
-                                           vertices[1].data(),
-                                           vertices[2].data(),
-                                           vertices[3].data() );
+    element_volumes[element_handle] = this->getElementVolume(element_handle);
   }
 #endif // end HAVE_FRENSIE_MOAB
+}
+
+// Returns the volume of a specific element
+double TetMesh::getElementVolume( ElementHandle element ) const
+{
+  return d_impl->getElementVolume( element );
+}
+
+// Returns the volume of a specific element
+double TetMeshImpl::getElementVolume( ElementHandle element ) const
+{
+#ifdef HAVE_FRENSIE_MOAB
+  moab::EntityHandle tet_handle = element;
+
+  // Extract the vertex data for the given tet
+  std::vector<moab::EntityHandle> vertex_handles;
+  
+  d_moab_interface->get_connectivity( &tet_handle, 1, vertex_handles );
+
+  std::array<double,3> vertices[4];
+
+  for( unsigned i = 0; i != vertex_handles.size(); ++i )
+  {
+    d_moab_interface->get_coords( &vertex_handles[i],
+          1,
+          vertices[i].data() );
+  }
+
+  return Utility::calculateTetrahedronVolume( vertices[0].data(),
+                                              vertices[1].data(),
+                                              vertices[2].data(),
+                                              vertices[3].data() );
+#endif
 }
 
 // Returns the moab interface pointer (obfuscated)

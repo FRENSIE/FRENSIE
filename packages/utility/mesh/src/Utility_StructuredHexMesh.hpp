@@ -103,6 +103,9 @@ public:
   //! Returns the volumes of the hex elements for the estimator class.
   void getElementVolumes( ElementHandleVolumeMap& element_volumes ) const final override;
 
+  //! Returns the volume of a specific mesh element
+  double getElementVolume( ElementHandle element ) const final override;
+
   //! Returns a bool that says whether or not a point is in the mesh.
   bool isPointInMesh( const double point[3] ) const final override;
 
