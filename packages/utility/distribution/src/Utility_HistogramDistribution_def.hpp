@@ -322,6 +322,69 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleInSubrange(
 						 max_indep_var );
 }
 
+// Return a sample from the distribution at the given CDF value in a subrange
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
+  const double random_number,
+  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+
+  // Compute the scaled random number
+  double scaled_random_number =
+    random_number*this->evaluateCDF( max_indep_var );
+
+  size_t dummy_index;
+
+  return this->sampleImplementation( scaled_random_number, dummy_index );
+}
+
+// Return a random sample from the corresponding CDF in a subrange with a min value included
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleInSubrange(
+   const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_indep_var,
+   const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+{
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( min_indep_var <= this->getUpperBoundOfIndepVar() );
+
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  return this->sampleWithRandomNumberInSubrange( random_number,
+                                                 min_indep_var,
+						                                     max_indep_var );
+}
+
+// Return a sample from the distribution at the given CDF value in a subrange
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
+  const double random_number,
+  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_indep_var,
+  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( min_indep_var <= this->getUpperBoundOfIndepVar() );
+
+  // Compute the scaled random number
+  double scaled_random_number =
+    random_number*(this->evaluateCDF( max_indep_var )-this->evaluateCDF(min_indep_var))+this->evaluateCDF(min_indep_var);
+
+  size_t dummy_index;
+
+  return this->sampleImplementation( scaled_random_number, dummy_index );
+}
+
 // Return a random sample using the random number and record the bin index
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
@@ -346,28 +409,6 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementat
   return Utility::get<0>(*bin) +
     IndepQuantity((scaled_random_number - Utility::get<2>(*bin))/
                   Utility::get<1>(*bin));
-}
-
-// Return a sample from the distribution at the given CDF value in a subrange
-template<typename IndependentUnit, typename DependentUnit>
-inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
-  const double random_number,
-  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the maximum indep var is valid
-  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-
-  // Compute the scaled random number
-  double scaled_random_number =
-    random_number*this->evaluateCDF( max_indep_var );
-
-  size_t dummy_index;
-
-  return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
 // Return the upper bound of the distribution independent variable

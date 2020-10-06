@@ -143,6 +143,16 @@ public:
 			    const double random_number,
 			    const IndepQuantity max_indep_var ) const override;
 
+  //! Return a random sample from the corresponding CDF in a sub range with a minimum
+  IndepQuantity sampleInSubrange( const IndepQuantity min_indep_var,
+                                  const IndepQuantity max_indep_var ) const;
+
+    //! Return a sample from the distribution at the given CDF value in a subrange
+  IndepQuantity sampleWithRandomNumberInSubrange(
+			    const double random_number,
+			    const IndepQuantity min_indep_var,
+          const IndepQuantity max_indep_var ) const;
+
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const override;
 
