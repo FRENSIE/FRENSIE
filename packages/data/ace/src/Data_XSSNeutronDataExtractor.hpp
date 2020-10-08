@@ -188,6 +188,12 @@ private:
   // The jxs array (a copy will be stored so that modifications can be made)
   std::vector<int> d_jxs;
 
+  // list of locators for start of each blockID in enum
+  std::vector<int> start;
+
+  // list of lengths of each blockID in enum
+  std::vector<int> length;
+
   // The xss array (data in this array should never be directly modified)
   std::shared_ptr<const std::vector<double> > d_xss;
 
@@ -196,6 +202,8 @@ private:
 
   // The ESZ block (cached for quick access to cross sections in this block)
   Utility::ArrayView<const double> d_esz_block;
+
+
 };
 
 } // end Data namespace
