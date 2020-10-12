@@ -74,12 +74,21 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   dlwp = d_jxs[18];
   yp = d_jxs[19];
   fis = d_jxs[20];
-  end = d_jxs[21]; // after here is where weird things start happening
-  lunr = d_jxs[];
-  dnu  = d_jxs[];
-  bdd = d_jxs[];
-  dnedl = d_jxs[];
-  dned= d_jxs[];
+  end = d_jxs[21]; 
+  // discrepencies begein
+  // according to the manual, after end
+  // comment shows name in  section: ! parameters for continuous jxs block
+  lunr = d_jxs[22]; // referred to as iurpt in NJOY
+  dnu  = d_jxs[23]; // referred to as nud in NJOY 
+  bdd = d_jxs[24]; // referred to as dndat in NJOY
+  dnedl = d_jxs[25]; // referred to as ,]ldnd in NJOY
+  dned= d_jxs[26]; // referred to as dnd in NJOY
+  // UNACCOUNTED FOR
+  jxsd(i), i=1,2 ;
+  ptype;
+  ntro;
+  ploc;
+
 
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
@@ -91,7 +100,6 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   // add to hpp
 
   // names of each block, TODO SORT OUT DISCREPENCIES OR ONES NOT FOUND IN MCNPMANIII
-  // also need to sort in order of occurence to have matching functionality with vectors
   enum blockId = {  
   esz,
   nu,
@@ -105,7 +113,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   ldlw,
   dlw,
   gpd,
-  mtpr,
+  mtrp,
   lsigp,
   sigp,
   landp,
@@ -114,7 +122,24 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   dlwp,
   yp,
   fis,
-  end, others } 
+  end, 
+  //  discrepencies begin
+  // others from manual 
+  lunr,
+  dnu,
+  bdd,
+  dnedl
+  // others from NJOY, see line 22 in github file
+  iurpt,
+  nud,
+  dndat,
+  ldnd,
+  dnd,
+  jxsd(2), // what is this, why does it have (2), later refered as (jxsd(i),i=1,2) line 12792
+  ptype,
+  ntro,
+  ploct
+  } 
 }
 
 // Check if the nuclide is fissionable
