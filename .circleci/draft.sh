@@ -32,7 +32,7 @@ function get_github_status(){
 
 
 function is_draft() {
-    github_res=$(get_github_status
+    github_res=$(get_github_status)
     # Get state of the PR
     mergeable_state=$(printf "${github_res}" | jq '.mergeable_state')
     title=$(printf "${github_res}" | jq '.title' | tr '[:upper:]' '[:lower:]')
@@ -56,7 +56,7 @@ function is_draft() {
 
 
 function is_ready() {
-    github_res=$(get_github_status
+    github_res=$(get_github_status)
 
     labels=$(printf "${github_res}" | jq '.labels[]')
     rdy=0
