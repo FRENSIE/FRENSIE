@@ -60,10 +60,11 @@ function is_ready() {
 
     labels=$(printf "${github_res}" | jq '.labels[]')
     rdy=0
-    for label in $labels do 
-    if [[ "$label" == "\"ready\"" ]]; then 
-        rdy=1
-    fi
+    for label in $labels; do 
+        if [[ "$label" == "\"ready\"" ]]; then 
+            rdy=1
+        fi
+    done
     echo $rdy
 }
 
@@ -72,9 +73,10 @@ function is_approved() {
     git_rev_res=$(curl --silent --header "${headers}" "${api_endpoint}/reviews" | jq '{state: [.[].state]}')
     approvals=$(printf "${git_rev_res}" | jq '.state[]')
     approved=0
-    for approval in $approvals do
-    if [[ "$approval" == "\"APPROVED\"" ]]; then 
-        approved=1
-    fi
+    for approval in $approvals; do
+        if [[ "$approval" == "\"APPROVED\"" ]]; then 
+            approved=1
+        fi
+    done
     echo $approved
 }
