@@ -32,7 +32,7 @@ function get_github_status(){
 
 
 function is_draft() {
-    github_res=$(get_github_status())
+    github_res=$(get_github_status
     # Get state of the PR
     mergeable_state=$(printf "${github_res}" | jq '.mergeable_state')
     title=$(printf "${github_res}" | jq '.title' | tr '[:upper:]' '[:lower:]')
@@ -48,7 +48,7 @@ function is_draft() {
     # Check for Tittle SKIP Token
     for skip_token in '[wip]' '[WIP]'; do
         if [[ ${title} == *"${skip_token}"* ]]; then
-        draft_pr=1
+            draft_pr=1
         fi
     done
     echo $draft_pr
@@ -56,7 +56,7 @@ function is_draft() {
 
 
 function is_ready() {
-    github_res=$(get_github_status())
+    github_res=$(get_github_status
 
     labels=$(printf "${github_res}" | jq '.labels[]')
     rdy=0
