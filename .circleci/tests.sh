@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /root/frensie/.circleci/draft.sh
+source /root/frensie/.circleci/github_info.sh
 source /root/frensie/.circleci/detect_package.sh
 
 draft_pr=`is_draft`

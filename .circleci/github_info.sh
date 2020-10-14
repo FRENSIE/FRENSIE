@@ -2,16 +2,6 @@
 
 
 function get_github_status(){
-#    required_env_vars=(
-#        "GITHUB_TOKEN"
-
-#        "CIRCLE_PROJECT_USERNAME"
-
-#        "CIRCLE_PR_REPONAME"
-#        "CIRCLE_PR_NUMBER"
-#        "CIRCLE_TOKEN"
-#        "CIRCLE_BUILD_NUM"
-#    )
     # check if required VAR are defined 
     for required_env_var in ${required_env_vars[@]}; do
         if [[ -z "${!required_env_var}" ]]; then
@@ -20,11 +10,6 @@ function get_github_status(){
         exit 0
         fi
     done
-
-
-    # Since we're piggybacking off of an existing OAuth var, tweak the var for our uses
-#    token=$(printf "${GITHUB_TOKEN}" | cut -d':' -f1)
-#    headers="Authorization: token $token"
     api_endpoint="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PR_REPONAME}/pulls/${CIRCLE_PR_NUMBER}"
     # Fetch PR metadata from Github's API and parse fields from json
     github_res=$(curl --silent --header "${headers}" "${api_endpoint}" | jq '{mergeable_state: .mergeable_state, title: .title, labels: [.labels[].name]}')
