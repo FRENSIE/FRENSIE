@@ -4,6 +4,7 @@ source /root/frensie/.circleci/draft.sh
 source /root/frensie/.circleci/detect_package.sh
 
 is_draft
+draft_pr=$(is_draft)
 echo "Draft: $draft_pr"
 if [[ "${draft_pr}" == 1 ]]; then
     echo "In draft Mode"

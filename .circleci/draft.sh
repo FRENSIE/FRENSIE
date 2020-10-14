@@ -28,6 +28,7 @@ function get_github_status(){
     api_endpoint="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PR_REPONAME}/pulls/${CIRCLE_PR_NUMBER}"
     # Fetch PR metadata from Github's API and parse fields from json
     github_res=$(curl --silent --header "${headers}" "${api_endpoint}" | jq '{mergeable_state: .mergeable_state, title: .title, labels: [.labels[].name]}')
+    echo $github_res
 }
 
 
