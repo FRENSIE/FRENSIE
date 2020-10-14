@@ -11,7 +11,7 @@ function get_github_status(){
 #        "CIRCLE_PR_NUMBER"
 #        "CIRCLE_TOKEN"
 #        "CIRCLE_BUILD_NUM"
-    )
+#    )
     # check if required VAR are defined 
     for required_env_var in ${required_env_vars[@]}; do
         if [[ -z "${!required_env_var}" ]]; then
