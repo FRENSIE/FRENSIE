@@ -24,7 +24,7 @@ function is_draft() {
     headers="Authorization: token $token"
     api_endpoint="https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PR_REPONAME}/pulls/${CIRCLE_PR_NUMBER}"
     # Fetch PR metadata from Github's API and parse fields from json
-    github_res=$(curl --silent --header "${headers}" "${api_endpoint}" | jq '{mergeable_state: .mergeable_state, title: .title, label: .name}')
+    github_res=$(curl --silent --header "${headers}" "${api_endpoint}" | jq '{mergeable_state: .mergeable_state, title: .title, labels: .name}')
     echo $github_res
     mergeable_state=$(printf "${github_res}" | jq '.mergeable_state')
     title=$(printf "${github_res}" | jq '.title' | tr '[:upper:]' '[:lower:]')
