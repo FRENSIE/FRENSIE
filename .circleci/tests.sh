@@ -26,14 +26,14 @@ if [[ "${draft}" == 1 ]]; then
     echo "In draft Mode"
     echo "Skipping test"
     skip_test
-elif [[ "${is_ready}" == 0 ]]; then 
+elif [[ "${rdy}" == 0 ]]; then 
     uniq_modified_pkg=`uniq_modified_pkg`
     echo "package to be build: $uniq_modified_pkg"
     for pkg in ${uniq_modified_pkg}; do
         echo "Draft only build the modified package"
         make test-${pkg}
     done
-elif [[ "${is_ready}" == 1 ]]; then 
+elif [[ "${rdy}" == 1 ]]; then 
     echo "package to be build: all"
     for pkg in ${uniq_modified_pkg}; do
         echo "make"
