@@ -52,94 +52,80 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   for( size_t i = 0; i < d_jxs.size(); ++i )
     d_jxs[i] -= 1; 
 
-  // Locator key list
-  esz = d_jxs[0];
-  nu = d_jxs[1];
-  mtr = d_jxs[2];
-  lqr = d_jxs[3];
-  tyr = d_jxs[4];
-  lsig = d_jxs[5];
-  sig = d_jxs[6];
-  land = d_jxs[7];
-  and = d_jxs[8]; // maybe this keyword is reserved
-  ldlw = d_jxs[9];
-  dlw = d_jxs[10];
-  gpd = d_jxs[11];
-  mtpr = d_jxs[12];
-  lsigp = d_jxs[13];
-  sigp = d_jxs[14];
-  landp = d_jxs[15];
-  andp = d_jxs[16];
-  ldlwp = d_jxs[17];
-  dlwp = d_jxs[18];
-  yp = d_jxs[19];
-  fis = d_jxs[20];
-  end = d_jxs[21]; 
-  // discrepencies begein
-  // according to the manual, after end
-  // comment shows name in  section: ! parameters for continuous jxs block
-  lunr = d_jxs[22]; // referred to as iurpt in NJOY
-  dnu  = d_jxs[23]; // referred to as nud in NJOY 
-  bdd = d_jxs[24]; // referred to as dndat in NJOY
-  dnedl = d_jxs[25]; // referred to as ,]ldnd in NJOY
-  dned= d_jxs[26]; // referred to as dnd in NJOY
-  // UNACCOUNTED FOR
-  jxsd(i), i=1,2 ;
+  // names of each block in the order they appear in the manual and the FRENSIE
+  // (C++) index they correspond to
+  enum blockId  {  esz, // 0
+                    nu, // 1 
+                    mtr, // 2
+                    lqr, // 3
+                    tyr, // 4
+                    lsig, // 5
+                    sig, // 6
+                    landb, // 7
+                    andb, // 8
+                    ldlw, // 9
+                    dlw, // 10
+                    gpd, // 11
+                    mtrp, // 12
+                    lsigp, // 13
+                    sigp, // 14
+                    landp, // 15
+                    andp, // 16
+                    ldlwp, // 17
+                    dlwp, // 18
+                    yp, // 19
+                    fis, // 20
+                    end, // 21
+                    lunr, // 22
+                    dnu, // 23
+                    bdd, //24
+                    dnedl, // 25
+                    dned // 26 
+                    }; 
+  
+  // Locator key list in increasing order of value, for starts
+  std::vector<int> start = {  d_jxs[esz]    ,
+                              d_jxs[nu]     ,
+                              d_jxs[mtr]    ,
+                              d_jxs[lqr]    ,
+                              d_jxs[tyr]    ,
+                              d_jxs[lsig]   ,
+                              d_jxs[sig]    ,
+                              d_jxs[landb]  , // added b suffix to correspond locators to actutal angular dist in naming convention
+                              d_jxs[andb]   , // added b suffix because of reserved word and, i.e. and block
+                              d_jxs[ldlw]   ,
+                              d_jxs[dlw]    ,
+                              d_jxs[lunr]   , // referred to as iurpt in NJOY
+                              d_jxs[dnu]    , // referred to as nud in NJOY 
+                              d_jxs[bdd]    , // referred to as dndat in NJOY
+                              d_jxs[dnedl]  , // referred to as ,]ldnd in NJOY
+                              d_jxs[dned]   , // referred to as dnd in NJOY
+                              d_jxs[gpd]    ,
+                              d_jxs[mtrp]   ,
+                              d_jxs[lsigp]  ,
+                              d_jxs[sigp]   ,
+                              d_jxs[landp]  ,
+                              d_jxs[andp]   ,
+                              d_jxs[ldlwp]  ,
+                              d_jxs[dlwp]   ,
+                              d_jxs[yp]     ,
+                              d_jxs[fis]    ,
+                              d_jxs[end] } ;
+
+  // find irrelevant blocks and remove them from start
+  // TODO
+
+  // likely can ignore as we are not doing particle production in FRENSIE
+  /* jxsd(i), i=1,2 ;
   ptype;
   ntro;
-  ploc;
-
+  ploc; // */
 
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
   // Extract and cache the ESZ block
-  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] ); //LOOKHERE
-
-  // one time logic to create blockID enum, start vector, and length vector
-  // add to hpp
-
-  // names of each block, TODO SORT OUT DISCREPENCIES OR ONES NOT FOUND IN MCNPMANIII
-  enum blockId = {  
-  esz,
-  nu,
-  mtr,
-  lqr,
-  tyr,
-  lsig,
-  sig,
-  land,
-  and, //TODO FIND OUT IF THIS WORD IS RESERVED
-  ldlw,
-  dlw,
-  gpd,
-  mtrp,
-  lsigp,
-  sigp,
-  landp,
-  andp,
-  ldlwp,
-  dlwp,
-  yp,
-  fis,
-  end, 
-  //  discrepencies begin
-  // others from manual 
-  lunr,
-  dnu,
-  bdd,
-  dnedl
-  // others from NJOY, see line 22 in github file
-  iurpt,
-  nud,
-  dndat,
-  ldnd,
-  dnd,
-  jxsd(2), // what is this, why does it have (2), later refered as (jxsd(i),i=1,2) line 12792
-  ptype,
-  ntro,
-  ploct
-  } 
+  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] ); 
 }
 
 // Check if the nuclide is fissionable
@@ -198,10 +184,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() cons
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractEnergyGrid() const
 {
   Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
-  // LOOKHERE
-  // jxs[0] = 0 usually, but better to not have magic numbers, see table F.4
-  // could add jxs[0] to total xs, total abs xs, elastic xs, heating numbers, worth it for consistency?
-  // Utility::ArrayView<const double> energy_grid = d_esz_block( jxs[0] , d_nxs[2] - jxs[0] );
+  // Utility::ArrayView<const double> energy_grid = d_esz_block( jxs[0] , d_nxs[2] - jxs[0] ); is maybe better?
 
   // Make sure the extracted energy grid is sorted
   TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -302,7 +285,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractNUBlock() const
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractMTRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[2], d_nxs[3] ); //LOOKHERE (okay), 
+    return d_xss_view( d_jxs[2], d_nxs[3] ); 
   else
     return Utility::ArrayView<const double>();
 }
@@ -426,7 +409,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLDLWPBlock() co
     return Utility::ArrayView<const double>();
 }
 
-/* old fix with alex, not good
+/* // old fix with alex, not good
 // Extract the DLW block from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWBlock() const
 {
@@ -435,13 +418,13 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWBlock() cons
     // If photon data is not present, d_jxs[11] <= 0 which means DLWBlock is the last block
     // In this case, use the size of the entire array (d_nxs[0]) to find the correct size
     if( d_jxs[11] > 0 )
-      return d_xss_view( d_jxs[10], d_jxs[11]-d_jxs[10] );
+      return d_xss_view( d_jxs[dlwb], d_jxs[dlwb]-d_jxs[dlwb+1] );
     else
-      return d_xss_view( d_jxs[10], d_nxs[0]-d_jxs[10] );
+      return d_xss_view( d_jxs[10], d_jxz[end]-d_jxs[10] );
   }
   else
     return Utility::ArrayView<const double>();
-} */
+} // */
 
 // THIS JUSTIFICATION, CHECK 430999.710NC SEQUENTIAL ORDER OF LOCATORS IN JXS ARRAY
 // noticed jxs[11] < jxs[23] < jxs[22]
@@ -575,9 +558,6 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractFISBlock() cons
   else
     return Utility::ArrayView<const double>();
 }
-
-// LOOKHERE, THINGS BELOW NOT IN MY VERSION OF THE MANUAL, IS THIS PERHAPS WHY THERE ARE
-// ENTRIES AFTER JXS[26]
 
 // Extract the UNR block from the XSS array
 /*! \details Contains the unresolved resonance range probability tables
