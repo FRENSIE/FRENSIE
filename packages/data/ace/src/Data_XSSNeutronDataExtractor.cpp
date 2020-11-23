@@ -82,39 +82,6 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
                     dnedl, // 25
                     dned // 26 
                     }; 
-  
-  // Locator key list in increasing order of value, for starts
-  std::vector<int> start = {  d_jxs[esz]    ,
-                              d_jxs[nu]     ,
-                              d_jxs[mtr]    ,
-                              d_jxs[lqr]    ,
-                              d_jxs[tyr]    ,
-                              d_jxs[lsig]   ,
-                              d_jxs[sig]    ,
-                              d_jxs[landb]  , // added b suffix to correspond locators to actutal angular dist in naming convention
-                              d_jxs[andb]   , // added b suffix because of reserved word and, i.e. and block
-                              d_jxs[ldlw]   ,
-                              d_jxs[dlw]    ,
-                              d_jxs[lunr]   , // referred to as iurpt in NJOY
-                              d_jxs[dnu]    , // referred to as nud in NJOY 
-                              d_jxs[bdd]    , // referred to as dndat in NJOY
-                              d_jxs[dnedl]  , // referred to as ,]ldnd in NJOY
-                              d_jxs[dned]   , // referred to as dnd in NJOY
-                              d_jxs[gpd]    ,
-                              d_jxs[mtrp]   ,
-                              d_jxs[lsigp]  ,
-                              d_jxs[sigp]   ,
-                              d_jxs[landp]  ,
-                              d_jxs[andp]   ,
-                              d_jxs[ldlwp]  ,
-                              d_jxs[dlwp]   ,
-                              d_jxs[yp]     ,
-                              d_jxs[fis]    ,
-                              d_jxs[end] } ;
-
-  // find irrelevant blocks and remove them from start
-  // TODO
-
   // likely can ignore as we are not doing particle production in FRENSIE
   /* jxsd(i), i=1,2 ;
   ptype;

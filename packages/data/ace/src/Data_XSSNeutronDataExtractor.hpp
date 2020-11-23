@@ -191,9 +191,6 @@ private:
   // list of locators for start of each blockID in enum
   std::vector<int> start;
 
-  // list of lengths of each blockID in enum
-  std::vector<int> length;
-
   // The xss array (data in this array should never be directly modified)
   std::shared_ptr<const std::vector<double> > d_xss;
 
