@@ -135,10 +135,6 @@ class PQLAQuadrature
   //! Take direction signs to calculate secondary index
   size_t findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
 
-  //! Get a specific reference to a spherical triangle
-  void getSphericalTriangle(const size_t triangle_index,
-                            SphericalTriangle& triangle) const ;
-
   //! Quadrature order
   unsigned d_quadrature_order;
 

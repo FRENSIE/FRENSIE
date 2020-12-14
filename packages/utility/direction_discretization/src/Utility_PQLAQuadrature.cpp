@@ -12,6 +12,7 @@
 #include "Utility_DesignByContract.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 // std includes
 #include <cmath>
@@ -128,7 +129,7 @@ size_t PQLAQuadrature::findTriangleBin(const std::array<double, 3>& direction) c
                                                  static_cast<int>(fabs(direction_normalized_1_norm[2])*d_quadrature_order))
          +this->findSecondaryIndex(std::signbit(direction_normalized_1_norm[0]), 
                                     std::signbit(direction_normalized_1_norm[1]),
-                                    std::signbit(direction_normalized_1_norm[2]))*std::pow(d_quadrature_order, 2);
+                                    std::signbit(direction_normalized_1_norm[2]))*d_quadrature_order*d_quadrature_order;
 }  
 
 // Find which triangle bin a direction vector is in (takes 2-norm vector)
@@ -162,9 +163,8 @@ double PQLAQuadrature::getTriangleArea(const size_t triangle_index) const
 void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector,
                                                      const size_t triangle_index) const
 {
-  SphericalTriangle triangle;
-  this->getSphericalTriangle(triangle_index,
-                             triangle);
+  testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
+  SphericalTriangle triangle = d_spherical_triangle_vector[triangle_index];
 
   std::array<double, 3>& vertex_A_vector = std::get<0>(triangle.triangle_parameter_vector[0]);
   std::array<double, 3>& vertex_B_vector = std::get<0>(triangle.triangle_parameter_vector[1]);
@@ -228,11 +228,16 @@ void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3>& dire
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
 
-  for(int dim = 0; dim < 3; ++dim)
+  if(normalization_constant > 0)
   {
-    direction_normalized_1_norm[dim] = direction_normalized_2_norm[dim]/normalization_constant;
+    for(int dim = 0; dim < 3; ++dim)
+    {
+      direction_normalized_1_norm[dim] = direction_normalized_2_norm[dim]/normalization_constant;
+    }
+  } else
+  {
+    THROW_EXCEPTION(std::runtime_error, " Normalization constant <= 0 ")
   }
-
 }
 
 // Converts direction vector to 1-norm normalized vector
@@ -286,14 +291,6 @@ size_t PQLAQuadrature::findSecondaryIndex(const bool x_sign, const bool y_sign, 
 
   return secondary_index;
   
-}
-
-// Return a spherical triangle struct
-void PQLAQuadrature::getSphericalTriangle(const size_t triangle_index,
-                                                             SphericalTriangle& triangle) const
-{
-  testPrecondition(triangle_index >= 0 && triangle_index <= this->getNumberOfTriangles()-1);
-  triangle = d_spherical_triangle_vector[triangle_index];
 }
 
 const std::vector<SphericalTriangle>& PQLAQuadrature::getSphericalTriangleVector() const
