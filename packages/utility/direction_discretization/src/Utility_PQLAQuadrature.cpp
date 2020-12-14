@@ -148,7 +148,7 @@ unsigned PQLAQuadrature::getQuadratureOrder() const
 // Return the total number of triangles
 size_t PQLAQuadrature::getNumberOfTriangles() const
 {
-  return 8*pow(d_quadrature_order,2);
+  return 8*d_quadrature_order*d_quadrature_order;
 }
 
 // Return the area of a triangle
@@ -192,9 +192,9 @@ void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& dire
                                          vector_operation_result);
 
 
-  for(int i = 0; i < 3; ++i)
+  for(int dim = 0; dim < 3; ++dim)
   {
-    C_hat[i] = q*vertex_A_vector[i]+sqrt(1-q*q)*vector_operation_result[i];
+    C_hat[dim] = q*vertex_A_vector[dim]+sqrt(1-q*q)*vector_operation_result[dim];
   }
 
   double z = 1-RandomNumberGenerator::getRandomNumber<double>()*(1-calculateCosineOfAngleBetweenUnitVectors(C_hat.data(), vertex_B_vector.data()));
@@ -202,9 +202,9 @@ void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& dire
   this->isotropicSamplingVectorOperation(C_hat,
                                          vertex_B_vector,
                                          vector_operation_result);
-  for(int i = 0; i < 3; ++i)
+  for(int dim = 0; dim < 3; ++dim)
   {
-    direction_vector[i] = z*vertex_B_vector[i] + sqrt(1-z*z)*vector_operation_result[i];
+    direction_vector[dim] = z*vertex_B_vector[dim] + sqrt(1-z*z)*vector_operation_result[dim];
   }
 }
 
@@ -214,9 +214,9 @@ void PQLAQuadrature::isotropicSamplingVectorOperation(const std::array<double, 3
                                       std::array<double, 3>& result_vector) const
 {
   double dot_product_result = calculateCosineOfAngleBetweenUnitVectors( vertex_1.data(), vertex_2.data() );
-  for(int dimension = 0; dimension < 3; ++dimension)
+  for(int dim = 0; dim < 3; ++dim)
   {
-    result_vector[dimension] = vertex_1[dimension] - dot_product_result*vertex_2[dimension];
+    result_vector[dim] = vertex_1[dim] - dot_product_result*vertex_2[dim];
   }
   normalizeVector(result_vector.data());
   testPostcondition(isUnitVector(result_vector.data()));
@@ -228,9 +228,9 @@ void PQLAQuadrature::normalizeVectorToOneNorm( const std::array<double, 3>& dire
 {
   double normalization_constant = fabs(direction_normalized_2_norm[0]) + fabs(direction_normalized_2_norm[1]) + fabs(direction_normalized_2_norm[2]);
 
-  for(int dimension = 0; dimension < 3; ++dimension)
+  for(int dim = 0; dim < 3; ++dim)
   {
-    direction_normalized_1_norm[dimension] = direction_normalized_2_norm[dimension]/normalization_constant;
+    direction_normalized_1_norm[dim] = direction_normalized_2_norm[dim]/normalization_constant;
   }
 
 }
