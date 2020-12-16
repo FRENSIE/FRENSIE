@@ -169,8 +169,8 @@ FRENSIE_UNIT_TEST(PQLAQuadrature, sampleIsotropicallyFromTriangle)
   std::vector<double> fake_stream = {0.32, 0.45, 0.83, 0.92};
   Utility::RandomNumberGenerator::setFakeStream(fake_stream);
 
-  std::array<size_t, 2> desired_triangles_to_sample_from = {5, 64};
-  double precalculated_results_array[2][3]= {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {-0.670743813270348,  -0.494811928758853,  -0.552506915900151}};
+  size_t desired_triangles_to_sample_from[2] = {5, 64};
+  double precalculated_results_array[2][3] = {{0.730188313787608, 0.669484176934741, 0.136440328503061}, {-0.670743813270348,  -0.494811928758853,  -0.552506915900151}};
 
   for(int test_index = 0; test_index < 2; ++test_index)
   {
