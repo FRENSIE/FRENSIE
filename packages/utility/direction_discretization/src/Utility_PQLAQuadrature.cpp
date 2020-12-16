@@ -179,7 +179,7 @@ double PQLAQuadrature::getTriangleArea(const size_t triangle_index) const
   return d_spherical_triangle_vector[triangle_index].area;
 }
 
-// Return a random direction from within a spherical triangle
+// Return a random direction from within a spherical triangle. Paper reference in .hpp file for more information.
 void PQLAQuadrature::sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector,
                                                      const size_t triangle_index) const
 {
@@ -272,7 +272,14 @@ void PQLAQuadrature::normalizeVectorToOneNorm(  const double x_direction,
                                   direction_normalized_1_norm );
 }
 
-// Take lower bounding plane indices of direction vector to form triangle index
+// Take lower bounding plane indices of direction vector to form triangle index.
+/* This algorithm takes the indices of the planes that interesect with an octahedron face
+ * and then uses the below formula to calculate what the respective triangle index for those
+ * planes is. The sum of these indices is always equal to the quadrature order + or - 1, so
+ * there is not a simple way to do this. The below takes the indices, determines which row it's on,
+ * and takes into account the pattern of each row having 2 less triangles than the last, and uses
+ * this information to calculate the index.
+ */
 size_t PQLAQuadrature::calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const
 {
 
