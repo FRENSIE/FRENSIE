@@ -25,13 +25,33 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
   testPrecondition(quadrature_order > 0);
   d_quadrature_order = quadrature_order;
 
-  //MORE COMMENTS
-  // CLEAN UP get<> statements
+  /* Visual Aid Reference: S.A. Rukolaine, V.S. Yuferev,
+   * Discrete ordinates quadrature schemes based on the angular interpolation of radiation intensity,
+   * Journal of Quantitative Spectroscopy and Radiative Transfer,
+   * Volume 69, Issue 3,
+   * 2001,
+   * Pages 257-275,
+   * ISSN 0022-4073
+   * FIGURE 1
+   */
+
+  /* PROCEDURE STEPS BASED OFF ABOVE VISUAL REFERENCE
+   * 1) Designate coordinate system: To the right is x, to the left is y, and up is z
+   * 2) Start at the lower right corner (x index = quadrature order, y index = 0, z index = 0)
+   * 3) Move clockwise around the triangle using the indices as direction vectors, normalizing to 2-norm
+   * 4) Store angle information relative to each vertex and area based off of triangle vertices
+   * 5) Use last vertex as starting point for next upside-down triangle in row (moving up and to the left in reference to visual aid)
+   * 6) Move clockwise again around triangle, using information in same manner but acknowledging the upside-down orientation of the triangle.
+   * 7) Use starting vertex of upside-down triangle as starting vertex of next rightside-up triangle.
+   * 8) Repeat until end of triangle "row"
+   * 9) First row has 2*(quadrature order) - 1 triangles, each row after that has 2 less triangles than the previous row,
+   *    repeat until the row you're at has 1 triangle
+   */
 
   // Form the triangle vertices
 
-  // Initialize triangle vertex indices at lower left corner of positive domain octahedron face
-  // This point is always either at lower left end of right-side-up triangle or upper left of up-side-down triangle
+  // Initialize triangle vertex indices at lower right corner of positive domain octahedron face
+  // This point is always either at lower right end of right-side-up triangle or upper right of up-side-down triangle
   double i_x;
   double i_y;
   double i_z;
@@ -51,7 +71,7 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
       vertex_vector.push_back({i_x, i_y, i_z});
       if(row_triangle % 2 == 0)
       {
-        // Always go counter-clockwise with vertices around triangle (start lower left vertex)
+        // Always go clockwise with vertices around triangle (start right left vertex)
         vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
         vertex_vector.push_back({i_x-1.0, i_y    , i_z+1.0});
 
@@ -62,7 +82,7 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
       }
       else
       {
-        // Always go counter-clockwise with vertices around triangle (start upper left vertex)
+        // Always go clockwise with vertices around triangle (start upper right vertex)
         vertex_vector.push_back({i_x    , i_y+1.0, i_z-1.0});
         vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
         // Do nothing for next triangle if triangle is pointing down (same vertex starting point for next triangle)
