@@ -297,6 +297,32 @@ const std::vector<SphericalTriangle>& PQLAQuadrature::getSphericalTriangleVector
 {
   return d_spherical_triangle_vector;
 }
+
+void SphericalTriangle::computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector)
+{
+  // Put methods in struct to simplify this part.
+  
+  // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
+  std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
+                                            calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
+                                            calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
+
+  // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
+  std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
+
+  std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
+                                  acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
+                                  acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
+
+  for(size_t vert = 0; vert < 3; ++vert)
+  {
+    triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[vert], opposite_side_length_vector[vert], angle_vector[vert]));
+  }
+
+  // Store triangle area
+  area = angle_vector[0]+angle_vector[1]+angle_vector[2]-M_PI;
+}
+
 EXPLICIT_CLASS_SERIALIZE_INST( PQLAQuadrature );
 } // end Utility namespace
 
