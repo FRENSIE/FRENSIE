@@ -58,45 +58,45 @@ FRENSIE_UNIT_TEST( PQLAQuadrature, findTriangleBin )
   std::shared_ptr<Utility::PQLAQuadrature> PQLAQuadrature(
               new Utility::PQLAQuadrature( quadrature_order ) );
 
-  std::array<double, 3> direction_1 {1, 1, 2};
-  std::array<double, 3> direction_2 {-1, -1, -2};
-  std::array<double, 3> direction_3 {-1, 1, 2};
-  std::array<double, 3> direction_4 {2, 1, 1};
-  std::array<double, 3> direction_5 {-0.670743813270348,  -0.494811928758853,  -0.552506915900151};
-  // Begin edge cases
-  std::array<double, 3> direction_6 {1, 1, 1};
-  std::array<double, 3> direction_7 {0, 1, 0};
-  std::array<double, 3> direction_8 {0, 0, 1};
-  std::array<double, 3> direction_9 {1, 0, 0};
-  std::array<double, 3> direction_10 {1, 2, 0};
-  std::array<double, 3> direction_11 {2, 1, 0};
-  std::array<double, 3> direction_12 {2, 0, 1};
-  std::array<double, 3> direction_13 {1, 0, 2};
-  std::array<double, 3> direction_14 {0, 2, 1};
-  std::array<double, 3> direction_15 {0, 1, 2};
+  std::vector< std::array< double, 3 > > direction_vector = {{1, 1, 2},
+                                                             {-1, -1, -2},
+                                                             {-1, 1, 2},
+                                                             {2, 1, 1},
+                                                             {-0.670743813270348,  -0.494811928758853,  -0.552506915900151},
+                                                             {1, 1, 1},
+                                                             {0, 1, 0},
+                                                             {0, 0, 1},
+                                                             {1, 0, 0},
+                                                             {1, 2, 0},
+                                                             {2, 1, 0},
+                                                             {2, 0, 1},
+                                                             {1, 0, 2},
+                                                             {0, 2, 1},
+                                                             {0, 1, 2}};
 
+  std::vector< size_t > index_vector = {3,
+                                        3+(number_of_triangles_per_side*7),
+                                        3+(number_of_triangles_per_side*1),
+                                        1,
+                                        64,
+                                        5,
+                                        8,
+                                        4,
+                                        0,
+                                        8,
+                                        5,
+                                        0,
+                                        2,
+                                        8,
+                                        7};
 
-  std::array< std::pair< std::array<double, 3>, unsigned >, 15 > direction_index_array
-  { 
-    std::make_pair(direction_1, 3),
-    std::make_pair(direction_2, 3+(number_of_triangles_per_side*7)),
-    std::make_pair(direction_3, 3+(number_of_triangles_per_side*1)),
-    std::make_pair(direction_4, 1),
-    std::make_pair(direction_5, 64),
-    // Begin edge cases
-    std::make_pair(direction_6, 5),
-    std::make_pair(direction_7, 8),
-    std::make_pair(direction_8, 4),
-    std::make_pair(direction_9, 0),
-    std::make_pair(direction_10, 8),
-    std::make_pair(direction_11, 5),
-    std::make_pair(direction_12, 0),
-    std::make_pair(direction_13, 2),
-    std::make_pair(direction_14, 8),
-    std::make_pair(direction_15, 7)
-  };
+  std::vector< std::pair< std::array<double, 3>, unsigned > > direction_index_vector;
+  for (size_t direction_index_pair = 0; direction_index_pair < index_vector.size(); ++direction_index_pair)
+  {
+    direction_index_vector.push_back(std::make_pair(direction_vector[direction_index_pair], index_vector[direction_index_pair]));
+  }
 
-  for(auto it = direction_index_array.begin(); it != direction_index_array.end(); ++it)
+  for(auto it = direction_index_vector.begin(); it != direction_index_vector.end(); ++it)
   {
     std::array<double, 3> normalize_direction = it->first;
     Utility::normalizeVector(normalize_direction[0],
