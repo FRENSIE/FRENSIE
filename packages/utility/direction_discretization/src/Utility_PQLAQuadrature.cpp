@@ -87,11 +87,11 @@ PQLAQuadrature::PQLAQuadrature(unsigned quadrature_order)
         vertex_vector.push_back({i_x-1.0, i_y+1.0, i_z    });
         // Do nothing for next triangle if triangle is pointing down (same vertex starting point for next triangle)
       }
+
       // normalize vectors to 2-norm (currently indices of planes)
-      
-      for(size_t i = 0; i < 3; ++i)
+      for(size_t vertex = 0; vertex < 3; ++vertex)
       {
-        normalizeVector(vertex_vector[i].data());
+        normalizeVector(vertex_vector[vertex].data());
       }
 
       SphericalTriangle local_triangle;
