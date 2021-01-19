@@ -708,6 +708,10 @@ protected:
   static inline T rawEpsilon() noexcept
   { return std::numeric_limits<T>::epsilon(); }
 
+    //! Get comparison tolerance
+  static inline T rawComparisonTolerance() noexcept
+  { return (T)1.e-15; }
+
   //! Get the maximum rounding error
   static inline T rawRoundError() noexcept
   { return std::numeric_limits<T>::round_error(); }
@@ -769,6 +773,10 @@ protected:
   //! Get the machine epsilon
   static inline std::complex<T> rawEpsilon() noexcept
   { return std::complex<T>(ParallelBaseType::rawEpsilon(), ParallelBaseType::rawZero()); }
+
+    //! Get comparison tolerance
+  static inline std::complex<T> rawComparisonTolerance() noexcept
+  { return std::complex<T>(ParallelBaseType::rawComparisonTolerance(), ParallelBaseType::rawZero()); }
 
   //! Get the maximum rounding error
   static inline std::complex<T> rawRoundError() noexcept
@@ -1155,6 +1163,10 @@ public:
   static inline typename BaseType::QuantityType epsilon() noexcept
   { return BaseType::rawEpsilon(); }
 
+  //! Get comparison tolerence
+  static inline typename BaseType::QuantityType comparisonTolerance() noexcept
+  { return BaseType::rawComparisonTolerance(); }
+
   //! Get the maximum rounding error
   static inline typename BaseType::QuantityType roundError() noexcept
   { return BaseType::rawRoundError(); }
@@ -1204,6 +1216,10 @@ public:
   static inline typename BaseType::QuantityType epsilon() noexcept
   { return BaseType::rawEpsilon(); }
 
+  //! Get comparison tolerance
+  static inline typename BaseType::QuantityType comparisonTolerance() noexcept
+  { return BaseType::rawComparisonTolerance(); }
+
   //! Get the maximum rounding error
   static inline typename BaseType::QuantityType roundError() noexcept
   { return BaseType::rawRoundError(); }
@@ -1250,6 +1266,10 @@ public:
   static inline typename BaseType::QuantityType epsilon() noexcept
   { return BaseType::QuantityType::from_value( BaseType::rawEpsilon() ); }
 
+ //! Get comparison tolerance
+  static inline typename BaseType::QuantityType comparisonTolerance() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawComparisonTolerance() ); }
+
   //! Get the maximum rounding error
   static inline typename BaseType::QuantityType roundError() noexcept
   { return BaseType::QuantityType::from_value( BaseType::rawRoundError() ); }
@@ -1292,6 +1312,10 @@ public:
   //! Get the machine epsilon
   static inline typename BaseType::QuantityType epsilon() noexcept
   { return BaseType::QuantityType::from_value( BaseType::rawEpsilon() ); }
+
+  //! Get comparison tolerance
+  static inline typename BaseType::QuantityType comparisonTolerance() noexcept
+  { return BaseType::QuantityType::from_value( BaseType::rawComparisonTolerance() ); }
 
   //! Get the maximum rounding error
   static inline typename BaseType::QuantityType roundError() noexcept

@@ -215,6 +215,10 @@ struct QuantityTraits
   static inline QuantityType epsilon() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
 
+    //! Get comparison tolerance (only defined for floating-point types)
+  static inline QuantityType comparisonTolerance() noexcept
+  { return UndefinedQuantityTraits<T>::notDefined(); }
+
   //! Get the maximum rounding error (only defined for floating-point types)
   static inline QuantityType roundError() noexcept
   { return UndefinedQuantityTraits<T>::notDefined(); }
