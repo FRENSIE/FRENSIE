@@ -156,6 +156,15 @@ boost::units::quantity<Unit,double> smallOverTwo( const boost::units::quantity<U
   return Utility::QuantityTraits<boost::units::quantity<Unit,double> >::initializeQuantity( smallOverTwo( double() ) );
 }
 
+
+void boost_check_equal_str(std::string val1, std::string val2){
+  BOOST_CHECK_EQUAL(val1, val2);
+}
+void boost_check_equal_bool(bool val1, bool val2){
+  BOOST_CHECK_EQUAL(val1, val2);
+}
+
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -176,7 +185,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                      "rhs", false, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -189,7 +198,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                      "rhs", false, zero( T() ),
                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -201,7 +210,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", false, zero( T() ),
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -213,7 +222,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", false, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -225,7 +234,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", false, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -238,7 +247,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -250,7 +259,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -262,7 +271,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -274,7 +283,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -287,7 +296,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -299,7 +308,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -311,7 +320,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "", small(T()) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -323,7 +332,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T>::template createComparisonHeader<Policy>(
@@ -336,7 +345,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader, TypePair, TestTypes )
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 }
 
 //---------------------------------------------------------------------------//
@@ -359,7 +368,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                      "rhs", false, (T*)NULL,
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   T value = zero( T() );
 
@@ -373,7 +382,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", false, &value,
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T*>::template createComparisonHeader<Policy>(
@@ -385,7 +394,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", false, &value,
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T*>::template createComparisonHeader<Policy>(
@@ -397,7 +406,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", true, &value,
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T*>::template createComparisonHeader<Policy>(
@@ -409,7 +418,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", true, &value,
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T*>::template createComparisonHeader<Policy>(
@@ -421,7 +430,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", true, &value,
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::ComparisonTraits<T*>::template createComparisonHeader<Policy>(
@@ -433,7 +442,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_pointer,
                                                      "rhs", true, &value,
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 }
 
 //---------------------------------------------------------------------------//
@@ -457,7 +466,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                      "rhs", true, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
@@ -467,7 +476,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "rhs", true, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
@@ -478,7 +487,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     right_value, "rhs",
@@ -490,7 +499,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // Check that const values have the same details created
   const T const_left_value = left_value;
@@ -503,7 +512,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "rhs", true, zero( T() ),
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
@@ -513,7 +522,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "rhs", true, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
@@ -524,7 +533,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     const_right_value, "rhs",
@@ -536,7 +545,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalues_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 }
 
 //---------------------------------------------------------------------------//
@@ -561,7 +570,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                      "rhs", false, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -571,7 +580,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", false, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -582,7 +591,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", false, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -594,7 +603,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // LHS = rvalue reference, RHS = lvalue reference
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
@@ -605,7 +614,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                      "rhs", true, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
@@ -615,7 +624,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", true, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
@@ -626,7 +635,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     right_value, "rhs",
@@ -638,7 +647,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   const T const_left_value = left_value;
   const T const_right_value = right_value;
@@ -651,7 +660,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", false, zero( T() ),
                                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -661,7 +670,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", false, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -672,7 +681,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", false, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( const_left_value, "lhs",
                                                     zero( T() ), "rhs",
@@ -684,7 +693,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // LHS = rvalue reference, RHS = const lvalue reference
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
@@ -695,7 +704,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                      "rhs", true, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
@@ -705,7 +714,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", true, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
@@ -716,7 +725,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "rhs", true, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     const_right_value, "rhs",
@@ -728,7 +737,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_lvalue_rvalue_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 }
 
 //---------------------------------------------------------------------------//
@@ -749,7 +758,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
                                      "rhs", false, zero( T() ),
                                      "" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
@@ -759,7 +768,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
                                                      "rhs", false, zero( T() ),
                                                      "", small( T() ) ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
@@ -770,7 +779,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
                                                      "rhs", false, zero( T() ),
                                                      "[0].first" ) + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header = Utility::createComparisonHeader<Policy,0>( zero( T() ), "lhs",
                                                     zero( T() ), "rhs",
@@ -782,7 +791,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
                                                      "[0].first", small(T()) )
     + ": ";
 
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 }
 
 //---------------------------------------------------------------------------//
@@ -801,7 +810,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
                      std::string("\"rhs\""), false, std::string("test string"),
                      "" ) + ": ";
   
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // Two string literals (different size)
   header =
@@ -815,7 +824,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
              std::string("\"rhs\""), false, std::string("another test string"),
              "" ) + ": ";
   
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // One string literal and one string rvalue
   header =
@@ -829,7 +838,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
                      std::string("rhs"), false, std::string("test string"),
                      "" ) + ": ";
   
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   header =
     Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
@@ -842,7 +851,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
                      std::string("\"rhs\""), false, std::string("test string"),
                      "" ) + ": ";
   
-  BOOST_CHECK_EQUAL( header, expected_header );
+  boost_check_equal_str( header, expected_header );
 
   // One string literal and one string lvalue
   {
@@ -859,7 +868,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
                      std::string("rhs"), true, test_string,
                      "" ) + ": ";
   
-    BOOST_CHECK_EQUAL( header, expected_header );
+    boost_check_equal_str( header, expected_header );
     
     header =
       Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
@@ -872,7 +881,7 @@ BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
                      std::string("\"rhs\""), false, std::string("test string"),
                      "" ) + ": ";
   
-    BOOST_CHECK_EQUAL( header, expected_header );
+    boost_check_equal_str( header, expected_header );
   }
 }
 
@@ -895,7 +904,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
 
   bool expected_compare_result = Policy::compare( left_value, right_value );
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = zero( T() );
   right_value = one( T() );
@@ -907,7 +916,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
 
   expected_compare_result = Policy::compare( left_value, right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one( T() );
   right_value = zero( T() );
@@ -919,7 +928,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
 
   expected_compare_result = Policy::compare( left_value, right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one( T() );
   right_value = one( T() );
@@ -931,7 +940,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
 
   expected_compare_result = Policy::compare( left_value, right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = zero(T());
   right_value = smallOverTwo(T());
@@ -945,7 +954,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = smallOverTwo(T());
   right_value = zero(T());
@@ -959,7 +968,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = zero(T());
   right_value = smallByTwo(T());
@@ -973,7 +982,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = smallByTwo(T());
   right_value = zero(T());
@@ -987,7 +996,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one(T());
   right_value = one(T())+smallOverTwo(T());
@@ -1001,7 +1010,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one(T())+smallOverTwo(T());
   right_value = one(T());
@@ -1015,7 +1024,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one(T());
   right_value = one(T())+smallByTwo(T());
@@ -1029,7 +1038,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one(T())+smallByTwo(T());
   right_value = one(T());
@@ -1043,7 +1052,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // Detail logging
   left_value = zero( T() );
@@ -1062,8 +1071,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1083,8 +1092,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1104,8 +1113,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1125,8 +1134,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1148,8 +1157,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1171,8 +1180,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1194,8 +1203,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1217,8 +1226,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1240,8 +1249,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1263,8 +1272,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1286,8 +1295,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1309,8 +1318,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare, TypePair, TestTypes )
                                                       "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//
@@ -1332,7 +1341,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
 
   bool expected_compare_result = Policy::compare( &left_value, &right_value );
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = zero( T() );
   right_value = one( T() );
@@ -1344,7 +1353,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
 
   expected_compare_result = Policy::compare( &left_value, &right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one( T() );
   right_value = zero( T() );
@@ -1356,7 +1365,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
 
   expected_compare_result = Policy::compare( &left_value, &right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   left_value = one( T() );
   right_value = one( T() );
@@ -1368,7 +1377,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
 
   expected_compare_result = Policy::compare( &left_value, &right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // Detail logging
   left_value = zero( T() );
@@ -1387,8 +1396,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1408,8 +1417,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1429,8 +1438,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1450,8 +1459,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_pointer, TypePair, EqualityTestTypes )
                                                       "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//
@@ -1472,7 +1481,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
 
   bool expected_compare_result = Policy::compare( left_value, right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              right_value, "rhs",
@@ -1481,7 +1490,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( left_value, right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   const T const_left_value = left_value;
   const T const_right_value = right_value;
@@ -1493,7 +1502,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( const_left_value, const_right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              const_right_value, "rhs",
@@ -1502,7 +1511,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( const_left_value, const_right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // Details logging
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
@@ -1520,8 +1529,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1539,8 +1548,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "[0].first" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1558,8 +1567,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1578,8 +1587,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1597,8 +1606,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1617,8 +1626,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "[0].first", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1636,8 +1645,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1656,8 +1665,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalues_helper, TypePair, TestTypes )
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//
@@ -1680,7 +1689,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   bool expected_compare_result = Policy::compare( left_value, zero( T() ) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( left_value, "lhs",
                                              zero( T() ), "rhs",
@@ -1689,7 +1698,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( left_value, zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   const T const_left_value = left_value;
   const T const_right_value = right_value;
@@ -1701,7 +1710,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( const_left_value, zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( const_left_value, "lhs",
                                              zero( T() ), "rhs",
@@ -1710,7 +1719,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( const_left_value, zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // No details logging, LHS = rvalue reference, RHS = lvalue reference
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
@@ -1719,7 +1728,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
 
   expected_compare_result = Policy::compare( zero( T() ), right_value );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              right_value, "rhs",
@@ -1728,7 +1737,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( zero( T() ), right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
@@ -1737,7 +1746,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( zero( T() ), const_right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              const_right_value, "rhs",
@@ -1746,7 +1755,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
   expected_compare_result =
     Policy::compare( zero( T() ), const_right_value, small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // Details logging, LHS = lvalue reference, RHS = rvalue reference
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
@@ -1764,8 +1773,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1783,8 +1792,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1802,8 +1811,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1822,8 +1831,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1841,8 +1850,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1861,8 +1870,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1880,8 +1889,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1900,8 +1909,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1919,8 +1928,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1938,8 +1947,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1957,8 +1966,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1977,8 +1986,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -1996,8 +2005,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2016,8 +2025,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2035,8 +2044,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2055,8 +2064,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_lvalue_rvalue_helper,
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 }
 
 //---------------------------------------------------------------------------//
@@ -2075,7 +2084,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
 
   bool expected_compare_result = Policy::compare( zero( T() ), zero( T() ) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
@@ -2084,7 +2093,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( zero( T() ), zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
@@ -2093,7 +2102,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( zero( T() ), zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( zero( T() ), "lhs",
                                              zero( T() ), "rhs",
@@ -2102,7 +2111,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
   expected_compare_result =
     Policy::compare( zero( T() ), zero( T() ), small(T()) );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   // Details logging
   const typename Utility::ComparisonTraits<T>::ExtraDataType extra_data =
@@ -2120,8 +2129,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2139,8 +2148,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "[0].first" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2158,8 +2167,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2178,8 +2187,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2197,8 +2206,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2217,8 +2226,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "[0].first", small(T()) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2236,8 +2245,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2256,8 +2265,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
                                      "[0].first", small( T() ) ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 }
 
 typedef boost::mpl::list<Utility::EqualityComparisonPolicy,Utility::InequalityComparisonPolicy> LocalPolicyTypes;
@@ -2278,7 +2287,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
   bool expected_compare_result = Policy::compare( std::string("test string"),
                                                   std::string("test string") );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
                                                  std::string("test string"), "rhs",
@@ -2287,7 +2296,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
   expected_compare_result = Policy::compare( std::string("test string"),
                                              std::string("test string") );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   compare_result = Utility::compare<Policy,0,0>( std::string("test string"), "lhs",
                                                  "test string", "\"rhs\"",
@@ -2296,7 +2305,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
   expected_compare_result = Policy::compare( std::string("test string"),
                                              std::string("test string") );
 
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  boost_check_equal_bool( compare_result, expected_compare_result );
 
   {
     std::string test_string( "test string" );
@@ -2308,7 +2317,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
     expected_compare_result = Policy::compare( std::string("test string"),
                                                test_string );
 
-    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+    boost_check_equal_bool( compare_result, expected_compare_result );
     
     compare_result = Utility::compare<Policy,0,0>( test_string, "lhs",
                                                    "test string", "\"rhs\"",
@@ -2317,7 +2326,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
     expected_compare_result = Policy::compare( test_string,
                                                std::string("test string") );
     
-    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+    boost_check_equal_bool( compare_result, expected_compare_result );
   }
   
 
@@ -2337,8 +2346,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2356,8 +2365,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2375,8 +2384,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
                                      "" ) + ": " +
     (expected_compare_result ? "passed\n" : "failed!\n");
   
-  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  boost_check_equal_bool( compare_result, expected_compare_result );
+  boost_check_equal_str( oss.str(), expected_details );
 
   oss.str( "" );
   oss.clear();
@@ -2397,8 +2406,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
                                        "" ) + ": " +
       (expected_compare_result ? "passed\n" : "failed!\n");
   
-    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-    BOOST_CHECK_EQUAL( oss.str(), expected_details );
+    boost_check_equal_bool( compare_result, expected_compare_result );
+    boost_check_equal_str( oss.str(), expected_details );
 
     oss.str( "" );
     oss.clear();
@@ -2416,8 +2425,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
                                        "" ) + ": " +
       (expected_compare_result ? "passed\n" : "failed!\n");
   
-    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
-    BOOST_CHECK_EQUAL( oss.str(), expected_details );
+    boost_check_equal_bool( compare_result, expected_compare_result );
+    boost_check_equal_str( oss.str(), expected_details );
   }
 }
 
