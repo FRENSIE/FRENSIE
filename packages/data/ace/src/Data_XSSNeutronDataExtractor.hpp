@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <memory>
 
+
 // FRENSIE Includes
 #include "Utility_Vector.hpp"
 #include "Utility_Array.hpp"
@@ -196,6 +197,36 @@ private:
 
   // The ESZ block (cached for quick access to cross sections in this block)
   Utility::ArrayView<const double> d_esz_block;
+
+  // enum to give block ids appropriate indexing value 
+  enum blockId  {  esz, // 0
+                    nu, // 1 
+                    mtr, // 2
+                    lqr, // 3
+                    tyr, // 4
+                    lsig, // 5
+                    sig, // 6
+                    landb, // 7
+                    andb, // 8
+                    ldlw, // 9
+                    dlw, // 10
+                    gpd, // 11
+                    mtrp, // 12
+                    lsigp, // 13
+                    sigp, // 14
+                    landp, // 15
+                    andp, // 16
+                    ldlwp, // 17
+                    dlwp, // 18
+                    yp, // 19
+                    fis, // 20
+                    end, // 21
+                    lunr, // 22
+                    dnu, // 23
+                    bdd, //24
+                    dnedl, // 25
+                    dned // 26 
+                  };
 };
 
 } // end Data namespace

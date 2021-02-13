@@ -21,9 +21,9 @@ namespace Data{
  * subtracted from all indices so that the correct array location is accessed).
  */
 XSSNeutronDataExtractor::XSSNeutronDataExtractor(
-		       const Utility::ArrayView<const int>& nxs,
-                       const Utility::ArrayView<const int>& jxs,
-		       const std::shared_ptr<const std::vector<double> >& xss )
+            const Utility::ArrayView<const int>& nxs,
+            const Utility::ArrayView<const int>& jxs,
+            const std::shared_ptr<const std::vector<double> >& xss )
   : d_nxs( nxs.begin(), nxs.end() ),
     d_jxs( jxs.begin(), jxs.end() ),
     d_xss( xss ),
@@ -57,79 +57,60 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 
   // Extract and cache the ESZ block
   d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] );
-}
 
-// enum to give block ids appropriate indexing value 
-enum blockId  {  esz, // 0
-                  nu, // 1 
-                  mtr, // 2
-                  lqr, // 3
-                  tyr, // 4
-                  lsig, // 5
-                  sig, // 6
-                  landb, // 7
-                  andb, // 8
-                  ldlw, // 9
-                  dlw, // 10
-                  gpd, // 11
-                  mtrp, // 12
-                  lsigp, // 13
-                  sigp, // 14
-                  landp, // 15
-                  andp, // 16
-                  ldlwp, // 17
-                  dlwp, // 18
-                  yp, // 19
-                    fis, // 20
-                  end, // 21
-                   lunr, // 22
-                  dnu, // 23
-                  bdd, //24
-                  dnedl, // 25
-                  dned // 26 
-                 };
+  // sort given jxs array into map data structure to be used later
+  // perhaps turn below into a class method and call from the constructor
 
-// sort given jxs array into map data structure
-// first, add available blocks 
-int last_block = dned;// probably don't want anything past dned since it is particle produciton
-std::vector<std::pair<int,int> > available_blocks;
-  for(int block = 0 ; block < last_block ; block++) {
-  if(d_jxs[block]>=0) {
-    available_blocks.push_back(std::make_pair(d_jxs[block],block));
+  // first, add available blocks 
+  int last_block = dned;// probably don't want anything past dned since it is particle produciton
+  std::vector<std::pair<int,int> > available_blocks;
+    for(int block = 0 ; block < last_block ; block++) {
+    if(d_jxs[block]>=0) {
+      available_blocks.push_back(std::make_pair(d_jxs[block],block));
+    }
   }
-}
 
-// sort pairs by first (jxs locations) to get monotone order
-std::sort(available_blocks.begin(),available_blocks.end());
+  // sort pairs by first (jxs locations) to get monotone order
+  std::sort(available_blocks.begin(),available_blocks.end());
 
-// maybe this becomes an error check (TEST_FOR_EXCEPTION ? )
-/* 
-// monotone check
-for(int idx = 0 ; idx < available_blocks.size()-1 ; idx++) {
-  // don't do check on last bc last block is end and it doesn't have a size
-  if(available_blocks[idx].first > available_blocks[idx+1].first ) {
-    // current block's location  happens after the next
-    // blocks are not sorted in monotone order
-    std::cout << "monotone check failed" << std::endl;
-    std::cout << "curr block "<< available_blocks[idx].second << " , jxs[block] = " << available_blocks[idx].first << std::endl;
-    std::cout << "next block "<< available_blocks[idx+1].second  <<  " , jxs[block+1] = "<< available_blocks[idx+1].first << std::endl;
+  // maybe this becomes an error check (TEST_FOR_EXCEPTION ? )
+  /* 
+  // monotone check
+  for(int idx = 0 ; idx < available_blocks.size()-1 ; idx++) {
+    // don't do check on last bc last block is end and it doesn't have a size
+    if(available_blocks[idx].first > available_blocks[idx+1].first ) {
+      // current block's location  happens after the next
+      // blocks are not sorted in monotone order
+      std::cout << "monotone check failed" << std::endl;
+      std::cout << "curr block "<< available_blocks[idx].second << " , jxs[block] = " << available_blocks[idx].first << std::endl;
+      std::cout << "next block "<< available_blocks[idx+1].second  <<  " , jxs[block+1] = "<< available_blocks[idx+1].first << std::endl;
 
-  } else {
-    std::cout << "monotone check passed for block " << available_blocks[idx].second << std::endl; // can likely comment out in FRENSIE
+    } else {
+      std::cout << "monotone check passed for block " << available_blocks[idx].second << std::endl; // can likely comment out in FRENSIE
+    }
   }
-}
-*/
+  */
 
-// create map that accepts a block key and returns a start-length pair for the queried block
-std::map<int, std::pair<int,int> > block_to_start_length_pair; // first parameter is the block's start, second parameter is the length of that block
-for(std::vector<std::pair<int,int> >::iterator soi=available_blocks.begin() ; soi<available_blocks.end() -1 ; soi++ ) {
-    // soi stands for sorted order iterator 
-    int block_id = soi->second;    // grab the block corresponding to the first value in the pair
-    int start = soi->first;       // grab the jxs position corresponding to the current block
-    int next_start = (soi+1)->first;   // grab the jxs position corresponding to the current block
-    int length = next_start - start ;    // the difference next - curr is the length of the block curr
-    block_to_start_length_pair.insert(std::make_pair(block_id,std::make_pair(start,length)));
+  // create map that accepts a block key and returns a start-length pair for the queried block
+  std::map<int, std::pair<int,int> > block_to_start_length_pair; // first parameter is the block's start, second parameter is the length of that block
+  for(std::vector<std::pair<int,int> >::iterator soi=available_blocks.begin() ; soi<available_blocks.end() -1 ; soi++ ) {
+      // soi stands for sorted order iterator 
+      int block_id = soi->second;    // grab the block corresponding to the first value in the pair
+      int start = soi->first;       // grab the jxs position corresponding to the current block
+      int next_start = (soi+1)->first;   // grab the jxs position corresponding to the current block
+      int length = next_start - start ;    // the difference next - curr is the length of the block curr
+      block_to_start_length_pair.insert(std::make_pair(block_id,std::make_pair(start,length)));
+  }
+
 }
+
+
+// TODO below here
+// change jxs indices to block names
+// change starts to be accessed from map[blockid].first
+// change lengths to be accessed from the map[blockid].second for subtractions
+// TBD whether to leave non subtractions, if tests pass consider changing, but
+// i don't see a reason to change them if their fixed size is given in the MCNP manual
 
 // Check if the nuclide is fissionable
 bool XSSNeutronDataExtractor::hasFissionData() const
