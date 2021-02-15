@@ -115,7 +115,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 // Check if the nuclide is fissionable
 bool XSSNeutronDataExtractor::hasFissionData() const
 {
-  if( d_jxs[1] >= 0 )
+  if( block_to_start_length_pair[nu].first >= 0 )
     return true;
   else
     return false;
@@ -124,7 +124,7 @@ bool XSSNeutronDataExtractor::hasFissionData() const
 // check if the nuclide has delayed neutron data
 bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
 {
-  if( d_jxs[23] >= 0 )
+  if( block_to_start_length_pair[dnu].first >= 0 )
     return true;
   else
     return false;
@@ -133,7 +133,7 @@ bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
 // Check if the nuclide has unresolved resonances
 bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
 {
-  if( d_jxs[22] >= 0 )
+  if( block_to_start_length_pair[lunr].first >= 0 )
     return true;
   else
     return false;
@@ -236,8 +236,8 @@ auto XSSNeutronDataExtractor::extractAverageHeatingNumbersInMeV() const -> Utili
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractNUBlock() const
 {
-  if( d_jxs[1] >= 0 )
-    return d_xss_view( d_jxs[1], d_jxs[2]-d_jxs[1] );
+  if( block_to_start_length_pair[nu].first >= 0 )
+    return d_xss_view( block_to_start_length_pair[nu].first, block_to_start_length_pair[nu].second);
   else
     return Utility::ArrayView<const double>();
 }
@@ -247,7 +247,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractMTRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[2], d_nxs[3] );
+    return d_xss_view( block_to_start_length_pair[mtr].first, d_nxs[3] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -257,7 +257,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractMTRPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[12], d_nxs[5] );
+    return d_xss_view( block_to_start_length_pair[mtrp].first, d_nxs[5] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -267,7 +267,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLQRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[3], d_nxs[3] );
+    return d_xss_view( block_to_start_length_pair[lqr].first, d_nxs[3] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -277,7 +277,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractTYRBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[4], d_nxs[3] );
+    return d_xss_view( block_to_start_length_pair[tyr].first, d_nxs[3] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -290,7 +290,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLSIGBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[5], d_nxs[3] );
+    return d_xss_view( block_to_start_length_pair[lsig].first, d_nxs[3] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -303,7 +303,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[13], d_nxs[5] );
+    return d_xss_view( block_to_start_length_pair[lsigp].first, d_nxs[5] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -313,7 +313,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGBlock() const
 {
   if( d_nxs[3] != 0 )
-    return d_xss_view( d_jxs[6], d_jxs[7]-d_jxs[6] );
+    return d_xss_view( block_to_start_length_pair[sig].first, block_to_start_length_pair[sig].second );
   else
     return Utility::ArrayView<const double>();
 }
@@ -325,14 +325,14 @@ XSSNeutronDataExtractor::extractSIGBlock() const
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLANDBlock() const
 {
-  return d_xss_view( d_jxs[7], d_nxs[4]+1 );
+  return d_xss_view( block_to_start_length_pair[landb].first, d_nxs[4]+1 );
 }
 
 // Extract the AND block from the XSS array
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDBlock() const
 {
-  return d_xss_view( d_jxs[8], d_jxs[9]-d_jxs[8] );
+  return d_xss_view( block_to_start_length_pair[andb].first, block_to_start_length_pair[andb].second );
 }
 
 // Extract the LDLW block from the XSS array
@@ -343,7 +343,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLDLWBlock() const
 {
   if( d_nxs[4] != 0 )
-    return d_xss_view( d_jxs[9], d_nxs[4] );
+    return d_xss_view( block_to_start_length_pair[ldlw].first, d_nxs[4] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -356,7 +356,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[17], d_nxs[5] );
+    return d_xss_view( block_to_start_length_pair[ldlwp].first, d_nxs[5] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -366,7 +366,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWBlock() const
 {
   if( d_nxs[4] != 0 )
-    return d_xss_view( d_jxs[10], d_jxs[11]-d_jxs[10] );
+    return d_xss_view( block_to_start_length_pair[dlw].first, block_to_start_length_pair[dlw].second );
   else
     return Utility::ArrayView<const double>();
 }
@@ -376,7 +376,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[18], d_jxs[19]-d_jxs[18] );
+    return d_xss_view(block_to_start_length_pair[dlwp].first, block_to_start_length_pair[dlwp].second );
   else
     return Utility::ArrayView<const double>();
 }
@@ -390,7 +390,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractGPDBlock() const
 {
   if( d_jxs[11] >= 0 )
-    return d_xss_view( d_jxs[11], d_jxs[12]-d_jxs[11] );
+    return d_xss_view( block_to_start_length_pair[gpd].first, block_to_start_length_pair[gpd].second );
   else
     return Utility::ArrayView<const double>();
 }
@@ -400,7 +400,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[14], d_jxs[15]-d_jxs[14] );
+    return d_xss_view( block_to_start_length_pair[sigp].first, block_to_start_length_pair[sigp].second );
   else
     return Utility::ArrayView<const double>();
 }
@@ -413,7 +413,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractLANDPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[15], d_nxs[5] );
+    return d_xss_view( block_to_start_length_pair[landp].first, d_nxs[5] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -428,7 +428,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDPBlock() const
 {
   if( d_nxs[5] != 0 )
-    return d_xss_view( d_jxs[16], d_jxs[17]-d_jxs[16] );
+    return d_xss_view( block_to_start_length_pair[andp].first, d_jxs[17]-d_jxs[16] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -466,7 +466,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
-    return d_xss_view( d_jxs[22], d_jxs[23]-d_jxs[22] );
+    return d_xss_view( block_to_start_length_pair[lunr].first, block_to_start_length_pair[lunr].second);
   else
     return Utility::ArrayView<const double>();
 }
@@ -476,7 +476,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNUBlock() const
 {
   if( this->hasDelayedNeutronData() )
-    return d_xss_view( d_jxs[23], d_jxs[24]-d_jxs[23] );
+    return d_xss_view( block_to_start_length_pair[dnu].first, block_to_start_length_pair[dnu].second);
   else
     return Utility::ArrayView<const double>();
 }
@@ -486,7 +486,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractBDDBlock() const
 {
   if( this->hasDelayedNeutronData() )
-    return d_xss_view( d_jxs[24], d_jxs[25] - d_jxs[24] );
+    return d_xss_view( block_to_start_length_pair[bdd].first, block_to_start_length_pair[bdd].second);
   else
     return Utility::ArrayView<const double>();
 }
@@ -499,7 +499,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNEDLBlock() const
 {
   if( d_nxs[7] != 0 )
-    return d_xss_view( d_jxs[25], d_nxs[7] );
+    return d_xss_view( block_to_start_length_pair[dnedl].first, d_nxs[7] );
   else
     return Utility::ArrayView<const double>();
 }
@@ -509,7 +509,7 @@ Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNEDBlock() const
 {
   if( d_nxs[7] != 0 )
-    return d_xss_view( d_jxs[26], d_jxs[11] - d_jxs[26] );
+    return d_xss_view( block_to_start_length_pair[dned].first,block_to_start_length_pair[dned].second );
   else
     return Utility::ArrayView<const double>();
 }
