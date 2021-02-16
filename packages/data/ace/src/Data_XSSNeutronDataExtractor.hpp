@@ -227,6 +227,9 @@ private:
                     dnedl, // 25
                     dned // 26 
                   };
+
+  // create map that accepts a block key and returns a start-length pair
+  std::map<int, std::pair<int,int> > block_to_start_length_pair; 
 };
 
 } // end Data namespace
