@@ -2,7 +2,7 @@
 //!
 //! \file   tstXSSNeutronDataExtractorSort.cpp
 //! \author Lewis Gross
-//! \brief  Tests jxs array sort yields correct block sizes for extraction
+//! \brief  Tests that jxs array sort yields correct block sizes for extraction
 //!
 //---------------------------------------------------------------------------//
 
@@ -51,17 +51,20 @@ std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor;
 // ESZ
 // size == 5*nxs[2]
 
-
 //---------------------------------------------------------------------------//
 // Check that the XSSNeutronDataExtractor produces the expecte MTR block size
 // size == nxs[3]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 {
   Utility::ArrayView<const double> mtr_block =
-    xss_data_extractor->extractMTRBlock();
+    xss_data_extractor_isotope->extractMTRBlock();
 // TODO, figure out how to check the size from map as opposed below (d_nxs)
-  FRENSIE_CHECK_EQUAL( mtr_block.size(), d_nxs[3] ); 
+  FRENSIE_CHECK_EQUAL( mtr_block.size(), block_to_start_length_pair[mtr].second ); 
 }
+
+// how to get map in test, perhaps use shared pointer something like
+// if block exists, check 
+
 
 // MTRP
 // size == nxs[5]
@@ -138,25 +141,28 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file",
                                         test_isotope_ace_file_name, "",
-                                        "Test h1 ACE file name" );
+                                        "Test isotope ACE file name" );
 
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file_start_line",
                                         test_isotope_ace_file_start_line, 1,
-                                        "Test h1 ACE file start line" );
+                                        "Test isotope ACE file start line" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Data::ACEFileHandler ace_file_handler_h1( test_h1_ace_file_name,
-                                            test_h1_ace_table_name,
-                                            test_h1_ace_file_start_line );
+  Data::ACEFileHandler ace_file_handler_isotope( test_isotope_ace_file_name,
+                                            test_isotope_ace_table_name,
+                                            test_isotope_ace_file_start_line );
 
-  xss_data_extractor_h1.reset(
-   new Data::XSSNeutronDataExtractor( ace_file_handler_h1.getTableNXSArray(),
-				      ace_file_handler_h1.getTableJXSArray(),
-				      ace_file_handler_h1.getTableXSSArray() ) );
+  xss_data_extractor_isotope.reset(
+   new Data::XSSNeutronDataExtractor( ace_file_handler_isotope.getTableNXSArray(),
+				      ace_file_handler_isotope.getTableJXSArray(),
+				      ace_file_handler_isotope.getTableXSSArray() ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 
+//---------------------------------------------------------------------------//
+// end tstXSSNeutronDataExtractorSort.cpp
+//---------------------------------------------------------------------------//
