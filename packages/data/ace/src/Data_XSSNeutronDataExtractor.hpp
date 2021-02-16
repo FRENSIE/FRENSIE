@@ -198,6 +198,10 @@ private:
   // The ESZ block (cached for quick access to cross sections in this block)
   Utility::ArrayView<const double> d_esz_block;
 
+  enum nxsId {
+    // TODO
+  };
+
   // enum to give block ids appropriate indexing value 
   enum blockId  {  esz, // 0
                     nu, // 1 

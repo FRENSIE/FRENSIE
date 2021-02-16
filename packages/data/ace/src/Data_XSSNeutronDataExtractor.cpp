@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_XSSNeutronDataExtractor.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Lewis Gross
 //! \brief  XSS array (from ace table) neutron data extractor class definition.
 //!
 //---------------------------------------------------------------------------//
@@ -91,8 +91,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   }
   */
 
-  // create map that accepts a block key and returns a start-length pair for the queried block
-  std::map<int, std::pair<int,int> > block_to_start_length_pair; // first parameter is the block's start, second parameter is the length of that block
+  // first parameter is the block's start, second parameter is the length of that block
   for(std::vector<std::pair<int,int> >::iterator soi=available_blocks.begin() ; soi<available_blocks.end() -1 ; soi++ ) {
       // soi stands for sorted order iterator 
       int block_id = soi->second;    // grab the block corresponding to the first value in the pair
@@ -106,11 +105,10 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 
 
 // TODO below here
-// change jxs indices to block names
+// add start, length variable to each method
+// use the map for each start and the correct (map or not) for each length
 // change starts to be accessed from map[blockid].first
-// change lengths to be accessed from the map[blockid].second for subtractions
-// TBD whether to leave non subtractions, if tests pass consider changing, but
-// i don't see a reason to change them if their fixed size is given in the MCNP manual
+// implement nxs enum and use that as well to eliminate magic numbers
 
 // Check if the nuclide is fissionable
 bool XSSNeutronDataExtractor::hasFissionData() const
