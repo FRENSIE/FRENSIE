@@ -198,38 +198,48 @@ private:
   // The ESZ block (cached for quick access to cross sections in this block)
   Utility::ArrayView<const double> d_esz_block;
 
-  enum nxsId {
-    // TODO
+  // enum to give nxs array parameters appropriate indexing value 
+  enum nxsId {    xss_length, // 0, last value position in xss arrary
+                  ZAID, // 1, 1000*Z+A
+                  nes, // 2, number of energies in grid
+                  ntr, // 3, number of reactions, excluding elastic
+                  nr, // 4,  number of reactions having secondery neutrons, excluding elastic
+                  ntrp, // 5, number of neutron in photon out reacionts
+                  nxs_place_holder, // 6, place holder for future development in MCNP
+                  npcr, // 7, number of delayed neutron precursor families
   };
 
-  // enum to give block ids appropriate indexing value 
-  enum blockId  {  esz, // 0
-                    nu, // 1 
-                    mtr, // 2
-                    lqr, // 3
-                    tyr, // 4
-                    lsig, // 5
-                    sig, // 6
-                    landb, // 7
-                    andb, // 8
-                    ldlw, // 9
-                    dlw, // 10
-                    gpd, // 11
-                    mtrp, // 12
-                    lsigp, // 13
-                    sigp, // 14
-                    landp, // 15
-                    andp, // 16
-                    ldlwp, // 17
-                    dlwp, // 18
-                    yp, // 19
-                    fis, // 20
-                    end, // 21
-                    lunr, // 22
-                    dnu, // 23
-                    bdd, //24
-                    dnedl, // 25
-                    dned // 26 
+  // enum to give block ids appropriate indexing value in jxs array
+  enum blockId  {  esz, // 0, location of energy table
+                    nu, // 1, location of fission nu data
+                    mtr, // 2, location of MT array
+                    lqr, // 3, location of Q-value array
+                    tyr, // 4, location of reaction type array
+                    lsig, // 5, location of table of cross section locators
+                    sig, // 6, location of cross sections
+                    landb, // 7, location of table of angular distribution locators
+                    andb, // 8, location of angular distributions
+                    ldlw, // 9, location of table of energy distribution locators
+                    dlw, // 10, location of energy distributions
+                    gpd, // 11, location of photon production data
+                    mtrp, // 12, location of photon production MT array
+                    lsigp, // 13, location of photon production cross section locators
+                    sigp, // 14, location of photon production cross sections
+                    landp, // 15, location of table of photon production angular distribution locators
+                    andp, // 16, location of photon production angular distributions
+                    ldlwp, // 17, location of table of photon production energy distribution locators
+                    dlwp, // 18, location of photon production energy distributions
+                    yp, // 19, location of table of yield multipliers
+                    fis, // 20, location of totalf ission cross section
+                    end, // 21, locaiton of end of last non particle production block ( this is different from nxs[xss_length] sometimes )
+                    lunr, // 22, location of probability tables
+                    dnu, // 23, locaiton of delayed nubar data
+                    bdd, //24, location of basic delayed data (decay rates and probabilities)
+                    dnedl, // 25,  location of table of energy distirbution locators 
+                    dned // 26, location or energy distributions
+                    // the blocks after here can be read about in the NJOY open source code on GitHub
+                    // these are particle production blocks that FRENSIE does not support
+                    // these blocks appear to come after jxs[end], which explains whey nxs[xss_length] is not always equal to jxs[end]
                   };
 
   // create map that accepts a block key and returns a start-length pair
