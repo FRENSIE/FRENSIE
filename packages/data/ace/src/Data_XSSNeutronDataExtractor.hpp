@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_XSSNeutronDataExtractor.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Lewis Gross
 //! \brief  XSS array (from ace table) neutron data extractor class decl.
 //!
 //---------------------------------------------------------------------------//

@@ -22,89 +22,221 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 
+
+//---------------------------------------------------------------------------//
+// Test Scope Variables
+//---------------------------------------------------------------------------//
 std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor;
-
-
-// ? FRENSIE_UNIT_TEST() where is implementation
-
-
-//---------------------------------------------------------------------------//
-// extractions
-//---------------------------------------------------------------------------//
-
-/* THIS MAY BE REDUNDANT SINCE WE ARE ONLY CHECKING NON SUBTRACTION SIZES
-// extract NXS
-// extract JXS
-*/
-
-
-
-// import map structure from XSSNeutronDataExtractor
-// extract each block to be tested
-// check that size of block to be tested matches map size
+const auto last_it = block_to_start_length_pair.end(); // used to check if map contains a block
 
 
 //---------------------------------------------------------------------------//
-//  checking that subtractions match MCNP manual defined sizes
+// Check that the XSSNeutronDataExtractor produces the expected block size
 //---------------------------------------------------------------------------//
-
 // ESZ
 // size == 5*nxs[2]
 
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock )
+{
+  Utility::ArrayView<const double> esz_block =
+    xss_data_extractor_isotope->extractESZlock();
+    if(block_to_start_length_pair.find(esz) != last_it) {
+      FRENSIE_CHECK_EQUAL( esz_block.size(), block_to_start_length_pair[esz].second );
+    }
+}
+
 //---------------------------------------------------------------------------//
-// Check that the XSSNeutronDataExtractor produces the expecte MTR block size
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
+// MTR
 // size == nxs[3]
+
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 {
   Utility::ArrayView<const double> mtr_block =
     xss_data_extractor_isotope->extractMTRBlock();
-// TODO, figure out how to check the size from map as opposed below (d_nxs)
-  FRENSIE_CHECK_EQUAL( mtr_block.size(), block_to_start_length_pair[mtr].second ); 
+    if(block_to_start_length_pair.find(mtr) != last_it) {
+      FRENSIE_CHECK_EQUAL( mtr_block.size(), block_to_start_length_pair[mtr].second );
+    }
 }
 
-// how to get map in test, perhaps use shared pointer something like
-// if block exists, check 
-
-
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // MTRP
 // size == nxs[5]
 
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock )
+{
+  Utility::ArrayView<const double> mtrp_block =
+    xss_data_extractor_isotope->extractMTRPlock();
+    if(block_to_start_length_pair.find(mtrp)!=last_it) {
+      FRENSIE_CHECK_EQUAL( mtrp_block.size(), block_to_start_length_pair[mtrp].second );
+    }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LQR
 // size == nxs[3]
 
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock )
+{
+  Utility::ArrayView<const double> lqr_block =
+    xss_data_extractor_isotope->extractLQRlock();
+    if(block_to_start_length_pair.find(lqr)!=last_it) {
+      FRENSIE_CHECK_EQUAL( lqr_block.size(), block_to_start_length_pair[lqr].second );
+    }
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // TYR
 // size == nxs[3]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock )
+{
+  Utility::ArrayView<const double> tyr_block =
+    xss_data_extractor_isotope->extractTYRlock();
+    if(block_to_start_length_pair.find(tyr)!=last_it) {
+      FRENSIE_CHECK_EQUAL( tyr_block.size(), block_to_start_length_pair[tyr].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LSIG
 // size == nxs[3]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock )
+{
+  Utility::ArrayView<const double> lsig_block =
+    xss_data_extractor_isotope->extractLSIGlock();
+    if(block_to_start_length_pair.find(lsig)!=last_it) {
+      FRENSIE_CHECK_EQUAL( lsig_block.size(), block_to_start_length_pair[lsig].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LSIGP
 // size == nxs[5]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock )
+{
+  Utility::ArrayView<const double> lsigp_block =
+    xss_data_extractor_isotope->extractLSIGPlock();
+    if(block_to_start_length_pair.find(lsigp)!=last_it) {
+      FRENSIE_CHECK_EQUAL( lsigp_block.size(), block_to_start_length_pair[lsigp].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LAND
 // size == nxs[4] + 1
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock )
+{
+  Utility::ArrayView<const double> land_block =
+    xss_data_extractor_isotope->extractLANDBlock();
+    if(block_to_start_length_pair.find(landb)!=last_it) {
+      FRENSIE_CHECK_EQUAL( land_block.size(), block_to_start_length_pair[landb].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LDLW
 // size ==  nxs[4]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock )
+{
+  Utility::ArrayView<const double> ldlw_block =
+    xss_data_extractor_isotope->extractLDLWBlock();
+    if(block_to_start_length_pair.find(ldlw)!=last_it) {
+      FRENSIE_CHECK_EQUAL( ldlw_block.size(), block_to_start_length_pair[ldlw].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LDLWP
 // size ==  nxs[5]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock )
+{
+  Utility::ArrayView<const double> ldlwp_block =
+    xss_data_extractor_isotope->extractLDLWPBlock();
+    if(block_to_start_length_pair.find(ldlwp)!=last_it) {
+      FRENSIE_CHECK_EQUAL( ldlwp_block.size(), block_to_start_length_pair[ldlwp].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // DNEDL
 // size == nxs[7]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock )
+{
+  Utility::ArrayView<const double> dnedl_block =
+    xss_data_extractor_isotope->extractDNEDLBlock();
+    if(block_to_start_length_pair.find(dnedl)!=last_it) {
+      FRENSIE_CHECK_EQUAL( dnedl_block.size(), block_to_start_length_pair[dnedl].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // GPD 
 // size = 600 + nxs[3] 
+// TODO DOUBLE CHECK THIS
 
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // LANDP
 // size == nxs[5]
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock )
+{
+  Utility::ArrayView<const double> landp_block =
+    xss_data_extractor_isotope->extractLANDPBlock();
+    if(block_to_start_length_pair.find(landp)!=last_it) {
+      FRENSIE_CHECK_EQUAL( landp_block.size(), block_to_start_length_pair[landp].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // YP
 // size == xss[jxs[19]] + 1
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock )
+{
+  Utility::ArrayView<const double> yp_block =
+    xss_data_extractor_isotope->extractYPBlock();
+    if(block_to_start_length_pair.find(yp)!=last_it) {
+      FRENSIE_CHECK_EQUAL( yp_block.size(), block_to_start_length_pair[yp].second );
+    }
+}
 
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor produces the expected block size
+//---------------------------------------------------------------------------//
 // FIS
 // size == xss[jxs[20]] + 2
-
+FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
+{
+  Utility::ArrayView<const double> fis_block =
+    xss_data_extractor_isotope->extractFISBlock();
+    if(block_to_start_length_pair.find(fis)!=last_it) {
+      FRENSIE_CHECK_EQUAL( fis_block.size(), block_to_start_length_pair[fis].second );
+    }
+}
 
 //---------------------------------------------------------------------------//
 //  check if size is zero for and/andp
@@ -128,9 +260,9 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_isotope_ace_table_name; // TODO 
-std::string test_isotope_ace_file_name; // TODO
-unsigned test_isotope_ace_file_start_line; //TODO
+std::string test_isotope_ace_table_name;
+std::string test_isotope_ace_file_name; 
+unsigned test_isotope_ace_file_start_line; 
 
 // TODO 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
