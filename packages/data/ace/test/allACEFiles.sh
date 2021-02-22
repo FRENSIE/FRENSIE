@@ -1,11 +1,18 @@
-#! bin/bash/
+#!/bin/bash
 
-cd /home/software/mcnpdata/xdata/endf71x
-find . -name "*nc" | xargs my_test_executable #not sure about the best way to use this, do i store it in something or do I just pipe it 
+# list=$( find $1 -name "*nc" | cut -d"/" -f8 ) $1 is the first command line argument, e.g. /home/software/mcnpdata/xdata/endf71x/
+# ./allACEFiles.sh /home/software/mcnpdata/xdata/endf71x/
+# cut command to split by / and take the 8th split commponent
 
+list=$( find /home/software/mcnpdata/xdata/endf71x/ -name "*nc")
 
-# search into each directory
-# run find and give only file name
+for item in ${list}; do
+    echo $item
+    #./execuatble --test_isotope_ace_table_name= --test_isotope_ace_file_name= 
+done
 
-# also i probably need to trim this somehow to get just the ace file name before giving to xargs
-# maybe the test builds the executable and then runs this script which keeps executing the executable with different command line args (is this even how this works?)
+# WORFLOW PLAN
+# get full file path (need this for command line arg)
+# cut to get table name  (need this for second command line arg)
+# let default do its job for filestartline
+# can give relative path as argument
