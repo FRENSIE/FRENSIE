@@ -31,6 +31,9 @@ const auto last_it = block_to_start_length_pair.end(); // used to check if map c
 
 
 //---------------------------------------------------------------------------//
+// Check sizes for blocks that do not depend on subtractions
+
+//---------------------------------------------------------------------------//
 // Check that the XSSNeutronDataExtractor produces the expected block size
 //---------------------------------------------------------------------------//
 // ESZ
@@ -239,20 +242,38 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
 }
 
 //---------------------------------------------------------------------------//
-//  check if size is zero for and/andp
+
+
+// if the size of the andp block is zero, there must be all zeros for the locators
+// in the landp block except for the first MT, which is elastic scattering
+
 //---------------------------------------------------------------------------//
-
-// if the size of and or andp is zero, then there must be all zeros for the locators
-// related to and/andp except for the elastic MT which is the first entry in land/landp
-
-// and (starts at jxs[8) size = 0, 
-// check that xss[jxs[7] + i] for i = 1,nxs[4] (nxs[4] is number of neutron reactions)
-
+//  check if size is zero for andp block
+//---------------------------------------------------------------------------//
 // andp (starts at jxs[16]) size = 0
 // check that xss(jxs[15] + j) for  j=1,nxs[5] (nxs[5] is number of photon reactions )
+  FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, confirmLANDP )
+  {
+    if(block_to_start_length_pair[andp].second==0){
+      Utility::ArrayView<const double> andp_block =
+      xss_data_extractor_isotope->extractANDPBlock();
+      for(size_t j = 1; j<nxs[ntrp] ; j++)
+        FRENSIE_CHECK_EQUAL( andp_block[j], 0);
+      // OR
+      //for(auto v : andp_block) 
+      //  FRENSIE_CHECK_EQUAL(v,0)
+    }
+  }
+
+//---------------------------------------------------------------------------//
 
 
-// add all  sizes together to get total size
+
+//---------------------------------------------------------------------------//
+// add all  sizes together to get total size (maybe)
+//---------------------------------------------------------------------------//
+
+
 
 
 //---------------------------------------------------------------------------//
@@ -264,16 +285,16 @@ std::string test_isotope_ace_table_name;
 std::string test_isotope_ace_file_name; 
 unsigned test_isotope_ace_file_start_line; 
 
-// TODO 
+
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_table",
-                                        test_isotope_ace_table_name, "",
-                                        "Test isotope ACE table name in h1 ACE file" );
-
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file",
                                         test_isotope_ace_file_name, "",
                                         "Test isotope ACE file name" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_table",
+                                        test_isotope_ace_table_name, "",
+                                        "Test isotope ACE table name in h1 ACE file" );
 
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file_start_line",
                                         test_isotope_ace_file_start_line, 1,
