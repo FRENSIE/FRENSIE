@@ -204,10 +204,10 @@ private:
                   nes, // 2, number of energies in grid
                   ntr, // 3, number of reactions, excluding elastic
                   nr, // 4,  number of reactions having secondery neutrons, excluding elastic
-                  ntrp, // 5, number of neutron in photon out reacionts
+                  ntrp, // 5, number of neutron in photon out reactions
                   nxs_place_holder, // 6, place holder for future development in MCNP
                   npcr, // 7, number of delayed neutron precursor families
-  };
+                  };
 
   // enum to give block ids appropriate indexing value in jxs array
   enum blockId  {  esz, // 0, location of energy table

@@ -113,7 +113,9 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 // Check if the nuclide is fissionable
 bool XSSNeutronDataExtractor::hasFissionData() const
 {
-  if( block_to_start_length_pair[nu].first >= 0 )
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(nu);
+  if(it!=block_to_start_length_pair.end() && it->second.first >= 0 ) // check that d_jxs[nu]>=0
     return true;
   else
     return false;
@@ -122,7 +124,9 @@ bool XSSNeutronDataExtractor::hasFissionData() const
 // check if the nuclide has delayed neutron data
 bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
 {
-  if( block_to_start_length_pair[dnu].first >= 0 )
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnu);
+  if(it!=block_to_start_length_pair.end() && it->second.first >= 0)  // check that d_jxs[dnu]>=0
     return true;
   else
     return false;
@@ -131,15 +135,16 @@ bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
 // Check if the nuclide has unresolved resonances
 bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
 {
-  if( block_to_start_length_pair[lunr].first >= 0 )
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lunr);
+  if( it!=block_to_start_length_pair.end() && it->second.first >= 0) // check that d_jxs[lunr]>=0
     return true;
   else
     return false;
 }
 
 // Extract the ESZ block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractESZBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() const
 {
   return d_esz_block;
 }
@@ -147,6 +152,7 @@ XSSNeutronDataExtractor::extractESZBlock() const
 // Extract the energy grid from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractEnergyGrid() const
 {
+  // TODO remove d_nxs[2] way, change to computing start and length before call and passing in
   Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
 
   // Make sure the extracted energy grid is sorted
@@ -163,7 +169,7 @@ auto XSSNeutronDataExtractor::extractEnergyGridInMeV() const -> Utility::ArrayVi
 {
   Utility::ArrayView<const Energy> energy_grid(
                   Utility::reinterpretAsQuantity<Energy>( d_esz_block.data() ),
-                  Utility::ArrayView<const Energy>::size_type(d_nxs[2]) );
+                  Utility::ArrayView<const Energy>::size_type(d_nxs[2]) ); //TODO remove d_nxs[2] way
 
   // Make sure the extracted energy grid is sorted
   TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -177,7 +183,7 @@ auto XSSNeutronDataExtractor::extractEnergyGridInMeV() const -> Utility::ArrayVi
 // Extract the total cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalCrossSection() const
 {
-  return d_esz_block( d_nxs[2], d_nxs[2] );
+  return d_esz_block( d_nxs[2], d_nxs[2] ); //TODO remove d_nxs[2] way
 }
 
 // Extract the total cross section from the XSS array
@@ -191,12 +197,12 @@ auto XSSNeutronDataExtractor::extractTotalCrossSectionInBarns() const -> Utility
 // Extract the total absorption cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalAbsorptionCrossSection() const
 {
-  return d_esz_block( 2*d_nxs[2], d_nxs[2] );
+  return d_esz_block( 2*d_nxs[2], d_nxs[2] ); //TODO remove d_nxs[2] way
 }
 
 // Extract the total absorption cross section from the XSS array
 auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSectionInBarns() const -> Utility::ArrayView<const Area>
-{
+{ //TODO remove d_nxs[2] way
   return Utility::ArrayView<const Area>(
          Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+2*d_nxs[2] ),
          Utility::ArrayView<const Area>::size_type(d_nxs[2]) );
@@ -204,13 +210,13 @@ auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSectionInBarns() const 
 
 // Extract the elastic cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractElasticCrossSection() const
-{
+{ //TODO remove d_nxs[2] way
   return d_esz_block( 3*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the elastic cross section from the XSS array
 auto XSSNeutronDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
-{
+{ //TODO remove d_nxs[2] way
   return Utility::ArrayView<const Area>(
          Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+3*d_nxs[2] ),
          Utility::ArrayView<const Area>::size_type(d_nxs[2]) );
@@ -218,64 +224,84 @@ auto XSSNeutronDataExtractor::extractElasticCrossSectionInBarns() const -> Utili
 
 // Extract the average heating numbers from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractAverageHeatingNumbers() const
-{
+{ //TODO remove d_nxs[2] way
   return d_esz_block( 4*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the average heating numbers from the XSS array
 auto XSSNeutronDataExtractor::extractAverageHeatingNumbersInMeV() const -> Utility::ArrayView<const Energy>
-{
+{ //TODO remove d_nxs[2] way
   return Utility::ArrayView<const Energy>(
        Utility::reinterpretAsQuantity<Energy>( d_esz_block.data()+4*d_nxs[2] ),
        Utility::ArrayView<const Energy>::size_type(d_nxs[2]) );
 }
 
 // Extract the NU block form the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractNUBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractNUBlock() const
 {
-  if( block_to_start_length_pair[nu].first >= 0 )
-    return d_xss_view( block_to_start_length_pair[nu].first, block_to_start_length_pair[nu].second);
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(nu);
+  // this block requires a subtraction, use map implementation for both
+  int start = it->second.first;  
+  int length = it->second.second;
+  if( it!=block_to_start_length_pair.end() && it->second.first >= 0)
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the MTR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractMTRBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractMTRBlock() const
 {
-  if( d_nxs[3] != 0 )
-    return d_xss_view( block_to_start_length_pair[mtr].first, d_nxs[3] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(mtr);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntr];
+  if( d_nxs[ntr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the MTRP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractMTRPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractMTRPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[mtrp].first, d_nxs[5] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(mtrp);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntrp];
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the LQR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLQRBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLQRBlock() const
 {
-  if( d_nxs[3] != 0 )
-    return d_xss_view( block_to_start_length_pair[lqr].first, d_nxs[3] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lqr);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntr];
+  if( d_nxs[ntr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the TYR block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractTYRBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTYRBlock() const
 {
-  if( d_nxs[3] != 0 )
-    return d_xss_view( block_to_start_length_pair[tyr].first, d_nxs[3] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(tyr);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntr];
+  if( d_nxs[ntr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -284,11 +310,15 @@ XSSNeutronDataExtractor::extractTYRBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLSIGBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGBlock() const
 {
-  if( d_nxs[3] != 0 )
-    return d_xss_view( block_to_start_length_pair[lsig].first, d_nxs[3] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lsig);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntr];
+  if( d_nxs[ntr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -297,21 +327,29 @@ XSSNeutronDataExtractor::extractLSIGBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLSIGPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[lsigp].first, d_nxs[5] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lsigp);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntrp];
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the SIG block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractSIGBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractSIGBlock() const
 {
-  if( d_nxs[3] != 0 )
-    return d_xss_view( block_to_start_length_pair[sig].first, block_to_start_length_pair[sig].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(sig);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( d_nxs[ntr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -320,28 +358,40 @@ XSSNeutronDataExtractor::extractSIGBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLANDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLANDBlock() const
 {
-  return d_xss_view( block_to_start_length_pair[landb].first, d_nxs[4]+1 );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(landb);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;
+  int length = d_nxs[nr] + 1 ;
+  return d_xss_view( start , length);
 }
 
 // Extract the AND block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractANDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDBlock() const
 {
-  return d_xss_view( block_to_start_length_pair[andb].first, block_to_start_length_pair[andb].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(andb);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  return d_xss_view( start, length );
 }
 
 // Extract the LDLW block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLDLWBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLDLWBlock() const
 {
-  if( d_nxs[4] != 0 )
-    return d_xss_view( block_to_start_length_pair[ldlw].first, d_nxs[4] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(landb);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;
+  int length = d_nxs[nr];
+  if( d_nxs[nr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -350,31 +400,43 @@ XSSNeutronDataExtractor::extractLDLWBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLDLWPBlock() const
+Utility::ArrayView<const double>  XSSNeutronDataExtractor::extractLDLWPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[ldlwp].first, d_nxs[5] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(ldlwp);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntrp];
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the DLW block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDLWBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWBlock() const
 {
-  if( d_nxs[4] != 0 )
-    return d_xss_view( block_to_start_length_pair[dlw].first, block_to_start_length_pair[dlw].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dlw);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( d_nxs[nr] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the DLWP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDLWPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDLWPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view(block_to_start_length_pair[dlwp].first, block_to_start_length_pair[dlwp].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dlwp);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
@@ -384,21 +446,29 @@ XSSNeutronDataExtractor::extractDLWPBlock() const
  * photon production cross section (size=nxs[2]). For older evaluations, the
  * block also contains the 30*20 matrix of secondary photon energies.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractGPDBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractGPDBlock() const
 {
-  if( d_jxs[11] >= 0 )
-    return d_xss_view( block_to_start_length_pair[gpd].first, block_to_start_length_pair[gpd].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(gpd);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( it!=block_to_start_length_pair.end() && it->second.first >= 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the SIGP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractSIGPBlock() const
+Utility::ArrayView<const double>XSSNeutronDataExtractor::extractSIGPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[sigp].first, block_to_start_length_pair[sigp].second );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(sigp);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -407,11 +477,15 @@ XSSNeutronDataExtractor::extractSIGPBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractLANDPBlock() const
+Utility::ArrayView<const double>XSSNeutronDataExtractor::extractLANDPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[landp].first, d_nxs[5] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(landp);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;  
+  int length = d_nxs[ntrp];
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -422,39 +496,45 @@ XSSNeutronDataExtractor::extractLANDPBlock() const
  * entry in the LANDP block is 0 (indicating that the outgoing photon angle is
  * isotropic in the lab frame).
  */
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractANDPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDPBlock() const
 {
-  if( d_nxs[5] != 0 )
-    return d_xss_view( block_to_start_length_pair[andp].first, d_jxs[17]-d_jxs[16] );
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(andp);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the YP block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractYPBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractYPBlock() const
 {
-  if( d_nxs[5] != 0 )
-  {
-    int size = (int)d_xss_view[d_jxs[19]] + 1;
-
-    return d_xss_view( d_jxs[19], size );
-  }
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(yp);
+  // this block has a length defined by the MCNP manual
+    int start = it->second.first;  
+    int length = (int)d_xss_view[d_jxs[19]] + 1;
+    // TODO determine if this is safe to do outside of the if 
+    // if not, may need to redo the ordering of the conditions
+  if( d_nxs[ntrp] != 0 )
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the FIS block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractFISBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractFISBlock() const
 {
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(fis);
+  // this block has a length defined by the MCNP manual
+  int start = it->second.first;
+  int length = (int)d_xss_view[d_jxs[20]+1] + 2;
   if( d_jxs[20] >= 0 )
-  {
-    int size = (int)d_xss_view[d_jxs[20]+1] + 2;
-
-    return d_xss_view( d_jxs[20], size );
-  }
+    return d_xss_view( start , length );
   else
     return Utility::ArrayView<const double>();
 }
@@ -463,30 +543,45 @@ XSSNeutronDataExtractor::extractFISBlock() const
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractUNRBlock() const
 {
-  if( d_jxs[22] >= 0 )
-    return d_xss_view( block_to_start_length_pair[lunr].first, block_to_start_length_pair[lunr].second);
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lunr);
+  // no fixed size in the MCNP manual, this block requires the map implementation 
+  int start = it->second.first;
+  int length = it->second.second;
+  if( it!=block_to_start_length_pair.end() && it->second.first >= 0 )
+    return d_xss_view( start , length);
   else
     return Utility::ArrayView<const double>();
 }
 
 // Extract the DNU (delayed NU) block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractDNUBlock() const
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNUBlock() const
 {
-  if( this->hasDelayedNeutronData() )
-    return d_xss_view( block_to_start_length_pair[dnu].first, block_to_start_length_pair[dnu].second);
-  else
-    return Utility::ArrayView<const double>();
+  if( this->hasDelayedNeutronData() ){
+  // need a const iterator since this function is declared const
+    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnu);
+    // no fixed size in the MCNP manual, this block requires the map implementation 
+    int start = it->second.first;
+    int length = it->second.second;
+    return d_xss_view( start, length);
+  } else { 
+    return Utility::ArrayView<const double>(); 
+  }
 }
 
 // Extract the BDD (basic delayed data) block from the XSS array
-Utility::ArrayView<const double>
-XSSNeutronDataExtractor::extractBDDBlock() const
+Utility::ArrayView<const double>XSSNeutronDataExtractor::extractBDDBlock() const
 {
-  if( this->hasDelayedNeutronData() )
-    return d_xss_view( block_to_start_length_pair[bdd].first, block_to_start_length_pair[bdd].second);
-  else
+  if( this->hasDelayedNeutronData() ){
+    // need a const iterator since this function is declared const
+    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(bdd);
+    // no fixed size in the MCNP manual, this block requires the map implementation 
+    int start = it->second.first;
+    int length = it->second.second;
+    return d_xss_view( start, length);
+  } else {
     return Utility::ArrayView<const double>();
+  }
 }
 
 // Extract the DNEDL (delayed neutron LDLW) block from the XSS array
@@ -496,20 +591,32 @@ XSSNeutronDataExtractor::extractBDDBlock() const
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNEDLBlock() const
 {
-  if( d_nxs[7] != 0 )
+  if( d_nxs[npcr] != 0 ) {
+    // need a const iterator since this function is declared const
+    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnedl);
+    // this block has a length defined by the MCNP manual
+    int start = it->second.first;
+    int length = d_nxs[npcr];
     return d_xss_view( block_to_start_length_pair[dnedl].first, d_nxs[7] );
-  else
+  } else {
     return Utility::ArrayView<const double>();
+  }
 }
 
 // Extract the delayed neutron DLW block from the XSS array
 Utility::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNEDBlock() const
 {
-  if( d_nxs[7] != 0 )
-    return d_xss_view( block_to_start_length_pair[dned].first,block_to_start_length_pair[dned].second );
-  else
+  if( d_nxs[npcr] != 0 ) {
+    // need a const iterator since this function is declared const
+    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dned);
+    // no fixed size in the MCNP manual, this block requires the map implementation 
+    int start = it->second.first;
+    int length = it->second.second;
+    return d_xss_view( start , length);
+  } else {
     return Utility::ArrayView<const double>();
+  }
 }
 
 // Extract the Ace Laws from the XSS array
