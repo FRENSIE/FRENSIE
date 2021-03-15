@@ -1,0 +1,107 @@
+version: 2.1
+
+jobs:
+  checkout_cmake:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - checkout
+      - run: mkdir bld
+      - run: 
+          name: Configure CMake
+          command: cd bld; cmake -D CMAKE_INSTALL_PREFIX:PATH=/root/opt/frensie
+                                 -D FRENSIE_ENABLE_DBC:BOOL=ON
+                                 -D CMAKE_BUILD_TYPE:STRING=RELEASE
+                                 -D CMAKE_TIMING_VERBOSE:BOOL=ON
+                                 -D FRENSIE_ENABLE_MOAB:BOOL=ON
+                                 -D MOAB_PREFIX:PATH=/root/opt/moab/
+                                 -D MOAB_USE_EIGEN:BOOL=ON
+                                 -D FRENSIE_ENABLE_DAGMC:BOOL=ON
+                                 -D DAGMC_PREFIX:PATH=/root/opt/dagmc ..
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+    
+  build:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: cd bld; /root/frensie/.circleci/build.sh
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+ 
+  tests:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: cd bld; /root/frensie/.circleci/tests.sh
+  
+  build_test_all:
+    docker:
+      - image: frensie/frensie-deps
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: cd bld; make
+      - run:
+          name: Test
+          command: cd bld; make test
+
+
+workflows:
+  version: 2
+  build_and_tests:
+    jobs:
+      - checkout_cmake:
+          filters:
+            branches:
+              ignore: master
+            tags:
+              ignore: /.*/
+      - build:
+          requires:
+            - checkout_cmake
+      - tests:
+          requires:
+            - build
+
+  full_build_test:
+    jobs:
+      - checkout_cmake:
+          filters:
+            branches:
+              only:
+                - master
+      - build_test_all:
+          requires:
+            - checkout_cmake
+          filters:
+            branches:
+              only:
+                - master
+

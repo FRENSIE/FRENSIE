@@ -3,13 +3,15 @@
 # 1.)
 MACRO(ENABLE_SWIG_SUPPORT)
 
+  SET(SWIG_MIN_VERSION 3.0.0)
+
   # Add the user supplied SWIG prefix to help find SWIG
   IF(DEFINED SWIG_PREFIX)
     SET(CMAKE_PREFIX_PATH ${SWIG_PREFIX} ${CMAKE_PREFIX_PATH})
   ENDIF()
 
   # Find the SWIG package available on this system
-  FIND_PACKAGE(SWIG 4.0.0 REQUIRED)
+  FIND_PACKAGE(SWIG ${SWIG_MIN_VERSION} REQUIRED)
   
   # Find the python package available on this system
   FIND_PACKAGE(PythonInterp 2.7 REQUIRED)

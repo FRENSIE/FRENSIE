@@ -16,3 +16,8 @@ INCLUDE_DIRECTORIES(${NUMPY_INCLUDE_DIRS})
 # Set up the directory hierarchy
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(test)
+
+# # the compiler flags for compiling C sources 
+MESSAGE( STATUS "CMAKE_C_FLAGS: " ${CMAKE_C_FLAGS} )
+# # the compiler flags for compiling C++ sources 
+MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )

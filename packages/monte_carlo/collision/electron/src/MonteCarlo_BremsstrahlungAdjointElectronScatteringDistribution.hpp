@@ -15,6 +15,7 @@
 
 namespace MonteCarlo{
 
+// test
 //! The bremsstrahlung adjoint electron scattering distribution class
 class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectronScatteringDistribution
 {
