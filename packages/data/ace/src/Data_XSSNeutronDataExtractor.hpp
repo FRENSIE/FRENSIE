@@ -237,7 +237,7 @@ private:
                     bdd, //24, location of basic delayed data (decay rates and probabilities)
                     dnedl, // 25,  location of table of energy distirbution locators 
                     dned // 26, location or energy distributions
-                    // the blocks after here can be read about in the NJOY open source code on GitHub
+                    // the blocks after here (listed in the mcnp manual) can be read about in the NJOY open source code on GitHub
                     // these are particle production blocks that FRENSIE does not support
                     // these blocks appear to come after jxs[end], which explains whey nxs[xss_length] is not always equal to jxs[end]
                   };
