@@ -27,11 +27,12 @@
 // Test Scope Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor;
-const auto last_it = block_to_start_length_pair.end(); // used to check if map contains a block
-
+std::map<int, std::pair<int,int> > block_to_start_length_pair = xss_data_extractor->block_to_start_length_pair;
+last_it = block_to_start_length_pair.end();
 
 //---------------------------------------------------------------------------//
 // Check sizes for blocks that do not depend on subtractions
+// TODO monotone check? where should this be
 
 //---------------------------------------------------------------------------//
 // Check that the XSSNeutronDataExtractor produces the expected block size

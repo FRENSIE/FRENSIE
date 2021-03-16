@@ -310,8 +310,8 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGBlock() con
  */
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
-  // need a const iterator since this function is declared const
-  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lsigp);
+  // need a const iterator since this function is declared const 
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lsigp); 
   if ( it!=block_to_start_length_pair.end() && d_nxs[ntrp] != 0 ) {
     // this block has a length defined by the MCNP manual
     int start = it->second.first;  
@@ -597,13 +597,13 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractBDDBlock() cons
  */
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNEDLBlock() const
 {
-  if( d_nxs[npcr] != 0 ) {
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnedl);
+  if( it!=block_to_start_length_pair.end() && d_nxs[npcr] != 0 ) {
     // need a const iterator since this function is declared const
-    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnedl);
     // this block has a length defined by the MCNP manual
     int start = it->second.first;
     int length = d_nxs[npcr];
-    return d_xss_view( block_to_start_length_pair[dnedl].first, d_nxs[7] );
+    return d_xss_view( start , length);
   } else {
     return Utility::ArrayView<const double>();
   }
