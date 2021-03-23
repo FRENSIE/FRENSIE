@@ -70,6 +70,9 @@ public:
   //! Check if the nuclide has unresolved resonances
   bool hasUnresolvedResonanceData() const;
 
+  // Query block size given a blockId 
+  const int queryBlockSize(int blockId) const;
+
   //! Extract the ESZ block from the XSS array
   Utility::ArrayView<const double> extractESZBlock() const;
 
