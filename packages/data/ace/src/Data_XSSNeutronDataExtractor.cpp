@@ -116,11 +116,11 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
   else
     return false;
 }
-
-  const int queryBlockSize(int blockId) const
+  // given a block index, return the size in the map
+  int XSSNeutronDataExtractor::queryBlockSize(int block_index) const
   {
     // need a const iterator since this function is declared const
-    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(blockId);
+    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(block_index);
     if ( it!=block_to_start_length_pair.end() ) {
       // if block exists, return the length 
       return it->second.second;
@@ -130,6 +130,23 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
       } 
   }
 
+  int XSSNeutronDataExtractor::queryNXS(int nxs_index) const
+  {
+    if(nxs_index < last_nxs) {
+      return d_nxs[nxs_index];
+    } else {
+      return 0;
+    }
+  }
+
+  int XSSNeutronDataExtractor::queryJXS(int jxs_index) const 
+  {
+    if(jxs_index < last_jxs) {
+      return d_jxs[jxs_index];
+    } else {
+      return 0;
+    }
+  }
 
 // Extract the ESZ block from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() const

@@ -71,7 +71,11 @@ public:
   bool hasUnresolvedResonanceData() const;
 
   // Query block size given a blockId 
-  const int queryBlockSize(int blockId) const;
+  int queryBlockSize(int block_index) const;
+
+  int queryNXS(int nxs_index) const;
+
+  int queryJXS(int jxs_index) const;
 
   //! Extract the ESZ block from the XSS array
   Utility::ArrayView<const double> extractESZBlock() const;
@@ -210,6 +214,7 @@ private:
                   ntrp, // 5, number of neutron in photon out reactions
                   nxs_place_holder, // 6, place holder for future development in MCNP
                   npcr, // 7, number of delayed neutron precursor families
+                  last_nxs // 8, used to prevent asking for part of the nxs array that doesn't exist in queryNXS
                   };
 
   // enum to give block ids appropriate indexing value in jxs array
@@ -239,7 +244,8 @@ private:
                     dnu, // 23, locaiton of delayed nubar data
                     bdd, //24, location of basic delayed data (decay rates and probabilities)
                     dnedl, // 25,  location of table of energy distirbution locators 
-                    dned // 26, location or energy distributions
+                    dned, // 26, location or energy distributions
+                    last_jxs // 27, used to prevent asking for part of the jxs array that doesn't exist in queryJXS
                     // the blocks after here (listed in the mcnp manual) can be read about in the NJOY open source code on GitHub
                     // these are particle production blocks that FRENSIE does not support
                     // these blocks appear to come after jxs[end], which explains whey nxs[xss_length] is not always equal to jxs[end]

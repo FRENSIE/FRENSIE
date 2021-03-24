@@ -22,13 +22,53 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 
+// enum to give nxs array parameters appropriate indexing value 
+enum nxsId {    xss_length, // 0, last value position in xss arrary
+                ZAID, // 1, 1000*Z+A
+                nes, // 2, number of energies in grid
+                ntr, // 3, number of reactions, excluding elastic
+                nr, // 4,  number of reactions having secondery neutrons, excluding elastic
+                ntrp, // 5, number of neutron in photon out reactions
+                nxs_place_holder, // 6, place holder for future development in MCNP
+                npcr, // 7, number of delayed neutron precursor families
+                };
 
+// enum to give block ids appropriate indexing value in jxs array
+enum blockId  {  esz, // 0, location of energy table
+                  nu, // 1, location of fission nu data
+                  mtr, // 2, location of MT array
+                  lqr, // 3, location of Q-value array
+                  tyr, // 4, location of reaction type array
+                  lsig, // 5, location of table of cross section locators
+                  sig, // 6, location of cross sections
+                  landb, // 7, location of table of angular distribution locators
+                  andb, // 8, location of angular distributions
+                  ldlw, // 9, location of table of energy distribution locators
+                  dlw, // 10, location of energy distributions
+                  gpd, // 11, location of photon production data
+                  mtrp, // 12, location of photon production MT array
+                  lsigp, // 13, location of photon production cross section locators
+                  sigp, // 14, location of photon production cross sections
+                  landp, // 15, location of table of photon production angular distribution locators
+                  andp, // 16, location of photon production angular distributions
+                  ldlwp, // 17, location of table of photon production energy distribution locators
+                  dlwp, // 18, location of photon production energy distributions
+                  yp, // 19, location of table of yield multipliers
+                  fis, // 20, location of totalf ission cross section
+                  end, // 21, locaiton of end of last non particle production block ( this is different from nxs[xss_length] sometimes )
+                  lunr, // 22, location of probability tables
+                  dnu, // 23, locaiton of delayed nubar data
+                  bdd, //24, location of basic delayed data (decay rates and probabilities)
+                  dnedl, // 25,  location of table of energy distirbution locators 
+                  dned // 26, location or energy distributions
+                  // the blocks after here (listed in the mcnp manual) can be read about in the NJOY open source code on GitHub
+                  // these are particle production blocks that FRENSIE does not support
+                  // these blocks appear to come after jxs[end], which explains whey nxs[xss_length] is not always equal to jxs[end]
+                };
 //---------------------------------------------------------------------------//
 // Test Scope Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor;
-std::map<int, std::pair<int,int> > block_to_start_length_pair = xss_data_extractor->block_to_start_length_pair;
-last_it = block_to_start_length_pair.end();
+std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor_isotope;
 
 //---------------------------------------------------------------------------//
 // Check sizes for blocks that do not depend on subtractions
@@ -42,11 +82,8 @@ last_it = block_to_start_length_pair.end();
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock )
 {
-  Utility::ArrayView<const double> esz_block =
-    xss_data_extractor_isotope->extractESZlock();
-    if(block_to_start_length_pair.find(esz) != last_it) {
-      FRENSIE_CHECK_EQUAL( esz_block.size(), block_to_start_length_pair[esz].second );
-    }
+  Utility::ArrayView<const double> esz_block = xss_data_extractor_isotope->extractESZBlock();
+    FRENSIE_CHECK_EQUAL( esz_block.size(), xss_data_extractor_isotope->queryBlockSize(esz) );
 }
 
 //---------------------------------------------------------------------------//
@@ -57,11 +94,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock )
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 {
-  Utility::ArrayView<const double> mtr_block =
-    xss_data_extractor_isotope->extractMTRBlock();
-    if(block_to_start_length_pair.find(mtr) != last_it) {
-      FRENSIE_CHECK_EQUAL( mtr_block.size(), block_to_start_length_pair[mtr].second );
-    }
+  Utility::ArrayView<const double> mtr_block = xss_data_extractor_isotope->extractMTRBlock();
+    FRENSIE_CHECK_EQUAL( mtr_block.size(), xss_data_extractor_isotope->queryBlockSize(mtr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -72,11 +106,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock )
 {
-  Utility::ArrayView<const double> mtrp_block =
-    xss_data_extractor_isotope->extractMTRPlock();
-    if(block_to_start_length_pair.find(mtrp)!=last_it) {
-      FRENSIE_CHECK_EQUAL( mtrp_block.size(), block_to_start_length_pair[mtrp].second );
-    }
+  Utility::ArrayView<const double> mtrp_block = xss_data_extractor_isotope->extractMTRPBlock();
+  FRENSIE_CHECK_EQUAL( mtrp_block.size(), xss_data_extractor_isotope->queryBlockSize(mtrp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -87,11 +118,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock )
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock )
 {
-  Utility::ArrayView<const double> lqr_block =
-    xss_data_extractor_isotope->extractLQRlock();
-    if(block_to_start_length_pair.find(lqr)!=last_it) {
-      FRENSIE_CHECK_EQUAL( lqr_block.size(), block_to_start_length_pair[lqr].second );
-    }
+  Utility::ArrayView<const double> lqr_block = xss_data_extractor_isotope->extractLQRBlock();
+  FRENSIE_CHECK_EQUAL( lqr_block.size(), xss_data_extractor_isotope->queryBlockSize(lqr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -101,11 +129,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock )
 // size == nxs[3]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock )
 {
-  Utility::ArrayView<const double> tyr_block =
-    xss_data_extractor_isotope->extractTYRlock();
-    if(block_to_start_length_pair.find(tyr)!=last_it) {
-      FRENSIE_CHECK_EQUAL( tyr_block.size(), block_to_start_length_pair[tyr].second );
-    }
+  Utility::ArrayView<const double> tyr_block = xss_data_extractor_isotope->extractTYRBlock();
+  FRENSIE_CHECK_EQUAL( tyr_block.size(), xss_data_extractor_isotope->queryBlockSize(tyr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -115,11 +140,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock )
 // size == nxs[3]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock )
 {
-  Utility::ArrayView<const double> lsig_block =
-    xss_data_extractor_isotope->extractLSIGlock();
-    if(block_to_start_length_pair.find(lsig)!=last_it) {
-      FRENSIE_CHECK_EQUAL( lsig_block.size(), block_to_start_length_pair[lsig].second );
-    }
+  Utility::ArrayView<const double> lsig_block = xss_data_extractor_isotope->extractLSIGBlock();
+  FRENSIE_CHECK_EQUAL( lsig_block.size(), xss_data_extractor_isotope->queryBlockSize(lsig) );
 }
 
 //---------------------------------------------------------------------------//
@@ -129,11 +151,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock )
 // size == nxs[5]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock )
 {
-  Utility::ArrayView<const double> lsigp_block =
-    xss_data_extractor_isotope->extractLSIGPlock();
-    if(block_to_start_length_pair.find(lsigp)!=last_it) {
-      FRENSIE_CHECK_EQUAL( lsigp_block.size(), block_to_start_length_pair[lsigp].second );
-    }
+  Utility::ArrayView<const double> lsigp_block = xss_data_extractor_isotope->extractLSIGPBlock();
+  FRENSIE_CHECK_EQUAL( lsigp_block.size(), xss_data_extractor_isotope->queryBlockSize(lsigp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -143,11 +162,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock )
 // size == nxs[4] + 1
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock )
 {
-  Utility::ArrayView<const double> land_block =
-    xss_data_extractor_isotope->extractLANDBlock();
-    if(block_to_start_length_pair.find(landb)!=last_it) {
-      FRENSIE_CHECK_EQUAL( land_block.size(), block_to_start_length_pair[landb].second );
-    }
+  Utility::ArrayView<const double> land_block = xss_data_extractor_isotope->extractLANDBlock();
+  FRENSIE_CHECK_EQUAL( land_block.size(), xss_data_extractor_isotope->queryBlockSize(landb) );
 }
 
 //---------------------------------------------------------------------------//
@@ -157,11 +173,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock )
 // size ==  nxs[4]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock )
 {
-  Utility::ArrayView<const double> ldlw_block =
-    xss_data_extractor_isotope->extractLDLWBlock();
-    if(block_to_start_length_pair.find(ldlw)!=last_it) {
-      FRENSIE_CHECK_EQUAL( ldlw_block.size(), block_to_start_length_pair[ldlw].second );
-    }
+  Utility::ArrayView<const double> ldlw_block = xss_data_extractor_isotope->extractLDLWBlock();
+    FRENSIE_CHECK_EQUAL( ldlw_block.size(), xss_data_extractor_isotope->queryBlockSize(dlw) );
 }
 
 //---------------------------------------------------------------------------//
@@ -171,11 +184,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock )
 // size ==  nxs[5]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock )
 {
-  Utility::ArrayView<const double> ldlwp_block =
-    xss_data_extractor_isotope->extractLDLWPBlock();
-    if(block_to_start_length_pair.find(ldlwp)!=last_it) {
-      FRENSIE_CHECK_EQUAL( ldlwp_block.size(), block_to_start_length_pair[ldlwp].second );
-    }
+  Utility::ArrayView<const double> ldlwp_block = xss_data_extractor_isotope->extractLDLWPBlock();
+  FRENSIE_CHECK_EQUAL( ldlwp_block.size(), xss_data_extractor_isotope->queryBlockSize(dlwp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -185,11 +195,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock )
 // size == nxs[7]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock )
 {
-  Utility::ArrayView<const double> dnedl_block =
-    xss_data_extractor_isotope->extractDNEDLBlock();
-    if(block_to_start_length_pair.find(dnedl)!=last_it) {
-      FRENSIE_CHECK_EQUAL( dnedl_block.size(), block_to_start_length_pair[dnedl].second );
-    }
+  Utility::ArrayView<const double> dnedl_block = xss_data_extractor_isotope->extractDNEDLBlock();
+  FRENSIE_CHECK_EQUAL( dnedl_block.size(), xss_data_extractor_isotope->queryBlockSize(dlwp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -207,11 +214,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock )
 // size == nxs[5]
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock )
 {
-  Utility::ArrayView<const double> landp_block =
-    xss_data_extractor_isotope->extractLANDPBlock();
-    if(block_to_start_length_pair.find(landp)!=last_it) {
-      FRENSIE_CHECK_EQUAL( landp_block.size(), block_to_start_length_pair[landp].second );
-    }
+  Utility::ArrayView<const double> landp_block = xss_data_extractor_isotope->extractLANDPBlock();
+  FRENSIE_CHECK_EQUAL( landp_block.size(), xss_data_extractor_isotope->queryBlockSize(landp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -221,11 +225,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock )
 // size == xss[jxs[19]] + 1
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock )
 {
-  Utility::ArrayView<const double> yp_block =
-    xss_data_extractor_isotope->extractYPBlock();
-    if(block_to_start_length_pair.find(yp)!=last_it) {
-      FRENSIE_CHECK_EQUAL( yp_block.size(), block_to_start_length_pair[yp].second );
-    }
+  Utility::ArrayView<const double> yp_block = xss_data_extractor_isotope->extractYPBlock();
+  FRENSIE_CHECK_EQUAL( yp_block.size(), xss_data_extractor_isotope->queryBlockSize(yp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -235,11 +236,8 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock )
 // size == xss[jxs[20]] + 2
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
 {
-  Utility::ArrayView<const double> fis_block =
-    xss_data_extractor_isotope->extractFISBlock();
-    if(block_to_start_length_pair.find(fis)!=last_it) {
-      FRENSIE_CHECK_EQUAL( fis_block.size(), block_to_start_length_pair[fis].second );
-    }
+  Utility::ArrayView<const double> fis_block = xss_data_extractor_isotope->extractFISBlock();
+  FRENSIE_CHECK_EQUAL( fis_block.size(), xss_data_extractor_isotope->queryBlockSize(fis) );
 }
 
 //---------------------------------------------------------------------------//
@@ -255,25 +253,17 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
 // check that xss(jxs[15] + j) for  j=1,nxs[5] (nxs[5] is number of photon reactions )
   FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, confirmLANDP )
   {
-    if(block_to_start_length_pair[andp].second==0){
-      Utility::ArrayView<const double> andp_block =
-      xss_data_extractor_isotope->extractANDPBlock();
-      for(size_t j = 1; j<nxs[ntrp] ; j++)
+    if(xss_data_extractor_isotope->queryBlockSize(landp)==0){
+      Utility::ArrayView<const double> andp_block = xss_data_extractor_isotope->extractANDPBlock();
+      for(size_t j = 1; j < xss_data_extractor_isotope->queryNXS(ntrp) ; j++)
         FRENSIE_CHECK_EQUAL( andp_block[j], 0);
-      // OR
-      //for(auto v : andp_block) 
-      //  FRENSIE_CHECK_EQUAL(v,0)
+      // first entry is for elastic, all others would be for the other MTs
+      // if the map determines that the landp has size zero, it puts placeholder
+      // zeros for each MT in the andp block, check that they are all zero
     }
   }
 
 //---------------------------------------------------------------------------//
-
-
-
-//---------------------------------------------------------------------------//
-// add all  sizes together to get total size (maybe)
-//---------------------------------------------------------------------------//
-
 
 
 
@@ -289,14 +279,12 @@ unsigned test_isotope_ace_file_start_line;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file",
-                                        test_isotope_ace_file_name, "",
-                                        "Test isotope ACE file name" );
-
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_table",
                                         test_isotope_ace_table_name, "",
                                         "Test isotope ACE table name in h1 ACE file" );
-
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file",
+                                        test_isotope_ace_file_name, "",
+                                        "Test isotope ACE file name" );
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_isotope_ace_file_start_line",
                                         test_isotope_ace_file_start_line, 1,
                                         "Test isotope ACE file start line" );
