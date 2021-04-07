@@ -1,0 +1,59 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_kernel)
+
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_collision_kernel_test_root_geometry)
+
+ADD_SUBDIRECTORY(test_files)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FilledGeometryModel
+  DEPENDS tstFilledGeometryModel.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(FilledGeometryModel
+  ACE_LIB_DEPENDS 8000.12p
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+FRENSIE_ADD_TEST_EXECUTABLE(TransportKernel
+  DEPENDS tstTransportKernel.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(TransportKernel
+  ACE_LIB_DEPENDS 8000.12p
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+IF(FRENSIE_ENABLE_DAGMC)
+
+  FRENSIE_ADD_TEST_EXECUTABLE(TransportKernelDagMC
+    DEPENDS tstTransportKernelDagMC.cpp
+    LIB_DEPENDS geometry_dagmc
+    TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+  FRENSIE_ADD_TEST(TransportKernelDagMC
+    ACE_LIB_DEPENDS 8000.12p
+    EXTRA_ARGS
+    --test_database=${COLLISION_DATABASE_XML_FILE}
+    --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
+
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+
+  FRENSIE_ADD_TEST_EXECUTABLE(TransportKernelRoot
+    DEPENDS tstTransportKernelRoot.cpp
+    LIB_DEPENDS geometry_root
+    TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET} ${ROOT_GEOM_TEST_TARGET})
+  FRENSIE_ADD_TEST(TransportKernelRoot
+    ACE_LIB_DEPENDS 8000.12p
+    EXTRA_ARGS
+    --test_database=${COLLISION_DATABASE_XML_FILE}
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geometry.root)
+
+ENDIF()
+
+FRENSIE_ADD_TEST_EXECUTABLE(CollisionKernel
+  DEPENDS tstCollisionKernel.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(CollisionKernel
+  ACE_LIB_DEPENDS 8000.12p
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_kernel)

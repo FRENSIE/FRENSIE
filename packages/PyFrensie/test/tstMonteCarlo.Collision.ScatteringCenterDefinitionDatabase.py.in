@@ -1,0 +1,142 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Collision.ScatteringCenterDefinitionDatabase class unit tests
+#  \file   tstMonteCarlo.Collision.ScatteringCenterDefinitionDatabase.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Collision.ScatteringCenterDefinitionDatabase class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ScatteringCenterDefinitionDatabase class
+class ScatteringCenterDefinitionDatabaseTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision.ScatteringCenterDefinitionDatabase class"
+
+    def testCreateDefinition(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase createDefinition"
+        database = Collision.ScatteringCenterDefinitionDatabase()
+
+        database.createDefinition( Data.ZAID(1000) )
+
+        self.assertTrue(  database.doesDefinitionExist( "H" ) )
+
+        database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+
+        self.assertTrue(  database.doesDefinitionExist( "H1 @ 293.1K" ) )
+
+        with self.assertRaises(RuntimeError):
+            database.createDefinition( "H", Data.ZAID(1000) )
+        with self.assertRaises(RuntimeError):
+            database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+
+    def testCreateDefinitionAlias(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase createDefinitionAlias"
+        database = Collision.ScatteringCenterDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.createDefinitionAlias( "H1 @ 293.1K", "H1" )
+
+        database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+        database.createDefinitionAlias( "H1 @ 293.1K", "H1" )
+
+        self.assertFalse( database.isDefinitionNameAnAlias( "dummy" ) )
+        self.assertFalse( database.isDefinitionNameAnAlias( "H1 @ 293.1K" ) )
+        self.assertTrue(  database.isDefinitionNameAnAlias( "H1" ) )
+
+    def testResolveDefinitionAlias(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase resolveDefinitionAlias"
+        database = Collision.ScatteringCenterDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.getDefinition( "H1" )
+
+        database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+        database.createDefinitionAlias( "H1 @ 293.1K", "H1" )
+        self.assertEqual( database.resolveDefinitionAlias( "H1" ), "H1 @ 293.1K" )
+
+    def testGetDefinition(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase getDefinition"
+        database = Collision.ScatteringCenterDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.getDefinition( "H1 @ 293.1K" )
+
+        definition = database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+        self.assertTrue( definition.getZAID() ==
+                         database.getDefinition( "H1 @ 293.1K" ).getZAID() )
+
+        database.createDefinitionAlias( "H1 @ 293.1K", "H1" )
+        # Access the definition through an alias
+        self.assertTrue( definition.getZAID() ==
+                         database.getDefinition( "H1" ).getZAID() )
+
+    def testRemoveDefinition(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinitionDatabase removeDefinition"
+        database = Collision.ScatteringCenterDefinitionDatabase()
+        database.removeDefinition( "H1 @ 293.1K" )
+
+        database.createDefinition( "H1 @ 293.1K", Data.ZAID(1001) )
+        database.createDefinitionAlias( "H1 @ 293.1K", "H1" )
+
+        self.assertTrue(  database.doesDefinitionExist( "H1 @ 293.1K" ) )
+        self.assertTrue(  database.doesDefinitionExist( "H1" ) )
+
+        database.removeDefinition( "H1" )
+
+        self.assertTrue(  database.doesDefinitionExist( "H1 @ 293.1K" ) )
+        self.assertFalse( database.doesDefinitionExist( "H1" ) )
+
+        database.removeDefinition( "H1 @ 293.1K" )
+
+        self.assertFalse( database.doesDefinitionExist( "H1 @ 293.1K" ) )
+        self.assertFalse( database.doesDefinitionExist( "H1" ) )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ScatteringCenterDefinitionDatabaseTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Collision.ScatteringCenterDefinitionDatabase.py
+#-----------------------------------------------------------------------------#

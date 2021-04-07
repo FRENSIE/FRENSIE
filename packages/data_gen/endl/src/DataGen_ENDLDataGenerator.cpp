@@ -8,32 +8,26 @@
 
 // FRENSIE Includes
 #include "DataGen_ENDLDataGenerator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
 // Constructor
-ENDLDataGenerator::ENDLDataGenerator( const unsigned atomic_number )
-  : d_atomic_number( atomic_number )
+ENDLDataGenerator::ENDLDataGenerator()
+  : d_data_container()
+{ /* ... */ }
+
+// Get the data container
+const Data::ENDLDataContainer& ENDLDataGenerator::getDataContainer() const
 {
-  // Make sure the atomic number is valid
-  testPrecondition( atomic_number <= 100u );
+  return d_data_container;
 }
 
-// Set the atomic number
-void ENDLDataGenerator::setAtomicNumber( 
-        Data::ENDLVolatileDataContainer&
-        data_container ) const
+// Get the volatile data container
+Data::ENDLVolatileDataContainer& ENDLDataGenerator::getVolatileDataContainer()
 {
-  data_container.setAtomicNumber( d_atomic_number ); 
+  return d_data_container;
 }
-
-// Get the atomic number
-unsigned ENDLDataGenerator::getAtomicNumber() const
-{
-  return d_atomic_number;
-}
-			    
 
 } // end DataGen
 

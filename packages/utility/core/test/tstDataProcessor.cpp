@@ -9,16 +9,11 @@
 // Std Lib Includes
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
-#include "Utility_TupleMemberTraits.hpp"
-#include "Utility_Tuple.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data.
@@ -37,273 +32,69 @@
 #define TOL 1e-12
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros.
+// Template Typedefs.
 //---------------------------------------------------------------------------//
-#define TUPLE_TYPEDEFS()					\
-  typedef Utility::Pair<double,double> pair_d_d;			\
-  typedef Utility::Pair<unsigned,double> pair_u_d;			\
-  typedef Utility::Pair<double,unsigned> pair_d_u;			\
-  typedef Utility::Trip<double,double,double> trip_d_d_d;		\
-  typedef Utility::Trip<unsigned,double,double> trip_u_d_d;		\
-  typedef Utility::Trip<unsigned,double,unsigned> trip_u_d_u;		\
-  typedef Utility::Trip<double,double,unsigned> trip_d_d_u;		\
-  typedef Utility::Trip<unsigned,unsigned,double> trip_u_u_d;		\
-  typedef Utility::Trip<double,unsigned,double> trip_d_u_d;		\
-  typedef Utility::Quad<double,double,double,double> quad_d_d_d_d;	\
-  typedef Utility::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
-  typedef Utility::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
-  typedef Utility::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
-  typedef Utility::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
-  typedef Utility::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
-  typedef Utility::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
-  typedef Utility::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
-  typedef Utility::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
-  typedef Utility::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
-  
-#define UNIT_TEST_INSTANTIATION_POLICY( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
-					name,				\
-					LogLogDataProcessing )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
-					name,				\
-					SqrSqrDataProcessing ) \
+template<typename Policy>
+struct TypeList
+{
+  typedef std::tuple<std::tuple<Policy,std::pair<double,double> >,
+                     std::tuple<Policy,std::tuple<double,double> >,
+                     std::tuple<Policy,std::tuple<double,double,double> >,
+                     std::tuple<Policy,std::tuple<double,double,double,double> > > type;
+};
 
-#define UNIT_TEST_INSTANTIATION_POLICY_TUPLE( type, name )		\
-  TUPLE_TYPEDEFS()							\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					LogLogDataProcessing,	\
-					pair_d_d )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					LogLogDataProcessing,	\
-					trip_d_d_d )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					LogLogDataProcessing,	\
-					quad_d_d_d_d )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					SqrSqrDataProcessing, \
-					pair_d_d )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					SqrSqrDataProcessing, \
-					trip_d_d_d )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
-					name,				\
-					SqrSqrDataProcessing, \
-					quad_d_d_d_d )			\
+typedef decltype(std::tuple_cat(typename TypeList<Utility::LogLogDataProcessing>::type(),typename TypeList<Utility::SqrSqrDataProcessing>::type())) PolicyTupleTypes;
 
-#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )			\
-  TUPLE_TYPEDEFS()							\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_d )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
+typedef std::tuple<std::pair<double,double>,
+                   std::tuple<double,double>,
+                   std::tuple<double,double,double>,
+                   std::tuple<double,double,double,double> > TupleTypes;
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( type, name, array ) \
-  TUPLE_TYPEDEFS()							\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
-							    name, \
-							    THIRD, \
-							    trip_d_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
-							    name, \
-							    THIRD, \
-							    quad_d_d_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
-							    name, \
-							    FOURTH, \
-							    quad_d_d_d_d, \
-							    array )	\
+typedef std::tuple<std::tuple<std::integral_constant<size_t,2>,std::tuple<double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::tuple<double,double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,3>,std::tuple<double,double,double,double> > > ThreePlusTupleSingleMemberTypes;
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( type, name )		\
-  TUPLE_TYPEDEFS()							\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      SECOND,		\
-						      pair_d_d )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      SECOND,		\
-						      pair_u_d )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      SECOND,		\
-						      trip_d_d_d )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      SECOND,		\
-						      trip_u_d_d )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      THIRD,		\
-						      quad_d_d_d_d )	\
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
-						      name,		\
-						      THIRD,		\
-						      quad_u_u_d_d )	\
+typedef std::tuple<std::tuple<std::integral_constant<size_t,1>,std::pair<double,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::pair<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::tuple<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::tuple<unsigned,double,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::tuple<double,double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::tuple<unsigned,unsigned,double,double> > > TupleSingleMemberTypes;
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( type, name, array ) \
-  TUPLE_TYPEDEFS()							\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    FIRST,	\
-							    pair_d_u,	\
-							    trip_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    SECOND,	\
-							    pair_d_u,	\
-							    pair_u_d,	\
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    THIRD,	\
-							    trip_d_d_u, \
-							    trip_u_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    FOURTH,	\
-							    quad_u_d_d_d, \
-							    quad_d_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    FIRST,	\
-							    pair_d_u,	\
-							    pair_u_d,	\
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    SECOND,	\
-							    trip_u_u_d, \
-							    trip_d_u_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    THIRD,	\
-							    trip_d_u_d, \
-							    trip_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    FOURTH,	\
-							    quad_u_u_d_d, \
-							    quad_u_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    THIRD,	\
-							    FIRST,	\
-							    trip_d_d_u, \
-							    trip_u_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    THIRD,	\
-							    SECOND,	\
-							    trip_d_u_d, \
-							    trip_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    THIRD,	\
-							    THIRD,	\
-							    trip_d_d_d, \
-							    trip_u_u_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    THIRD,	\
-							    FOURTH,	\
-							    quad_d_d_d_d, \
-							    quad_u_u_u_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FOURTH,	\
-							    FIRST,	\
-							    quad_u_d_d_d, \
-							    quad_d_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FOURTH,	\
-							    SECOND,	\
-							    quad_u_u_d_d, \
-							    quad_u_d_d_u, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FOURTH,	\
-							    THIRD,	\
-							    quad_d_d_d_d, \
-							    quad_u_u_u_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, \
-							    name, \
-							    FOURTH, \
-							    FOURTH, \
-							    quad_d_d_d_u, \
-							    quad_u_u_u_u, \
-							    array )	\
+typedef std::tuple<std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,0>,std::pair<double,unsigned>,std::tuple<double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,0>,std::tuple<double,unsigned>,std::tuple<double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::pair<double,unsigned>,std::pair<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::tuple<double,unsigned>,std::tuple<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,2>,std::tuple<double,double,unsigned>,std::tuple<unsigned,double,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,3>,std::tuple<unsigned,double,double,double>,std::tuple<double,double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::pair<double,unsigned>,std::pair<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::tuple<double,unsigned>,std::tuple<unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::tuple<unsigned,unsigned,double>,std::tuple<double,unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,2>,std::tuple<double,unsigned,double>,std::tuple<double,double,unsigned> >,
+                   
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,3>,std::tuple<unsigned,unsigned,double,double>,std::tuple<unsigned,double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,0>,std::tuple<double,double,unsigned>,std::tuple<unsigned,double,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,1>,std::tuple<double,unsigned,double>,std::tuple<double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,2>,std::tuple<double,double,double>,std::tuple<unsigned,unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,3>,std::tuple<double,double,double,double>,std::tuple<unsigned,unsigned,unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,0>,std::tuple<unsigned,double,double,double>,std::tuple<double,double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,1>,std::tuple<unsigned,unsigned,double,double>,std::tuple<unsigned,double,double,unsigned> >,
+                   std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,2>,std::tuple<double,double,double,double>,std::tuple<unsigned,unsigned,unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,3>,std::tuple<double,double,double,unsigned>,std::tuple<unsigned,unsigned,unsigned,unsigned> > > TwoTupleTwoMemberTypes;
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( type, name, array ) \
-  TUPLE_TYPEDEFS()							\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    SECOND,	\
-							    pair_d_d,	\
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    THIRD,	\
-							    trip_d_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    FIRST,	\
-							    FOURTH,	\
-							    quad_d_d_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    THIRD,	\
-							    trip_u_d_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    SECOND,	\
-							    FOURTH,	\
-							    quad_u_d_u_d, \
-							    array )	\
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
-							    name,	\
-							    THIRD,	\
-							    FOURTH,	\
-							    quad_d_d_u_u, \
-							    array )	\
-  
+typedef std::tuple<std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::pair<double,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::tuple<double,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,2>,std::tuple<double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,3>,std::tuple<double,double,double,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,2>,std::tuple<unsigned,double,double> >,
+                   std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,3>,std::tuple<unsigned,double,unsigned,double> >,
+                   std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,3>,std::tuple<double,double,unsigned,unsigned> > > TupleTwoMemberTypes;
+
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-
 class TestDataProcessor : public Utility::DataProcessor
 {
 public:
@@ -312,7 +103,7 @@ public:
 
   virtual ~TestDataProcessor()
   { /* ... */ }
-  
+
   void processDataFiles()
   { /* ... */ }
 
@@ -370,42 +161,36 @@ const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::refer
 //---------------------------------------------------------------------------//
 // Helper functions.
 //---------------------------------------------------------------------------//
-template<Utility::TupleMember member, typename T, template<typename> class Array>
+template<size_t member, typename T, template<typename,typename...> class Array>
 void fillArrayOneTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
-    tupleMemberType;
-  
-  typename Array<T>::size_type size = Utility::getArraySize( array );
+  typedef typename Utility::TupleElement<member,T>::type tupleMemberType;
 
-  if( size > 0 )
+  if( array.size() > 0 )
   {
-    for( unsigned int i = 1; i <= size; ++i )
-    {
-      Utility::set<member>( array[i-1], static_cast<tupleMemberType>( i ) );
-    }
+    for( size_t i = 1; i <= array.size(); ++i )
+      Utility::get<member>( array[i-1] ) = static_cast<tupleMemberType>( i );
   }
 }
 
-template<Utility::TupleMember indepMember,
-	 Utility::TupleMember depMember,
+template<size_t indepMember,
+	 size_t depMember,
 	 typename T,
-	 template<typename> class Array>
+	 template<typename,typename...> class Array>
 void fillArrayTwoTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
-  typedef typename Utility::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
-  
-  typename Array<T>::size_type size = Utility::getArraySize( array );
+  typedef typename Utility::TupleElement<indepMember,T>::type indepTupleMemberType;
+  typedef typename Utility::TupleElement<depMember,T>::type depTupleMemberType;
 
-  if( size > 0 )
+  if( array.size() > 0 )
   {
-    for( unsigned int i = 0; i < size; ++i )
+    for( size_t i = 0; i < array.size(); ++i )
     {
-      Utility::set<indepMember>( array[i],
-		            static_cast<indepTupleMemberType>( i*INDEP_VAR ) );
-      Utility::set<depMember>( array[i],
-		                static_cast<depTupleMemberType>( i*DEP_VAR ) );
+      Utility::get<indepMember>( array[i] ) =
+        static_cast<indepTupleMemberType>( i*INDEP_VAR );
+      
+      Utility::get<depMember>( array[i] ) = 
+        static_cast<depTupleMemberType>( i*DEP_VAR );
     }
   }
 }
@@ -414,10 +199,12 @@ void fillArrayTwoTupleMemberData( Array<T> &array )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the DataProcessingPolicies correctly process data
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
-				   DataProcessingPolicy,
-				   Policy )
+FRENSIE_UNIT_TEST_TEMPLATE( DataProcessor, DataProcessingPolicy,
+                            Utility::LogLogDataProcessing,
+                            Utility::SqrSqrDataProcessing )
 {
+  FETCH_TEMPLATE_PARAM( 0, Policy );
+  
   double processed_indep_var, processed_dep_var;
   processed_indep_var = Policy::processIndependentVar( INDEP_VAR );
   processed_dep_var = Policy::processDependentVar( DEP_VAR );
@@ -426,66 +213,66 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   ref_indep_var = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
   ref_dep_var = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
 
-  TEST_FLOATING_EQUALITY( processed_indep_var, ref_indep_var, TOL );
-  TEST_FLOATING_EQUALITY( processed_dep_var, ref_dep_var, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_indep_var, ref_indep_var, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_dep_var, ref_dep_var, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_POLICY( DataProcessor, DataProcessingPolicy );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can processes an array of UTILITY Tuple structs
 // in the desired format
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( DataProcessor, 
-				   processContinuousData,
-				   Policy,
-				   Tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   processContinuousData,
+                                   PolicyTupleTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Policy );
+  FETCH_TEMPLATE_PARAM( 1, Tuple );
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
   Tuple data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<Tuple> processed_data( 10, data_point );
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
+  std::vector<Tuple> processed_data( 10, data_point );
 
   // Load the reference array
-  data_point.first = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
-  data_point.second = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
-  Teuchos::Array<Tuple> ref_data( 10, data_point );
+  Utility::get<0>( data_point ) = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
+  Utility::get<1>( data_point ) = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
+  std::vector<Tuple> ref_data( 10, data_point );
 
   // Process the Array
   data_processor.processContinuousData<Policy,
 				       Utility::FIRST,
 				       Utility::SECOND>( processed_data );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data, ref_data, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_POLICY_TUPLE( DataProcessor, processContinuousData );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can remove elements with a tuple member less
 // than a specified value
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
-				   removeElementsLessThanValue,
-				   Tuple )
+FRENSIE_UNIT_TEST_TEMPLATE( DataProcessor,
+                            removeElementsLessThanValue,
+                            TupleTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Tuple );
+  
   TestDataProcessor data_processor;
 
-  Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
-  
+  std::vector<Tuple> ref_data( 10 ), clipped_data( 10 );
+
   // Load the reference array
   fillArrayOneTupleMemberData<Utility::FIRST>( ref_data );
 
   // Load the clipped array
   clipped_data = ref_data;
-  
+
   // Set the lower bound to the min value in the array and clip the array
   double lower_bound = Utility::get<Utility::FIRST>( ref_data.front() );
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  FRENSIE_CHECK_EQUAL( clipped_data, ref_data );
 
   // Set the lower bound to a value less than the min value in the array and
   // clip the array
@@ -494,17 +281,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
 
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+  FRENSIE_CHECK_EQUAL( clipped_data, ref_data );
 
   // Set the lower bound to a value greater than the min value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  lower_bound = (Utility::get<Utility::FIRST>( ref_data[2] ) + 
+  lower_bound = (Utility::get<Utility::FIRST>( ref_data[2] ) +
 		 Utility::get<Utility::FIRST>( ref_data[1] ) )/2.0;
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
 
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 1, ref_data.size()-1 ) );
+  FRENSIE_CHECK_EQUAL( clipped_data | Utility::Slice(0, clipped_data.size()),
+                       (ref_data | Utility::Slice(1, ref_data.size()-1)) );
 
   // Set the lower bound to a value greater than the min value but on
   // a bin boundary and clip the array
@@ -512,35 +300,36 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   lower_bound = Utility::get<Utility::FIRST>( ref_data[2] );
   data_processor.removeElementsLessThanValue<Utility::FIRST>( clipped_data,
 							     lower_bound );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 2, ref_data.size()-2 ) );
-}
 
-UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsLessThanValue );
+  FRENSIE_CHECK_EQUAL( clipped_data | Utility::Slice(0, clipped_data.size()),
+                       (ref_data | Utility::Slice(2, ref_data.size()-2)) );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can remove elements with a tuple member greater
 // than a specified value
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
-				   removeElementsGreaterThanValue,
-				   Tuple )
+FRENSIE_UNIT_TEST_TEMPLATE( DataProcessor,
+                            removeElementsGreaterThanValue,
+                            TupleTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Tuple );
+  
   TestDataProcessor data_processor;
 
-  Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
-  
+  std::vector<Tuple> ref_data( 10 ), clipped_data( 10 );
+
   // Load the reference array
   fillArrayOneTupleMemberData<Utility::FIRST>( ref_data );
 
   // Load the clipped array
   clipped_data = ref_data;
-  
+
   // Set the upper bound to the max value in the array and clip the array
   double upper_bound = Utility::get<Utility::FIRST>( ref_data.back() );
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  FRENSIE_CHECK_EQUAL( clipped_data, ref_data );
 
   // Set the upper bound to a value greater than the max value in the array and
   // clip the array
@@ -549,16 +338,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
 
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+  FRENSIE_CHECK_EQUAL( clipped_data, ref_data );
 
   // Set the upper bound to a value less than the max value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  upper_bound = (Utility::get<Utility::FIRST>( ref_data[ref_data.size()-2] ) + 
+  upper_bound = (Utility::get<Utility::FIRST>( ref_data[ref_data.size()-2] ) +
 		 Utility::get<Utility::FIRST>( ref_data[ref_data.size()-3]))/2.0;
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-1 ) );
+  FRENSIE_CHECK_EQUAL( clipped_data | Utility::Slice(0, clipped_data.size()),
+                       (ref_data | Utility::Slice(0, ref_data.size()-1)) );
 
   // Set the upper bound to a value less than the max value but on
   // a bin boundary and clip the array
@@ -566,66 +356,64 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   upper_bound = Utility::get<Utility::FIRST>( ref_data[ref_data.size()-3] );
   data_processor.removeElementsGreaterThanValue<Utility::FIRST>( clipped_data,
 								upper_bound );
-  UTILITY_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-2 ) );
+  FRENSIE_CHECK_EQUAL( clipped_data | Utility::Slice(0, clipped_data.size()),
+                       (ref_data | Utility::Slice(0, ref_data.size()-2)) );
 }
-
-UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsGreaterThanValue );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can coarsen constant regions in an array
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
-				   coarsenConstantRegions,
-				   Tuple )
+FRENSIE_UNIT_TEST_TEMPLATE( DataProcessor, coarsenConstantRegions, TupleTypes )
 {
-  TestDataProcessor data_processor;
+  FETCH_TEMPLATE_PARAM( 0, Tuple );
   
+  TestDataProcessor data_processor;
+
   // Load the array to be processed
   Tuple data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<Tuple> coarsened_data( 10, data_point );
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
+  std::vector<Tuple> coarsened_data( 10, data_point );
 
   // Load the reference array
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<Tuple> reference_data( 2, data_point );
+  Utility::get<0>( data_point ) = INDEP_VAR;
+  Utility::get<1>( data_point ) = DEP_VAR;
+  std::vector<Tuple> reference_data( 2, data_point );
 
   // Coarsen the array
   data_processor.coarsenConstantRegions<Utility::SECOND>( coarsened_data );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( coarsened_data, reference_data, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( coarsened_data, reference_data, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, coarsenConstantRegions );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate the slopes between all pairs
 // of data points in an array and store in the desired tuple member
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
-						       calculateSlopes,
-						       member,
-						       Tuple,
-						       array )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   calculateSlopes,
+                                   ThreePlusTupleSingleMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Member );
+  FETCH_TEMPLATE_PARAM( 1, Tuple );
+
+  constexpr size_t member = Member::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple> raw_data( 10 );
-  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( raw_data );
-  array<Tuple> processed_data;
-  Utility::copyArrayView( processed_data, raw_data() );
+  std::vector<Tuple> processed_data( 10 );
+  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( processed_data );
 
   // Load the reference array
-  Teuchos::Array<Tuple> ref_data( 10 );
+  std::vector<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
-  
+
   double slope = 0.0;
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
     if( i != ref_data.size() - 1 )
     {
-      slope = (ref_data[i+1].second - ref_data[i].second)/
-	(ref_data[i+1].first - ref_data[i].first);
+      slope = (Utility::get<1>(ref_data[i+1]) - Utility::get<1>(ref_data[i]))/
+	(Utility::get<0>(ref_data[i+1]) - Utility::get<0>(ref_data[i]) );
       Utility::set<member>( ref_data[i], slope );
     }
     else
@@ -633,236 +421,220 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   }
 
   // Processes the array
-  data_processor.calculateSlopes<Utility::FIRST,
-				 Utility::SECOND,
-				 member>( processed_data );
+  data_processor.calculateSlopes<Utility::FIRST,Utility::SECOND,member>( processed_data );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data, ref_data, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a continuous cdf from an array
 // of data and store in the desired tuple member
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
-						       calculateContinuousCDF,
-						       member,
-						       Tuple,
-						       array )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   calculateContinuousCDF,
+                                   ThreePlusTupleSingleMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Member );
+  FETCH_TEMPLATE_PARAM( 1, Tuple );
+
+  constexpr size_t member = Member::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple> raw_data( 10 );
-  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( raw_data );
-  array<Tuple> processed_data;
-  Utility::copyArrayView( processed_data, raw_data() );
+  std::vector<Tuple> processed_data( 10 );
+  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( processed_data );
 
   // Load the reference array
-  Teuchos::Array<Tuple> ref_data( 10 );
+  std::vector<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
   double cdf_value;
-  
+
   for( unsigned int i = 0; i < ref_data.size(); ++i )
-  {    
+  {
     if( i != 0 )
     {
-      cdf_value += 0.5*(ref_data[i].first - ref_data[i-1].first)*
-	(ref_data[i].second + ref_data[i-1].second);
+      cdf_value += 0.5*(Utility::get<0>(ref_data[i]) - Utility::get<0>(ref_data[i-1]))*
+	(Utility::get<1>(ref_data[i]) + Utility::get<1>(ref_data[i-1]));
     }
     else
       cdf_value = 0.0;
-      
+
     Utility::set<member>( ref_data[i], cdf_value );
   }
-  
+
   double norm_value = Utility::get<member>( ref_data.back() );
-  for( unsigned int i = 0; i < ref_data.size(); ++i )
+  for( size_t i = 0; i < ref_data.size(); ++i )
   {
-    ref_data[i].second /= norm_value;
-    Utility::set<member>( ref_data[i], 
-			 Utility::get<member>( ref_data[i] )/norm_value );
+    Utility::get<1>(ref_data[i]) /= norm_value;
+    Utility::set<member>( ref_data[i],
+                          Utility::get<member>( ref_data[i] )/norm_value );
   }
-  
+
   // Processes the array
-  data_processor.calculateContinuousCDF<Utility::FIRST,
-					Utility::SECOND,
-					member>( processed_data );
+  data_processor.calculateContinuousCDF<Utility::FIRST,Utility::SECOND,member>( processed_data );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data, ref_data, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a continuous pdf from an array
 // of data and store in the desired tuple member
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
-							calculateContinuousPDF,
-							member,
-							Tuple,
-							array )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   calculateContinuousPDF,
+                                   ThreePlusTupleSingleMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Member );
+  FETCH_TEMPLATE_PARAM( 1, Tuple );
+
+  constexpr size_t member = Member::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple> raw_data( 10 );
-  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( raw_data );
-  array<Tuple> processed_data;
-  Utility::copyArrayView( processed_data, raw_data() );
+  std::vector<Tuple> processed_data( 10 );
+  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( processed_data );
 
   // Load the reference array
-  Teuchos::Array<Tuple> ref_data( 10 );
+  std::vector<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
   double pdf_value;
-  
-  for( unsigned int i = 0; i < ref_data.size(); ++i )
-  {    
+
+  for( size_t i = 0; i < ref_data.size(); ++i )
+  {
     if( i != 0 )
     {
-      pdf_value = (ref_data[i].second - ref_data[i-1].second)/
-	(ref_data[i].first - ref_data[i-1].first);
+      pdf_value = (Utility::get<1>(ref_data[i]) - Utility::get<1>(ref_data[i-1]))/
+	(Utility::get<0>(ref_data[i]) - Utility::get<0>(ref_data[i-1]));
     }
     else
     {
-      pdf_value = (ref_data[i+1].second - ref_data[i].second)/
-	(ref_data[i+1].first - ref_data[i].second);
+      pdf_value = (Utility::get<1>(ref_data[i+1]) - Utility::get<1>(ref_data[i]))/
+	(Utility::get<0>(ref_data[i+1]) - Utility::get<0>(ref_data[i]));
     }
-      
+
     Utility::set<member>( ref_data[i], pdf_value );
   }
-  
+
   // Processes the array
-  data_processor.calculateContinuousPDF<Utility::FIRST,
-					member,
-					Utility::SECOND>( processed_data );
+  data_processor.calculateContinuousPDF<Utility::FIRST,member,Utility::SECOND>( processed_data );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data, ref_data, TOL );
 }
-
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a discrete cdf from an array
 // of data in place
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( DataProcessor,
-						 calculateDiscreteCDF,
-						 member,
-						 Tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   calculateDiscreteCDF,
+                                   TupleSingleMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, Member );
+  FETCH_TEMPLATE_PARAM( 1, Tuple );
+
+  constexpr size_t member = Member::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple> processed_data( 10 );
+  std::vector<Tuple> processed_data( 10 );
   fillArrayOneTupleMemberData<member>( processed_data );
-  
+
   // Load the reference array
-  Teuchos::Array<Tuple> ref_data( 10 );
+  std::vector<Tuple> ref_data( 10 );
   fillArrayOneTupleMemberData<member>( ref_data );
-  
-  for( unsigned int i = 1; i < ref_data.size(); ++i )
+
+  for( size_t i = 1; i < ref_data.size(); ++i )
   {
     Utility::set<member>( ref_data[i], Utility::get<member>( ref_data[i-1] ) +
 			 Utility::get<member>( ref_data[i] ) );
   }
-  
-  for( unsigned int i = 0; i < ref_data.size(); ++i )
+
+  for( size_t i = 0; i < ref_data.size(); ++i )
   {
     Utility::set<member>( ref_data[i], Utility::get<member>( ref_data[i] )/
 			 Utility::get<member>( ref_data.back() ) );
   }
-  
-  // Processes the array
-  data_processor.calculateDiscreteCDF<member,
-  				      member>( processed_data );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
-}
 
-UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( DataProcessor, calculateDiscreteCDF );
+  // Processes the array
+  data_processor.calculateDiscreteCDF<member,member>( processed_data );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( processed_data, ref_data, TOL );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member of a tuple with
 // data in another member (for all tuples in an array)
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_DECL( DataProcessor,
-						       copyTupleMemberData,
-						       Member1,
-						       Member2,
-						       Tuple1,
-						       Tuple2,
-						       array )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   copyTupleMemberData,
+                                   TwoTupleTwoMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, MemberT1 );
+  FETCH_TEMPLATE_PARAM( 1, MemberT2 );
+  FETCH_TEMPLATE_PARAM( 2, Tuple1 );
+  FETCH_TEMPLATE_PARAM( 3, Tuple2 );
+
+  constexpr size_t Member1 = MemberT1::value;
+  constexpr size_t Member2 = MemberT2::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple1> raw_original_data( 10 );
-  fillArrayOneTupleMemberData<Member1>( raw_original_data );
-  array<Tuple1>  original_data;
-  Utility::copyArrayView( original_data, raw_original_data() );
- 
-  Teuchos::Array<Tuple2> raw_processed_data( raw_original_data.size() );
-  array<Tuple2> processed_data;
-  Utility::copyArrayView( processed_data, raw_processed_data() );
-  
+  std::vector<Tuple1> original_data( 10 );
+  fillArrayOneTupleMemberData<Member1>( original_data );
+
+  std::vector<Tuple2> processed_data( original_data.size() );
+
   // Load the reference array
-  Teuchos::Array<Tuple2> ref_data( 10 );
+  std::vector<Tuple2> ref_data( 10 );
   fillArrayOneTupleMemberData<Member2>( ref_data );
-  
+
   // Process the array
   data_processor.copyTupleMemberData<Member1,Member2>( original_data,
 						       processed_data );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( processed_data, ref_data );
+
+  FRENSIE_CHECK_EQUAL( processed_data, ref_data );
 }
-    
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, ArrayView );
 
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member with data in 
+// Check that the DataProcessor can swap data in one member with data in
 // another member (for all tuples in an array)
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
-						       swapTupleMemberData,
-						       Member1,
-						       Member2,
-						       Tuple,
-						       array )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DataProcessor,
+                                   swapTupleMemberData,
+                                   TupleTwoMemberTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, MemberT1 );
+  FETCH_TEMPLATE_PARAM( 1, MemberT2 );
+  FETCH_TEMPLATE_PARAM( 2, Tuple );
+
+  constexpr size_t Member1 = MemberT1::value;
+  constexpr size_t Member2 = MemberT2::value;
+  
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  Teuchos::Array<Tuple> raw_data( 10 );
-  fillArrayOneTupleMemberData<Member1>( raw_data );
-  array<Tuple>  processed_data;
-  Utility::copyArrayView( processed_data, raw_data() );
+  std::vector<Tuple> processed_data( 10 );
+  fillArrayOneTupleMemberData<Member1>( processed_data );
 
   // Load the reference array
-  Teuchos::Array<Tuple> ref_data( 10 );
+  std::vector<Tuple> ref_data( 10 );
   fillArrayOneTupleMemberData<Member2>( ref_data );
-  
+
   // Process the array
   data_processor.swapTupleMemberData<Member1,Member2>( processed_data );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( processed_data, ref_data );
-}
 
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, ArrayView );
+  FRENSIE_CHECK_EQUAL( processed_data, ref_data );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can convert an unsigned int to a string
-TEUCHOS_UNIT_TEST( DataProcessor, uint_to_string_test )
+FRENSIE_UNIT_TEST( DataProcessor, uint_to_string_test )
 {
   TestDataProcessor data_processor;
 
   std::string shell = data_processor.uintToShellStr( SHELL );
   std::string reference_shell( SHELL_NAME );
 
-  TEST_EQUALITY( shell, reference_shell );
+  FRENSIE_CHECK_EQUAL( shell, reference_shell );
 }
 
 //---------------------------------------------------------------------------//

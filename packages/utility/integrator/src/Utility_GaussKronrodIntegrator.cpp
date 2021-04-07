@@ -1,129 +1,18 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_GaussKronrodIntegrator.cpp
-//! \author Luke Kersting
-//! \brief  Gauss-Kronrod integrator
+//! \author Alex Robinson
+//! \brief  Gauss-Kronrod integrator explicit instantiations
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
-// Initialize static member data
-
-// Constructor
-GaussKronrodIntegrator::GaussKronrodIntegrator( 
-    const double relative_error_tol,
-    const double absolute_error_tol,
-    const size_t subinterval_limit )
-  : d_relative_error_tol( relative_error_tol ),
-    d_absolute_error_tol( absolute_error_tol ),
-    d_subinterval_limit( subinterval_limit ) 
-{
-  // Make sure the error tolerances are valid
-  testPrecondition( relative_error_tol >= 0.0 );
-  testPrecondition( absolute_error_tol >= 0.0 );
-  // Make sure the subinterval limit is valid
-  testPrecondition( subinterval_limit > 0 );
-
-  TEST_FOR_EXCEPTION( 
-    d_absolute_error_tol <= 0 && 
-    (d_relative_error_tol < 50 * std::numeric_limits<double>::epsilon() ||
-    d_relative_error_tol < 0.5e-28),
-    Utility::IntegratorException,
-    "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
-
-}
-
-// Destructor
-GaussKronrodIntegrator::~GaussKronrodIntegrator()
-{ /* ... */ }
-
-// Rescale absolute error from integration
-void GaussKronrodIntegrator::rescaleAbsoluteError( 
-    double& absolute_error, 
-    double result_abs, 
-    double result_asc ) const
-{
-  if ( result_asc != 0 && absolute_error != 0 )
-    {
-      double scale = 200.0 * absolute_error/result_asc;
-
-      if ( scale < 1.0 )
-      {
-        absolute_error = result_asc * pow( scale, 1.5 );
-      }  
-      else
-      {    
-      absolute_error = result_asc;
-      }  
-    };
-
-  if ( result_abs > std::numeric_limits<double>::min() / ( 50.0 *
-                    std::numeric_limits<double>::epsilon() ) )
-    {
-      double min_error = 50.0*std::numeric_limits<double>::epsilon() * result_abs;
-
-      if ( min_error > absolute_error ) 
-        {
-          absolute_error = min_error;
-        }
-    };
-};
-
-// Sort the bin order from highest to lowest error 
-//! \details The error list will be correctly sorted except bin_1 and bin_2
-void GaussKronrodIntegrator::sortBins( 
-        Teuchos::Array<int>& bin_order,
-        BinArray& bin_array, 
-        const ExtrpolatedBinTraits& bin_1,
-        const ExtrpolatedBinTraits& bin_2,
-        const int& number_of_intervals,
-        int& nr_max ) const
-{
-  testPrecondition( bin_order.size() == number_of_intervals );
-
-  double larger_error;
-  double smaller_error;
-  
-  int bin_with_larger_error = bin_order[nr_max];
-
-  // append new intervals to bin_array
-  if ( bin_1.error <= bin_2.error )
-  {
-    bin_array[bin_with_larger_error] = bin_2;
-    bin_array[number_of_intervals] = bin_1;
-
-    larger_error = bin_2.error;
-    smaller_error = bin_1.error;
-  }
-  else
-  {
-    bin_array[bin_with_larger_error] = bin_1;
-    bin_array[number_of_intervals] = bin_2;
-
-    larger_error = bin_1.error;
-    smaller_error = bin_2.error;
-  }
-
-  // remove old interval from list
-  bin_order.remove( nr_max ); 
-
-  /*
-   *  This part of the routine is only executed if, due to a
-   *  difficult integrand, subdivision increased the error
-   *  estimate. in the normal case the insert procedure should
-   *  start after the nr_max-th largest error estimate.
-   */
-  int original_nr_max = nr_max;
-  while ( nr_max > 0 && larger_error > bin_array[bin_order[nr_max-1]].error )
-  {
-    nr_max--; //reduce nr_max if the bin above it has larger error
-  }
-
+EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<double> );
+EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<long double> );
   
   int start_bin;
   if ( original_nr_max > nr_max )

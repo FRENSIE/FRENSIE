@@ -9,8 +9,12 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 #define MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -33,7 +37,7 @@ public:
   AdjointElectronProbeState();
 
   //! Constructor
-  AdjointElectronProbeState( 
+  AdjointElectronProbeState(
 		       const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
@@ -67,7 +71,7 @@ public:
   AdjointElectronProbeState* clone() const;
 
   //! Print the adjoint electron state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -89,8 +93,9 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronProbeState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronProbeState, 
-			 "AdjointElectronProbeState" );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronProbeState, "AdjointElectronProbeState" );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointElectronProbeState );
+TYPE_NAME_TRAITS_QUICK_DECL2( AdjointElectronProbeState, MonteCarlo );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 

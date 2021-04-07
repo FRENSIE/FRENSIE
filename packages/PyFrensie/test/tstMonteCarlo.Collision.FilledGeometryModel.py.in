@@ -1,0 +1,1946 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Collision.FilledGeometryModel class unit tests
+#  \file   tstMonteCarlo.Collision.FilledGeometryModel.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Collision.FilledGeometryModel class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
+                  help="set the dagmc xml file that will be used to create the model")
+parser.add_option("-d", "--database_path", type="string", dest="database_path", default="",
+                  help="set the path to the scattering center database that will be used to create the model")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the FilledGeometryModel class
+class FilledGeometryModelTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision.FilledGeometryModel class"
+
+    @classmethod
+    def setUpClass(cls):
+        database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(database_path)
+        h_properties = database.getAtomProperties( Data.ZAID(1001) )
+        h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        o_properties = database.getAtomProperties( Data.ZAID(8016) )
+        o16_properties = database.getNuclideProperties( Data.ZAID(8016) )
+        cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+        h_definition = cls.scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+        h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        o_definition = cls.scattering_center_definition_database.createDefinition( "O16 @ 293.6K", Data.ZAID(8016) )
+
+        o_definition.setPhotoatomicDataProperties(
+          o_properties.getSharedPhotoatomicDataProperties(
+                         Data.PhotoatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+        o_definition.setElectroatomicDataProperties(
+          o_properties.getSharedElectroatomicDataProperties(
+                       Data.ElectroatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+        o_definition.setNuclearDataProperties(
+          o16_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        cls.material_definition_database = Collision.MaterialDefinitionDatabase()
+
+        cls.material_definition_database.addDefinition(
+                                               "Water @ 293.6K", 1,
+                                               ("H1 @ 293.6K", "O16 @ 293.6K"),
+                                               (2.0, 1.0))
+
+        cls.material_definition_database.addDefinition( "H1 @ 293.6K", 2,
+                                                   ("H1 @ 293.6K",), (1.0,) )
+
+    def testConstructor_neutron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_neutron_mode"
+
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path, self.scattering_center_definition_database, self.material_definition_database, properties, unfilled_model, True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_neutron_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_neutron_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_neutron_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_neutron_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_adjoint_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testConstructor_adjoint_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel constructor_adjoint_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel(
+                                        options.database_path,
+                                        self.scattering_center_definition_database,
+                                        self.material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+        self.assertTrue( filled_model.getUnfilledModel() == unfilled_model )
+        self.assertFalse( filled_model == unfilled_model )
+
+    def testIsCellVoid_neutron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_neutron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_neutron_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_neutron_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_neutron_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_neutron_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_adjoint_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testIsCellVoid_adjoint_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel isCellVoid_adjoint_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        self.assertFalse( filled_model.isTerminationCell( 1 ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.NEUTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.PHOTON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ELECTRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.POSITRON ) )
+
+        self.assertTrue( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_PHOTON ) )
+
+        self.assertFalse( filled_model.isCellVoid( 1, MonteCarlo.ADJOINT_ELECTRON ) )
+
+    def testGet_cross_section_neutron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_neutron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+      1.064473352626745806e-01,
+          10 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    def testGet_cross_section_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSection(
+                                          cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSectionQuick(
+                                          cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    def testGet_cross_section_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    def testGet_cross_section_neutron_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_neutron_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSection(
+                                          cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSectionQuick(
+                                          cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSection(
+                                          cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSectionQuick(
+                                          cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    def testGet_cross_section_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+        print "\n\nfilled_model.getPositronMacroscopicTotalCrossSection( cell, energy )",filled_model.getPositronMacroscopicTotalCrossSection( cell, energy )
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    def testGet_cross_section_neutron_photon_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_neutron_photon_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          5.565644507161069399e-01,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalCrossSectionQuick( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getNeutronMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          1.064473352626745806e-01,
+          10 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          7.063503858378371303e-02,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          2.213467312742279508e-02,
+          10 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790169070e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getElectronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999163916e+04,
+          10 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          4.065685841790115228e+04,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSection(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSection(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getPositronMacroscopicTotalForwardCrossSectionQuick(
+                                    cell, energy ),
+          2.997884161999251228e+04,
+          10 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+    # Check that the macroscopic total cross section can be returned
+    def testGet_cross_section_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_adjoint_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+          3.898546934741942138e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          3.898546934741942138e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+          2.112255390180249326e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          2.112255390180249326e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonWeightFactor( cell, energy ),
+          1.845679718875878672e+00,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonWeightFactorQuick( cell, energy ),
+          1.845679718875878672e+00,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+          1.332400408475752779e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalCrossSectionQuick( cell, energy ),
+          1.332400408475752779e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+          5.430040110435463419e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSectionQuick( cell, energy ),
+          5.430040110435463419e-02,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonWeightFactor( cell, energy ),
+          2.453757949071393996e-01,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointPhotonWeightFactorQuick( cell, energy ),
+          2.453757949071393996e-01,
+          10 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronWeightFactor( cell, energy ),
+                         1.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointElectronWeightFactor( cell, energy ),
+                         1.0 )
+
+    def testGet_cross_section_adjoint_electron_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel get_cross_section_adjoint_electron_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        # Check the neutron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getNeutronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getElectronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getElectronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the positron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getPositronMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getPositronMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+
+        # Check the adjoint photon cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonWeightFactor( cell, energy ),
+                         1.0 )
+
+        energy = 10.0
+
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonMacroscopicTotalForwardCrossSection( cell, energy ),
+                         0.0 )
+        self.assertEqual( filled_model.getAdjointPhotonWeightFactor( cell, energy ),
+                         1.0 )
+
+        # Check the adjoint electron cross sections
+        cell = 1
+        energy = 1.0
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalCrossSection(
+                    cell, energy ),
+          1.962547578714210249e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalCrossSectionQuick(
+                    cell, energy ),
+          1.962547578714210249e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
+                    cell, energy ),
+          1.962264560274902324e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
+                    cell, energy ),
+          1.962264560274902324e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronWeightFactor(
+                    cell, energy ),
+          1.000144230520714439,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronWeightFactorQuick(
+                    cell, energy ),
+          1.000144230520714439,
+          10 )
+
+        energy = 10.0
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalCrossSection(
+                    cell, energy ),
+          1.782038552051321312e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalCrossSectionQuick(
+                    cell, energy ),
+          1.782038552051321312e+05,
+          10 )
+
+        print filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
+                    cell, energy )
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalForwardCrossSection(
+                    cell, energy ),
+          1.7812508593810786e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronMacroscopicTotalForwardCrossSectionQuick(
+                    cell, energy ),
+          1.7812508593810786e+05,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronWeightFactor(
+                    cell, energy ),
+          1.000442213215558152,
+          10 )
+
+        self.assertAlmostEqual(
+          filled_model.getAdjointElectronWeightFactorQuick(
+                    cell, energy ),
+          1.000442213215558152,
+          10 )
+
+    # Check that the Critical Line Energies can be returned
+    def testGetCriticalLineEnergies_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Collision.FilledGeometryModel getCriticalLineEnergies_adjoint_photon_mode"
+        unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0e24 )
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        filled_model = Collision.FilledGeometryModel( options.database_path,
+                                                self.scattering_center_definition_database,
+                                                self.material_definition_database,
+                                                properties,
+                                                unfilled_model,
+                                                True )
+
+        line_energies = filled_model.getCriticalLineEnergies()
+
+        self.assertEqual( len(line_energies), 1 )
+        self.assertAlmostEqual( line_energies[0], 0.51099891013, delta=1e-10*0.51099891 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the testCases to the testSuite
+    suite.addTest(unittest.makeSuite(FilledGeometryModelTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Collision.FilledGeometryModel.py
+#-----------------------------------------------------------------------------#

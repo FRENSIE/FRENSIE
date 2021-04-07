@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Geometry_Config.hpp
 //! \author Alex Robinson
 //! \brief  Define which geometry packages (if any) have been enabled.

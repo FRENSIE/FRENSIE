@@ -1,0 +1,2186 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ActiveRegion.StandardParticleDistribution class unit tests
+#  \file   tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ActiveRegion.StandardParticleDistribution class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
+Coordinate = importPyFrensieModuleFromBuildDir('Utility.Coordinate')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+
+#-----------------------------------------------------------------------------#
+# Testing Functions
+#-----------------------------------------------------------------------------#
+def initializeCartesianSpatialDimensionDists( particle_distribution ):
+    raw_uniform_dist_a = Distribution.UniformDistribution( -1.0, 1.0, 0.5 )
+
+    x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+
+    particle_distribution.setDimensionDistribution( x_dimension_dist )
+
+    y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( y_dimension_dist )
+
+    z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_a )
+
+    particle_distribution.setDimensionDistribution( z_dimension_dist )
+    return particle_distribution
+
+def initializeCylindricalSpatialDimensionDists( particle_distribution ):
+    raw_power_dist = Distribution.PowerDistribution_1( 0.5, 0.0, 1.0 )
+    raw_uniform_dist_a = Distribution.UniformDistribution( 0.0, 2*numpy.pi, 0.1 )
+    raw_uniform_dist_b = Distribution.UniformDistribution( -1.0, 1.0, 2.0 )
+
+    r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+    particle_distribution.setDimensionDistribution( r_dimension_dist )
+
+    theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( theta_dimension_dist )
+
+    z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+    particle_distribution.setDimensionDistribution( z_dimension_dist )
+    return particle_distribution
+
+def initializeSphericalSpatialDimensionDists( particle_distribution ):
+    raw_power_dist = Distribution.PowerDistribution_2( 0.5, 0.0, 1.0 )
+    raw_uniform_dist_a = Distribution.UniformDistribution( 0.0, 2*numpy.pi, 0.1 )
+    raw_uniform_dist_b = Distribution.UniformDistribution( -1.0, 1.0, 2.0 )
+
+    r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+    particle_distribution.setDimensionDistribution( r_dimension_dist )
+
+    theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( theta_dimension_dist )
+
+    mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+    particle_distribution.setDimensionDistribution( mu_dimension_dist )
+    return particle_distribution
+
+def initializeCartesianDirectionalDimensionDists( particle_distribution ):
+    raw_uniform_dist_a = Distribution.UniformDistribution( -1.0, 1.0, 0.5 )
+
+    u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( u_dimension_dist )
+
+    v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( v_dimension_dist )
+
+    w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+    particle_distribution.setDimensionDistribution( w_dimension_dist )
+    return particle_distribution
+
+def initializeMiscDimensionDists_primary( particle_distribution ):
+    raw_uniform_dist_b = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+    time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist_b )
+    particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+    raw_delta_dist = Distribution.DeltaDistribution( 0.5 )
+
+    weight_dimension_dist = ActiveRegion.IndependentWeightDimensionDistribution( raw_delta_dist )
+    particle_distribution.setDimensionDistribution( weight_dimension_dist )
+
+    # Create the fully tabular distribution
+    primary_grid = [-1.0, 0.0, 1.0]
+
+    secondary_dists = [0, 0, 0]
+    # Create the secondary distribution in the first bin
+    secondary_dists[0] = Distribution.UniformDistribution( 0.0, 10.0, 0.5 )
+    # Create the secondary distribution in the second bin
+    secondary_dists[1] = Distribution.UniformDistribution( 0.0, 20.0, 0.25 )
+    # Create the secondary distribution in the third bin
+    secondary_dists[2] = secondary_dists[1]
+
+    raw_dependent_distribution = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+
+    raw_dependent_distribution.limitToPrimaryIndepLimits()
+
+    energy_dimension_dist = ActiveRegion.PrimarySpatialDependentEnergyDimensionDistribution( raw_dependent_distribution )
+
+    particle_distribution.setDimensionDistribution( energy_dimension_dist )
+    return particle_distribution
+
+def initializeMiscDimensionDists_tertiary( particle_distribution ):
+    raw_uniform_dist_b = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+    time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist_b )
+    particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+    raw_delta_dist = Distribution.DeltaDistribution( 0.5 )
+
+    weight_dimension_dist = ActiveRegion.IndependentWeightDimensionDistribution( raw_delta_dist )
+    particle_distribution.setDimensionDistribution( weight_dimension_dist )
+
+    # Create the fully tabular distribution
+    primary_grid = [-1.0, 0.0, 1.0]
+
+    secondary_dists = [0, 0, 0]
+    # Create the secondary distribution in the first bin
+    secondary_dists[0] = Distribution.UniformDistribution( 0.0, 10.0, 0.5 )
+    # Create the secondary distribution in the second bin
+    secondary_dists[1] = Distribution.UniformDistribution( 0.0, 20.0, 0.25 )
+    # Create the secondary distribution in the third bin
+    secondary_dists[2] = secondary_dists[1]
+
+    raw_dependent_distribution = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+
+    raw_dependent_distribution.limitToPrimaryIndepLimits()
+
+    energy_dimension_dist = ActiveRegion.TertiarySpatialDependentEnergyDimensionDistribution( raw_dependent_distribution )
+
+    particle_distribution.setDimensionDistribution( energy_dimension_dist )
+    return particle_distribution
+
+def createCartesianSpatialCartesianDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeCartesianSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeCartesianDirectionalDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_primary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+def createCartesianSpatialSphericalDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeCartesianSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_primary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+def createCylindricalSpatialCartesianDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeCylindricalSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeCartesianDirectionalDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_tertiary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+def createCylindricalSpatialSphericalDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeCylindricalSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_tertiary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+def createSphericalSpatialCartesianDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeSphericalSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeCartesianDirectionalDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_tertiary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+def createSphericalSpatialSphericalDirectionalDist():
+    spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+    directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+    particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "test dist",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+    # Create the dimension distributions
+    particle_distribution = initializeSphericalSpatialDimensionDists( particle_distribution )
+    particle_distribution = initializeMiscDimensionDists_tertiary( particle_distribution )
+
+    particle_distribution.constructDimensionDistributionDependencyTree()
+
+    return particle_distribution
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardParticleDistribution class
+class StandardParticleDistributionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.StandardParticleDistribution class"
+
+    def setUp(self):
+
+        cartesian_spatial_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        cartesian_spatial_distribution = initializeCartesianSpatialDimensionDists( cartesian_spatial_distribution )
+
+    def testGetName(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getName"
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        self.assertEqual( particle_distribution.getName(), "test dist" )
+
+    def testGetDimensionDistributionTypeName(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getDimensionDistributionTypeName"
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        raw_dist = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        energy_dimension_dist = ActiveRegion.IndependentEnergyDimensionDistribution( raw_dist )
+
+        particle_distribution.setDimensionDistribution( energy_dimension_dist )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION ),
+                          "Uniform Distribution" )
+
+    def testIsSpatiallyUniform_cartesian(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution getIsSpatiallyUniform_cartesian"
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        raw_uniform_dist = Distribution.UniformDistribution( 0.5, 1.5, 0.5 )
+
+        raw_delta_dist = Distribution.DeltaDistribution( 1.0 )
+
+        # Create a uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertTrue( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_delta_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_delta_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_delta_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_delta_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_delta_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_delta_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform Cartesian spatial distribution
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_delta_dist )
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_delta_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( x_dimension_dist )
+        particle_distribution.setDimensionDistribution( y_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+    def testIsSpatiallyUniform_cylindrical(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isSpatiallyUniform_cylindrical"
+        spatial_coord_conversion_policy = Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        raw_power_dist = Distribution.PowerDistribution_1( 1.0, 0.0, 1.0 )
+        raw_uniform_dist = Distribution.UniformDistribution( 0.0, 2*numpy.pi, 1.0 )
+
+        # Create a uniform cylindrical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertTrue( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform cylindrical spatial distribution
+        particle_distribution.reset()
+
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+    def testIsSpatiallyUniform_spherical(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isSpatiallyUniform_spherical"
+        spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        raw_power_dist = Distribution.PowerDistribution_2( 1.0, 0.0, 1.0 )
+        raw_uniform_dist_a = Distribution.UniformDistribution( 0.0, 2*numpy.pi, 1.0 )
+        raw_uniform_dist_b = Distribution.UniformDistribution( -1.0, 1.0, 1.0 )
+
+        # Create a uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertTrue( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_power_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+        # Create a non-uniform spherical spatial distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        theta_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_power_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_power_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isSpatiallyUniform() )
+
+    def testIsDirectionallyUniform_cartesian(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isDirectionallyUniform_cartesian"
+        spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        raw_uniform_dist = Distribution.UniformDistribution( -1.0, 1.0, 1.0 )
+        raw_delta_dist = Distribution.DeltaDistribution( 1.0 )
+
+        # Create a non-uniform Cartesian directional distribution
+        u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_uniform_dist )
+        v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist )
+        w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( u_dimension_dist )
+        particle_distribution.setDimensionDistribution( v_dimension_dist )
+        particle_distribution.setDimensionDistribution( w_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform Cartesian directional distribution
+        u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+        v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist )
+        w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( u_dimension_dist )
+        particle_distribution.setDimensionDistribution( v_dimension_dist )
+        particle_distribution.setDimensionDistribution( w_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform Cartesian directional distribution
+        u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_uniform_dist )
+        v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_delta_dist )
+        w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist )
+
+        particle_distribution.setDimensionDistribution( u_dimension_dist )
+        particle_distribution.setDimensionDistribution( v_dimension_dist )
+        particle_distribution.setDimensionDistribution( w_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform Cartesian directional distribution
+        u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_uniform_dist )
+        v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist )
+        w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( u_dimension_dist )
+        particle_distribution.setDimensionDistribution( v_dimension_dist )
+        particle_distribution.setDimensionDistribution( w_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform Cartesian directional distribution
+        u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+        v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_delta_dist )
+        w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( u_dimension_dist )
+        particle_distribution.setDimensionDistribution( v_dimension_dist )
+        particle_distribution.setDimensionDistribution( w_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+    def testIsDirectionallyUniform_spherical(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution isDirectionallyUniform_spherical"
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        raw_delta_dist = Distribution.DeltaDistribution( 1.0 )
+        raw_uniform_dist_a = Distribution.UniformDistribution( 0.0, 2*numpy.pi, 1.0 )
+        raw_uniform_dist_b = Distribution.UniformDistribution( -1.0, 1.0, 1.0 )
+
+        # Create a non-uniform spherical directional distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+
+        theta_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+
+        mu_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertTrue( particle_distribution.isDirectionallyUniform() )
+
+        # Create a uniform spherical directional distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+        theta_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertTrue( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform spherical directional distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_delta_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_uniform_dist_b )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform spherical directional distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_uniform_dist_a )
+        mu_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+        # Create a non-uniform spherical directional distribution
+        r_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( raw_delta_dist )
+        theta_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( raw_delta_dist )
+        mu_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( raw_delta_dist )
+
+        particle_distribution.setDimensionDistribution( r_dimension_dist )
+        particle_distribution.setDimensionDistribution( theta_dimension_dist )
+        particle_distribution.setDimensionDistribution( mu_dimension_dist )
+
+        particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.assertFalse( particle_distribution.isDirectionallyUniform() )
+
+    def testEvaluate_cartesian_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_cartesian_directional"
+        particle_distribution = createCartesianSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( -1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( -1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
+
+        photon.setPosition( -0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0078125 )
+
+        photon.setPosition( 0.0, -0.5, -0.5 )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, -1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, -1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00390625 )
+
+        photon.setPosition( 1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cartesian_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cartesian_spatial_spherical_directional"
+        particle_distribution = createCartesianSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( -1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( -1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
+
+        photon.setPosition( -0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0625 )
+
+        photon.setPosition( 0.0, -0.5, -0.5 )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 0.5, -0.5, -0.5 )
+        photon.setDirection( 0.0, -1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 1.0, -0.5, -0.5 )
+        photon.setDirection( 0.0, 0.0, -1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.03125 )
+
+        photon.setPosition( 1.1, -0.5, -0.5 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cylindrical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_cartesian_directional"
+        particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0008838834764831846,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, -0.1, 0.0 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0004419417382415923,
+                                delta=1e-15 )
+
+        photon.setPosition( -0.1, 0.1, 1.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0004419417382415923,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, 0.1, 1.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_cylindrical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_cylindrical_spatial_spherical_directional"
+        particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.007071067811865477,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, -0.1, 0.0 )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0035355339059327385,
+                                delta=1e-15 )
+
+        photon.setPosition( -0.1, 0.1, 1.0 )
+        photon.setDirection( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.0035355339059327385,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.1, 0.1, 1.1 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_spherical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_cartesian_directional"
+        particle_distribution = createSphericalSpatialCartesianDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.00625 )
+
+        photon.setPosition( -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0) )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.00625,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                6.25e-5,
+                                delta=1e-15 )
+
+        photon.setPosition( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.003125,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.003125 )
+
+        photon.setPosition( 0.0, 0.0, 1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testEvaluate_spherical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution evaluate_spherical_spatial_spherical_directional"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setPosition( 0.0, 0.0, -1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.0, 0.0, -1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.05 )
+
+        photon.setPosition( -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0), -1.0/numpy.sqrt(3.0) )
+        photon.setDirection( -1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.05,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+        photon.setPosition( 0.1, 0.1, 0.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                5.0e-4,
+                                delta=1e-15 )
+
+        photon.setPosition( 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0), 1.0/numpy.sqrt(3.0) )
+        photon.setDirection( 0.0, 1.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertAlmostEqual( particle_distribution.evaluate( photon ),
+                                0.025,
+                                delta=1e-15 )
+
+        photon.setPosition( 0.0, 0.0, 1.0 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.025 )
+
+        photon.setPosition( 0.0, 0.0, 1.1 )
+        photon.setDirection( 1.0, 0.0, 0.0 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 1.0 )
+        photon.setWeight( 1.0 )
+
+        self.assertEqual( particle_distribution.evaluate( photon ), 0.0 )
+
+    def testSample_cartesian_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_cartesian_directional"
+        particle_distribution = createCartesianSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [ 0.0, 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15, 0.0 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), -1.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream = [ 0.5, 0.5, 1.0-1e-15, 0.5, 0.5, 0.0, 0.5, 0.5 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream = [ 1.0-1e-15, 1.0-1e-15, 0.0, 0.0, 1.0-1e-15, 0.5, 0.5, 1.0-1e-15 ]
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getYPosition(), -1.0 )
+        self.assertEqual( photon.getZPosition(), -1.0 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-15 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cartesian_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cartesian_spatial_spherical_directional"
+        particle_distribution = createCartesianSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 0.0 # x
+        fake_stream[1] = 0.5 # energy
+        fake_stream[2] = 0.5 # y
+        fake_stream[3] = 1.0-1e-15 # z
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), -1.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # x
+        fake_stream[1] = 0.5 # energy
+        fake_stream[2] = 0.0 # y
+        fake_stream[3] = 0.5 # z
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), -1.0 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # x
+        fake_stream[1] = 1.0-1e-15 # energy
+        fake_stream[2] = 1.0-1e-15 # y
+        fake_stream[3] = 0.0 # z
+        fake_stream[4] = 0.5 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getZPosition(), -1.0 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-15 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cylindrical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cylindrical_spatial_cartesian_directional"
+        particle_distribution = createCylindricalSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 8 )
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.0 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 1.0-1e-15 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.25 # theta
+        fake_stream[2] = 1.0-1e-15 # z
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_cylindrical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_cylindrical_spatial_spherical_directional"
+        particle_distribution = createCylindricalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.0 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 0.0 )
+        self.assertEqual( photon.getYPosition(), 0.0 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # z
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -0.7071067811865476, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertEqual( photon.getZPosition(), 0.0 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.25 # theta
+        fake_stream[2] = 1.0-1e-15 # z
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_spherical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_spherical_spatial_cartesian_directional"
+        particle_distribution = createSphericalSpatialCartesianDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 8 )
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 1.0-1e-15 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 0.5 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 1.0-1e-15 # mu
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 1.0-1e-15 # u
+        fake_stream[5] = 1.0-1e-15 # v
+        fake_stream[6] = 0.5 # w
+        fake_stream[7] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0/numpy.sqrt(2.0), delta=1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), 1.0/numpy.sqrt(2.0), delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_spherical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_spherical_spatial_spherical_directional"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 7 )
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 5.0 )
+        self.assertEqual( photon.getEnergy(), 5.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.75 # theta
+        fake_stream[5] = 0.5 # mu
+        fake_stream[6] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 1.0-1e-15 # mu
+        fake_stream[3] = 1.0-1e-15 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 1.0-1e-15 # mu
+        fake_stream[6] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sample( photon )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.5 )
+        self.assertEqual( photon.getWeight(), 0.5 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSample_point_spatial_mono_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sample_point_spatial_mono_directional"
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        position = [1.0, 2.0, 3.0]
+        direction = [0.0, -1/numpy.sqrt(2.0), 1/numpy.sqrt(2.0)]
+
+        tmp_particle_distribution.setPosition( position )
+        tmp_particle_distribution.setDirection( direction )
+
+        raw_uniform_dist = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+        energy_dimension_dist = ActiveRegion.IndependentEnergyDimensionDistribution( raw_uniform_dist )
+        tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+
+        time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist )
+        tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+        raw_delta_dist = Distribution.DeltaDistribution( 0.5 )
+
+        weight_dimension_dist = ActiveRegion.IndependentWeightDimensionDistribution( raw_delta_dist )
+        tmp_particle_distribution.setDimensionDistribution( weight_dimension_dist )
+
+        tmp_particle_distribution.constructDimensionDistributionDependencyTree()
+
+        particle_distribution = tmp_particle_distribution
+
+        # Set the random number generator stream
+        fake_stream = [None] * 2
+        fake_stream[0] = 0.25 # energy
+        fake_stream[1] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sample( photon )
+
+        self.assertEqual( photon.getXPosition(), 1.0 )
+        self.assertEqual( photon.getYPosition(), 2.0 )
+        self.assertEqual( photon.getZPosition(), 3.0 )
+        self.assertTrue( photon.getXDirection() < 1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(),
+                                -1/numpy.sqrt(2.0),
+                                delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(),
+                                1/numpy.sqrt(2.0),
+                                delta=1e-15 )
+        self.assertAlmostEqual( photon.getEnergy(), 0.25, delta=1e-15 )
+        self.assertAlmostEqual( photon.getTime(), 0.5, delta=1e-15 )
+        self.assertAlmostEqual( photon.getWeight(), 0.5, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testSampleWithDimensionValue(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution sampleWithDimensionValue"
+        particle_distribution = createSphericalSpatialSphericalDirectionalDist()
+
+        # Set the random number generator stream
+        fake_stream = [None] * ( 6 )
+        fake_stream[0] = 0.0 # theta
+        fake_stream[1] = 1.0-1e-15 # mu
+        fake_stream[2] = 1.0-1e-15 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 1.0-1e-15 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.PRIMARY_SPATIAL_DIMENSION, 0.5 )
+
+        self.assertTrue( photon.getXPosition() < 1e-7 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), 0.5, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getSourceTime(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( photon.getTime(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceWeight(), 0.375 )
+        self.assertEqual( photon.getWeight(), 0.375 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.5 # mu
+        fake_stream[2] = 0.5 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.SECONDARY_SPATIAL_DIMENSION, numpy.pi/2 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, delta=1e-12 )
+        self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, delta=1e-12 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # energy
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 1.0-1e-15 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.TERTIARY_SPATIAL_DIMENSION, 0.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-7 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.25 )
+        self.assertEqual( photon.getWeight(), 0.25 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION, 0.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertAlmostEqual( photon.getSourceWeight(), 0.07957747154594767, delta=1e-12 )
+        self.assertAlmostEqual( photon.getWeight(), 0.07957747154594767, delta=1e-12 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.75 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.5 # energy
+        fake_stream[4] = 0.0 # theta
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION, 1.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getYPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 10.0 )
+        self.assertEqual( photon.getEnergy(), 10.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.25 )
+        self.assertEqual( photon.getWeight(), 0.25 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-12 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 0.0 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 1.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getZPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 1.0 )
+        self.assertEqual( photon.getEnergy(), 1.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.05 )
+        self.assertEqual( photon.getWeight(), 0.05 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.0 # r
+        fake_stream[1] = 0.0 # theta
+        fake_stream[2] = 0.0 # mu
+        fake_stream[3] = 0.0 # theta
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.0 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 2.0 )
+
+        self.assertTrue( photon.getXPosition() < 1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-12 )
+        self.assertTrue( photon.getYDirection() < 1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 2.0 )
+        self.assertEqual( photon.getEnergy(), 2.0 )
+        self.assertEqual( photon.getSourceTime(), 0.0 )
+        self.assertEqual( photon.getTime(), 0.0 )
+        self.assertEqual( photon.getSourceWeight(), 0.05 )
+        self.assertEqual( photon.getWeight(), 0.05 )
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15 # r
+        fake_stream[1] = 0.5 # theta
+        fake_stream[2] = 0.5 # mu
+        fake_stream[3] = 0.75 # theta
+        fake_stream[4] = 0.5 # mu
+        fake_stream[5] = 0.5 # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        particle_distribution.sampleWithDimensionValue( photon, ActiveRegion.ENERGY_DIMENSION, 15.0 )
+
+        self.assertAlmostEqual( photon.getXPosition(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getYPosition() < 1e-12 )
+        self.assertTrue( photon.getZPosition() < 1e-12 )
+        self.assertTrue( photon.getXDirection() < 1e-12 )
+        self.assertAlmostEqual( photon.getYDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( photon.getZDirection() < 1e-12 )
+        self.assertEqual( photon.getSourceEnergy(), 15.0 )
+        self.assertEqual( photon.getEnergy(), 15.0 )
+        self.assertEqual( photon.getSourceTime(), 0.5 )
+        self.assertEqual( photon.getTime(), 0.5 )
+        self.assertEqual( photon.getSourceWeight(), 0.025 )
+        self.assertEqual( photon.getWeight(), 0.025 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testDefault_dists_cartesian_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_cartesian_spatial_cartesian_directional"
+        spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+    def testDefault_dists_cartesian_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_cartesian_spatial_spherical_directional"
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+    def testDefault_dists_cylindrical_spatial_cartesian_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_cylindrical_spatial_cartesian_directional"
+        spatial_coord_conversion_policy = Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+    def testDefault_dists_cylindrical_spatial_spherical_directional(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_cylindrical_spatial_spherical_directional"
+        spatial_coord_conversion_policy = Coordinate.BasicCylindricalSpatialCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+    def testDefault_dists_spherical_spatial_cartesian_directional(self):
+        "\*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_spherical_spatial_cartesian_directional"
+        spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+    def testDefault_dists_spherical_spatial_spherical_directional(self):
+        "\*Test MonteCarlo.ActiveRegion.StandardParticleDistribution default_dists_spherical_spatial_spherical_directional"
+        spatial_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist", spatial_coord_conversion_policy, directional_coord_conversion_policy )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_SPATIAL_DIMENSION),
+                       "Delta Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION),
+                       "Uniform Distribution" )
+
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.ENERGY_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.TIME_DIMENSION),
+                       "Delta Distribution" )
+        self.assertEqual( particle_distribution.getDimensionDistributionTypeName( ActiveRegion.WEIGHT_DIMENSION),
+                       "Delta Distribution" )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(StandardParticleDistributionTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ActiveRegion.StandardParticleDistribution.py
+#-----------------------------------------------------------------------------#

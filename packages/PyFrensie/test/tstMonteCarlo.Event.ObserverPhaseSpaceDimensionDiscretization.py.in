@@ -1,0 +1,3665 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization class unit tests
+#  \file   tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.DefaultTypedObserverPhaseSpaceDimensionDiscretization class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ObserverCosineDimensionDiscretization class
+class ObserverCosineDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverCosineDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = -1.0
+        discretization[1] = -1.0/3
+        discretization[2] = 1.0/3
+        discretization[3] = 1.0
+
+        self.dimension_discretization = Event.ObserverCosineDimensionDiscretization( discretization )
+
+        discretization = [None] * 6
+
+        discretization[0] = -1.0
+        discretization[1] = -1.0/3
+        discretization[2] = 0.0
+        discretization[3] = 0.0
+        discretization[4] = 1.0/3
+        discretization[5] = 1.0
+
+        self.dimension_discretization_with_line_bins = Event.ObserverCosineDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_COSINE_DIMENSION )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimension(),
+                       Event.OBSERVER_COSINE_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(),
+                       "Cosine" )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimensionName(),
+                       "Cosine" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getNumberOfBins(), 5 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization isValueInDiscretization_any"
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( -2.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1.0 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 2.0 ) )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( -2.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.0 ) )
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( 2.0 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( -1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( -2.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( -1.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 2.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( -1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( -2.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( -1.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( -0.0000000000001 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.0000000000001 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 2.0/3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon_wrapper.setAngleCosine( -0.0000000000001 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon_wrapper.setAngleCosine( 0.0000000000001 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -0.0000000000001 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0000000000001 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverCosineDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon_wrapper.setAngleCosine( -1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( -0.0000000000001 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 0.0000000000001 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 2.0/3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon_wrapper.setAngleCosine( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverEnergyDimensionDiscretization class
+class ObserverEnergyDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverEnergyDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+
+        self.dimension_discretization = Event.ObserverEnergyDimensionDiscretization( discretization )
+
+        discretization = [None] * 9
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+        discretization[4] = 1e-3
+        discretization[5] = 1e-2
+        discretization[6] = 1e-1
+        discretization[7] = 1e-1
+        discretization[8] = 1.0
+
+        self.dimension_discretization_with_line_bins = Event.ObserverEnergyDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_ENERGY_DIMENSION )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimension(),
+                       Event.OBSERVER_ENERGY_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(), "Energy" )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimensionName(), "Energy" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getNumberOfBins(), 8 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization isValueInDiscretization_any"
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1e-3 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 5e-3 ) )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.0 ) )
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.5 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setEnergy( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.9999999999999e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0000000000001e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.999999999999e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.000000000001e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setEnergy( 1e-15 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setEnergy( 9.9999999999999e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon.setEnergy( 1.0000000000001e-3  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setEnergy( 5e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setEnergy( 1e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setEnergy( 5e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setEnergy( 9.999999999999e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setEnergy( 1e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        photon.setEnergy( 1.000000000001e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setEnergy( 0.5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setEnergy( 1.0  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverEnergyDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.setEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setEnergy( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverSourceEnergyDimensionDiscretization class
+class ObserverSourceEnergyDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+
+        self.dimension_discretization = Event.ObserverSourceEnergyDimensionDiscretization( discretization )
+
+        discretization = [None] * 9
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+        discretization[4] = 1e-3
+        discretization[5] = 1e-2
+        discretization[6] = 1e-1
+        discretization[7] = 1e-1
+        discretization[8] = 1.0
+
+        self.dimension_discretization_with_line_bins = Event.ObserverSourceEnergyDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_SOURCE_ENERGY_DIMENSION )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimension(),
+                       Event.OBSERVER_SOURCE_ENERGY_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(), "Source Energy" )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimensionName(), "Source Energy" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getNumberOfBins(), 8 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization isValueInDiscretization_any"
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1e-3 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 5e-3 ) )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.0 ) )
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.5 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceEnergy( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setSourceEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+
+        photon.setSourceEnergy( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceEnergy( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.9999999999999e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0000000000001e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.999999999999e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.000000000001e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceEnergy( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceEnergy( 1e-15 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceEnergy( 9.9999999999999e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon.setSourceEnergy( 1.0000000000001e-3  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceEnergy( 5e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceEnergy( 1e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceEnergy( 5e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setSourceEnergy( 9.999999999999e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setSourceEnergy( 1e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        photon.setSourceEnergy( 1.000000000001e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setSourceEnergy( 0.5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setSourceEnergy( 1.0  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setSourceEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverSourceEnergyDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.setSourceEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceEnergy( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceEnergy( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverTimeDimensionDiscretization class
+class ObserverTimeDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverTimeDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = 1e-6
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+
+        self.dimension_discretization = Event.ObserverTimeDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_TIME_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(), "Time" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization isValueInDiscretization_any"
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1e-6 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1e-3 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 5e-3 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setTime( 0.0 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setTime( 1e-6 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setTime( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setTime( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setTime( 0.0 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 2997.92458 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 1e-6 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsEndTime( 1.0 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 0.0 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896.22900000002 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 5e-6 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 14839726.671 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 0.0 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896229.0 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 1e-4 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 146898304.42 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime(1e-3 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 1.0 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setTime( 5e-3 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 1.0 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-6 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setTime( 1e-6 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setTime( 1e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setTime( 5e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setTime( 1e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setTime( 5e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setTime( 1e-3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setTime( 1e-6 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverTimeDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.setTime( 0.0 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896.22900000002 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertAlmostEqual( bin_indices_and_weights[0][1], 0.8, delta=1e-15 )
+
+        photon.setTime( 2e-6 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 179875.4748 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setTime( 2e-6 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 539626.4244 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 2 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertAlmostEqual( bin_indices_and_weights[0][1], 0.44444444444444453, delta=1e-15 )
+        self.assertEqual( bin_indices_and_weights[1][0], 1 )
+        self.assertAlmostEqual( bin_indices_and_weights[1][1], 0.5555555555555556, delta=1e-15 )
+
+        photon.setTime( 5e-4 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 134906606.10000002 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertAlmostEqual( bin_indices_and_weights[0][1], 0.1111111111111111, delta=1e-15 )
+
+        photon.setTime( 0.0 )
+        photon_wrapper.calculateStateTimesUsingParticleTimeAsStartTime( 149896229.0 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 3 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertAlmostEqual( bin_indices_and_weights[0][1], 0.0018, delta=1e-15 )
+        self.assertEqual( bin_indices_and_weights[1][0], 1 )
+        self.assertAlmostEqual( bin_indices_and_weights[1][1], 0.018, delta=1e-15 )
+        self.assertEqual( bin_indices_and_weights[2][0], 2 )
+        self.assertAlmostEqual( bin_indices_and_weights[2][1], 0.18, delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverSourceTimeDimensionDiscretization class
+class ObserverSourceTimeDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+
+        self.dimension_discretization = Event.ObserverSourceTimeDimensionDiscretization( discretization )
+
+        discretization = [None] * 9
+
+        discretization[0] = 0.0
+        discretization[1] = 1e-5
+        discretization[2] = 1e-4
+        discretization[3] = 1e-3
+        discretization[4] = 1e-3
+        discretization[5] = 1e-2
+        discretization[6] = 1e-1
+        discretization[7] = 1e-1
+        discretization[8] = 1.0
+
+        self.dimension_discretization_with_line_bins = Event.ObserverSourceTimeDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_SOURCE_TIME_DIMENSION )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimension(),
+                       Event.OBSERVER_SOURCE_TIME_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(), "Source Time" )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getDimensionName(), "Source Time" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+        self.assertEqual( self.dimension_discretization_with_line_bins.getNumberOfBins(), 8 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization isValueInDiscretization_any"
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1e-3 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 5e-3 ) )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( -1.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 0.0 ) )
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.0 ) )
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( 1.5 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceTime( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setSourceTime( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+
+        photon.setSourceTime( 1e-3 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 5e-3 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1e-15 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1.0 )
+
+        self.assertTrue( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceTime( 1.5 )
+
+        self.assertFalse( self.dimension_discretization_with_line_bins.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.9999999999999e-4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0000000000001e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 5e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 9.999999999999e-2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.000000000001e-1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 0.5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( 1.0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceTime( 1e-15 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceTime( 1e-15 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceTime( 9.9999999999999e-4 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon.setSourceTime( 1.0000000000001e-3  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceTime( 5e-3 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceTime( 1e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 4 )
+
+        photon.setSourceTime( 5e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setSourceTime( 9.999999999999e-2 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 5 )
+
+        photon.setSourceTime( 1e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 6 )
+
+        photon.setSourceTime( 1.000000000001e-1 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setSourceTime( 0.5 )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+        photon.setSourceTime( 1.0  )
+
+        bin_indices = self.dimension_discretization_with_line_bins.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 7 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+        photon.setSourceTime( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceTime( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverSourceTimeDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.setSourceTime( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        # Check that line bin indices are calculated correctly
+        photon.setSourceTime( 1e-15 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 9.9999999999999e-4 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0000000000001e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-3 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 4 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 5e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 9.9999999999999e-2 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 5 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 6 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0000000000001e-1 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 0.5 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.setSourceTime( 1.0 )
+
+        bin_indices_and_weights = self.dimension_discretization_with_line_bins.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 7 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverCollisionNumberDimensionDiscretization class
+class ObserverCollisionNumberDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 4
+
+        discretization[0] = 1
+        discretization[1] = 2
+        discretization[2] = 3
+        discretization[3] = 5
+
+        self.dimension_discretization = Event.ObserverCollisionNumberDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_COLLISION_NUMBER_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(),
+                          "Collision Number" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 4 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization isValueInDiscretization_any"
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 2 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 3 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 4 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 5 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 6 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.incrementCollisionNumber()
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 3 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 4 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 5 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 1 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 3 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverCollisionNumberDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+        photon.incrementCollisionNumber()
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 3 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the ObserverSourceIdDimensionDiscretization class
+class ObserverSourceIdDimensionDiscretizationTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ObserverSourceIdDimensionDiscretization class"
+
+    def setUp(self):
+        discretization = [None] * 3
+
+        discretization[0] = [0]
+        discretization[1] = [0,1]
+        discretization[2] = [1,2]
+
+        self.dimension_discretization = Event.ObserverSourceIdDimensionDiscretization( discretization )
+
+    def testGetDimension(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization getDimension"
+        self.assertEqual( self.dimension_discretization.getDimension(),
+                       Event.OBSERVER_SOURCE_ID_DIMENSION )
+
+    def testGetDimensionName(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization getDimensionName"
+        self.assertEqual( self.dimension_discretization.getDimensionName(),
+                          "Source Id" )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization getNumberOfBins"
+        self.assertEqual( self.dimension_discretization.getNumberOfBins(), 3 )
+
+    def testIsValueInDiscretization_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization isValueInDiscretization_any"
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 0 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 1 ) )
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( 2 ) )
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( 3 ) )
+
+    def testIsValueInDiscretization_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization isValueInDiscretization_wrapper"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceId( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceId( 1 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+        photon.setSourceId( 2 )
+
+        self.assertTrue( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+
+        photon.setSourceId( 3 )
+
+        self.assertFalse( self.dimension_discretization.isValueInDiscretization( photon_wrapper ) )
+
+
+    def testDoesRangeIntersectDiscretization(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization doesRangeIntersectDiscretization"
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceId( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceId( 1 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceId( 2 )
+
+        self.assertTrue( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+        photon.setSourceId( 3 )
+
+        self.assertFalse( self.dimension_discretization.doesRangeIntersectDiscretization( photon_wrapper ) )
+
+
+    def testCalculateBinIndicesOfValue_any(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization calculateBinIndicesOfValue_any"
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 0 )
+
+        self.assertEqual( len(bin_indices), 2 )
+        self.assertEqual( bin_indices[0], 0 )
+        self.assertEqual( bin_indices[1], 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 1 )
+
+        self.assertEqual( len(bin_indices), 2 )
+        self.assertEqual( bin_indices[0], 1 )
+        self.assertEqual( bin_indices[1], 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( 2 )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+    def testCalculateBinIndicesOfValue_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization calculateBinIndicesOfValue_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceId( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 2 )
+        self.assertEqual( bin_indices[0], 0 )
+        self.assertEqual( bin_indices[1], 1 )
+
+        photon.setSourceId( 1 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 2 )
+        self.assertEqual( bin_indices[0], 1 )
+        self.assertEqual( bin_indices[1], 2 )
+
+        photon.setSourceId( 2 )
+
+        bin_indices = self.dimension_discretization.calculateBinIndicesOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices), 1 )
+        self.assertEqual( bin_indices[0], 2 )
+
+    def testCalculateBinIndicesOfValue_weights_wrapper(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization calculateBinIndicesOfValue_weights_wrapper"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceId( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 2 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+        self.assertEqual( bin_indices_and_weights[1][0], 1 )
+        self.assertEqual( bin_indices_and_weights[1][1], 1.0 )
+
+        photon.setSourceId( 1 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 2 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+        self.assertEqual( bin_indices_and_weights[1][0], 2 )
+        self.assertEqual( bin_indices_and_weights[1][1], 1.0 )
+
+        photon.setSourceId( 2 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesAndWeightsOfValue( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+    def testCalculateBinIndicesOfRange(self):
+        "*Test MonteCarlo.Event.ObserverSourceIdDimensionDiscretization calculateBinIndicesOfRange"
+
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setSourceId( 0 )
+        photon_wrapper = Event.ObserverParticleStateWrapper( photon )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 2 )
+        self.assertEqual( bin_indices_and_weights[0][0], 0 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+        self.assertEqual( bin_indices_and_weights[1][0], 1 )
+        self.assertEqual( bin_indices_and_weights[1][1], 1.0 )
+
+        photon.setSourceId( 1 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 2 )
+        self.assertEqual( bin_indices_and_weights[0][0], 1 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+        self.assertEqual( bin_indices_and_weights[1][0], 2 )
+        self.assertEqual( bin_indices_and_weights[1][1], 1.0 )
+
+        photon.setSourceId( 2 )
+
+        bin_indices_and_weights = self.dimension_discretization.calculateBinIndicesOfRange( photon_wrapper )
+
+        self.assertEqual( len(bin_indices_and_weights), 1 )
+        self.assertEqual( bin_indices_and_weights[0][0], 2 )
+        self.assertEqual( bin_indices_and_weights[0][1], 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ObserverCosineDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverEnergyDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverSourceEnergyDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverTimeDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverSourceTimeDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverSourceIdDimensionDiscretizationTestCase))
+    suite.addTest(unittest.makeSuite(ObserverCollisionNumberDimensionDiscretizationTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.ObserverPhaseSpaceDimensionDiscretization.py
+#-----------------------------------------------------------------------------#

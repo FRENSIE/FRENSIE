@@ -1,0 +1,512 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## DataGen.ENDL.StandardENDLDataGenerator class unit tests
+#  \file   tstDataGen.ENDL.StandardENDLDataGenerator.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the DataGen.ENDL.StandardENDLDataGenerator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import inspect
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--test_h_eadl_file", type="string", dest="test_h_eadl_file",
+                  help="the test h EADL file")
+parser.add_option("-p", "--test_h_epdl_file", type="string", dest="test_h_epdl_file",
+                  help="the test h EPDL file")
+parser.add_option("-e", "--test_h_eedl_file", type="string", dest="test_h_eedl_file",
+                  help="the test h EEDL file")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+ENDL = importPyFrensieModuleFromBuildDir('DataGen.ENDL')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardENDLDataGenerator class
+class StandardENDLDataGenerator(unittest.TestCase):
+    "TestCase class for DataGen.ENDL.StandardENDLDataGenerator class"
+
+    def testPopulateENDLDataContainer(self):
+        "*Test DataGen.ENDL.StandardENDLDataGenerator populateENDLDataContainer"
+        generator = ENDL.StandardENDLDataGenerator( options.test_h_eadl_file,
+                                                    options.test_h_epdl_file,
+                                                    options.test_h_eedl_file )
+
+        generator.populateENDLDataContainer()
+
+        data_container = generator.getDataContainer()
+
+        self.assertEqual( data_container.getAtomicNumber(), 1 )
+        self.assertEqual( data_container.getAtomicWeight(), 1.0079 )
+
+        # CHECK ATOMIC RELAXATION DATA
+        self.assertEqual( len(data_container.getSubshells()), 1 )
+        self.assertTrue( data_container.getSubshells().count( 1 ) )
+        self.assertEqual( data_container.getSubshellOccupancy(1), 1 )
+        self.assertEqual( data_container.getSubshellBindingEnergy(1), 1.361e-5 )
+        self.assertEqual( data_container.getSubshellKineticEnergy(1), 1.361e-5 )
+        self.assertEqual( data_container.getSubshellAverageRadius(1), 7.9356e-9 )
+        self.assertEqual( data_container.getLocalDepositionPerInitialVacancy(1), 1.361e-5 )
+        
+        # CHECK COHERENT PHOTON DATA
+        energy_grid = data_container.getCoherentCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 1.0e-6 )
+        self.assertEqual( len(energy_grid), 362 )
+        
+        cross_section = data_container.getCoherentCrossSection()
+
+        self.assertEqual( cross_section[0], 9.887553000E-06 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        form_factor_argument = data_container.getCoherentFormFactorArgument()
+
+        self.assertEqual( form_factor_argument[0], 0.0 )
+        self.assertEqual( len(form_factor_argument), 90 )
+
+        form_factor = data_container.getCoherentFormFactor()
+        
+        self.assertEqual( form_factor[0], 1.0 )
+        self.assertEqual( len(form_factor), len(form_factor_argument) )
+
+        factor_energy = data_container.getCoherentImaginaryAnomalousFactorIncidentEnergy()
+
+        self.assertEqual( factor_energy[0], 1.0e-6 )
+        self.assertEqual( len(factor_energy), 194 )
+
+        factor = data_container.getCoherentImaginaryAnomalousFactor()
+
+        self.assertEqual( factor[0], 0.0 )
+        self.assertEqual( len(factor), len(factor_energy) )
+
+        factor_energy = data_container.getCoherentRealAnomalousFactorIncidentEnergy()
+
+        self.assertEqual( factor_energy[0], 1.0e-6 )
+        self.assertEqual( len(factor_energy), 308 )
+
+        factor = data_container.getCoherentRealAnomalousFactor()
+
+        self.assertEqual( factor[0], -9.961483000E-01 )
+        self.assertEqual( len(factor), len(factor_energy) )
+
+        photon_energy_grid = data_container.getCoherentAveragePhotonIncidentEnergy()
+
+        self.assertEqual( photon_energy_grid[0], 1.0e-6 )
+        self.assertEqual( len(photon_energy_grid), 2 )
+
+        photon_energy = data_container.getCoherentAveragePhotonEnergy()
+
+        self.assertEqual( photon_energy[0], 1.0e-6 )
+        self.assertEqual( len(photon_energy), len(photon_energy_grid) )
+
+        # SET INCOHERENT PHOTON DATA
+        energy_grid = data_container.getIncoherentCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 1.0e-6 )
+        self.assertEqual( len(energy_grid), 111 )
+
+        cross_section = data_container.getIncoherentCrossSection()
+
+        self.assertEqual( cross_section[0], 9.562300000E-08 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        scattering_function_argument = data_container.getIncoherentScatteringFunctionArgument()
+
+        self.assertEqual( scattering_function_argument[0], 0.0 )
+        self.assertEqual( len(scattering_function_argument), 94 )
+
+        scattering_function = data_container.getIncoherentScatteringFunction()
+
+        self.assertEqual( scattering_function[0], 0.0 )
+        self.assertEqual( len(scattering_function), len(scattering_function_argument) )
+
+        photon_energy_grid = data_container.getIncoherentAveragePhotonIncidentEnergy()
+
+        self.assertEqual( photon_energy_grid[0], 1.0e-6 )
+        self.assertEqual( len(photon_energy_grid), 111 )
+
+        photon_energy = data_container.getIncoherentAveragePhotonEnergy()
+
+        self.assertEqual( photon_energy[0], 9.999973000E-07 )
+        self.assertEqual( len(photon_energy), len(photon_energy_grid) )
+
+        electron_energy_grid = data_container.getIncoherentAverageElectronIncidentEnergy()
+
+        self.assertEqual( electron_energy_grid[0], 1.0e-6 )
+        self.assertEqual( len(electron_energy_grid), 111 )
+
+        electron_energy = data_container.getIncoherentAverageElectronEnergy()
+
+        self.assertEqual( electron_energy[0], 2.740270000E-12 )
+        self.assertEqual( len(electron_energy), len(electron_energy_grid) )
+
+        # SET PHOTOELECTRIC PHOTON DATA
+        energy_grid = data_container.getPhotoelectricCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(energy_grid), 73 )
+
+        cross_section = data_container.getPhotoelectricCrossSection()
+
+        self.assertEqual( cross_section[0], 6.305834000E+06 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        residual_energy_grid = data_container.getPhotoelectricAverageResidualIncidentEnergy()
+
+        self.assertEqual( residual_energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(residual_energy_grid), 2 )
+
+        residual_energy = data_container.getPhotoelectricAverageResidualEnergy()
+
+        self.assertEqual( residual_energy[0], 1.361000000E-05 )
+        self.assertEqual( len(residual_energy), len(residual_energy_grid) )
+
+        photon_energy_grid = data_container.getPhotoelectricAveragePhotonsIncidentEnergy()
+
+        self.assertEqual( len(photon_energy_grid), 0 )
+
+        photon_energy = data_container.getPhotoelectricAveragePhotonsEnergy()
+
+        self.assertEqual( len(photon_energy), len(photon_energy_grid) )
+
+        electron_energy_grid = data_container.getPhotoelectricAverageElectronsIncidentEnergy()
+
+        self.assertEqual( electron_energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(electron_energy_grid), 2 )
+
+        electron_energy = data_container.getPhotoelectricAverageElectronsEnergy()
+
+        self.assertEqual( electron_energy[0], 0.0 )
+        self.assertEqual( len(electron_energy), len(electron_energy_grid) )
+
+        # SET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+        energy_grid = data_container.getPhotoelectricCrossSectionEnergyGrid(1)
+
+        self.assertEqual( energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(energy_grid), 73 )
+
+        cross_section = data_container.getPhotoelectricCrossSection(1)
+
+        self.assertEqual( cross_section[0], 6.305834000E+06 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        residual_energy_grid = data_container.getPhotoelectricAverageResidualIncidentEnergy(1)
+
+        self.assertEqual( residual_energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(residual_energy_grid), 2 )
+
+        residual_energy = data_container.getPhotoelectricAverageResidualEnergy(1)
+
+        self.assertEqual( residual_energy[0], 1.361000000E-05 )
+        self.assertEqual( len(residual_energy), len(residual_energy_grid) )
+
+        electron_energy_grid = data_container.getPhotoelectricAverageElectronsIncidentEnergy(1)
+
+        self.assertEqual( electron_energy_grid[0], 1.361000000E-05 )
+        self.assertEqual( len(electron_energy_grid), 2 )
+
+        electron_energy = data_container.getPhotoelectricAverageElectronsEnergy(1)
+
+        self.assertEqual( electron_energy[0], 0.0 )
+        self.assertEqual( len(electron_energy), len(electron_energy_grid) )
+
+        # SET PAIR PRODUCTION PHOTON DATA
+        energy_grid = data_container.getPairProductionCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 1.022000000E+00 )
+        self.assertEqual( len(energy_grid), 83 )
+
+        cross_section = data_container.getPairProductionCrossSection()
+
+        self.assertEqual( cross_section[0], 0.0 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        positron_energy_grid = data_container.getPairProductionAveragePositronIncidentEnergy()
+
+        self.assertEqual( positron_energy_grid[0],  1.022000000E+00 )
+        self.assertEqual( len(positron_energy_grid), 2 )
+
+        positron_energy = data_container.getPairProductionAveragePositronEnergy()
+
+        self.assertEqual( positron_energy[0], 0.0 )
+        self.assertEqual( len(positron_energy), len(positron_energy_grid) )
+
+        electron_energy_grid = data_container.getPairProductionAverageElectronIncidentEnergy()
+
+        self.assertEqual( electron_energy_grid[0],  1.022000000E+00 )
+        self.assertEqual( len(electron_energy_grid), 2 )
+
+        electron_energy = data_container.getPairProductionAverageElectronEnergy()
+
+        self.assertEqual( electron_energy[0], 0.0 )
+        self.assertEqual( len(electron_energy), len(electron_energy_grid) )
+
+        # SET TRIPLET PRODUCTION PHOTON DATA
+        energy_grid = data_container.getTripletProductionCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 2.044000000E+00 )
+        self.assertEqual( len(energy_grid), 77 )
+
+        cross_section = data_container.getTripletProductionCrossSection()
+
+        self.assertEqual( cross_section[0], 0.0 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        positron_energy_grid = data_container.getTripletProductionAveragePositronIncidentEnergy()
+
+        self.assertEqual( positron_energy_grid[0], 2.044000000E+00 )
+        self.assertEqual( len(positron_energy_grid), 2 )
+
+        positron_energy = data_container.getTripletProductionAveragePositronEnergy()
+
+        self.assertEqual( positron_energy[0], 5.110000000E-01 )
+        self.assertEqual( len(positron_energy), len(positron_energy_grid) )
+
+        electron_energy_grid = data_container.getTripletProductionAverageElectronIncidentEnergy()
+
+        self.assertEqual( electron_energy_grid[0], 2.044000000E+00 )
+        self.assertEqual( len(electron_energy_grid), 2 )
+
+        electron_energy = data_container.getTripletProductionAverageElectronEnergy()
+
+        self.assertEqual( electron_energy[0], 5.110000000E-01 )
+        self.assertEqual( len(electron_energy), len(electron_energy_grid) )
+        
+        # CHECK ELASTIC DATA
+        energy_grid = data_container.getElasticEnergyGrid()
+        
+        self.assertEqual( energy_grid[0], 1.0e-5 )
+        self.assertEqual( len(energy_grid), 101 )
+
+        cross_section = data_container.getElasticTransportCrossSection()
+
+        self.assertEqual( cross_section[0], 2.74896e+8 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        cross_section = data_container.getCutoffElasticCrossSection()
+
+        self.assertEqual( cross_section[0], 2.74896e+8 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        residual_energy_grid = data_container.getCutoffElasticResidualIncidentEnergy()
+
+        self.assertEqual( residual_energy_grid[0], 1.0e-5 )
+        self.assertEqual( len(residual_energy_grid), 2 )
+
+        residual_energy = data_container.getCutoffElasticResidualEnergy()
+
+        self.assertEqual( residual_energy[0], 0.0 )
+        self.assertEqual( len(residual_energy), len(residual_energy_grid) )
+
+        scattered_incident_energy = data_container.getCutoffElasticScatteredElectronIncidentEnergy()
+
+        self.assertEqual( scattered_incident_energy[0], 1.0e-5 )
+        self.assertEqual( len(scattered_incident_energy), 2 )
+        
+        scattered_energy = data_container.getCutoffElasticScatteredElectronEnergy()
+
+        self.assertEqual( scattered_energy[0], 1.0e-5 )
+        self.assertEqual( len(scattered_energy), len(scattered_incident_energy) )
+
+        angular_grid = data_container.getCutoffElasticAngularEnergyGrid()
+
+        self.assertEqual( angular_grid[0], 1.0e-5 )
+        self.assertEqual( len(angular_grid), 16 )
+
+        elastic_angles = data_container.getCutoffElasticAnglesAtEnergy(1.0e-5)
+
+        self.assertEqual( elastic_angles[0], 1.0e-6 )
+        self.assertEqual( len(elastic_angles), 2 )
+
+        elastic_angles = data_container.getCutoffElasticAnglesAtEnergy(1.0e+5)
+
+        self.assertEqual( elastic_angles[0], 1.0e-6 )
+        self.assertEqual( len(elastic_angles), 96 )
+
+        elastic_pdf = data_container.getCutoffElasticPDFAtEnergy(1.0e-5)
+
+        self.assertEqual( elastic_pdf[0], 0.5 )
+        self.assertEqual( len(elastic_pdf), 2 )
+
+        elastic_pdf = data_container.getCutoffElasticPDFAtEnergy(1.0e+5)
+
+        self.assertEqual( elastic_pdf[0], 9.86945e5 )
+        self.assertEqual( len(elastic_pdf), 96 )
+
+        cross_section = data_container.getTotalElasticCrossSection()
+
+        self.assertEqual( cross_section[0], 2.74896e8 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        # CHECK ELECTROIONIZATION DATA
+        energy_grid = data_container.getElectroionizationCrossSectionEnergyGrid( 1 )
+        
+        self.assertEqual( energy_grid[0], 1.361e-5 )
+        self.assertEqual( len(energy_grid), 35 )
+
+        cross_section = data_container.getElectroionizationCrossSection( 1 )
+
+        self.assertEqual( cross_section[0], 0.0 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        scattered_incident_energy = data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( 1 )
+
+        self.assertEqual( scattered_incident_energy[0], 1.361e-5 )
+        self.assertEqual( len(scattered_incident_energy), 6 )
+
+        scattered_energy = data_container.getElectroionizationAverageScatteredElectronEnergy( 1 )
+
+        self.assertEqual( scattered_energy[0], 0.0 )
+        self.assertEqual( len(scattered_energy), len(scattered_incident_energy) )
+
+        recoil_incident_energy = data_container.getElectroionizationAverageRecoilElectronIncidentEnergy( 1 )
+
+        self.assertEqual( recoil_incident_energy[0], 1.361e-5 )
+        self.assertEqual( len(recoil_incident_energy), 25 )
+
+        recoil_energy = data_container.getElectroionizationAverageRecoilElectronEnergy( 1 )
+
+        self.assertEqual( recoil_energy[0], 0.0 )
+        self.assertEqual( len(recoil_energy), len(recoil_incident_energy) )
+
+        recoil_energy_grid = data_container.getElectroionizationRecoilEnergyGrid( 1 )
+
+        self.assertEqual( recoil_energy_grid[0], 1.36100e-5 )
+        self.assertEqual( len(recoil_energy_grid), 8 )
+
+        electroionization_recoil_energy = data_container.getElectroionizationRecoilEnergyAtEnergy( 1, 1.36100e-5 )
+
+        self.assertEqual( electroionization_recoil_energy[0], 2.79866e-9 )
+        self.assertEqual( len(electroionization_recoil_energy), 2 )
+
+        electroionization_recoil_energy = data_container.getElectroionizationRecoilEnergyAtEnergy( 1, 1.00000e+5 )
+
+        self.assertEqual( electroionization_recoil_energy[0], 1.00000e-7 )
+        self.assertEqual( len(electroionization_recoil_energy), 147 )
+
+        electroionization_recoil_pdf = data_container.getElectroionizationRecoilPDFAtEnergy( 1, 1.36100e-5 )
+
+        self.assertEqual( electroionization_recoil_pdf[0], 3.97015e+7 )
+        self.assertEqual( len(electroionization_recoil_pdf), 2 )
+        
+        electroionization_recoil_pdf = data_container.getElectroionizationRecoilPDFAtEnergy( 1, 1.00000e+5 )
+
+        self.assertEqual( electroionization_recoil_pdf[0], 1.61897e+5 )
+        self.assertEqual( len(electroionization_recoil_pdf), 147 )
+
+        # CHECK BREMSSTRAHLUNG DATA
+        energy_grid = data_container.getBremsstrahlungCrossSectionEnergyGrid()
+
+        self.assertEqual( energy_grid[0], 1.0e-5 )
+        self.assertEqual( len(energy_grid), 96 )
+        
+        cross_section = data_container.getBremsstrahlungCrossSection()
+
+        self.assertEqual( cross_section[0],  2.97832e+1 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+
+        photon_energy_grid = data_container.getBremsstrahlungAveragePhotonIncidentEnergy()
+
+        self.assertEqual( photon_energy_grid[0], 1.0e-5 )
+        self.assertEqual( len(photon_energy_grid), 82 )
+
+        photon_energy = data_container.getBremsstrahlungAveragePhotonEnergy()
+
+        self.assertEqual( photon_energy[0], 2.14426e-6 )
+        self.assertEqual( len(photon_energy), len(photon_energy_grid) )
+
+        bremsstrahlung_photon_energy_grid = data_container.getBremsstrahlungPhotonEnergyGrid()
+
+        self.assertEqual( bremsstrahlung_photon_energy_grid[0], 1.00000e-5 )
+        self.assertEqual( len(bremsstrahlung_photon_energy_grid), 10 )
+
+        bremsstrahlung_photon_energy = data_container.getBremsstrahlungPhotonEnergyAtEnergy( 1.00000e-5 )
+
+        self.assertEqual( bremsstrahlung_photon_energy[0], 1.00000e-7 )
+        self.assertEqual( len(bremsstrahlung_photon_energy), 17 )
+
+        bremsstrahlung_photon_energy = data_container.getBremsstrahlungPhotonEnergyAtEnergy( 1.00000e+5 )
+
+        self.assertEqual( bremsstrahlung_photon_energy[0], 1.00000e-7 )
+        self.assertEqual( len(bremsstrahlung_photon_energy), 111 )
+
+        bremsstrahlung_photon_pdf = data_container.getBremsstrahlungPhotonPDFAtEnergy( 1.00000e-5 )
+
+        self.assertEqual( bremsstrahlung_photon_pdf[0], 2.13940e+6 )
+        self.assertEqual( len(bremsstrahlung_photon_pdf), 17 )
+        
+        bremsstrahlung_photon_pdf = data_container.getBremsstrahlungPhotonPDFAtEnergy( 1.00000e+5 )
+
+        self.assertEqual( bremsstrahlung_photon_pdf[0],  3.65591e+5 )
+        self.assertEqual( len(bremsstrahlung_photon_pdf), 111 )
+
+        electron_incident_energy = data_container.getBremsstrahlungAverageElectronIncidentEnergy()
+
+        self.assertEqual( electron_incident_energy[0], 1.0e-5 )
+        self.assertEqual( len(electron_incident_energy), 85 )
+
+        electron_energy = data_container.getBremsstrahlungAverageElectronEnergy()
+
+        self.assertEqual( electron_energy[0], 7.85574e-6 )
+        self.assertEqual( len(electron_energy), len(electron_incident_energy) )
+        
+        # CHECK ATOMIC EXCITATION DATA
+        energy_grid = data_container.getAtomicExcitationEnergyGrid()
+        
+        self.assertEqual( energy_grid[0], 1.361e-5 )
+        self.assertEqual( len(energy_grid), 170 )
+
+        cross_section = data_container.getAtomicExcitationCrossSection()
+
+        self.assertEqual( cross_section[0], 0.0 )
+        self.assertEqual( len(cross_section), len(energy_grid) )
+        
+        atomic_excitation_energy_loss = data_container.getAtomicExcitationEnergyLoss()
+
+        self.assertEqual( atomic_excitation_energy_loss[0], 1.36100e-5 )
+        self.assertEqual( len(atomic_excitation_energy_loss), len(energy_grid) )
+
+        data_container.saveToFile( "test_h_endl.xml", True )
+        
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(StandardENDLDataGenerator))
+
+    print >>sys.stderr, \
+        "\n**********************************************\n" + \
+        "Testing DataGen.ENDL.StandardENDLDataGenerator \n" + \
+        "**********************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstDataGen.ENDL.StandardENDLDataGenerator.py
+#-----------------------------------------------------------------------------#

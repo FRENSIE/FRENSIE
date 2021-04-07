@@ -1,0 +1,185 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.CollisionForcer class unit tests
+#  \file   tstMonteCarlo.Event.CollisionForcer.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Event.CollisionForcer class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--database_path", type="string", dest="database_path", default="",
+                  help="set the path to the scattering center database that will be used to create the model")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the standard collision forcer class 
+class StandardCollisionForcerTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event StandardCollisionForcer"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
+        h_properties = database.getAtomProperties( Data.ZAID(1001) )
+        h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+        h_definition = cls.scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+        h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        cls.material_definition_database = Collision.MaterialDefinitionDatabase()
+
+        cls.material_definition_database.addDefinition( "H1 @ 293.6K", 1,
+                                                        ("H1 @ 293.6K",), (1.0,) )
+
+        cls.unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+        
+        cls.properties = MonteCarlo.SimulationProperties()
+        cls.properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        cls.filled_model = Collision.FilledGeometryModel(
+                                cls.database_path,
+                                cls.scattering_center_definition_database,
+                                cls.material_definition_database,
+                                cls.properties,
+                                cls.unfilled_model,
+                                False )
+
+    #-------------------------------------------------------------------------#
+    # Check that the forced collision cells can be set
+    def testSetForcedCollisionCells_default(self):
+        "*Test MonteCarlo.Event.StandardCollisionForcer setForcedCollisionCells default"
+
+        collision_forcer = Event.StandardCollisionForcer()
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.PHOTON,
+                                                  [1] )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.PHOTON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.PHOTON ), 1.0 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.NEUTRON,
+                                                  [1] )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.NEUTRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.NEUTRON ), 1.0 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.ELECTRON,
+                                                  [1] )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.ELECTRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.ELECTRON ), 1.0 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.POSITRON,
+                                                  [1] )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.POSITRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.POSITRON ), 1.0 )
+
+    #-------------------------------------------------------------------------#
+    # Check that the forced collision cells can be set
+    def testSetForcedCollisionCells(self):
+        "*Test MonteCarlo.Event.StandardCollisionForcer setForcedCollisionCells"
+        collision_forcer = Event.StandardCollisionForcer()
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.PHOTON,
+                                                  [1],
+                                                  0.5 )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.PHOTON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.PHOTON ), 0.5 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.NEUTRON,
+                                                  [1],
+                                                  0.75 )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.NEUTRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.NEUTRON ), 0.75 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.ELECTRON,
+                                                  [1],
+                                                  0.25 )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.ELECTRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.ELECTRON ), 0.25 )
+
+        collision_forcer.setForcedCollisionCells( self.filled_model,
+                                                  MonteCarlo.POSITRON,
+                                                  [1],
+                                                  1.0 )
+
+        self.assertSequenceEqual( list(collision_forcer.getCells( MonteCarlo.POSITRON )), [1] )
+        self.assertEqual( collision_forcer.getGenerationProbability( MonteCarlo.POSITRON ), 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(StandardCollisionForcerTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************\n" + \
+        "Testing MonteCarlo.Event.CollisionForcer \n" + \
+        "**************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.CollisionForcer.py
+#-----------------------------------------------------------------------------#

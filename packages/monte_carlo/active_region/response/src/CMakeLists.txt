@@ -1,0 +1,3 @@
+FRENSIE_SETUP_PACKAGE(monte_carlo_active_region_response
+  MPI_LIBRARIES ${MPI_CXX_LIBRARIES}
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} monte_carlo_active_region_core monte_carlo_collision_kernel)

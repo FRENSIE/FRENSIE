@@ -27,7 +27,8 @@ public:
   template<typename SmartPointer>
   static void createState( SmartPointer& particle,
 			   const ParticleType type,
-			   const ParticleState::historyNumberType history );
+			   const ParticleState::historyNumberType history,
+                           const bool probe = false );
 
 private:
 

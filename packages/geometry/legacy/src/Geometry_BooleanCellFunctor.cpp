@@ -20,7 +20,7 @@
 #include "Geometry_BooleanCellFunctor.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SetOperationFunctor.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -61,8 +61,8 @@ BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
  * It is only called by the constructor. It is a protected member and not a
  * private member to allow for "white-box" unit testing.
  * \param[in,out] cell_definition a cell definition string which contains the
- * logical combination of second order surfaces which define the cell. The 
- * string is passed by reference so that is can be modified.  
+ * logical combination of second order surfaces which define the cell. The
+ * string is passed by reference so that is can be modified.
  * \pre The cell definition string must not contain any characters except the
  * ones in the following string: "0123456789-nu() ".
  * \note Developers: It might be useful to change the DBC precondition to a
@@ -72,9 +72,9 @@ BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
 void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
 {
   // The cell definition must be valid
-  testPrecondition( cell_definition.find_first_not_of( "0123456789-nu() ", 0 ) 
+  testPrecondition( cell_definition.find_first_not_of( "0123456789-nu() ", 0 )
 		    == std::string::npos );
-  
+
   unsigned white_space_loc = cell_definition.find( " " );
 
   while( white_space_loc < cell_definition.size() )
@@ -86,32 +86,32 @@ void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
 }
 
 // Rename the cell definition variables
-/*! \details This function renames all of the surface IDs (variables) in the 
+/*! \details This function renames all of the surface IDs (variables) in the
  * cell definition string based on the order in which they appear. This allows
  * variables to be referenced based on their index in an array. This function
- * is only called by the constructor. It is a protected member and not a 
+ * is only called by the constructor. It is a protected member and not a
  * private member to allow for "white-box" unit testing.
  * \param[in,out] cell_definition a cell definition string which contains the
- * logical combination of second order surfaces which define the cell. The 
+ * logical combination of second order surfaces which define the cell. The
  * string is passed by reference so that it can be modified.
  * \pre The cell definition string must not contain any white space characters
- * (the BooleanCellFunctor::removeWhiteSpace member function must be called 
+ * (the BooleanCellFunctor::removeWhiteSpace member function must be called
  * before this function).
  */
 void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 {
   // The cell definition must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
-  
+
   std::string operation_characters( "nu()" );
-  
+
   unsigned variable_start_loc, variable_end_loc;
-  variable_start_loc = 
+  variable_start_loc =
     cell_definition.find_first_not_of( operation_characters );
   variable_end_loc = cell_definition.find_first_of( operation_characters,
 						    variable_start_loc+1 ) - 1;
   unsigned variable_name_size;
-  
+
   unsigned variable_index = 0;
 
   while( variable_start_loc < cell_definition.size() )
@@ -121,17 +121,17 @@ void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 
     std::stringstream new_variable_name;
     new_variable_name << variable_index;
-    
+
     cell_definition.insert( variable_start_loc, new_variable_name.str() );
-    
+
     // Move past the current variable
     variable_start_loc = cell_definition.find_first_of( operation_characters,
 							variable_start_loc );
     // Look for the next variable
-    variable_start_loc = 
+    variable_start_loc =
       cell_definition.find_first_not_of( operation_characters,
 					 variable_start_loc );
-    variable_end_loc = 
+    variable_end_loc =
       cell_definition.find_first_of( operation_characters,
 				     variable_start_loc+1 ) - 1;
     ++variable_index;
@@ -145,25 +145,25 @@ void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
  * allow for "white-box" unit testing.
  * \param[in] cell_definition a cell definition string which contains the
  * logical combination of second order surfaces which define the cell. The
- * string is passed by reference to avoid copy overhead though it is not 
+ * string is passed by reference to avoid copy overhead though it is not
  * modified.
  * \pre The cell definition string must not contain any white space characters
- * (the BooleanCellFunctor::removeWhiteSpace member function must be called 
+ * (the BooleanCellFunctor::removeWhiteSpace member function must be called
  * before this function).
  */
-unsigned 
+unsigned
 BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
 {
   // The cell definition must not be empty
   testPrecondition( cell_definition.size() > 0 );
   // The cell definition must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
-  
+
   std::string operation_characters( "nu()" );
-  
-  unsigned operation_loc, start_loc = 0; 
+
+  unsigned operation_loc, start_loc = 0;
   operation_loc = cell_definition.find_first_of( operation_characters );
-  
+
   unsigned number_of_variables = 0;
 
   if( operation_loc < cell_definition.size() )
@@ -171,17 +171,17 @@ BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
     // Check if the cell definition starts with a variable
     if( operation_loc == 1 )
       ++number_of_variables;
-    
+
     while( operation_loc < cell_definition.size() )
     {
       if( operation_loc - start_loc > 1 )
 	++number_of_variables;
-      
+
       start_loc = operation_loc;
-      operation_loc = 
+      operation_loc =
 	cell_definition.find_first_of( operation_characters, operation_loc+1 );
     }
-    
+
     // Check if the cell definition ends with a variable
     if( start_loc < cell_definition.size()-1 )
       ++number_of_variables;
@@ -189,12 +189,12 @@ BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
   // Check for the special case of only one variable (e.g. sphere)
   else
     number_of_variables = 1;
-    
+
   return number_of_variables;
 }
 
 // Determine the variable range in the string
-/*! \details This function determines the range of variable indices that are 
+/*! \details This function determines the range of variable indices that are
  * present in a sub-string. It is a protected member and not a private member
  * to allow for "white-box" unit testing.
  * \param[in] sub_string A sub-string from the original cell_definition (usually
@@ -209,12 +209,12 @@ BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
  * BooleanCellFunctor::removeWhiteSpace member function must be called before
  * this function).
  */
-Utility::Pair<unsigned,unsigned> 
+Utility::Pair<unsigned,unsigned>
 BooleanCellFunctor::getVariableRange( std::string sub_string ) const
 {
   // The sub-string must be free of white space
   testPrecondition( sub_string.find( " " ) > sub_string.size() );
-  
+
   std::string operation_characters( "nu()" );
 
   unsigned operation_loc = sub_string.find_first_of( operation_characters );
@@ -228,44 +228,44 @@ BooleanCellFunctor::getVariableRange( std::string sub_string ) const
   }
 
   std::stringstream processed_sub_string( sub_string );
-  
+
   unsigned start_variable, end_variable;
   processed_sub_string >> start_variable;
   end_variable = start_variable;
 
   while( processed_sub_string )
     processed_sub_string >> end_variable;
-  
+
 
   Utility::Pair<unsigned,unsigned> range( start_variable, end_variable );
-  
-  return range;  
+
+  return range;
 }
-  
+
 // Construct the child functors
 /*! \details This function constructs child BooleanCellFunctors from the
  * cell_definition. Every time a parentheses is encountered a new child will
- * be created. It is a protected member and not a private member to allow for 
+ * be created. It is a protected member and not a private member to allow for
  * "white-box" unit testing.
- * \param[in] cell_definition A cell definition string which contains the 
+ * \param[in] cell_definition A cell definition string which contains the
  * logical combination of second order surfaces which define the cell. The
  * string is passed by reference to avoid copy overhead though it is not
- * modified. 
+ * modified.
  * \pre The cell definition string must not contain any white space
  * characters (the BooleanCellFunctor::removeWhiteSpace member function must
  * be called before this function).
  */
-void BooleanCellFunctor::constructChildFunctors( 
+void BooleanCellFunctor::constructChildFunctors(
 					   const std::string &cell_definition )
 {
   // The sub-string must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
-  
+
   unsigned sub_string_start, next_sub_string_start, sub_string_end;
   sub_string_start = cell_definition.find( "(" );
   next_sub_string_start = cell_definition.find( "(", sub_string_start+1 );
   sub_string_end = cell_definition.find( ")" );
-  
+
   Teuchos::Array<BooleanCellFunctor> child_functors;
   Teuchos::Array<Utility::Pair<unsigned,unsigned> > child_functor_variables;
 
@@ -274,7 +274,7 @@ void BooleanCellFunctor::constructChildFunctors(
     // Ignore nested parentheses (they will be handled by the children)
     while( sub_string_end > next_sub_string_start )
     {
-      next_sub_string_start = 
+      next_sub_string_start =
 	cell_definition.find( "(", next_sub_string_start+1 );
       sub_string_end = cell_definition.find( ")", sub_string_end+1 );
     }
@@ -285,7 +285,7 @@ void BooleanCellFunctor::constructChildFunctors(
 						     sub_string_size );
 
     // Record which variables should be used with this child
-    Utility::Pair<unsigned,unsigned> sub_string_variable_range = 
+    Utility::Pair<unsigned,unsigned> sub_string_variable_range =
       getVariableRange( sub_string );
     child_functor_variables.push_back( sub_string_variable_range );
 
@@ -296,7 +296,7 @@ void BooleanCellFunctor::constructChildFunctors(
     // Process the next child if one exists
     sub_string_start = cell_definition.find( "(", sub_string_end );
     next_sub_string_start = cell_definition.find( "(", sub_string_start+1 );
-    sub_string_end = cell_definition.find( ")", sub_string_start );    
+    sub_string_end = cell_definition.find( ")", sub_string_start );
   }
 
   d_child_functors = child_functors;
@@ -318,12 +318,12 @@ void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
 {
   // The sub-string must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
-  
+
   unsigned sub_string_start, next_sub_string_start, sub_string_end;
   sub_string_start = cell_definition.find( "(" );
   next_sub_string_start = cell_definition.find( "(", sub_string_start+1 );
   sub_string_end = cell_definition.find( ")" );
-  
+
   unsigned dummy_variable_index = 0;
 
   while( sub_string_start < cell_definition.size() )
@@ -331,45 +331,45 @@ void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
     // Ignore nested parentheses (they will be handled by the children)
     while( sub_string_end > next_sub_string_start )
     {
-      next_sub_string_start = 
+      next_sub_string_start =
 	cell_definition.find( "(", next_sub_string_start+1 );
       sub_string_end = cell_definition.find( ")", sub_string_end+1 );
     }
-    
+
     // Remove the sub-string and add a dummy variable
     unsigned sub_string_size = sub_string_end - sub_string_start + 1;
-    
+
     cell_definition.erase( sub_string_start, sub_string_size );
-    
+
     std::stringstream dummy_variable;
     dummy_variable << "d" << dummy_variable_index;
-    
+
     cell_definition.insert( sub_string_start, dummy_variable.str() );
 
     // Find the next sub-string if one exists
     sub_string_start = cell_definition.find( "(", sub_string_start );
     next_sub_string_start = cell_definition.find( "(", sub_string_start+1 );
     sub_string_end = cell_definition.find( ")", sub_string_start );
-    
+
     ++dummy_variable_index;
   }
-}    
+}
 
 // Assign the set operation functors based on the cell definition
-/*! \details This function creates an array of Utility::SetOperatorFunctors 
+/*! \details This function creates an array of Utility::SetOperatorFunctors
  * from the cell definition string. It is a protected member and not a private
  * member to allow for "white-box" unit testing.
- * \param[in] cell_definition A cell definition string which contains the 
+ * \param[in] cell_definition A cell definition string which contains the
  * logical combination of second order surfaces which define the cell. The
  * string is passed by reference to avoid copy overhead.
- * \pre 
+ * \pre
  * <ul>
  *  <li> The cell definition string must not contain any white space characters
- *       (the BooleanCellFunctor::removeWhiteSpace member function must be 
+ *       (the BooleanCellFunctor::removeWhiteSpace member function must be
  *       called before this function).
  *  <li> The cell definition string cannot start with an operation character.
  *  <li> The cell definition string cannot end with an operation character.
- *  <li> The cell definition string must contain at least one operation 
+ *  <li> The cell definition string must contain at least one operation
  *       character.
  *  <li> The cell definition string must be a reduced definition (there must
  *       not be any parentheses present in the string).
@@ -385,15 +385,15 @@ void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_def
   // The cell definition cannot start with an operation
   testPrecondition( cell_definition.find_first_of( "nu" ) != 0 );
   // The cell definition cannot end with an operation
-  testPrecondition( cell_definition.find_last_of( "nu" ) != 
+  testPrecondition( cell_definition.find_last_of( "nu" ) !=
 		    cell_definition.size()-1 );
   // The cell definition must be reduced
-  testPrecondition( cell_definition.find_first_of( "()" ) > 
+  testPrecondition( cell_definition.find_first_of( "()" ) >
 		    cell_definition.size() );
 
   std::string operation_characters( "nu" );
 
-  unsigned operation_loc = 
+  unsigned operation_loc =
     cell_definition.find_first_of( operation_characters );
 
   Teuchos::Array<Teuchos::RCP<Utility::SetOperationFunctor> > function_definition;
@@ -402,13 +402,13 @@ void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_def
   {
     if( cell_definition.compare( operation_loc, 1, "n" ) == 0 )
     {
-      Teuchos::RCP<Utility::SetOperationFunctor> 
+      Teuchos::RCP<Utility::SetOperationFunctor>
 	new_op( new Utility::IntersectionFunctor );
       function_definition.push_back( new_op );
     }
     else
     {
-      Teuchos::RCP<Utility::SetOperationFunctor> 
+      Teuchos::RCP<Utility::SetOperationFunctor>
 	new_op( new Utility::UnionFunctor );
       function_definition.push_back( new_op );
     }
@@ -416,10 +416,10 @@ void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_def
     operation_loc = cell_definition.find_first_of( operation_characters,
 						   operation_loc+1 );
   }
-  
+
   d_function_definition = function_definition;
 }
-      
+
 // Get the number of child functors
 unsigned BooleanCellFunctor::getNumChildFunctors() const
 {
@@ -433,7 +433,7 @@ unsigned BooleanCellFunctor::getNumSetOperationFunctors() const
 }
 
 // Get the variable ranges for child functors
-Teuchos::Array<Utility::Pair<unsigned,unsigned> > 
+Teuchos::Array<Utility::Pair<unsigned,unsigned> >
 BooleanCellFunctor::getChildFunctorVariableRanges() const
 {
   return d_child_functor_variables;

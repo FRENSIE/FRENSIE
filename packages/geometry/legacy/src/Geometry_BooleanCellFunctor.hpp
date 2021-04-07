@@ -24,12 +24,12 @@ namespace Geometry{
 
 /*! \brief Functor that takes an array of bools and returns true of false.
  *
- * This object is designed to represent the logical representation of a 
- * geometric cell defined by the logical combination of second order surface. 
- * Its constructor takes a string which contains the logical combination of 
+ * This object is designed to represent the logical representation of a
+ * geometric cell defined by the logical combination of second order surface.
+ * Its constructor takes a string which contains the logical combination of
  * second order surfaces. Only the logical operators that define the cell are
  * are recorded during object construction. The surface numbers and senses
- * are ignored. Upon creation, this object can be used as a function which 
+ * are ignored. Upon creation, this object can be used as a function which
  * takes an array of bools and returns either true or false. The array of bools
  * represent whether a point is on the side of each surface corresponding
  * to the sense that defines the cell. This object allows the evaluation of
@@ -40,7 +40,7 @@ namespace Geometry{
  */
 class BooleanCellFunctor
 {
-  
+
 public:
 
   //@{
@@ -48,14 +48,14 @@ public:
   //! Typedef for Boolean array (guaranteed to work)
   typedef typename Teuchos::ArrayRCP<bool> BooleanArray;
   //@}
-  
+
   //! Constructor
   BooleanCellFunctor( std::string cell_definition );
 
   //! Destructor
   ~BooleanCellFunctor()
   { /* ... */ }
-  
+
   //! Function evaluation operator
   template<typename BoolArray>
   bool operator()( const BoolArray &arguments ) const;
@@ -71,12 +71,12 @@ protected:
 
   //! Rename the cell definition variables
   void renameVariables( std::string &cell_definition ) const;
-  
+
   //! Determine the number of variables present in the cell definition
   unsigned getNumVariables( const std::string &cell_definition );
 
   //! Determine the variable range in the string
-  Utility::Pair<unsigned,unsigned> 
+  Utility::Pair<unsigned,unsigned>
   getVariableRange( std::string sub_string ) const;
 
   //! Construct the child functors
@@ -95,21 +95,21 @@ protected:
   unsigned getNumSetOperationFunctors() const;
 
   //! Get the variable ranges for the child functors
-  Teuchos::Array<Utility::Pair<unsigned,unsigned> > 
+  Teuchos::Array<Utility::Pair<unsigned,unsigned> >
   getChildFunctorVariableRanges() const;
 
 private:
 
   // Child BooleanCellFunctors for evaluation of terms in parentheses
   Teuchos::Array<BooleanCellFunctor> d_child_functors;
-  
+
   // Indices of Boolean variables found in parentheses
   Teuchos::Array<Utility::Pair<unsigned,unsigned> > d_child_functor_variables;
 
   // SetOperationFunctors for evaluating the cell function
-  Teuchos::Array<Teuchos::RCP<Utility::SetOperationFunctor> > 
+  Teuchos::Array<Teuchos::RCP<Utility::SetOperationFunctor> >
   d_function_definition;
-  
+
   // Number of Boolean variables to expect in Boolean array
   unsigned d_number_of_variables;
 

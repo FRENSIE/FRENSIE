@@ -1,0 +1,81 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   endl_to_native_endl.py
+##! \author Alex Robinson
+##! \brief  tool to convert endl data files to native endl format
+##!
+##---------------------------------------------------------------------------##
+
+import sys
+from os import path
+from optparse import *
+import PyFrensie.DataGen as DataGen
+import PyFrensie.DataGen.ENDL as DataGenENDL
+import PyFrensie.Data as Data
+import PyFrensie.Utility
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-z", "--atomic_number", type="int", dest="atomic_number",
+                  help="the atomic number to process")
+parser.add_option("-a", "--all", action="store_true", dest="process_all", default=False,
+                  help="process all endl data")
+parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                  help="the database name (with extension)")
+
+options,args = parser.parse_args()
+
+if __name__ == "__main__":
+
+    database = Data.ScatteringCenterPropertiesDatabase( options.db_name )
+
+    # Create the list of atomic numbers to process
+    if options.process_all:
+        atomic_numbers = list(range(1,101))
+    else:
+        if options.atomic_number > 0 or options.atomic_number <= 100:
+            atomic_numbers = [options.atomic_number]
+        else:
+            print "The atomic number must be in the range [1,100]"
+            sys.exit(1)
+
+            
+    database_dir = path.dirname( path.abspath(options.db_name) )
+
+    # Process the atomic numbers
+    for z in atomic_numbers:
+
+        # Create the filename from the atomic number
+        filename = "za"
+        
+        if z < 10:
+            filename += "00"
+        elif z < 100:
+            filename += "0"
+
+        filename += str(z*1000)
+
+        relative_eadl_file_path = "endldata/eadl/" + filename
+        relative_epdl_file_path = "endldata/epdl/" + filename
+        relative_eedl_file_path = "endldata/eedl/" + filename
+        
+        full_eadl_file_path = database_dir + "/" + relative_eadl_file_path
+        full_epdl_file_path = database_dir + "/" + relative_epdl_file_path
+        full_eedl_file_path = database_dir + "/" + relative_eedl_file_path
+
+        native_filename = "endl_native_" + str(z) + ".xml"
+        native_file_path = database_dir + "/endldata/" + native_filename
+
+        generator = DataGenENDL.StandardENDLDataGenerator( full_eadl_file_path,
+                                                           full_epdl_file_path,
+                                                           full_eedl_file_path )
+        print "Populating ENDL native data container for Z =", z
+        generator.populateENDLDataContainer()
+        generator.getDataContainer().saveToFile( native_file_path, True )
+
+##---------------------------------------------------------------------------##
+## endl_to_native_endl.py
+##---------------------------------------------------------------------------##
+
+        

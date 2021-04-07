@@ -1,34 +1,57 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(geometry_root)
+
+SET(ROOT_GEOM_TEST_TARGET geometry_root_test_geom)
+
 ADD_SUBDIRECTORY(test_files)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_EXECUTABLE(tstRoot tstRoot.cpp)
-TARGET_LINK_LIBRARIES(tstRoot geometry_root)
-ADD_TEST(Root_test tstRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root")
+FRENSIE_ADD_TEST_EXECUTABLE(RootModelProperties DEPENDS tstRootModelProperties.cpp)
+FRENSIE_ADD_TEST(RootModelProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(RootModel
+  DEPENDS tstRootModel.cpp
+  TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET})
+FRENSIE_ADD_TEST(RootModel
+  EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+
+FRENSIE_ADD_TEST_EXECUTABLE(RootModelIArchive
+  DEPENDS tstRootModelIArchive.cpp
+  TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET})
+FRENSIE_ADD_TEST(RootModelIArchiveFullPath
+  TEST_EXEC_NAME_ROOT RootModelIArchive
+  EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_model_archive_full_path.xml)
+FRENSIE_ADD_TEST(RootModelIArchiveRelativePath
+  TEST_EXEC_NAME_ROOT RootModelIArchive
+  EXTRA_ARGS
+  --test_archive_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/basic_root_model_archive_relative_path.xml
+  --reset_path=${CMAKE_CURRENT_BINARY_DIR}/test_files)
+  
+
+FRENSIE_ADD_TEST_EXECUTABLE(RootNavigator
+  DEPENDS tstRootNavigator.cpp
+  TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET})
+FRENSIE_ADD_TEST(RootNavigator
+  EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_EXECUTABLE(tstSharedParallelRoot tstSharedParallelRoot.cpp)
-  TARGET_LINK_LIBRARIES(tstSharedParallelRoot geometry_root)
-  ADD_TEST(SharedParallelRoot_2_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=2)
-  ADD_TEST(SharedParallelRoot_4_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=4)
+  FRENSIE_ADD_TEST_EXECUTABLE(SharedParallelRootNavigator
+    DEPENDS tstSharedParallelRootNavigator.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET})
+  FRENSIE_ADD_TEST(SharedParallelRootNavigator_2
+    TEST_EXEC_NAME_ROOT SharedParallelRootNavigator
+    OPENMP_TEST
+    EXTRA_ARGS
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root
+    --threads=2)
+
+  FRENSIE_ADD_TEST(SharedParallelRootNavigator_4
+    TEST_EXEC_NAME_ROOT SharedParallelRootNavigator
+    OPENMP_TEST
+    EXTRA_ARGS
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root
+    --threads=4)
 ENDIF()
 
-ADD_EXECUTABLE(tstRootInstanceFactoryBasic
-  tstRootInstanceFactoryBasic.cpp)
-TARGET_LINK_LIBRARIES(tstRootInstanceFactoryBasic geometry_root)
-ADD_TEST(RootInstanceFactoryBasic_test tstRootInstanceFactoryBasic --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
+FRENSIE_FINALIZE_PACKAGE_TESTS(geometry_root)
 
-ADD_EXECUTABLE(tstRootInstanceFactoryAdvanced
-  tstRootInstanceFactoryAdvanced.cpp)
-TARGET_LINK_LIBRARIES(tstRootInstanceFactoryAdvanced geometry_root)
-ADD_TEST(RootInstanceFactoryAdvanced_test tstRootInstanceFactoryAdvanced --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
 
-ADD_EXECUTABLE(tstGeometryModuleInterface_Root
-  tstModuleInterface.cpp)
-TARGET_LINK_LIBRARIES(tstGeometryModuleInterface_Root geometry_root)
-ADD_TEST(GeometryModuleInterface_Root_test tstGeometryModuleInterface_Root --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
-
-IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_EXECUTABLE(tstSharedParallelGeometryModuleInterface_Root tstSharedParallelModuleInterface.cpp)
-  TARGET_LINK_LIBRARIES(tstSharedParallelGeometryModuleInterface_Root geometry_root)
-  ADD_TEST(SharedParallelGeometryModuleInterface_Root_2_test tstSharedParallelGeometryModuleInterface_Root --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml" --threads=2)
-  ADD_TEST(SharedParallelGeometryModuleInterface_Root_4_test tstSharedParallelGeometryModuleInterface_Root --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml" --threads=4)
-ENDIF()

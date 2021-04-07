@@ -11,9 +11,9 @@
 
 namespace Utility{
 
-/*! \brief Policy struct for processing data tables that require log-log 
+/*! \brief Policy struct for processing data tables that require log-log
  * interpolation between evaluated points.
- * 
+ *
  * This policy class implements the data processing policy interface that is
  * expected by certain protected member functions of the DataProcessor base
  * class. All data processed with this policy will be converted to log-log
@@ -25,15 +25,15 @@ struct LogLogDataProcessing
   //! Process independent variable
   template<typename T>
   static T processIndependentVar( const T indep_var );
-  
+
   //! Process dependent variable
   template<typename T>
-  static T processDependentVar( const T dep_var );  
+  static T processDependentVar( const T dep_var );
 };
 
-/*! \brief Policy struct for processing data tables that require log-lin 
+/*! \brief Policy struct for processing data tables that require log-lin
  * interpolation between evaluated points.
- * 
+ *
  * This policy class implements the data processing policy interface that is
  * expected by certain protected member functions of the DataProcessor base
  * class. All data processed with this policy will be converted to log-lin
@@ -51,9 +51,9 @@ struct LogLinDataProcessing
   static T processDependentVar( const T dep_var );
 };
 
-/*! \brief Policy struct for processing data tables that require lin-log 
+/*! \brief Policy struct for processing data tables that require lin-log
  * interpolation between evaluated points.
- * 
+ *
  * This policy class implements the data processing policy interface that is
  * expected by certain protected member functions of the DataProcessor base
  * class. All data processed with this policy will be converted to lin-log
@@ -71,9 +71,9 @@ struct LinLogDataProcessing
   static T processDependentVar( const T dep_var );
 };
 
-/*! \brief Policy struct for processing data tables that require lin-lin 
+/*! \brief Policy struct for processing data tables that require lin-lin
  * interpolation between evaluated points.
- * 
+ *
  * This policy class implements the data processing policy interface that is
  * expected by certain protected member functions of the DataProcessor base
  * class. All data processed with this policy will be converted to lin-lin
@@ -96,8 +96,8 @@ struct LinLinDataProcessing
  *
  * This policy class implements the data processing policy interface that is
  * expected by certain protected member functions of the DataProcessor base
- * class. All data processed with this policy will be converted to 
- * square-square format. 
+ * class. All data processed with this policy will be converted to
+ * square-square format.
  * \ingroup policies
  */
 struct SqrSqrDataProcessing
@@ -105,12 +105,12 @@ struct SqrSqrDataProcessing
   //! Process independent variable
   template<typename T>
   static T processIndependentVar( const T indep_var );
-  
+
   //! Process dependent variable
   template<typename T>
   static T processDependentVar( const T dep_var );
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

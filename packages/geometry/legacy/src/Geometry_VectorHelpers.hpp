@@ -18,13 +18,13 @@ namespace Geometry{
 
 // Create a vector
 template<typename ScalarType>
-Vector<ScalarType> createVector( const ScalarType x, 
+Vector<ScalarType> createVector( const ScalarType x,
 				 const ScalarType y,
 				 const ScalarType z );
 
 // Create a vector from a tuple struct
 template<typename ScalarType>
-Vector<ScalarType> createVector( 
+Vector<ScalarType> createVector(
 		const Utility::Trip<ScalarType,ScalarType,ScalarType> &tuple );
 
 //! Create a x-axis vector

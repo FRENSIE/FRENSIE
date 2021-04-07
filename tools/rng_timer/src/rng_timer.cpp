@@ -35,12 +35,12 @@ void timeGenerator( const int trial_size, const int histories = 1 )
   for( int i = 0; i < histories; ++i )
   {
     Utility::RandomNumberGenerator::initialize( i );
-    
+
     for( int j = 0; j < trial_size/histories; ++j )
       Utility::RandomNumberGenerator::getRandomNumber<double>();
   }
   std::cout << std::endl;
-  
+
   double time2 = TIME();
 
   // Raw double generator timing
@@ -67,7 +67,7 @@ void timeGenerator( const int trial_size, const int histories = 1 )
     double mdbls_per_sec_raw = trial_size/(time3-time2)/1e6;
 
     // Print the last double generated
-    std::cout << "Last random number generated: " 
+    std::cout << "Last random number generated: "
 	      << generator.getRandomNumber() << " "
 	      << Utility::RandomNumberGenerator::getRandomNumber<double>()
 	      << std::endl
@@ -75,7 +75,7 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 	      << std::endl
 	      << "User + System time information (NOTE: MRS = Million Random "
 	      << "Numbers Per Second)\n" << std::endl
-	      << "  Wrapped Double generator:\tTime = " << time2-time1  
+	      << "  Wrapped Double generator:\tTime = " << time2-time1
 	      << " seconds " << "=> " << mdbls_per_sec_wrapped
 	      << std::endl
 	      << "  Raw Double generator:\t\tTime = " << time3-time2
@@ -83,15 +83,15 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 	      << std::endl << std::endl;
   }
 }
-      
+
 
 // Main itming function
 int main()
 {
   Utility::RandomNumberGenerator::createStreams();
-  
+
   Utility::RandomNumberGenerator::initialize();
-  
+
   int trial_size = 10000000;
 
   std::cout << "Timing generator for single history" << std::endl;
@@ -102,7 +102,7 @@ int main()
 
   std::cout << "Timing generator for 100 histories" << std::endl;
   timeGenerator( trial_size, 100 );
-  
+
   std::cout << "Timing generator for 1000 histories" << std::endl;
   timeGenerator( trial_size, 1000 );
 

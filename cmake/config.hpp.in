@@ -1,0 +1,59 @@
+#ifndef ${PROJECT_NAME}_CONFIG_HPP
+#define ${PROJECT_NAME}_CONFIG_HPP
+
+// Define if we want to use Design-by-Contract functionality. 
+#define HAVE_${PROJECT_NAME}_DBC ${HAVE_${PROJECT_NAME}_DBC}
+
+// Define if we want to use detailed logging functionality.
+#define HAVE_${PROJECT_NAME}_DETAILED_LOGGING ${HAVE_${PROJECT_NAME}_DETAILED_LOGGING}
+
+// Define if we want to do explicit template instantiation.
+#define HAVE_${PROJECT_NAME}_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION ${HAVE_${PROJECT_NAME}_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION}
+
+// Define if we want to use MPI
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MPI
+
+#ifdef HAVE_${PROJECT_NAME}_MPI
+#include <boost/mpi.hpp>
+
+// Prevent compiler warnings from unused variables when MPI is not used
+#define MPI_ENABLED_PARAMETER( mpi_enabled_var ) mpi_enabled_var
+// Prevent compiler warnings from unused variables when MPI is used
+#define MPI_DISABLED_PARAMETER( mpi_disabled_var )
+// This line will only be used if MPI is enabled
+#define MPI_ENABLED_LINE( ... ) __VA_ARGS__
+// This Line will only be used if MPI is disabled
+#define MPI_DISABLED_LINE( ... ) 
+#else
+#define MPI_ENABLED_PARAMETER( mpi_enabled_var )
+#define MPI_DISABLED_PARAMETER( mpi_disabled_var ) mpi_disabled_var
+#define MPI_ENABLED_LINE( ... )
+#define MPI_DISABLED_LINE( ... ) __VA_ARGS__
+#endif
+
+// Define if we want to use OpenMP
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_OPENMP
+
+#ifdef HAVE_${PROJECT_NAME}_OPENMP
+#include <omp.h>
+#endif
+
+// Define if we want to use HDF5
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_HDF5
+
+#ifdef HAVE_${PROJECT_NAME}_HDF5
+#include <H5Cpp.h>
+
+// Switch between variables depending on whether or not HDF5 is enabled
+#define HDF5_ENABLED_DISABLED_SWITCH( enabled_var, disabled_var ) enabled_var
+// This line will only be used if HDF5 is enabled
+#define HDF5_ENABLED_LINE( ... ) __VA_ARGS__
+#else
+#define HDF5_ENABLED_DISABLED_SWITCH( enabled_var, disabled_var ) disabled_var
+#define HDF5_ENABLED_LINE( ... )
+#endif
+
+// Define if we want to use MOAB
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MOAB
+
+#endif // end ${PROJECT_NAME}_CONFIG_HPP

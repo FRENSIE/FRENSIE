@@ -24,7 +24,7 @@
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -32,8 +32,8 @@ namespace Data{
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
 
-// Return the atomic subshells 
-const std::set<unsigned>& 
+// Return the atomic subshells
+const std::set<unsigned>&
 ENDLDataContainer::getSubshells() const
 {
   return d_subshells;
@@ -45,7 +45,7 @@ const double ENDLDataContainer::getSubshellOccupancy(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_occupancies.find( subshell )->second;
 }
@@ -56,7 +56,7 @@ const double ENDLDataContainer::getSubshellBindingEnergy(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_binding_energies.find( subshell )->second;
 }
@@ -67,7 +67,7 @@ const double ENDLDataContainer::getSubshellKineticEnergy(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_kinetic_energies.find( subshell )->second;
 }
@@ -78,7 +78,7 @@ const double ENDLDataContainer::getSubshellAverageRadius(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_average_radii.find( subshell )->second;
 }
@@ -89,7 +89,7 @@ const double ENDLDataContainer::getSubshellRadiativeLevel(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_radiative_levels.find( subshell )->second;
 }
@@ -100,112 +100,137 @@ const double ENDLDataContainer::getSubshellNonRadiativeLevel(
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_non_radiative_levels.find( subshell )->second;
 }
 
 // Return the average energy to the residual atom per initial vacancy
-const double ENDLDataContainer::getLocalDepositionPerInitialVacancy( 
+const double ENDLDataContainer::getLocalDepositionPerInitialVacancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_local_depositions.find( subshell )->second;
 }
 
 // Return the average number of photons per initial vacancy
-const double ENDLDataContainer::getAveragePhotonsPerInitialVacancy( 
+const double ENDLDataContainer::getAveragePhotonsPerInitialVacancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_average_photon_numbers.find( subshell )->second;
 }
 
 // Return the average energy of photons per initial vacancy
-const double 
-ENDLDataContainer::getAveragePhotonEnergyPerInitialVacancy( 
+const double
+ENDLDataContainer::getAveragePhotonEnergyPerInitialVacancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_average_photon_energies.find( subshell )->second;
 }
 
 // Return the average number of electrons per initial vacancy
-const double ENDLDataContainer::getAverageElectronsPerInitialVacancy( 
+const double ENDLDataContainer::getAverageElectronsPerInitialVacancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_average_electron_numbers.find( subshell )->second;
 }
 
 // Return the average energy of electrons per initial vacancy
-const double 
-ENDLDataContainer::getAverageElectronEnergyPerInitialVacancy( 
+const double
+ENDLDataContainer::getAverageElectronEnergyPerInitialVacancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_subshell_average_electron_energies.find( subshell )->second;
 }
 
+// Check if a subshell has radiative transitions
+bool ENDLDataContainer::hasRadiativeTransitions( const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_radiative_transition_probabilities.find( subshell ) !=
+    d_radiative_transition_probabilities.end();
+}
+
 // Return the radiative transition probability
 const std::map<unsigned,double>&
-ENDLDataContainer::getRadiativeTransitionProbability( 
+ENDLDataContainer::getRadiativeTransitionProbability(
     const unsigned subshell ) const
 {
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
+  testPrecondition( this->hasRadiativeTransitions( subshell ) );
 
   return d_radiative_transition_probabilities.find( subshell )->second;
 }
 
 // Return the radiative transition energy
 const std::map<unsigned,double>&
-ENDLDataContainer::getRadiativeTransitionEnergy( 
+ENDLDataContainer::getRadiativeTransitionEnergy(
     const unsigned subshell ) const
 {
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
+  testPrecondition( this->hasRadiativeTransitions( subshell ) );
 
   return d_radiative_transition_energies.find( subshell )->second;
 }
 
+// Check if a subshell has non radiative transitions
+bool ENDLDataContainer::hasNonRadiativeTransitions( const unsigned subshell ) const
+{
+  // Make sure the subshells are valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_non_radiative_transition_probabilities.find( subshell ) !=
+    d_non_radiative_transition_probabilities.end();
+}
+
 // Return the non radiative transition probability
 const std::map<unsigned,std::map<unsigned,double> >&
-ENDLDataContainer::getNonRadiativeTransitionProbability( 
+ENDLDataContainer::getNonRadiativeTransitionProbability(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
+  testPrecondition( this->hasNonRadiativeTransitions( subshell ) );
 
   return d_non_radiative_transition_probabilities.find( subshell )->second;
 }
 
 // Return the non radiative transition energy
 const std::map<unsigned,std::map<unsigned,double> >&
-ENDLDataContainer::getNonRadiativeTransitionEnergy( 
+ENDLDataContainer::getNonRadiativeTransitionEnergy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() ); 
+		    d_subshells.end() );
 
   return d_non_radiative_transition_energies.find( subshell )->second;
 }
@@ -215,7 +240,7 @@ ENDLDataContainer::getNonRadiativeTransitionEnergy(
 //---------------------------------------------------------------------------//
 
 // Set the atomic subshells
-void ENDLDataContainer::setSubshells( 
+void ENDLDataContainer::setSubshells(
     const std::set<unsigned>& subshells )
 {
   // Make sure the subshells are valid
@@ -229,7 +254,7 @@ void ENDLDataContainer::setSubshells(
 }
 
 // Set the number of electrons in subshells
-void ENDLDataContainer::setSubshellOccupancy( 
+void ENDLDataContainer::setSubshellOccupancy(
     const std::map<unsigned,double>& number_of_electrons )
 {
   d_subshell_occupancies = number_of_electrons;
@@ -306,9 +331,9 @@ void ENDLDataContainer::setAverageElectronEnergyPerInitialVacancy(
 }
 
 // Set the radiative transition probability
-void ENDLDataContainer::setRadiativeTransitionProbability( 
+void ENDLDataContainer::setRadiativeTransitionProbability(
     const unsigned subshell,
-    const std::map<unsigned,double>& 
+    const std::map<unsigned,double>&
         radiative_transition_probability )
 {
   // Make sure the subshell is valid
@@ -319,9 +344,9 @@ void ENDLDataContainer::setRadiativeTransitionProbability(
 }
 
 // Set the radiative transition energy
-void ENDLDataContainer::setRadiativeTransitionEnergy( 
+void ENDLDataContainer::setRadiativeTransitionEnergy(
     const unsigned subshell,
-    const std::map<unsigned,double>& 
+    const std::map<unsigned,double>&
         radiative_transition_energy )
 {
   // Make sure the subshell is valid
@@ -332,7 +357,7 @@ void ENDLDataContainer::setRadiativeTransitionEnergy(
 }
 
 // Set the non radiative transition probability
-void ENDLDataContainer::setNonRadiativeTransitionProbability( 
+void ENDLDataContainer::setNonRadiativeTransitionProbability(
     const unsigned subshell,
     std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_probability )
@@ -345,7 +370,7 @@ void ENDLDataContainer::setNonRadiativeTransitionProbability(
 }
 
 // Set the non radiative transition energy
-void ENDLDataContainer::setNonRadiativeTransitionEnergy( 
+void ENDLDataContainer::setNonRadiativeTransitionEnergy(
     const unsigned subshell,
     std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_energy )

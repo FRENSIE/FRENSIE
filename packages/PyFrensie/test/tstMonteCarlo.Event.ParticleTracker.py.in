@@ -1,0 +1,209 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.ParticleTracker class unit tests
+#  \file   tstMonteCarlo.Event.ParticleTracker.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.ParticleTracker class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ParticleTracker class
+class ParticleTrackerTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.ParticleTracker class"
+
+    def testGetId(self):
+        "*Test MonteCarlo.Event.ParticleTracker getId"
+        particle_tracker_0 = Event.ParticleTracker( 0, 100 )
+        self.assertEqual( particle_tracker_0.getId(), 0 )
+
+        particle_tracker_1 = Event.ParticleTracker( 1, 100 )
+        self.assertEqual( particle_tracker_1.getId(), 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that the tracked histories can be returned
+    def testGetTrackedHistories(self):
+        "*Test MonteCarlo.Event.ParticleTracker getTrackedHistories"
+        particle_tracker_a = Event.ParticleTracker( 0, 3 )
+
+        self.assertEqual( len(particle_tracker_a.getTrackedHistories()), 3 )
+        self.assertTrue( 0 in particle_tracker_a.getTrackedHistories() )
+        self.assertTrue( 1 in particle_tracker_a.getTrackedHistories() )
+        self.assertTrue( 2 in particle_tracker_a.getTrackedHistories() )
+
+        particle_tracker_b = Event.ParticleTracker( 1, [0, 2, 4, 7] )
+
+        self.assertEqual( len(particle_tracker_b.getTrackedHistories()), 4 )
+        self.assertTrue( 0 in particle_tracker_b.getTrackedHistories() )
+        self.assertTrue( 2 in particle_tracker_b.getTrackedHistories() )
+        self.assertTrue( 4 in particle_tracker_b.getTrackedHistories() )
+        self.assertTrue( 7 in particle_tracker_b.getTrackedHistories() )
+
+#-----------------------------------------------------------------------------#
+    # Check that the data is updated appropriately after events
+    def testUpdate_from_events(self):
+        "*Test MonteCarlo.Event.ParticleTracker update_from_events"
+        particle_tracker = Event.ParticleTracker( 0, 100 )
+
+        threads = 2
+
+        particle_tracker.enableThreadSupport( threads )
+
+        for j in range(threads):
+          # Initial particle state
+          if j%2 == 0:
+            particle = MonteCarlo.PhotonState( 0 )
+          else:
+            particle = MonteCarlo.ElectronState( 1 )
+
+          particle.setPosition( 2.0, 1.0, 1.0 )
+          particle.setDirection( 1.0, 0.0, 0.0 )
+          particle.setEnergy( 2.5 )
+          particle.setTime( 5e-11 )
+          particle.setWeight( 1.0 )
+
+          # Start and end positions
+          start_point = [ 1.0, 1.0, 1.0 ]
+          end_point = [ 2.0, 1.0, 1.0 ]
+
+          particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                                        start_point,
+                                                                        end_point )
+
+          particle.setAsGone()
+
+          particle_tracker.updateFromGlobalParticleGoneEvent( particle )
+          particle_tracker.commitHistoryContribution()
+
+        history_map = particle_tracker.getHistoryData()
+
+        for i in range(threads):
+          self.assertTrue( i in history_map )
+
+          cached_particle_state = None
+          if i%2 == 0:
+            self.assertTrue( MonteCarlo.PHOTON in history_map[i] )
+            self.assertTrue( 0 in history_map[i][MonteCarlo.PHOTON] )
+            self.assertTrue( 0 in history_map[i][MonteCarlo.PHOTON][0] )
+
+            cached_particle_state = history_map[i][MonteCarlo.PHOTON][0][0]
+          else:
+            self.assertTrue( MonteCarlo.ELECTRON in history_map[i] )
+            self.assertTrue( 0 in history_map[i][MonteCarlo.ELECTRON] )
+            self.assertTrue( 0 in history_map[i][MonteCarlo.ELECTRON][0] )
+
+            cached_particle_state = history_map[i][MonteCarlo.ELECTRON][0][0]
+
+          self.assertEqual( len(cached_particle_state), 2 )
+          self.assertSequenceEqual( list(cached_particle_state[0][0]), [1.0, 1.0, 1.0] )
+          self.assertSequenceEqual( list(cached_particle_state[0][1]), [1.0, 0.0, 0.0] )
+          self.assertEqual( cached_particle_state[0][2], 2.5 )
+
+          if i%2 == 0:
+            self.assertAlmostEqual( cached_particle_state[0][3],
+                                    1.664359048018479962e-11,
+                                    delta=1e-15 )
+          else:
+            self.assertAlmostEqual( cached_particle_state[0][3],
+                                    1.615259720929651211e-11,
+                                    delta=1e-15 )
+
+          self.assertEqual( cached_particle_state[0][4], 1.0 )
+          self.assertEqual( cached_particle_state[0][5], 0 )
+
+          self.assertSequenceEqual( list(cached_particle_state[1][0]), [2.0, 1.0, 1.0] )
+          self.assertSequenceEqual( list(cached_particle_state[1][1]), [1.0, 0.0, 0.0] )
+          self.assertEqual( cached_particle_state[1][2], 2.5 )
+          self.assertAlmostEqual( cached_particle_state[1][3], 5.0e-11, delta=1e-15 )
+          self.assertEqual( cached_particle_state[1][4], 1.0 )
+          self.assertEqual( cached_particle_state[1][5], 0 )
+
+#-----------------------------------------------------------------------------#
+    # Check that particle tracker data can be reset
+    def testResetData(self):
+        "*Test MonteCarlo.Event.ParticleTracker resetData"
+        particle_tracker = Event.ParticleTracker( 0, 100 )
+
+        threads = 1
+        particle_tracker.enableThreadSupport( threads )
+
+        # Initial particle state
+        particle = MonteCarlo.PhotonState( 0 )
+
+        particle.setPosition( 2.0, 1.0, 1.0 )
+        particle.setDirection( 1.0, 0.0, 0.0 )
+        particle.setEnergy( 2.5 )
+        particle.setTime( 5e-11 )
+        particle.setWeight( 1.0 )
+
+        # Start and end positions
+        start_point = [ 1.0, 1.0, 1.0 ]
+        end_point = [ 2.0, 1.0, 1.0 ]
+
+        particle_tracker.updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                                      start_point,
+                                                                      end_point )
+
+        particle.setAsGone()
+
+        particle_tracker.updateFromGlobalParticleGoneEvent( particle )
+        particle_tracker.commitHistoryContribution()
+
+        # Reset the data
+        particle_tracker.resetData()
+
+        history_map = particle_tracker.getHistoryData()
+
+        self.assertTrue( len(history_map) == 0 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ParticleTrackerTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+        # Delete the suite
+    del suite
+
+        # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.ParticleTracker.py
+#-----------------------------------------------------------------------------#

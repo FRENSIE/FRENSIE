@@ -15,7 +15,7 @@
 #include "Geometry_Matrix.hpp"
 #include "Geometry_MatrixHelpers.hpp"
 #include "Geometry_LinearAlgebraAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -31,11 +31,11 @@ IntersectionPoint<OrdinalType,ScalarType> createIntersectionPoint(
   testPrecondition( secondary_surface.isPlanar() );
   testPrecondition( tertiary_surface.isPlanar() );
   // None of the surface can be parallel (to guarantee a nonsingular system)
-  remember( Vector<ScalarType> primary_normal = 
+  remember( Vector<ScalarType> primary_normal =
 	    primary_surface.getLinearTermVector() );
   remember( Vector<ScalarType> secondary_normal =
 	    secondary_surface.getLinearTermVector() );
-  remember( Vector<ScalarType> tertiary_normal = 
+  remember( Vector<ScalarType> tertiary_normal =
 	    tertiary_surface.getLinearTermVector() );
   testPrecondition( !primary_normal.isParallel( secondary_normal ) &&
 		    !primary_normal.isAntiparallel( secondary_normal ) );
@@ -43,9 +43,9 @@ IntersectionPoint<OrdinalType,ScalarType> createIntersectionPoint(
 		    !primary_normal.isAntiparallel( tertiary_normal ) );
   testPrecondition( !secondary_normal.isParallel( tertiary_normal ) &&
 		    !secondary_normal.isAntiparallel( tertiary_normal ) );
-  
+
   // Create the system that will be solved (Ax = b)
-  Matrix<ScalarType> A = 
+  Matrix<ScalarType> A =
     createMatrixFromRows( primary_surface.getLinearTermVector(),
 			  secondary_surface.getLinearTermVector(),
 			  tertiary_surface.getLinearTermVector() );
@@ -56,7 +56,7 @@ IntersectionPoint<OrdinalType,ScalarType> createIntersectionPoint(
 
   Vector<ScalarType> x = LinearAlgebra::solveSystem( A, b );
 
-  return IntersectionPoint<OrdinalType,ScalarType>( x, 
+  return IntersectionPoint<OrdinalType,ScalarType>( x,
 						    primary_surface.getId(),
 						    secondary_surface.getId(),
 						    tertiary_surface.getId() );

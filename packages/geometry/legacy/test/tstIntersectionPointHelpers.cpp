@@ -40,7 +40,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPointHelpers,
 {
   typedef Geometry::Surface<OrdinalType,ScalarType> Surface;
   typedef Geometry::IntersectionPoint<OrdinalType,ScalarType> IntersectionPoint;
-  
+
   // Create three intersecting surfaces
   // x = 2
   Surface primary_surface( 1,
@@ -55,14 +55,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( IntersectionPointHelpers,
 			    0, 0, 1,
 			    0 );
 
-  IntersectionPoint test_point = 
+  IntersectionPoint test_point =
     Geometry::createIntersectionPoint( primary_surface,
 				     secondary_surface,
 				     tertiary_surface );
 
   TEST_EQUALITY_CONST( test_point[0], 2.0 );
   TEST_EQUALITY_CONST( test_point[1], 2.0 );
-  TEST_EQUALITY_CONST( test_point[2], 0.0 );  
+  TEST_EQUALITY_CONST( test_point[2], 0.0 );
 }
 
 UNIT_TEST_INSTANTIATION( IntersectionPointHelpers, createIntersectionPoint );

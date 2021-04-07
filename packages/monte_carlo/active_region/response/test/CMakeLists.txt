@@ -1,0 +1,31 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_active_region_response)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SinglePhaseSpaceDimensionParticleResponseFunction DEPENDS tstSinglePhaseSpaceDimensionParticleResponseFunction.cpp)
+FRENSIE_ADD_TEST(SinglePhaseSpaceDimensionParticleResponseFunction)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FullPhaseSpaceParticleResponseFunction DEPENDS tstFullPhaseSpaceParticleResponseFunction)
+FRENSIE_ADD_TEST(FullPhaseSpaceParticleResponseFunction)
+
+FRENSIE_ADD_TEST_EXECUTABLE(MaterialParticleResponseFunction
+  DEPENDS tstMaterialParticleResponseFunction
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(MaterialParticleResponseFunction
+  ACE_LIB_DEPENDS 8000.12p
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+FRENSIE_ADD_TEST_EXECUTABLE(MaterialComponentParticleResponseFunction
+  DEPENDS tstMaterialComponentParticleResponseFunction
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(MaterialComponentParticleResponseFunction
+  ACE_LIB_DEPENDS 8000.12p
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleResponseFunctionArithmeticOperators DEPENDS tstParticleResponseFunctionArithmeticOperators.cpp)
+FRENSIE_ADD_TEST(ParticleResponseFunctionArithmeticOperators)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardParticleResponse DEPENDS tstStandardParticleResponse.cpp)
+FRENSIE_ADD_TEST(StandardParticleResponse)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_active_region_response)

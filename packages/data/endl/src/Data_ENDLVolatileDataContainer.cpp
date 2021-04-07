@@ -18,9 +18,8 @@ ENDLVolatileDataContainer::ENDLVolatileDataContainer()
 
 // Constructor (from saved archive)
 ENDLVolatileDataContainer::ENDLVolatileDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
-  : ENDLDataContainer( archive_name, archive_type )
+                           const boost::filesystem::path& file_name_with_path )
+  : ENDLDataContainer( file_name_with_path )
 { /* ... */ }
 
 } // end Data namespace

@@ -39,7 +39,7 @@ Vector<ScalarType> solveSystem( const Matrix<ScalarType> &A,
 				const Vector<ScalarType> &b );
 
 /*! Compute the eigenvalues and eigenvectors of a symmetric 3x3 matrix
- * 
+ *
  * A symmetric matrix must be given so that the eigenvalues will be real.
  */
 template<typename ScalarType>
@@ -57,7 +57,7 @@ Vector<ScalarType> computeEigenvalues( const Matrix<ScalarType> &matrix );
 
 //! Align eigenvectors with desired axis
 template<typename ScalarType>
-void realignEigenvectors( 
+void realignEigenvectors(
 			Vector<ScalarType> &eigenvalues,
 			Matrix<ScalarType> &eigenvectors,
 			const Utility::Axis alignment_axis = Utility::Z_AXIS );

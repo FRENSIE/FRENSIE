@@ -1,0 +1,432 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   native_endl_to_native_epr.py
+##! \author Alex Robinson
+##! \brief  tool to convert native endl data files to native format
+##!
+##---------------------------------------------------------------------------##
+
+import sys
+from os import path
+from os import getcwd
+from optparse import *
+import PyFrensie.DataGen as DataGen
+import PyFrensie.DataGen.ENDL as DataGenENDL
+import PyFrensie.DataGen.ElectronPhoton as DataGenEP
+import PyFrensie.Data as Data
+import PyFrensie.Data.ENDL as ENDL
+import PyFrensie.Data.ACE as ACE
+import PyFrensie.MonteCarlo as MonteCarlo
+import PyFrensie.Utility
+import PyFrensie.Data as Data
+import PyFrensie.Data.Native as Native
+
+# Verify the user specified photon and electron limits
+def verifyEnergyLimits( min_photon_energy,
+                        max_photon_energy,
+                        min_electron_energy,
+                        max_electron_energy ):
+    if min_photon_energy is None:
+        if not max_photon_energy is None or not min_electron_energy is None or not max_electron_energy is None:
+            print "Either no energy limits can be set or all of them must be set!"
+            sys.exit(1)
+    else:
+        if max_photon_energy is None or min_electron_energy is None or max_electron_energy is None:
+            print "Either no energy limits can be set or all of them must be set!"
+            sys.exit(1)
+
+# Create the data generator
+def createGenerator( endl_file_name,
+                     ace_table_name,
+                     db_name,
+                     min_photon_energy,
+                     max_photon_energy,
+                     min_electron_energy,
+                     max_electron_energy ):
+
+    # Open the endl data container
+    endl_data_container = ENDL.ENDLDataContainer( endl_file_name )
+
+    # Create the data generator
+    if ace_table_name is None:
+        if min_photon_energy is None:
+            generator = DataGenEP.ENDLElectronPhotonRelaxationDataGenerator( endl_data_container )
+        else:
+            generator = DataGenEP.ENDLElectronPhotonRelaxationDataGenerator( endl_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
+    else:
+        # Open the database so that we can load the requested ace table
+        database = Data.ScatteringCenterPropertiesDatabase( db_name )
+
+        # Parse the zaid and table key
+        zaid,table_version = ace_table_name.split(".")
+
+        zaid = Data.ZAID( zaid )
+
+        if table_version.find("p") == -1:
+            print "Only ACE EPR tables can be specified (.12p or .14p)!"
+            sys.exit(1)
+
+        table_version = int( table_version.rstrip("p") )
+
+        if table_version < 12:
+            print "Only ACE EPR tables can be specified (.12p or .14p)!"
+            sys.exit(1)
+
+        photoatomic_data_properties = database.getAtomProperties( zaid ).getPhotoatomicDataProperties( Data.PhotoatomicDataProperties.ACE_EPR_FILE, table_version )
+
+        ace_file = ACE.ACEFileHandler( path.dirname(db_name) + "/" + photoatomic_data_properties.filePath(),
+                                       photoatomic_data_properties.tableName(),
+                                       photoatomic_data_properties.fileStartLine() )
+        xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(),
+                                                 ace_file.getTableJXSArray(),
+                                                 ace_file.getTableXSSArray() )
+        if min_photon_energy is None:
+            generator = DataGenEP.ACEAndENDLElectronPhotonRelaxationDataGenerator( xss_extractor, endl_data_container )
+        else:
+            generator = DataGenEP.ACEAndENDLElectronPhotonRelaxationDataGenerator( xss_extractor, endl_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
+
+    return generator
+
+# Set the generator options
+def setGeneratorOptions( generator,
+                         photon_grid_convergence_tol,
+                         photon_abs_diff_tol,
+                         photon_grid_dist_tol,
+                         electron_grid_convergence_tol,
+                         electron_abs_diff_tol,
+                         electron_grid_dist_tol,
+                         occupation_number_eval_tol,
+                         subshell_incoherent_eval_tol,
+                         photon_threshold_energy_nudge_factor,
+                         cutoff_angle_cosine,
+                         num_moment_preserving_angles,
+                         tabular_evaluation_tol,
+                         electron_two_d_interp_policy,
+                         electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
+                         notes ):
+
+    # Set the generator options
+    if not photon_grid_convergence_tol is None:
+        generator.setDefaultPhotonGridConvergenceTolerance( photon_grid_convergence_tol )
+
+    if not photon_abs_diff_tol is None:
+        generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( photon_abs_diff_tol )
+
+    if not photon_grid_dist_tol is None:
+        generator.setDefaultPhotonGridDistanceTolerance( photon_grid_dist_tol )
+
+    if not electron_grid_convergence_tol is None:
+        generator.setDefaultElectronGridConvergenceTolerance( electron_grid_convergence_tol )
+
+    if not electron_abs_diff_tol is None:
+        generator.setDefaultElectronGridAbsoluteDifferenceTolerance( electron_abs_diff_tol )
+
+    if not electron_grid_dist_tol is None:
+        generator.setDefaultElectronGridDistanceTolerance( electron_grid_dist_tol )
+
+    if not occupation_number_eval_tol is None:
+        generator.setOccupationNumberEvaluationTolerance( occupation_number_eval_tol )
+
+    if not subshell_incoherent_eval_tol is None:
+        generator.setSubshellIncoherentEvaluationTolerance( subshell_incoherent_eval_tol )
+
+    if not photon_threshold_energy_nudge_factor is None:
+        generator.setPhotonThresholdEnergyNudgeFactor( photon_threshold_energy_nudge_factor )
+
+    if not cutoff_angle_cosine is None:
+        generator.setCutoffAngleCosine( cutoff_angle_cosine )
+
+    if not num_moment_preserving_angles is None:
+        generator.setNumberOfMomentPreservingAngles( num_moment_preserving_angles )
+
+    if not tabular_evaluation_tol is None:
+        generator.setTabularEvaluationTolerance( tabular_evaluation_tol )
+
+    if not electron_two_d_interp_policy is None:
+        if electron_two_d_interp_policy == "LinLinLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLinLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLogLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLOGLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLinLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLINLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLogLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLinLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLINLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLogLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLOGLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLogLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        else:
+            print "Electron 2D interpolation policy", electron_two_d_interp_policy, "is not valid!"
+            sys.exit(1)
+
+    if not electron_two_d_grid_policy is None:
+        if electron_two_d_grid_policy == "CorrelatedGrid":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
+        elif electron_two_d_grid_policy == "UnitBaseCorrelatedGrid":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.MODIFIED_TWO_D_UNION )
+        elif electron_two_d_grid_policy == "DirectGrid":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.DIRECT_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
+        elif electron_two_d_grid_policy == "UnitBaseGrid":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+            generator.setElectronElasticSamplingMethod( MonteCarlo.TWO_D_UNION )
+        else:
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
+            sys.exit(1)
+
+    if electron_secondary_grid_refinement is True:
+      generator.setRefineSecondaryElectronGridsModeOn()
+
+    if not notes is None:
+        generator.setNotes( notes )
+
+# Generate the data
+def generateData( endl_file_name,
+                  output_file_name,
+                  ace_table_name = None,
+                  db_name = None,
+                  overwrite = False,
+                  notes = None,
+                  min_photon_energy = None,
+                  max_photon_energy = None,
+                  min_electron_energy = None,
+                  max_electron_energy = None,
+                  photon_grid_convergence_tol = None,
+                  photon_grid_abs_diff_tol = None,
+                  photon_grid_dist_tol = None,
+                  electron_grid_convergence_tol = None,
+                  electron_grid_abs_diff_tol = None,
+                  electron_grid_dist_tol = None,
+                  occupation_number_eval_tol = None,
+                  subshell_incoherent_eval_tol = None,
+                  photon_threshold_energy_nudge_factor = None,
+                  cutoff_angle_cosine = None,
+                  num_moment_preserving_angles = None,
+                  tabular_evaluation_tol = None,
+                  electron_secondary_grid_refinement = False,
+                  electron_two_d_interp_policy = None,
+                  electron_two_d_grid_policy = None ):
+
+    # Verify the energy limits
+    verifyEnergyLimits( min_photon_energy,
+                        max_photon_energy,
+                        min_electron_energy,
+                        max_electron_energy )
+
+    # Create the generator
+    generator = createGenerator( endl_file_name,
+                                 ace_table_name,
+                                 db_name,
+                                 min_photon_energy,
+                                 max_photon_energy,
+                                 min_electron_energy,
+                                 max_electron_energy )
+
+    # Set the generator options
+    setGeneratorOptions( generator,
+                         photon_grid_convergence_tol,
+                         photon_grid_abs_diff_tol,
+                         photon_grid_dist_tol,
+                         electron_grid_convergence_tol,
+                         electron_grid_abs_diff_tol,
+                         electron_grid_dist_tol,
+                         occupation_number_eval_tol,
+                         subshell_incoherent_eval_tol,
+                         photon_threshold_energy_nudge_factor,
+                         cutoff_angle_cosine,
+                         num_moment_preserving_angles,
+                         tabular_evaluation_tol,
+                         electron_two_d_interp_policy,
+                         electron_two_d_grid_policy,
+                         electron_secondary_grid_refinement,
+                         notes )
+
+    # Populate the data
+    generator.populateEPRDataContainer()
+
+    # Save the generated data
+    generator.getDataContainer().saveToFile( output_file_name, overwrite )
+
+    # Return the shared data container
+    return generator.getSharedDataContainer()
+
+# Update the database
+def addToDatabase( path_to_data_file,
+                   path_to_database,
+                   database,
+                   atomic_number,
+                   atomic_weight,
+                   force_update,
+                   database_save_required,
+                   version = 0 ):
+
+    zaid = Data.ZAID(atomic_number*1000)
+
+    if not database.doAtomPropertiesExist( zaid.atom() ):
+        database.initializeAtomProperties( zaid.atom(), atomic_weight )
+
+    atom_properties = database.getAtomProperties( zaid.atom() )
+
+    relative_path = path.relpath( path_to_data_file, path_to_database )
+
+    photoatomic_data_properties = \
+                Native.NativeEPRPhotoatomicDataProperties( atomic_weight,
+                                                           relative_path,
+                                                           version,
+                                                           zaid.atom() )
+
+    electroatomic_data_properties = \
+                Native.NativeEPRElectroatomicDataProperties( atomic_weight,
+                                                             relative_path,
+                                                             version,
+                                                             zaid.atom() )
+
+    # Check if the native file data has been added to the database
+    if atom_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, version ):
+        if force_update:
+            print "Warning: native photoatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
+            atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
+            database_save_required = True
+    else:
+        atom_properties.setPhotoatomicDataProperties( photoatomic_data_properties )
+        database_save_required = True
+
+    # Check if the native file exists
+    if atom_properties.electroatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE, version ):
+        if force_update:
+            print "Warning: native electroatomic data properties for atomic number", atomic_number, "and version", version, "already exist! They will be overwritten."
+            atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
+            database_save_required = True
+    else:
+        atom_properties.setElectroatomicDataProperties( electroatomic_data_properties )
+        database_save_required = True
+
+    return database_save_required
+
+
+if __name__ == "__main__":
+
+    # Parse the command-line arguments
+    parser = OptionParser()
+    parser.add_option("-e", "--endl_file_name", type="string", dest="endl_file_name",
+                      help="the endl file name (with extension)")
+    parser.add_option("-a", "--ace_table_name", type="string", dest="ace_table_name",
+                      help="the ace table name")
+    parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                      help="the database name (with extension)")
+    parser.add_option("-o", "--output_file_name", type="string", dest="output_file_name",
+                      help="the output file name (with extension)")
+    parser.add_option("--version", type="int", dest="version",
+                      help="the output file version", default=0)
+    parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
+                      help="Overwrite an existing output file")
+    parser.add_option("--add_to_db", action="store_true", dest="add_to_db", default=False,
+                      help="Add the container to the database" )
+    parser.add_option("--notes", type="string", dest="notes",
+                      help="data generation notes")
+    parser.add_option("--min_photon_energy", type="float", dest="min_photon_energy",
+                      help="the min photon energy")
+    parser.add_option("--max_photon_energy", type="float", dest="max_photon_energy",
+                      help="the max photon energy")
+    parser.add_option("--min_electron_energy", type="float", dest="min_electron_energy",
+                      help="the min electron energy")
+    parser.add_option("--max_electron_energy", type="float", dest="max_electron_energy",
+                      help="the max electron energy")
+    parser.add_option("--photon_grid_convergence_tol", type="float", dest="photon_grid_convergence_tol",
+                      help="the default photon grid convergence tolerance")
+    parser.add_option("--photon_grid_abs_diff_tol", type="float", dest="photon_grid_abs_diff_tol",
+                      help="the default photon grid absolute difference tolerance")
+    parser.add_option("--photon_grid_dist_tol", type="float", dest="photon_grid_dist_tol",
+                      help="the default photon grid distance tolerance")
+    parser.add_option("--electron_grid_convergence_tol", type="float", dest="electron_grid_convergence_tol",
+                      help="the default electron grid convergence tolerance")
+    parser.add_option("--electron_grid_abs_diff_tol", type="float", dest="electron_grid_abs_diff_tol",
+                      help="the default electron grid absolute difference tolerance")
+    parser.add_option("--electron_grid_dist_tol", type="float", dest="electron_grid_dist_tol",
+                      help="the default electron grid distance tolerance")
+    parser.add_option("--occupation_number_eval_tol", type="float", dest="occupation_number_eval_tol",
+                      help="the occupation number evaluation tolerance")
+    parser.add_option("--subshell_incoherent_eval_tol", type="float", dest="subshell_incoherent_eval_tol",
+                      help="the subshell incoherent evaluation tolerance")
+    parser.add_option("--photon_threshold_energy_nudge_factor", type="float", dest="photon_threshold_energy_nudge_factor",
+                      help="the photon threshold energy nudge factor")
+    parser.add_option("--cutoff_angle_cosine", type="float", dest="cutoff_angle_cosine",
+                      help="The electron cutoff angle cosine")
+    parser.add_option("--num_moment_preserving_angles", type="int", dest="num_moment_preserving_angles",
+                      help="The number of moment preserving angles for electrons")
+    parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
+                      help="The tabular evaluation tolerance")
+    parser.add_option("--refine_electron_secondary_grid", action="store_true", dest="electron_secondary_grid_refinement", default=False,
+                      help="Refine the electron secondary grids")
+    parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
+                      help="The electron 2D interpolation policy (e.g. LogLogLog)")
+    parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
+                      help="The electron bivariate grid policy")
+    options,args = parser.parse_args()
+
+    # The endl file name and the output file name must be specified
+    if options.endl_file_name is None:
+        print "The endl file name must be specified!"
+        sys.exit(1)
+
+    if options.output_file_name is None:
+        print "The output file name must be specified!"
+        sys.exit(1)
+
+    data_container = \
+    generateData( options.endl_file_name,
+                  options.output_file_name,
+                  options.ace_table_name,
+                  options.db_name,
+                  options.overwrite,
+                  options.notes,
+                  options.min_photon_energy,
+                  options.max_photon_energy,
+                  options.min_electron_energy,
+                  options.max_electron_energy,
+                  options.photon_grid_convergence_tol,
+                  options.photon_grid_abs_diff_tol,
+                  options.photon_grid_dist_tol,
+                  options.electron_grid_convergence_tol,
+                  options.electron_grid_abs_diff_tol,
+                  options.electron_grid_dist_tol,
+                  options.occupation_number_eval_tol,
+                  options.subshell_incoherent_eval_tol,
+                  options.photon_threshold_energy_nudge_factor,
+                  options.cutoff_angle_cosine,
+                  options.num_moment_preserving_angles,
+                  options.tabular_evaluation_tol,
+                  options.electron_secondary_grid_refinement,
+                  options.electron_two_d_interp_policy,
+                  options.electron_two_d_grid_policy )
+
+    # Add the container to the database
+    if options.add_to_db:
+        if options.db_name is None:
+            print "The database name must be supplied!"
+            sys.exit(1)
+
+        database = Data.ScatteringCenterPropertiesDatabase( options.db_name )
+
+        addToDatabase( options.output_file_name,
+                       path.dirname( options.db_name ),
+                       database,
+                       data_container.getAtomicNumber(),
+                       data_container.getAtomicWeight(),
+                       True,
+                       True,
+                       options.version )
+
+        database.saveToFile( options.db_name, True )
+
+##---------------------------------------------------------------------------##
+## native_endl_to_native_epr.py
+##---------------------------------------------------------------------------##

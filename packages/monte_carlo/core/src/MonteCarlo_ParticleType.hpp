@@ -9,112 +9,115 @@
 #ifndef MONTE_CARLO_PARTICLE_TYPE_HPP
 #define MONTE_CARLO_PARTICLE_TYPE_HPP
 
-// HDF5 Includes
-#include <H5Cpp.h>
-
 // FRENSIE Includes
-#include "Utility_HDF5TypeTraits.hpp"
-#include "Utility_ContractException.hpp"
+#include "Geometry_ParticleType.hpp"
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
+/*! The particle type enum
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum ParticleType{
-  PHOTON = 0,
+  ParticleType_START = 0,
+  PHOTON = ParticleType_START,
   NEUTRON,
   ELECTRON,
+  POSITRON,
   ADJOINT_PHOTON,
-  ADJOINT_PHOTON_PROBE,
   ADJOINT_NEUTRON,
-  ADJOINT_NEUTRON_PROBE,
   ADJOINT_ELECTRON,
-  ADJOINT_ELECTRON_PROBE,
-  UNKNOWN_PARTICLE,
-  PARTICLE_end
+  ADJOINT_POSITRON,
+  ParticleType_END
 };
 
-//! Test if the particle type name is valid
-bool isValidParticleTypeName( const std::string& particle_type_name );
+//! Convert the geometry particle type enum to a ParticleType enum
+ParticleType convertGeometryParticleTypeEnumToParticleTypeEnum(
+                                  const Geometry::ParticleType particle_type );
 
-//! Convert shorthand particle type name to verbose particle type name
-std::string convertShortParticleTypeNameToVerboseParticleTypeName(
-				 const std::string& short_particle_type_name );
+//! Convert shorthand particle type name to a particle type
+ParticleType convertShortParticleTypeNameToParticleTypeEnum(
+                                 const std::string& short_particle_type_name );
 
-//! Convert the particle type name to a ParticleType enum
-ParticleType convertParticleTypeNameToParticleTypeEnum( 
-				       const std::string& particle_type_name );
-
-//! Convert the ParticleType enum to a string
-std::string convertParticleTypeEnumToString( const ParticleType particle_type);
-
-//! Stream operator for print ParticleType enums
-inline std::ostream& operator<<( std::ostream& os,
-				 const ParticleType particle_type )
-{
-  os << convertParticleTypeEnumToString( particle_type );
-  return os;
-}
+//! Get the particle type enum from an int
+ParticleType convertIntToParticleType( const int raw_particle_type );
 
 } // end MonteCarlo namespace
 
 namespace Utility{
 
-/*! The specialization of the Utility::HDF5TypeTraits for the 
- * MonteCarlo::ParticleStateCore struct
- * \ingroup hdf5_type_traits
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::ParticleType
+ * \ingroup to_string_traits
  */
 template<>
-struct HDF5TypeTraits<MonteCarlo::ParticleType>
+struct ToStringTraits<MonteCarlo::ParticleType>
 {
-  static inline H5::EnumType dataType()
-  {
-    H5::EnumType hdf5_particle_type( sizeof( MonteCarlo::ParticleType ) );
+  //! Convert a MonteCarlo::ParticleType to a string
+  static std::string toString( const MonteCarlo::ParticleType type );
 
-    MonteCarlo::ParticleType particle_type = MonteCarlo::PHOTON;
-    
-    hdf5_particle_type.insert( "PHOTON", &particle_type );
-    
-    particle_type = MonteCarlo::NEUTRON;
-    
-    hdf5_particle_type.insert( "NEUTRON", &particle_type );
-    
-    particle_type = MonteCarlo::ELECTRON;
-    
-    hdf5_particle_type.insert( "ELECTRON", &particle_type );
-    
-    particle_type = MonteCarlo::ADJOINT_PHOTON;
-
-    hdf5_particle_type.insert( "ADJOINT_PHOTON", &particle_type );
-    
-    particle_type = MonteCarlo::ADJOINT_NEUTRON;
-    
-    hdf5_particle_type.insert( "ADJOINT_NEUTRON", &particle_type );
-
-    particle_type = MonteCarlo::ADJOINT_ELECTRON;
-    
-    hdf5_particle_type.insert( "ADJOINT_ELECTRON", &particle_type );
-    
-    return hdf5_particle_type;
-  }
-
-  static inline std::string name()
-  {
-    return "ParticleType";
-  }
-
-  //! Returns the zero value for this type
-  static inline MonteCarlo::ParticleType zero()
-  {
-    return MonteCarlo::PHOTON;
-  }
-
-  //! Returns the unity value for this type
-  static inline MonteCarlo::ParticleType one()
-  {
-    return MonteCarlo::NEUTRON;
-  }
+  //! Place the MonteCarlo::ParticleType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::ParticleType type );
 };
-
+  
 } // end Utility namespace
+
+namespace std{
+
+//! Stream operator for print ParticleType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const MonteCarlo::ParticleType particle_type )
+{
+  os << Utility::toString( particle_type );
+  return os;
+}
+  
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::ParticleType enum
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::ParticleType& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)type;
+  else
+  {
+    int raw_type;
+
+    archive & raw_type;
+
+    switch( raw_type )
+    {
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::PHOTON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::NEUTRON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ELECTRON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::POSITRON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ADJOINT_PHOTON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ADJOINT_NEUTRON, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::ADJOINT_ELECTRON, int, type );
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Cannot convert the deserialized raw particle type "
+                         "to its corresponding enum value!" );
+      }
+    }
+  }    
+}
+  
+} // end serialization namespace
+
+} // end boost namespace
 
 #endif // end MONTE_CARLO_PARTICLE_TYPE_HPP
 

@@ -10,13 +10,13 @@
 #define GEOMETRY_MATRIX_HELPERS_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
 // Create a 3x3 matrix
 template<typename ScalarType>
-Matrix<ScalarType> createMatrix( 
+Matrix<ScalarType> createMatrix(
 	    const ScalarType a00, const ScalarType a01, const ScalarType a02,
 	    const ScalarType a10, const ScalarType a11, const ScalarType a12,
 	    const ScalarType a20, const ScalarType a21, const ScalarType a22 )
@@ -29,11 +29,11 @@ Matrix<ScalarType> createMatrix(
 // Create a 3x3 symmetric matrix
 template<typename ScalarType>
 Matrix<ScalarType> createMatrix(
-	    const ScalarType a00, 
+	    const ScalarType a00,
 	    const ScalarType a10, const ScalarType a11,
 	    const ScalarType a20, const ScalarType a21, const ScalarType a22 )
 {
-  return Matrix<ScalarType>( a00, 
+  return Matrix<ScalarType>( a00,
 			     a10, a11,
 			     a20, a21, a22 );
 }
@@ -150,12 +150,12 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
 				   const Vector<ScalarType> &final_direction )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
+
   // The initial direction must be a unit vector
-  testPrecondition( ST::magnitude( initial_direction.normTwo() - 
+  testPrecondition( ST::magnitude( initial_direction.normTwo() -
 				   ST::one() ) < ST::prec() );
   // The final direction must be a unit vector
-  testPrecondition( ST::magnitude( final_direction.normTwo() - 
+  testPrecondition( ST::magnitude( final_direction.normTwo() -
 				   ST::one() ) < ST::prec() );
   // Both directions must be three space vectors
   testPrecondition( initial_direction.length() == 3 );
@@ -165,7 +165,7 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
   ScalarType v_i = initial_direction[1];
   ScalarType w_i = initial_direction[2];
   ScalarType arg_i = ST::squareroot( ST::one() - w_i*w_i );
-  
+
   ScalarType u_f = final_direction[0];
   ScalarType v_f = final_direction[1];
   ScalarType w_f = final_direction[2];
@@ -177,7 +177,7 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
   // Create a rotation matrix for rotating the initial direction to the z-axis
   if( ST::magnitude( ST::magnitude( w_i ) - ST::one() ) > ST::prec() )
   {
-    initial_dir_to_zaxis_matrix = createMatrix( 
+    initial_dir_to_zaxis_matrix = createMatrix(
 					  u_i*w_i/arg_i, v_i*w_i/arg_i, -arg_i,
 					  -v_i/arg_i,    u_i/arg_i, ST::zero(),
 					  u_i,           v_i,           w_i );
@@ -217,14 +217,14 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
   }
 
   Matrix<ScalarType> rotation_matrix;
-  
+
   rotation_matrix.multiply( ST::one(),
 			    zaxis_to_final_dir_matrix,
 			    false,
 			    initial_dir_to_zaxis_matrix,
 			    false,
 			    ST::zero() );
-  
+
   // The rotation matrix must be orthonormal
   testPostcondition( initial_dir_to_zaxis_matrix.isOrthonormal() );
   testPostcondition( zaxis_to_final_dir_matrix.isOrthonormal() );

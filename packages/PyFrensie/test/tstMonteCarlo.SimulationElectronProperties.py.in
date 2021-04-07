@@ -1,0 +1,329 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationElectronProperties class unit tests
+#  \file   tstMonteCarlo.SimulationElectronProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationElectronProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationElectronProperties class
+class SimulationElectronPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationElectronProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationElectronProperties defaults"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        self.assertEqual( properties.getMinElectronEnergy(), 1.e-4 )
+        self.assertEqual( properties.getMaxElectronEnergy(), 20.0 )
+        self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(),
+                          MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+        self.assertTrue(properties.isAtomicRelaxationModeOn() )
+        self.assertTrue(properties.isElasticModeOn() )
+        self.assertEqual( properties.getElasticElectronDistributionMode(),
+                          MonteCarlo.COUPLED_DISTRIBUTION )
+        self.assertEqual( properties.getCoupledElasticSamplingMode(),
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
+        self.assertEqual( properties.getElasticCutoffAngleCosine(), 1.0 )
+        self.assertTrue(properties.isElectroionizationModeOn() )
+        self.assertEqual( properties.getElectroionizationSamplingMode(),
+                          MonteCarlo.KNOCK_ON_SAMPLING )
+        self.assertTrue(properties.isBremsstrahlungModeOn() )
+        self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.TWOBS_DISTRIBUTION )
+        self.assertTrue(properties.isAtomicExcitationModeOn() )
+        self.assertEqual( properties.getElectronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getElectronRouletteSurvivalWeight(), 0.0 )
+
+    def testSetMinElectronEnergy(self):
+        "*Test MonteCarlo.SimulationElectronProperties setMinElectronEnergy"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setMinElectronEnergy( 1e-2 )
+        self.assertEqual( properties.getMinElectronEnergy(), 1e-2 )
+
+    def testSetMaxElectronEnergy(self):
+        "*Test MonteCarlo.SimulationElectronProperties setMaxElectronEnergy"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setMaxElectronEnergy( 15.0 )
+        self.assertEqual( properties.getMaxElectronEnergy(), 15.0 )
+
+    def testSetElectronEvaluationTolerance(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronEvaluationTolerance"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setElectronEvaluationTolerance( 1e-4 )
+        self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-4 )
+
+    def testSetElectronTwoDInterpPolicy(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronTwoDInterpPolicy"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(),
+                          MonteCarlo.LOGLOGLOG_INTERPOLATION )
+
+        interp = MonteCarlo.LINLINLIN_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LINLINLOG_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LINLOGLIN_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LOGLINLIN_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LINLOGLOG_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LOGLINLOG_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LOGLOGLIN_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+        interp = MonteCarlo.LOGLOGLOG_INTERPOLATION
+        properties.setElectronTwoDInterpPolicy( interp )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(), interp )
+
+    def testSetElectronTwoDGridPolicy(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronTwoDGridPolicy"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+
+        sample_type = MonteCarlo.CORRELATED_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
+
+        sample_type = MonteCarlo.DIRECT_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
+
+        sample_type = MonteCarlo.UNIT_BASE_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
+
+        sample_type = MonteCarlo.UNIT_BASE_CORRELATED_GRID
+        properties.setElectronTwoDGridPolicy( sample_type )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(), sample_type )
+
+    def testSetAtomicRelaxationModeOffOn(self):
+        "*Test MonteCarlo.SimulationElectronProperties setAtomicRelaxationModeOffO"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setAtomicRelaxationModeOff()
+        self.assertFalse(properties.isAtomicRelaxationModeOn() )
+
+        properties.setAtomicRelaxationModeOn()
+        self.assertTrue(properties.isAtomicRelaxationModeOn() )
+
+    def testSetElasticModeOffOn(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElasticModeOff"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setElasticModeOff()
+        self.assertFalse(properties.isElasticModeOn() )
+
+        properties.setElasticModeOn()
+        self.assertTrue(properties.isElasticModeOn() )
+
+    def testSetElasticElectronDistributionMode(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElasticElectronDistributionMode"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        self.assertEqual( properties.getElasticElectronDistributionMode(),
+                          MonteCarlo.COUPLED_DISTRIBUTION )
+
+        mode = MonteCarlo.DECOUPLED_DISTRIBUTION
+        properties.setElasticElectronDistributionMode( mode )
+        self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
+
+        mode = MonteCarlo.HYBRID_DISTRIBUTION
+        properties.setElasticElectronDistributionMode( mode )
+        self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
+
+        mode = MonteCarlo.CUTOFF_DISTRIBUTION
+        properties.setElasticElectronDistributionMode( mode )
+        self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
+
+        mode = MonteCarlo.SCREENED_RUTHERFORD_DISTRIBUTION
+        properties.setElasticElectronDistributionMode( mode )
+        self.assertEqual( properties.getElasticElectronDistributionMode(), mode )
+
+    def testSetCoupledElasticSamplingMode(self):
+        "*Test MonteCarlo.SimulationElectronProperties setCoupledElasticSamplingMode"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        self.assertEqual( properties.getCoupledElasticSamplingMode(),
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
+
+        mode = MonteCarlo.ONE_D_UNION
+        properties.setCoupledElasticSamplingMode( mode )
+        self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
+
+        mode = MonteCarlo.TWO_D_UNION
+        properties.setCoupledElasticSamplingMode( mode )
+        self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
+
+        mode = MonteCarlo.TWO_D_UNION
+        properties.setCoupledElasticSamplingMode( mode )
+        self.assertEqual( properties.getCoupledElasticSamplingMode(), mode )
+
+    def testSetElasticCutoffAngleCosine(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElasticCutoffAngleCosine"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setElasticCutoffAngleCosine( 0.9 )
+        self.assertEqual( properties.getElasticCutoffAngleCosine(), 0.9 )
+
+    def testSetElectroionizationModeOffOn(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectroionizationModeOffOn"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setElectroionizationModeOff()
+        self.assertFalse(properties.isElectroionizationModeOn() )
+
+        properties.setElectroionizationModeOn()
+        self.assertTrue(properties.isElectroionizationModeOn() )
+
+    def testSetElectroionizationSamplingMode(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectroionizationSamplingMode"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        function = MonteCarlo.OUTGOING_ENERGY_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
+
+        function = MonteCarlo.OUTGOING_ENERGY_RATIO_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
+
+        function = MonteCarlo.KNOCK_ON_SAMPLING
+        properties.setElectroionizationSamplingMode( function )
+        self.assertEqual( properties.getElectroionizationSamplingMode(), function )
+
+    def testSetBremsstrahlungModeOffOn(self):
+        "*Test MonteCarlo.SimulationElectronProperties setBremsstrahlungModeOffOn"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setBremsstrahlungModeOff()
+        self.assertFalse(properties.isBremsstrahlungModeOn() )
+
+        properties.setBremsstrahlungModeOn()
+        self.assertTrue(properties.isBremsstrahlungModeOn() )
+
+    def testSetBremsstrahlungAngularDistributionFunction_Dipole(self):
+        "*Test MonteCarlo.SimulationElectronProperties setBremsstrahlungAngularDistributionFunction"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        function = MonteCarlo.DIPOLE_DISTRIBUTION
+        properties.setBremsstrahlungAngularDistributionFunction( function )
+
+        self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.DIPOLE_DISTRIBUTION )
+
+
+    def testSetBremsstrahlungAngularDistributionFunction_Tabular(self):
+        "*Test MonteCarlo.SimulationElectronProperties setBremsstrahlungAngularDistributionFunction"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        function = MonteCarlo.TABULAR_DISTRIBUTION
+        properties.setBremsstrahlungAngularDistributionFunction( function )
+
+        self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.TABULAR_DISTRIBUTION )
+
+    def testSetAtomicExcitationModeOffOn(self):
+        "*Test MonteCarlo.SimulationElectronProperties setAtomicExcitationModeOffOn"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        properties.setAtomicExcitationModeOff()
+        self.assertFalse(properties.isAtomicExcitationModeOn() )
+
+        properties.setAtomicExcitationModeOn()
+        self.assertTrue(properties.isAtomicExcitationModeOn() )
+
+    def testGetElectronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        weight = 1e-14
+        properties.setElectronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getElectronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetElectronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationElectronProperties setElectronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationElectronProperties()
+
+        weight = 1e-12
+        properties.setElectronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getElectronRouletteSurvivalWeight(),
+                          weight )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationElectronPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationElectronProperties.py
+#-----------------------------------------------------------------------------#

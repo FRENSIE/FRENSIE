@@ -1,2 +1,0 @@
-/* Define if we want to use Design-by-Contract functionality. */
-#define HAVE_${PROJECT_NAME}_DBC ${HAVE_${PROJECT_NAME}_DBC}

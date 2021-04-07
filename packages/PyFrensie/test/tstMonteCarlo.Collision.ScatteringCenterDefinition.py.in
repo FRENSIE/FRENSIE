@@ -1,0 +1,460 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Collision.ScatteringCenterDefinition class unit tests
+#  \file   tstMonteCarlo.Collision.ScatteringCenterDefinition.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Collision.ScatteringCenterDefinition class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ScatteringCenterDefinition class
+class ScatteringCenterDefinitionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision.ScatteringCenterDefinition class"
+
+    def testGetName(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition getName"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+        self.assertEqual( definition.getName(), "H-Native" )
+
+        definition = Collision.ScatteringCenterDefinition( Data.ZAID(1000) )
+        self.assertEqual( definition.getName(), "H" )
+
+        definition = Collision.ScatteringCenterDefinition( "He3-Native", Data.ZAID(2003) )
+        self.assertEqual( definition.getName(), "He3-Native" )
+
+        definition = Collision.ScatteringCenterDefinition( Data.ZAID(2003) )
+        self.assertEqual( definition.getName(), "He3" )
+
+        with self.assertRaises(RuntimeError):
+            Collision.ScatteringCenterDefinition( "", Data.ZAID(1000) )
+
+    def testGetZAID(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition getZAID"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+        self.assertEqual( definition.getZAID(), Data.ZAID(1000) )
+
+        definition = Collision.ScatteringCenterDefinition( Data.ZAID(2003) )
+        self.assertEqual( definition.getZAID(), Data.ZAID(2003) )
+
+    def testSetAtomicWeight(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setAtomicWeight"
+        definition = Collision.ScatteringCenterDefinition( "H1", Data.ZAID(1001) )
+
+        self.assertFalse( definition.isAtomicWeightSet() )
+        with self.assertRaises(RuntimeError):
+          definition.getAtomicWeight()
+        with self.assertRaises(RuntimeError):
+          definition.getAtomicWeightRatio()
+
+        definition.setAtomicWeight( 1.0 )
+
+        self.assertTrue( definition.isAtomicWeightSet() )
+        self.assertEqual( definition.getAtomicWeight(), 1.0 )
+        self.assertAlmostEqual( definition.getAtomicWeightRatio(),
+                                9.914095197851978680e-01,
+                                delta=9.914095197851978680e-01*1e-15 )
+
+    def testSetAtomicWeightRatio(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setAtomicWeightRatio"
+        definition = Collision.ScatteringCenterDefinition( "H1", Data.ZAID(1001) )
+
+        self.assertFalse( definition.isAtomicWeightSet() )
+        with self.assertRaises(RuntimeError):
+          definition.getAtomicWeightRatio()
+        with self.assertRaises(RuntimeError):
+          definition.getAtomicWeight()
+
+        definition.setAtomicWeightRatio( 9.914095197851978680e-01 )
+
+        self.assertTrue( definition.isAtomicWeightSet() )
+        self.assertEqual( definition.getAtomicWeightRatio(),
+                          9.914095197851978680e-01 )
+        self.assertAlmostEqual( definition.getAtomicWeight(),
+                                1.0,
+                                delta=1e-15 )
+
+    def testSetPhotoatomicDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setPhotoatomicDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+
+        self.assertFalse( definition.hasPhotoatomicDataProperties() )
+
+        properties = Native.NativeEPRPhotoatomicDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.H_ATOM )
+
+        definition.setPhotoatomicDataProperties( properties )
+        self.assertTrue( definition.hasPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotoatomicDataProperties().filePath() )
+
+        atomic_weight = definition.getPhotoatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.0 )
+
+        definition.setAtomicWeight( 1.1 )
+        atomic_weight = definition.getPhotoatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.1 )
+
+        # A NULL pointer should be ignored
+        definition.setPhotoatomicDataProperties( None )
+
+        self.assertTrue( definition.hasPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotoatomicDataProperties().filePath() )
+
+        # Properties for a different atom will result in a warning
+        properties = Native.NativeEPRPhotoatomicDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.He_ATOM )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotoatomicDataProperties().filePath() )
+
+    def testSetAdjointPhotoatomicDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setAdjointPhotoatomicDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+        self.assertFalse( definition.hasAdjointPhotoatomicDataProperties() )
+
+        properties = Native.NativeEPRAdjointPhotoatomicDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.H_ATOM )
+
+        definition.setAdjointPhotoatomicDataProperties( properties )
+        self.assertTrue( definition.hasAdjointPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointPhotoatomicDataProperties().filePath() )
+
+        atomic_weight = definition.getAdjointPhotoatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.0 )
+
+        definition.setAtomicWeight( 1.1 )
+        atomic_weight = definition.getAdjointPhotoatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.1 )
+
+        # A NULL pointer should be ignored
+        definition.setAdjointPhotoatomicDataProperties( None )
+        self.assertTrue( definition.hasAdjointPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointPhotoatomicDataProperties().filePath() )
+
+        # Properties for a different atom will result in a warning
+        properties = Native.NativeEPRAdjointPhotoatomicDataProperties(
+                                             4.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.He_ATOM )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasAdjointPhotoatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointPhotoatomicDataProperties().filePath() )
+
+    def testSetElectroatomicDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setElectroatomicDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+        self.assertFalse( definition.hasElectroatomicDataProperties() )
+
+        properties = Native.NativeEPRElectroatomicDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.H_ATOM )
+
+        definition.setElectroatomicDataProperties( properties )
+        self.assertTrue( definition.hasElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getElectroatomicDataProperties().filePath() )
+
+        atomic_weight = definition.getElectroatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.0 )
+
+        definition.setAtomicWeight( 1.1 )
+        atomic_weight = definition.getElectroatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.1 )
+
+        # A NULL pointer should be ignored
+        definition.setElectroatomicDataProperties( None )
+        self.assertTrue( definition.hasElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getElectroatomicDataProperties().filePath() )
+
+        # Properties for a different atom will result in a warning
+        properties = Native.NativeEPRElectroatomicDataProperties(
+                                             4.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.He_ATOM )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getElectroatomicDataProperties().filePath() )
+
+    def testSetAdjointElectroatomicDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setAdjointElectroatomicDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H-Native", Data.ZAID(1000) )
+        self.assertFalse( definition.hasAdjointElectroatomicDataProperties() )
+
+        properties = Native.NativeEPRAdjointElectroatomicDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.H_ATOM )
+
+        definition.setAdjointElectroatomicDataProperties( properties )
+        self.assertTrue( definition.hasAdjointElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointElectroatomicDataProperties().filePath() )
+
+        atomic_weight = definition.getAdjointElectroatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.0 )
+
+        definition.setAtomicWeight( 1.1 )
+        atomic_weight = definition.getAdjointElectroatomicDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.1 )
+
+        # A NULL pointer should be ignored
+        definition.setAdjointElectroatomicDataProperties( None )
+        self.assertTrue( definition.hasAdjointElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointElectroatomicDataProperties().filePath() )
+
+        # Properties for a different atom will result in a warning
+        properties = Native.NativeEPRAdjointElectroatomicDataProperties(
+                                             4.0,
+                                             os.getcwd(),
+                                             0,
+                                             Data.He_ATOM )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasAdjointElectroatomicDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getAdjointElectroatomicDataProperties().filePath() )
+
+    def testSetNuclearDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setNuclearDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H1-293.1K", Data.ZAID(1001) )
+        self.assertFalse( definition.hasNuclearDataProperties() )
+
+        properties = ACE.ACENuclearDataProperties(
+                                             1.0,
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "1001.71c" )
+
+        definition.setNuclearDataProperties( properties )
+        self.assertTrue( definition.hasNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getNuclearDataProperties().filePath() )
+
+        atomic_weight_ratio = definition.getNuclearDataAtomicWeightRatio()
+        self.assertEqual( atomic_weight_ratio, 1.0 )
+
+        definition.setAtomicWeightRatio( 0.9 )
+        atomic_weight_ratio = definition.getNuclearDataAtomicWeightRatio()
+        self.assertEqual( atomic_weight_ratio, 0.9 )
+
+        # A NULL pointer should be ignored
+        definition.setNuclearDataProperties( None )
+        self.assertTrue( definition.hasNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getNuclearDataProperties().filePath() )
+
+        # Properties for a different nuclide will result in a warning
+        properties = ACE.ACENuclearDataProperties(
+                                             2.0,
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "2003.71c" )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getNuclearDataProperties().filePath() )
+
+
+    def testSetThermalNuclearDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setThermalNuclearDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H1 in H2O-293.1K", Data.ZAID(1001) )
+        self.assertFalse( definition.hasThermalNuclearDataProperties() )
+
+        properties = ACE.ACEThermalNuclearDataProperties(
+                                             (Data.ZAID(1001), Data.ZAID(1002), Data.ZAID(8016)),
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "ltwtr.71t" )
+
+        definition.setThermalNuclearDataProperties( properties )
+        self.assertTrue( definition.hasThermalNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getThermalNuclearDataProperties().filePath() )
+
+        # A NULL pointer should be ignored
+        definition.setThermalNuclearDataProperties( None )
+        self.assertTrue( definition.hasThermalNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getThermalNuclearDataProperties().filePath() )
+
+        # Properties for a different nuclide will result in a warning
+        properties = ACE.ACEThermalNuclearDataProperties(
+                                             (Data.ZAID(1002), Data.ZAID(8016)),
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "ltwtr.71t" )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasThermalNuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getThermalNuclearDataProperties().filePath() )
+
+    def testSetPhotonuclearDataProperties(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition setPhotonuclearDataProperties"
+        definition = Collision.ScatteringCenterDefinition( "H1-293.1K", Data.ZAID(1001) )
+        self.assertFalse( definition.hasPhotonuclearDataProperties() )
+
+        properties = ACE.ACEPhotonuclearDataProperties(
+                                             1.0,
+                                             os.getcwd(),
+                                             0,
+                                             "1001.10u" )
+
+        definition.setPhotonuclearDataProperties( properties )
+        self.assertTrue( definition.hasPhotonuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotonuclearDataProperties().filePath() )
+
+        atomic_weight = definition.getPhotonuclearDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.0 )
+
+        definition.setAtomicWeight( 1.1 )
+        atomic_weight = definition.getPhotonuclearDataAtomicWeight()
+        self.assertEqual( atomic_weight, 1.1 )
+
+        # A NULL pointer should be ignored
+        definition.setPhotonuclearDataProperties( None )
+        self.assertTrue( definition.hasPhotonuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotonuclearDataProperties().filePath() )
+
+        # Properties for a different nuclide will result in a warning
+        properties = ACE.ACEPhotonuclearDataProperties(
+                                             2.0,
+                                             os.getcwd(),
+                                             0,
+                                             "2003.10u" )
+
+        definition.setDataProperties( properties )
+        self.assertTrue( definition.hasPhotonuclearDataProperties() )
+        self.assertTrue( properties.filePath() ==
+                         definition.getPhotonuclearDataProperties().filePath() )
+
+    def testWarnDifferentTemps(self):
+        "*Test MonteCarlo.Collision.ScatteringCenterDefinition warn_different_temps"
+
+        # Set the nuclear data first
+        definition = Collision.ScatteringCenterDefinition( "H1-293.1K", Data.ZAID(1001) )
+
+        nuclear_properties = ACE.ACENuclearDataProperties(
+                                             1.0,
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "1001.71c" )
+
+        definition.setDataProperties( nuclear_properties )
+
+        thermal_nuclear_properties = ACE.ACEThermalNuclearDataProperties(
+                                            (Data.ZAID(1001), Data.ZAID(1002), Data.ZAID(8016)),
+                                            2.52574e-7,
+                                            os.getcwd(),
+                                            0,
+                                            "ltwtr.81t" )
+
+        definition.setDataProperties( thermal_nuclear_properties )
+
+
+        # Set the thermal nuclear data first
+        definition = Collision.ScatteringCenterDefinition( "H1-293.1K", Data.ZAID(1001) )
+        thermal_nuclear_properties = ACE.ACEThermalNuclearDataProperties(
+                                             (Data.ZAID(1001), Data.ZAID(1002), Data.ZAID(8016)),
+                                             2.52574e-8,
+                                             os.getcwd(),
+                                             0,
+                                             "ltwtr.81t" )
+
+        definition.setDataProperties( thermal_nuclear_properties )
+
+        nuclear_properties = ACE.ACENuclearDataProperties(
+                                             1.0,
+                                             2.52574e-7,
+                                             os.getcwd(),
+                                             0,
+                                             "1001.71c" )
+
+        definition.setDataProperties( nuclear_properties )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ScatteringCenterDefinitionTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Collision.ScatteringCenterDefinition.py
+#-----------------------------------------------------------------------------#

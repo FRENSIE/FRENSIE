@@ -9,6 +9,8 @@
 #ifndef GEOMETRY_EXCEPTIONS_HPP
 #define GEOMETRY_EXCEPTIONS_HPP
 
+namespace Geometry{
+
 //! The invalid geometry representation error
 class InvalidGeometryRepresentation : public std::logic_error
 {
@@ -19,6 +21,8 @@ public:
     : std::logic_error( what_arg )
   { /* ... */ }
 };
+
+} // end Geometry namespace
 
 #endif // end GEOMETRY_EXCEPTIONS_HPP
 

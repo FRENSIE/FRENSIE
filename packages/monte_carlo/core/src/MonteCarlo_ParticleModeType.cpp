@@ -12,206 +12,37 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
-// Test if the particle mode type name is valid
-bool isValidParticleModeTypeName( const std::string& particle_mode_type_name )
+// Convert a MonteCarlo::ParticleModeType to a string
+std::string ToStringTraits<MonteCarlo::ParticleModeType>::toString( const MonteCarlo::ParticleModeType type )
 {
-  if( particle_mode_type_name == "NEUTRON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "PHOTON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "ELECTRON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "PHOTON_ELECTRON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_ELECTRON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "ADJOINT_NEUTRON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
-    return true;
-  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
-    return true;
-  else
-    return false;
-}
-
-// Test if the source particle type is compatible with the particle mode type
-bool isParticleModeTypeCompatible( const ParticleModeType particle_mode,
-				   const ParticleType particle_type )
-{
-  switch( particle_mode )
+  switch( type )
   {
-  case NEUTRON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else
-        return false;
-    }
-  case PHOTON_MODE:
-    {
-      if( particle_type == PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case ELECTRON_MODE:
-    {
-      if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case NEUTRON_PHOTON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else if( particle_type == PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case PHOTON_ELECTRON_MODE:
-    {
-      if( particle_type == PHOTON )
-        return true;
-      else if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case NEUTRON_PHOTON_ELECTRON_MODE:
-    {
-      if( particle_type == NEUTRON )
-        return true;
-      else if( particle_type == PHOTON )
-        return true;
-      else if( particle_type == ELECTRON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_NEUTRON_MODE:
-    {
-      if( particle_type == ADJOINT_NEUTRON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_PHOTON_MODE:
-    {
-      if( particle_type == ADJOINT_PHOTON )
-        return true;
-      else
-        return false;
-    }
-  case ADJOINT_ELECTRON_MODE:
-    {
-      if( particle_type == ADJOINT_ELECTRON )
-        return true;
-      else
-        return false;
-    }
+  case MonteCarlo::NEUTRON_MODE: return "Neutron Mode";
+  case MonteCarlo::PHOTON_MODE: return "Photon Mode";
+  case MonteCarlo::ELECTRON_MODE: return "Electron Mode";
+  case MonteCarlo::NEUTRON_PHOTON_MODE: return "Neutron-Photon Mode";
+  case MonteCarlo::PHOTON_ELECTRON_MODE: return "Photon-Electron Mode";
+  case MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE: return "Neutron-Photon-Electron Mode";
+  case MonteCarlo::ADJOINT_NEUTRON_MODE: return "Adjoint Neutron Mode";
+  case MonteCarlo::ADJOINT_PHOTON_MODE: return "Adjoint Photon Mode";
+  case MonteCarlo::ADJOINT_ELECTRON_MODE: return "Adjoint Electron Mode";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: ParticleModeType " << particle_mode <<
-		     " and ParticleType " << particle_type <<
-	 	     " are not compatible!" );
+		     "Unknown particle mode encountered!" );
   }
 }
 
-// Convert the particle mode type name to a ParticleModeType enum
-ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
-				   const std::string& particle_mode_type_name )
+// Place the MonteCarlo::ParticleModeType in a stream
+void ToStringTraits<MonteCarlo::ParticleModeType>::toStream( std::ostream& os, const MonteCarlo::ParticleModeType type )
 {
-  // Make sure the particle mode type name is valid
-  testPrecondition( isValidParticleModeTypeName( particle_mode_type_name ) );
-  
-  if( particle_mode_type_name == "NEUTRON_MODE" )
-    return NEUTRON_MODE;
-  else if( particle_mode_type_name == "PHOTON_MODE" )
-    return PHOTON_MODE;
-  else if( particle_mode_type_name == "ELECTRON_MODE" )
-    return ELECTRON_MODE;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_MODE" )
-    return NEUTRON_PHOTON_MODE;
-  else if( particle_mode_type_name == "PHOTON_ELECTRON_MODE" )
-    return PHOTON_ELECTRON_MODE;
-  else if( particle_mode_type_name == "NEUTRON_PHOTON_ELECTRON_MODE" )
-    return NEUTRON_PHOTON_ELECTRON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_NEUTRON_MODE" )
-    return ADJOINT_NEUTRON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
-    return ADJOINT_PHOTON_MODE;
-  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
-    return ADJOINT_ELECTRON_MODE;
-  else
-  {
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: particle mode type name " <<
-		     particle_mode_type_name << " is unknown!" );
-  }
+  os << ToStringTraits<MonteCarlo::ParticleModeType>::toString( type );
 }
 
-// Convert the unsigned to a ParticleModeType enum
-ParticleModeType convertUnsignedToParticleModeTypeEnum(
-					    const unsigned particle_mode_type )
-{
-  switch( particle_mode_type )
-  {
-  case 0:
-    return NEUTRON_MODE;
-  case 1:
-    return PHOTON_MODE;
-  case 2:
-    return ELECTRON_MODE;
-  case 3:
-    return NEUTRON_PHOTON_MODE;
-  case 4:
-    return PHOTON_ELECTRON_MODE;
-  case 5:
-    return NEUTRON_PHOTON_ELECTRON_MODE;
-  case 6:
-    return ADJOINT_NEUTRON_MODE;
-  case 7:
-    return ADJOINT_PHOTON_MODE;
-  case 8:
-    return ADJOINT_ELECTRON_MODE;
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: unsigned integer " << particle_mode_type <<
-		     " does not correspond to a particle mode type!" );
-  }
-}
-
-// Convert a ParticleModeType enumeration to a string
-std::string convertParticleModeTypeEnumToString(
-					 const ParticleModeType particle_mode )
-{
-  switch( particle_mode )
-  {
-  case NEUTRON_MODE: return "Neutron Mode";
-  case PHOTON_MODE: return "Photon Mode";
-  case ELECTRON_MODE: return "Electron Mode";
-  case NEUTRON_PHOTON_MODE: return "Neutron-Photon Mode";
-  case PHOTON_ELECTRON_MODE: return "Photon-Electron Mode";
-  case NEUTRON_PHOTON_ELECTRON_MODE: return "Neutron-Photon-Electron Mode";
-  case ADJOINT_NEUTRON_MODE: return "Adjoint Neutron Mode";
-  case ADJOINT_PHOTON_MODE: return "Adjoint Photon Mode";
-  case ADJOINT_ELECTRON_MODE: return "Adjoint Electron Mode";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: unknown particle mode encountered!" );
-  }
-}
-
-} // end MonteCarlo namespace
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleModeType.cpp

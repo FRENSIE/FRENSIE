@@ -1,0 +1,98 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot class unit tests
+#  \file   tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.CellTrackLengthFluxEstimatorRoot class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_root_file", type="string", dest="test_root_file",
+                  help="Test CAD file name with path.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ROOT = importPyFrensieModuleFromBuildDir('Geometry.ROOT')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#---------------------------------------------------------------------------#
+# Tests.
+#---------------------------------------------------------------------------#
+#
+# Test the CellTrackLengthFluxEstimatorRoot class
+class CellTrackLengthFluxEstimatorRootTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.CellTrackLengthFluxEstimatorRoot class"
+
+    def setUp(self):
+      # Setup the ROOT Geometry
+      local_properties = ROOT.RootModelProperties( options.test_root_file )
+
+      tmp_model = ROOT.RootModel.getInstance()
+      tmp_model.initialize( local_properties )
+
+      self.model = tmp_model
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.CellTrackLengthFluxEstimatorRoot constructor"
+
+        cell_ids = [1, 2]
+        estimator = Event.WeightMultipliedCellTrackLengthFluxEstimator(
+                   0,
+                   1.0,
+                   cell_ids,
+                   self.model )
+
+        self.assertTrue( estimator.isEntityAssigned( 1 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 1 ),
+                                   934.5501530502127,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 2 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 2 ),
+                                   65.44984694978736,
+                                   delta=1e-15 )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(CellTrackLengthFluxEstimatorRootTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.CellTrackLengthFluxEstimatorRoot.py
+#-----------------------------------------------------------------------------#

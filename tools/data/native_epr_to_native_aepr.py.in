@@ -1,0 +1,551 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   native_epr_to_native_aepr.py
+##! \author Alex Robinson
+##! \brief  tool to convert native forward data files to native adjoint native
+##!         format
+##!
+##---------------------------------------------------------------------------##
+
+import sys
+from os import path
+from os import getcwd
+from optparse import *
+import PyFrensie.DataGen as DataGen
+import PyFrensie.DataGen.ENDL as DataGenENDL
+import PyFrensie.DataGen.ElectronPhoton as DataGenEP
+import PyFrensie.Data as Data
+import PyFrensie.Data.Native as Native
+import PyFrensie.MonteCarlo as MonteCarlo
+import PyFrensie.Utility
+
+# Verify the user specified photon ane electron limits
+def verifyEnergyLimits( min_photon_energy,
+                        max_photon_energy,
+                        min_electron_energy,
+                        max_electron_energy ):
+    if min_photon_energy is None:
+        if not max_photon_energy is None or not min_electron_energy is None or not max_electron_energy is None:
+            print "Either no energy limits can be set or all of them must be set!"
+            sys.exit(1)
+    else:
+        if max_photon_energy is None or min_electron_energy is None or max_electron_energy is None:
+            print "Either no energy limits can be set or all of them must be set!"
+            sys.exit(1)
+
+# Create the data generator
+def createGenerator( epr_file_name,
+                     min_photon_energy,
+                     max_photon_energy,
+                     min_electron_energy,
+                     max_electron_energy ):
+
+    # Open the endl data container
+    epr_data_container = Native.ElectronPhotonRelaxationDataContainer( epr_file_name )
+
+    # Create the data generator
+    if min_photon_energy is None:
+        generator = DataGenEP.StandardAdjointElectronPhotonRelaxationDataGenerator( epr_data_container )
+    else:
+        generator = DataGenEP.StandardAdjointElectronPhotonRelaxationDataGenerator( epr_data_container, min_photon_energy, max_photon_energy, min_electron_energy, max_electron_energy )
+
+    return generator
+
+# Set the generator options
+def setGeneratorOptions( generator,
+                         photon_grid_convergence_tol,
+                         photon_grid_abs_diff_tol,
+                         photon_grid_dist_tol,
+                         adjoint_pp_energy_dist_norm_const_eval_tol,
+                         adjoint_pp_energy_dist_norm_const_nudge_val,
+                         adjoint_tp_energy_dist_norm_const_eval_tol,
+                         adjoint_tp_energy_dist_norm_const_nudge_val,
+                         adjoint_incoherent_max_energy_nudge_val,
+                         adjoint_incoherent_energy_to_max_energy_nudge_val,
+                         adjoint_incoherent_eval_tol,
+                         adjoint_incoherent_grid_convergence_tol,
+                         adjoint_incoherent_grid_abs_diff_tol,
+                         adjoint_incoherent_grid_dist_tol,
+                         electron_grid_convergence_tol,
+                         electron_grid_abs_diff_tol,
+                         electron_grid_dist_tol,
+                         cutoff_angle_cosine,
+                         num_moment_preserving_angles,
+                         tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
+                         electron_two_d_interp_policy,
+                         electron_two_d_grid_policy,
+                         bremss_min_energy_nudge_val,
+                         bremss_max_energy_nudge_val,
+                         bremss_eval_tol,
+                         bremss_grid_convergence_tol,
+                         bremss_grid_abs_diff_tol,
+                         bremss_grid_dist_tol,
+                         electroion_sampling_mode,
+                         electroion_min_energy_nudge_val,
+                         electroion_max_energy_nudge_val,
+                         electroion_eval_tol,
+                         electroion_grid_convergence_tol,
+                         electroion_grid_abs_diff_tol,
+                         electroion_grid_dist_tol,
+                         notes ):
+
+    # Set the generator options
+    if not photon_grid_convergence_tol is None:
+        generator.setDefaultPhotonGridConvergenceTolerance( photon_grid_convergence_tol )
+
+    if not photon_grid_abs_diff_tol is None:
+        generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( photon_grid_abs_diff_tol )
+
+    if not photon_grid_dist_tol is None:
+        generator.setDefaultPhotonGridDistanceTolerance( photon_grid_dist_tol )
+
+    if not adjoint_pp_energy_dist_norm_const_eval_tol is None:
+        generator.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( adjoint_pp_energy_dist_norm_const_eval_tol )
+
+    if not adjoint_pp_energy_dist_norm_const_nudge_val is None:
+        generator.setAdjointPairProductionEnergyDistNormConstantNudgeValue( adjoint_pp_energy_dist_norm_const_nudge_val )
+
+    if not adjoint_tp_energy_dist_norm_const_eval_tol is None:
+        generator.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( adjoint_tp_energy_dist_norm_const_eval_tol )
+
+    if not adjoint_tp_energy_dist_norm_const_nudge_val is None:
+        generator.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( adjoint_tp_energy_dist_norm_const_nudge_val )
+
+    if not adjoint_incoherent_max_energy_nudge_val is None:
+        generator.setAdjointIncoherentMaxEnergyNudgeValue( adjoint_incoherent_max_energy_nudge_val )
+
+    if not adjoint_incoherent_energy_to_max_energy_nudge_val is None:
+        generator.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( adjoint_incoherent_energy_to_max_energy_nudge_val )
+
+    if not adjoint_incoherent_eval_tol is None:
+        generator.setAdjointIncoherentEvaluationTolerance( adjoint_incoherent_eval_tol )
+
+    if not adjoint_incoherent_grid_convergence_tol is None:
+        generator.setAdjointIncoherentGridConvergenceTolerance( adjoint_incoherent_grid_convergence_tol )
+
+    if not adjoint_incoherent_grid_abs_diff_tol is None:
+        generator.setAdjointIncoherentGridAbsoluteDifferenceTolerance( adjoint_incoherent_grid_abs_diff_tol )
+
+    if not adjoint_incoherent_grid_dist_tol is None:
+        generator.setAdjointIncoherentGridDistanceTolerance( adjoint_incoherent_grid_dist_tol )
+
+    if not electron_grid_convergence_tol is None:
+        generator.setDefaultElectronGridConvergenceTolerance( electron_grid_convergence_tol )
+
+    if not electron_grid_abs_diff_tol is None:
+        generator.setDefaultElectronGridAbsoluteDifferenceTolerance( electron_grid_abs_diff_tol )
+
+    if not electron_grid_dist_tol is None:
+        generator.setDefaultElectronGridDistanceTolerance( electron_grid_dist_tol )
+
+    if not cutoff_angle_cosine is None:
+        generator.setCutoffAngleCosine( cutoff_angle_cosine )
+
+    if not num_moment_preserving_angles is None:
+        generator.setNumberOfMomentPreservingAngles( num_moment_preserving_angles )
+
+    if not tabular_evaluation_tol is None:
+        generator.setElectronTabularEvaluationTolerance( tabular_evaluation_tol )
+
+    if electron_scatter_above_max_mode_on is False:
+        generator.setElectronScatterAboveMaxModeOff()
+
+    if generator.isElectronScatterAboveMaxModeOn():
+      print "Data will be generated to allow electrons to scatter above the max energy!"
+    else:
+      print "Data will be generated to allow electrons to scatter to the max energy but not above it!"
+
+    if not electron_two_d_interp_policy is None:
+        if electron_two_d_interp_policy == "LinLinLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLinLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLINLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLogLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLOGLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLinLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLINLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLogLin":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLIN_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLinLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLINLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LinLogLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LINLOGLOG_INTERPOLATION )
+        elif electron_two_d_interp_policy == "LogLogLog":
+            generator.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        else:
+            print "Electron 2D interpolation policy", electron_two_d_interp_policy, "is not valid!"
+            sys.exit(1)
+
+    if not electron_two_d_grid_policy is None:
+        if electron_two_d_grid_policy == "Correlated":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.CORRELATED_GRID )
+        elif electron_two_d_grid_policy == "UnitBaseCorrelated":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+        elif electron_two_d_grid_policy == "Direct":
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is currently not supported!"
+            sys.exit(1)
+        elif electron_two_d_grid_policy == "UnitBase":
+            generator.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+        else:
+            print "Electron bivariate grid policy", electron_two_d_grid_policy, "is not valid!"
+            sys.exit(1)
+
+    if not bremss_min_energy_nudge_val is None:
+        generator.setAdjointBremsstrahlungMinEnergyNudgeValue( bremss_min_energy_nudge_val )
+
+    if not bremss_max_energy_nudge_val is None:
+        generator.setAdjointBremsstrahlungMaxEnergyNudgeValue( bremss_max_energy_nudge_val )
+
+    if not bremss_eval_tol is None:
+        generator.setAdjointBremsstrahlungEvaluationTolerance( bremss_eval_tol )
+
+    if not bremss_grid_convergence_tol is None:
+        generator.setAdjointBremsstrahlungGridConvergenceTolerance( bremss_grid_convergence_tol )
+
+    if not bremss_grid_abs_diff_tol is None:
+        generator.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( bremss_grid_abs_diff_tol )
+
+    if not bremss_grid_dist_tol is None:
+        generator.setAdjointBremsstrahlungDistanceTolerance( bremss_grid_dist_tol )
+
+    if not electroion_sampling_mode is None:
+        if electroion_sampling_mode == "Knock-On":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_SAMPLING )
+        elif electroion_sampling_mode == "Outgoing Energy Ratio":
+            generator.setForwardElectroionizationSamplingMode( MonteCarlo.OUTGOING_ENERGY_RATIO_SAMPLING )
+        else:
+            print "the electro-ionization sampling mode ", electroion_sampling_mode, "is not valid!"
+            sys.exit(1)
+
+    if not electroion_min_energy_nudge_val is None:
+        generator.setAdjointElectroionizationMinEnergyNudgeValue( electroion_min_energy_nudge_val )
+
+    if not electroion_max_energy_nudge_val is None:
+        generator.setAdjointElectroionizationMaxEnergyNudgeValue( electroion_max_energy_nudge_val )
+
+    if not electroion_eval_tol is None:
+        generator.setAdjointElectroionizationEvaluationTolerance( electroion_eval_tol )
+
+    if not electroion_grid_convergence_tol is None:
+        generator.setAdjointElectroionizationGridConvergenceTolerance( electroion_grid_convergence_tol )
+
+    if not electroion_grid_abs_diff_tol is None:
+        generator.setAdjointElectroionizationAbsoluteDifferenceTolerance( electroion_grid_abs_diff_tol )
+
+    if not electroion_grid_dist_tol is None:
+        generator.setAdjointElectroionizationDistanceTolerance( electroion_grid_dist_tol )
+
+    if not notes is None:
+        generator.setNotes( notes )
+
+# Generate the data
+def generateData( epr_file_name,
+                  output_file_name,
+                  overwrite = False,
+                  notes = None,
+                  min_photon_energy = None,
+                  max_photon_energy = None,
+                  min_electron_energy = None,
+                  max_electron_energy = None,
+                  photon_grid_convergence_tol = None,
+                  photon_grid_abs_diff_tol = None,
+                  photon_grid_dist_tol = None,
+                  adjoint_pp_energy_dist_norm_const_eval_tol = None,
+                  adjoint_pp_energy_dist_norm_const_nudge_val = None,
+                  adjoint_tp_energy_dist_norm_const_eval_tol = None,
+                  adjoint_tp_energy_dist_norm_const_nudge_val = None,
+                  adjoint_incoherent_max_energy_nudge_val = None,
+                  adjoint_incoherent_energy_to_max_energy_nudge_val = None,
+                  adjoint_incoherent_eval_tol = None,
+                  adjoint_incoherent_grid_convergence_tol = None,
+                  adjoint_incoherent_grid_abs_diff_tol = None,
+                  adjoint_incoherent_grid_dist_tol = None,
+                  electron_grid_convergence_tol = None,
+                  electron_grid_abs_diff_tol = None,
+                  electron_grid_dist_tol = None,
+                  cutoff_angle_cosine = None,
+                  num_moment_preserving_angles = None,
+                  tabular_evaluation_tol = None,
+                  electron_scatter_above_max_mode_on = None,
+                  electron_two_d_interp_policy = None,
+                  electron_two_d_grid_policy = None,
+                  bremss_min_energy_nudge_val = None,
+                  bremss_max_energy_nudge_val = None,
+                  bremss_eval_tol = None,
+                  bremss_grid_convergence_tol = None,
+                  bremss_grid_abs_diff_tol = None,
+                  bremss_grid_dist_tol = None,
+                  electroion_sampling_mode = None,
+                  electroion_min_energy_nudge_val = None,
+                  electroion_max_energy_nudge_val = None,
+                  electroion_eval_tol = None,
+                  electroion_grid_convergence_tol = None,
+                  electroion_grid_abs_diff_tol = None,
+                  electroion_grid_dist_tol = None ):
+
+    # Verify the energy limits
+    verifyEnergyLimits( min_photon_energy,
+                        max_photon_energy,
+                        min_electron_energy,
+                        max_electron_energy )
+
+    # Create the generator
+    generator = createGenerator( epr_file_name,
+                                 min_photon_energy,
+                                 max_photon_energy,
+                                 min_electron_energy,
+                                 max_electron_energy )
+
+    # Set the generator options
+    setGeneratorOptions( generator,
+                         photon_grid_convergence_tol,
+                         photon_grid_abs_diff_tol,
+                         photon_grid_dist_tol,
+                         adjoint_pp_energy_dist_norm_const_eval_tol,
+                         adjoint_pp_energy_dist_norm_const_nudge_val,
+                         adjoint_tp_energy_dist_norm_const_eval_tol,
+                         adjoint_tp_energy_dist_norm_const_nudge_val,
+                         adjoint_incoherent_max_energy_nudge_val,
+                         adjoint_incoherent_energy_to_max_energy_nudge_val,
+                         adjoint_incoherent_eval_tol,
+                         adjoint_incoherent_grid_convergence_tol,
+                         adjoint_incoherent_grid_abs_diff_tol,
+                         adjoint_incoherent_grid_dist_tol,
+                         electron_grid_convergence_tol,
+                         electron_grid_abs_diff_tol,
+                         electron_grid_dist_tol,
+                         cutoff_angle_cosine,
+                         num_moment_preserving_angles,
+                         tabular_evaluation_tol,
+                         electron_scatter_above_max_mode_on,
+                         electron_two_d_interp_policy,
+                         electron_two_d_grid_policy,
+                         bremss_min_energy_nudge_val,
+                         bremss_max_energy_nudge_val,
+                         bremss_eval_tol,
+                         bremss_grid_convergence_tol,
+                         bremss_grid_abs_diff_tol,
+                         bremss_grid_dist_tol,
+                         electroion_sampling_mode,
+                         electroion_min_energy_nudge_val,
+                         electroion_max_energy_nudge_val,
+                         electroion_eval_tol,
+                         electroion_grid_convergence_tol,
+                         electroion_grid_abs_diff_tol,
+                         electroion_grid_dist_tol,
+                         notes )
+
+    # Populate the data
+    generator.populateEPRDataContainer( True, True )
+
+    # Save the generated data
+    generator.getDataContainer().saveToFile( output_file_name, overwrite )
+
+    # Return the shared data container
+    return generator.getSharedDataContainer()
+
+# Update the database
+def addToDatabase( path_to_data_file,
+                   path_to_database,
+                   database,
+                   atomic_number,
+                   atomic_weight,
+                   version_number = 0 ):
+
+    zaid = Data.ZAID(atomic_number*1000)
+
+    relative_path = path.relpath( path_to_data_file, path_to_database )
+
+    photoatomic_data_properties = \
+        Native.NativeEPRAdjointPhotoatomicDataProperties( atomic_weight,
+                                                          relative_path,
+                                                          version_number,
+                                                          zaid.atom() )
+    electroatomic_data_properties = \
+        Native.NativeEPRAdjointElectroatomicDataProperties( atomic_weight,
+                                                            relative_path,
+                                                            version_number,
+                                                            zaid.atom() )
+
+    if not database.doAtomPropertiesExist( zaid.atom() ):
+        database.initializeAtomProperties( zaid.atom(), atomic_weight )
+
+    atom_properties = database.getAtomProperties( zaid.atom() )
+
+    atom_properties.setAdjointPhotoatomicDataProperties( photoatomic_data_properties )
+    atom_properties.setAdjointElectroatomicDataProperties( electroatomic_data_properties )
+
+if __name__ == "__main__":
+
+    # Parse the command-line arguments
+    parser = OptionParser()
+    parser.add_option("-e", "--epr_file_name", type="string", dest="epr_file_name",
+                      help="the epr file name (with extension)")
+    parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                      help="the database name (with extension)")
+    parser.add_option("-o", "--output_file_name", type="string", dest="output_file_name",
+                      help="the output file name (with extension)")
+    parser.add_option("--overwrite", action="store_true", dest="overwrite", default=False,
+                      help="Overwrite an existing output file")
+    parser.add_option("--add_to_db", action="store_true", dest="add_to_db", default=False,
+                      help="Turn on the electron total elastic integrated cs mode" )
+    parser.add_option("--notes", type="string", dest="notes",
+                      help="data generation notes")
+    parser.add_option("--min_photon_energy", type="float", dest="min_photon_energy",
+                      help="the min photon energy")
+    parser.add_option("--max_photon_energy", type="float", dest="max_photon_energy",
+                      help="the max photon energy")
+    parser.add_option("--min_electron_energy", type="float", dest="min_electron_energy",
+                      help="the min electron energy")
+    parser.add_option("--max_electron_energy", type="float", dest="max_electron_energy",
+                      help="the max electron energy")
+    parser.add_option("--photon_grid_convergence_tol", type="float", dest="photon_grid_convergence_tol",
+                      help="the default photon grid convergence tolerance")
+    parser.add_option("--photon_grid_abs_diff_tol", type="float", dest="photon_grid_abs_diff_tol",
+                      help="the default photon grid absolute difference tolerance")
+    parser.add_option("--photon_grid_dist_tol", type="float", dest="photon_grid_dist_tol",
+                      help="the default photon grid distance tolerance")
+    parser.add_option("--adjoint_pp_energy_dist_norm_const_eval_tol", type="float", dest="adjoint_pp_energy_dist_norm_const_eval_tol",
+                      help="the adjoint pair production energy dist norm constant evaluation tolerance")
+    parser.add_option("--adjoint_pp_energy_dist_norm_const_nudge_val", type="float", dest="adjoint_pp_energy_dist_norm_const_nudge_val",
+                      help="the adjoint pair production energy dist norm constant nudge value")
+    parser.add_option("--adjoint_tp_energy_dist_norm_const_eval_tol", type="float", dest="adjoint_tp_energy_dist_norm_const_eval_tol",
+                      help="the adjoint triplet production energy dist norm constant evaluation tolerance")
+    parser.add_option("--adjoint_tp_energy_dist_norm_const_nudge_val", type="float", dest="adjoint_tp_energy_dist_norm_const_nudge_val",
+                      help="the adjoint triplet production energy dist norm constant nudge value")
+    parser.add_option("--adjoint_incoherent_max_energy_nudge_val", type="float", dest="adjoint_incoherent_max_energy_nudge_val",
+                      help="the adjoint incoherent max energy nudge value")
+    parser.add_option("--adjoint_incoherent_energy_to_max_energy_nudge_val", type="float", dest="adjoint_incoherent_energy_to_max_energy_nudge_val",
+                      help="the adjoint incoherent energy to max energy nudge value")
+    parser.add_option("--adjoint_incoherent_eval_tol", type="float", dest="adjoint_incoherent_eval_tol",
+                      help="the adjoint incoherent evaluation tolerance")
+    parser.add_option("--adjoint_incoherent_grid_convergence_tol", type="float", dest="adjoint_incoherent_grid_convergence_tol",
+                      help="the adjoint incoherent grid convergence tolerance")
+    parser.add_option("--adjoint_incoherent_grid_abs_diff_tol", type="float", dest="adjoint_incoherent_grid_abs_diff_tol",
+                      help="the adjoint incoherent grid convergence tolerance")
+    parser.add_option("--adjoint_incoherent_grid_dist_tol", type="float", dest="adjoint_incoherent_grid_dist_tol",
+                      help="the adjoint incoherent grid dist tol")
+    parser.add_option("--electron_grid_convergence_tol", type="float", dest="electron_grid_convergence_tol",
+                      help="the default electron grid convergence tolerance")
+    parser.add_option("--electron_grid_abs_diff_tol", type="float", dest="electron_grid_abs_diff_tol",
+                      help="the default electron grid absolute difference tolerance")
+    parser.add_option("--electron_grid_dist_tol", type="float", dest="electron_grid_dist_tol",
+                      help="the default electron grid distance tolerance")
+    parser.add_option("--cutoff_angle_cosine", type="float", dest="cutoff_angle_cosine",
+                      help="the electron cutoff angle cosine")
+    parser.add_option("--num_moment_preserving_angles", type="int", dest="num_moment_preserving_angles",
+                      help="The number of moment preserving angles for electrons")
+    parser.add_option("--tabular_evaluation_tol", type="float", dest="tabular_evaluation_tol",
+                      help="The tabular evaluation tolerance")
+    parser.add_option("--electron_scatter_above_max_mode_off", action="store_false", dest="electron_scatter_above_max_mode", default=True,
+                      help="Don't allow adjoint electrons to scatter above the max energy.")
+    parser.add_option("--electron_two_d_interp_policy", type="string", dest="electron_two_d_interp_policy",
+                      help="The electron 2D interpolation policy (e.g. LogLogLog)")
+    parser.add_option("--electron_two_d_grid_policy", type="string", dest="electron_two_d_grid_policy",
+                      help="The electron bivariate grid policy")
+    parser.add_option("--bremss_min_energy_nudge_val", type="float", dest="bremss_min_energy_nudge_val",
+                      help="The bremsstrahlung min energy nudge value")
+    parser.add_option("--bremss_max_energy_nudge_val", type="float", dest="bremss_max_energy_nudge_val",
+                      help="The bremsstrahlung max energy nudge value")
+    parser.add_option("--bremss_eval_tol", type="float", dest="bremss_eval_tol",
+                      help="The bremsstrahlung evaluation tolerance")
+    parser.add_option("--bremss_grid_convergence_tol", type="float", dest="bremss_grid_convergence_tol",
+                      help="The bremsstrahlung grid convergence tolerance")
+    parser.add_option("--bremss_grid_abs_diff_tol", type="float", dest="bremss_grid_abs_diff_tol",
+                      help="The bremsstrahlung grid absolute difference tolerance")
+    parser.add_option("--bremss_grid_dist_tol", type="float", dest="bremss_grid_dist_tol",
+                      help="The bremsstrahlung grid distance tolerance")
+    parser.add_option("--electroion_sampling_mode", type="string", dest="electroion_sampling_mode",
+                      help="The forward electroionization sampling mode")
+    parser.add_option("--electroion_min_energy_nudge_val", type="float", dest="electroion_min_energy_nudge_val",
+                      help="The electroionization min energy nudge value")
+    parser.add_option("--electroion_max_energy_nudge_val", type="float", dest="electroion_max_energy_nudge_val",
+                      help="The electroionization max energy nudge value")
+    parser.add_option("--electroion_eval_tol", type="float", dest="electroion_eval_tol",
+                      help="The electroionization evaluation tolerance")
+    parser.add_option("--electroion_grid_convergence_tol", type="float", dest="electroion_grid_convergence_tol",
+                      help="The electroionization grid convergence tolerance")
+    parser.add_option("--electroion_grid_abs_diff_tol", type="float", dest="electroion_grid_abs_diff_tol",
+                      help="The electroionization grid absolute difference tolerance")
+    parser.add_option("--electroion_grid_dist_tol", type="float", dest="electroion_grid_dist_tol",
+                      help="The electroionization grid distance tolerance")
+
+    options,args = parser.parse_args()
+
+    # The epr file name and the output file name must be specified
+    if options.epr_file_name is None:
+        print "The epr file name must be specified!"
+        sys.exit(1)
+
+    if options.output_file_name is None:
+        print "The output file name must be specified!"
+        sys.exit(1)
+
+    data_container = \
+    generateData( options.epr_file_name,
+                  options.output_file_name,
+                  options.overwrite,
+                  options.notes,
+                  options.min_photon_energy,
+                  options.max_photon_energy,
+                  options.min_electron_energy,
+                  options.max_electron_energy,
+                  options.photon_grid_convergence_tol,
+                  options.photon_grid_abs_diff_tol,
+                  options.photon_grid_dist_tol,
+                  options.adjoint_pp_energy_dist_norm_const_eval_tol,
+                  options.adjoint_pp_energy_dist_norm_const_nudge_val,
+                  options.adjoint_tp_energy_dist_norm_const_eval_tol,
+                  options.adjoint_tp_energy_dist_norm_const_nudge_val,
+                  options.adjoint_incoherent_max_energy_nudge_val,
+                  options.adjoint_incoherent_energy_to_max_energy_nudge_val,
+                  options.adjoint_incoherent_eval_tol,
+                  options.adjoint_incoherent_grid_convergence_tol,
+                  options.adjoint_incoherent_grid_abs_diff_tol,
+                  options.adjoint_incoherent_grid_dist_tol,
+                  options.electron_grid_convergence_tol,
+                  options.electron_grid_abs_diff_tol,
+                  options.electron_grid_dist_tol,
+                  options.cutoff_angle_cosine,
+                  options.num_moment_preserving_angles,
+                  options.tabular_evaluation_tol,
+                  options.electron_scatter_above_max_mode,
+                  options.electron_two_d_interp_policy,
+                  options.electron_two_d_grid_policy,
+                  options.bremss_min_energy_nudge_val,
+                  options.bremss_max_energy_nudge_val,
+                  options.bremss_eval_tol,
+                  options.bremss_grid_convergence_tol,
+                  options.bremss_grid_abs_diff_tol,
+                  options.bremss_grid_dist_tol,
+                  options.electroion_sampling_mode,
+                  options.electroion_min_energy_nudge_val,
+                  options.electroion_max_energy_nudge_val,
+                  options.electroion_eval_tol,
+                  options.electroion_grid_convergence_tol,
+                  options.electroion_grid_abs_diff_tol,
+                  options.electroion_grid_dist_tol )
+
+    # Add the container to the database
+    if options.add_to_db:
+        if options.db_name is None:
+            print "The database name must be supplied!"
+            sys.exit(1)
+
+        database = Data.ScatteringCenterPropertiesDatabase( options.db_name )
+
+        addToDatabase( options.output_file_name,
+                       path.dirname( options.db_name ),
+                       database,
+                       data_container.getAtomicNumber(),
+                       data_container.getAtomicWeight() )
+
+        database.saveToFile( options.db_name, True )
+
+##---------------------------------------------------------------------------##
+## end native_epr_to_native_aepr.py
+##---------------------------------------------------------------------------##

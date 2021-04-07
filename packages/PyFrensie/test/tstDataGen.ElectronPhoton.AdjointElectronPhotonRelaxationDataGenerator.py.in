@@ -1,0 +1,992 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## DataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator class unit tests
+#  \file   tstDataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the DataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import inspect
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_h_native_file", type="string", dest="test_h_native_file", default="",
+                  help="the h native file name")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ElectronPhoton = importPyFrensieModuleFromBuildDir('DataGen.ElectronPhoton')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardAdjointElectronPhotonRelaxationDataGenerator class
+class StandardAdjointElectronPhotonRelaxationDataGenerator(unittest.TestCase):
+    "TestCase class for DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.h_data_container = Native.ElectronPhotonRelaxationDataContainer( options.test_h_native_file )
+
+    def testBasicConstructor(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator basic constructor"
+
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        self.assertEqual( generator.getAtomicNumber(), 1 )
+        self.assertEqual( generator.getMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( generator.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( generator.getMinElectronEnergy(), 1e-5 )
+        self.assertEqual( generator.getMaxElectronEnergy(), 1e5 )
+        self.assertEqual( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+
+        # Test the photon table data
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Test the electron table data
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+
+        # Check the data container values
+        data_container = generator.getDataContainer()
+
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( data_container.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Test the electron table data
+        self.assertEqual( data_container.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( data_container.getNumberOfAdjointMomentPreservingAngles(), 0 )
+        self.assertEqual( data_container.getAdjointElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getAdjointElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+
+    def testConstructor(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator constructor"
+
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container, 1e-3, 20.0, 1e-5, 1e5 )
+
+        self.assertEqual( generator.getNotes(), "" )
+        self.assertEqual( generator.getAtomicNumber(), 1 )
+        self.assertEqual( generator.getMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( generator.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( generator.getMinElectronEnergy(), 1e-5 )
+        self.assertEqual( generator.getMaxElectronEnergy(), 1e5 )
+        self.assertEqual( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+
+        # Test the photon table data
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Test the electron table data
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+
+        note = "This data was generated by and for unit testing purposes only."
+        generator.setNotes(note)
+
+        # Check the data container values
+        data_container = generator.getDataContainer()
+
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( data_container.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Check the electron table data
+        self.assertEqual( data_container.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( data_container.getNumberOfAdjointMomentPreservingAngles(), 0 )
+        self.assertEqual( data_container.getAdjointElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getAdjointElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+        self.assertEqual( data_container.getNotes(), note )
+
+        data_container.saveToFile( "test_h_aepr.xml", True)
+
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container, "test_h_aepr.xml" )
+
+        self.assertEqual( generator.getAtomicNumber(), 1 )
+        self.assertEqual( generator.getMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( generator.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( generator.getMinElectronEnergy(), 1e-5 )
+        self.assertEqual( generator.getMaxElectronEnergy(), 1e5 )
+        self.assertEqual( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultPhotonGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+
+        # Test the photon table data
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( generator.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Test the electron table data
+        self.assertEqual( generator.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( generator.getNumberOfMomentPreservingAngles(), 0 )
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( generator.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( generator.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( generator.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( generator.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( generator.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( generator.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( generator.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+
+        # Check the data container values
+        data_container = generator.getDataContainer()
+
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( data_container.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridConvergenceTolerance(), 1e-3 )
+        self.assertEqual( data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-20 )
+        self.assertEqual( data_container.getAdjointIncoherentGridDistanceTolerance(), 1e-14 )
+
+        # Check the electron table data
+        self.assertEqual( data_container.getCutoffAngleCosine(), 1.0 )
+        self.assertEqual( data_container.getNumberOfAdjointMomentPreservingAngles(), 0 )
+        self.assertEqual( data_container.getAdjointElectronGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getAdjointElectronGridDistanceTolerance(), 1e-13 )
+        self.assertEqual( data_container.getElectronTabularEvaluationTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-8 )
+        self.assertEqual( data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-6 )
+        self.assertEqual( data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( data_container.getAdjointElectroionizationDistanceTolerance(), 1e-8 )
+        self.assertEqual( data_container.getNotes(), note )
+
+    def testSetDefaultPhotonGridTolerances(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setDefaultPhotonGridTolerances"
+
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setDefaultPhotonGridConvergenceTolerance( 1e-5 )
+        generator.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-40 )
+        generator.setDefaultPhotonGridDistanceTolerance( 1e-30 )
+
+        self.assertEqual( generator.getDefaultPhotonGridConvergenceTolerance(), 1e-5 )
+        self.assertEqual( generator.getDefaultPhotonGridAbsoluteDifferenceTolerance(), 1e-40 )
+        self.assertEqual( generator.getDefaultPhotonGridDistanceTolerance(), 1e-30 )
+
+    def testSetDefaultElectronGridTolerances(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setDefaultElectronGridTolerances"
+
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setDefaultElectronGridConvergenceTolerance( 1e-5 )
+        generator.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-40 )
+        generator.setDefaultElectronGridDistanceTolerance( 1e-30 )
+
+        self.assertEqual( generator.getDefaultElectronGridConvergenceTolerance(), 1e-5 )
+        self.assertEqual( generator.getDefaultElectronGridAbsoluteDifferenceTolerance(), 1e-40 )
+        self.assertEqual( generator.getDefaultElectronGridDistanceTolerance(), 1e-30 )
+
+    def testSetAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-5 )
+
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-5 )
+
+    def testSetAdjointPairProductionEnergyDistNormConstantNudgeValue(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointPairProductionEnergyDistNormConstantNudgeValue"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-4 )
+
+        self.assertEqual( generator.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-4 )
+
+    def testSetAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-4 )
+
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-4 )
+
+    def testSetAdjointTripletProductionEnergyDistNormConstantNudgeValue(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointTripletProductionEnergyDistNormConstantNudgeValue"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-2 )
+
+        self.assertEqual( generator.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-2 )
+
+    def testSetAdjointIncoherentMaxEnergyNudgeValue(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentMaxEnergyNudgeValue"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentMaxEnergyNudgeValue( 0.5 )
+
+        self.assertEqual( generator.getAdjointIncoherentMaxEnergyNudgeValue(), 0.5 )
+
+    def testSetAdjointIncoherentEnergyToMaxEnergyNudgeValue(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentEnergyToMaxEnergyNudgeValue"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-3 )
+
+        self.assertEqual( generator.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-3 )
+
+    def testSetAdjointIncoherentEvaluationTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentEvaluationTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentEvaluationTolerance( 1e-4 )
+
+        self.assertEqual( generator.getAdjointIncoherentEvaluationTolerance(), 1e-4 )
+
+    def testSetAdjointIncoherentGridConvergenceTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentGridConvergenceTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentGridConvergenceTolerance( 1e-5 )
+
+        self.assertEqual( generator.getAdjointIncoherentGridConvergenceTolerance(), 1e-5 )
+
+    def testSetAdjointIncoherentGridAbsoluteDifferenceTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentGridAbsoluteDifferenceTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-50 )
+
+        self.assertEqual( generator.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-50 )
+
+    def testSetAdjointIncoherentGridDistanceTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointIncoherentGridDistanceTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointIncoherentGridDistanceTolerance( 1e-40 )
+
+        self.assertEqual( generator.getAdjointIncoherentGridDistanceTolerance(), 1e-40 )
+
+    def testSetAdjointBremsstrahlungEvaluationTolerance(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator setAdjointBremsstrahlungEvaluationTolerance"
+        generator = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container )
+
+        generator.setAdjointBremsstrahlungEvaluationTolerance( 1e-4 )
+
+        self.assertEqual( generator.getAdjointBremsstrahlungEvaluationTolerance(), 1e-4 )
+
+    def testPopulateEPRDataContainer(self):
+        "*Test DataGen.ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator populateEPRDataContainer"
+
+        generator_h = ElectronPhoton.StandardAdjointElectronPhotonRelaxationDataGenerator( self.h_data_container, 1e-3, 20.0, 1e-5, 20.0 )
+
+        # Set default photon grid tolerances
+        generator_h.setDefaultPhotonGridConvergenceTolerance( 1e-3 )
+        generator_h.setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-42 )
+        generator_h.setDefaultPhotonGridDistanceTolerance( 1e-15 )
+
+        generator_h.setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
+        generator_h.setAdjointPairProductionEnergyDistNormConstantNudgeValue( 1e-6 )
+        generator_h.setAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance( 1e-3 )
+        generator_h.setAdjointTripletProductionEnergyDistNormConstantNudgeValue( 1e-6 )
+        generator_h.setAdjointIncoherentMaxEnergyNudgeValue( 0.2 )
+        generator_h.setAdjointIncoherentEnergyToMaxEnergyNudgeValue( 1e-6 )
+        generator_h.setAdjointIncoherentEvaluationTolerance( 1e-3 )
+        generator_h.setAdjointIncoherentGridConvergenceTolerance( 0.5 )
+        generator_h.setAdjointIncoherentGridAbsoluteDifferenceTolerance( 1e-42 )
+        generator_h.setAdjointIncoherentGridDistanceTolerance( 1e-18 )
+
+        # Set default electron grid tolerances
+        generator_h.setDefaultElectronGridConvergenceTolerance( 0.5 )
+        generator_h.setDefaultElectronGridAbsoluteDifferenceTolerance( 1e-16 )
+        generator_h.setDefaultElectronGridDistanceTolerance( 1e-9 )
+
+        generator_h.setElectronTabularEvaluationTolerance( 1e-7 )
+        generator_h.setElectronTwoDInterpPolicy( MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        generator_h.setElectronTwoDGridPolicy( MonteCarlo.UNIT_BASE_GRID )
+        generator_h.setForwardElectroionizationSamplingMode( MonteCarlo.KNOCK_ON_SAMPLING )
+
+        generator_h.setCutoffAngleCosine( 0.9 )
+        generator_h.setNumberOfMomentPreservingAngles( 1 )
+
+        generator_h.setAdjointBremsstrahlungMinEnergyNudgeValue( 1e-9 )
+        generator_h.setAdjointBremsstrahlungMaxEnergyNudgeValue( 1e-2 )
+        generator_h.setAdjointBremsstrahlungEvaluationTolerance( 1e-3 )
+        generator_h.setAdjointBremsstrahlungGridConvergenceTolerance( 0.5 )
+        generator_h.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-12 )
+        generator_h.setAdjointBremsstrahlungDistanceTolerance( 1e-14 )
+
+        generator_h.setAdjointElectroionizationMinEnergyNudgeValue( 1e-9 )
+        generator_h.setAdjointElectroionizationMaxEnergyNudgeValue( 1e-2 )
+        generator_h.setAdjointElectroionizationEvaluationTolerance( 1e-3 )
+        generator_h.setAdjointElectroionizationGridConvergenceTolerance( 0.5 )
+        generator_h.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-12 )
+        generator_h.setAdjointElectroionizationDistanceTolerance( 1e-14 )
+
+        # Generate the data
+        generator_h.populateEPRDataContainer( True, True )
+
+        # Check the data container values
+        h_data_container = generator_h.getDataContainer()
+
+        # Check the basic table settings data
+        self.assertEqual( h_data_container.getAtomicNumber(), 1 )
+        self.assertEqual( h_data_container.getMinPhotonEnergy(), 0.001 )
+        self.assertEqual( h_data_container.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( h_data_container.getMinElectronEnergy(), 1.0e-5 )
+        self.assertEqual( h_data_container.getMaxElectronEnergy(), 20.0 )
+
+        # Check the photon table settings data
+        self.assertEqual( h_data_container.getAdjointPhotonGridConvergenceTolerance(), 0.001 )
+        self.assertEqual( h_data_container.getAdjointPhotonGridAbsoluteDifferenceTolerance(), 1e-42 )
+        self.assertEqual( h_data_container.getAdjointPhotonGridDistanceTolerance(), 1e-15 )
+
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistNormConstantEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistNormConstantNudgeValue(), 1e-6 )
+        self.assertEqual( h_data_container.getAdjointIncoherentMaxEnergyNudgeValue(), 0.2 )
+        self.assertEqual( h_data_container.getAdjointIncoherentEnergyToMaxEnergyNudgeValue(), 1e-6 )
+        self.assertEqual( h_data_container.getAdjointIncoherentEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointIncoherentGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointIncoherentGridAbsoluteDifferenceTolerance(), 1e-42 )
+        self.assertEqual( h_data_container.getAdjointIncoherentGridDistanceTolerance(), 1e-18 )
+
+        # Check the electron table data
+        self.assertEqual( h_data_container.getCutoffAngleCosine(), 0.9 )
+        self.assertEqual( h_data_container.getNumberOfAdjointMomentPreservingAngles(), 1 )
+        self.assertEqual( h_data_container.getAdjointElectronGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 )
+        self.assertEqual( h_data_container.getElectronTabularEvaluationTolerance(), 1e-7 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-12 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-14 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-12 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationDistanceTolerance(), 1e-14 )
+
+        # Check the relaxation data
+        self.assertEqual( len( h_data_container.getSubshells() ), 1 )
+        self.assertTrue( h_data_container.getSubshells().count( 1 ) )
+        self.assertEqual( h_data_container.getSubshellOccupancy( 1 ), 1 )
+        self.assertEqual( h_data_container.getSubshellBindingEnergy( 1 ), 1.361000000000E-05 )
+        self.assertFalse( h_data_container.hasAdjointRelaxationData() )
+
+        # Check the Compton profiles
+        self.assertEqual( len( h_data_container.getComptonProfileMomentumGrid(1) ), 871 )
+        self.assertEqual( h_data_container.getComptonProfileMomentumGrid(1)[0], -1.0 )
+        self.assertEqual( h_data_container.getComptonProfileMomentumGrid(1)[-1], 1.0 )
+        self.assertEqual( len( h_data_container.getComptonProfile(1) ), 871 )
+        self.assertAlmostEqual( h_data_container.getComptonProfile(1)[0], 2.24060414412282093e-09, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getComptonProfile(1)[-1], 2.24060414412282093e-09, delta=1e-15 )
+
+        # Check the occupation numbers
+        self.assertEqual( len( h_data_container.getOccupationNumberMomentumGrid(1) ), 410 )
+        self.assertEqual( h_data_container.getOccupationNumberMomentumGrid(1)[0], -1.0 )
+        self.assertEqual( h_data_container.getOccupationNumberMomentumGrid(1)[-1], 1.0 )
+        self.assertEqual( len( h_data_container.getOccupationNumber(1) ), 410 )
+        self.assertEqual( h_data_container.getOccupationNumber(1)[0], 0.0 )
+        self.assertEqual( h_data_container.getOccupationNumber(1)[-1], 1.0 )
+
+        # Check the Waller-Hartree scattering function
+        self.assertEqual( len( h_data_container.getWallerHartreeScatteringFunctionMomentumGrid() ), 365 )
+        self.assertEqual( h_data_container.getWallerHartreeScatteringFunctionMomentumGrid()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeScatteringFunctionMomentumGrid()[-1], 1.0e+17, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getWallerHartreeScatteringFunction() ), 365 )
+        self.assertEqual( h_data_container.getWallerHartreeScatteringFunction()[0], 0.0 )
+        self.assertEqual( h_data_container.getWallerHartreeScatteringFunction()[-1], 1.0 )
+
+        # Check the Waller-Hartree atomic form factor
+        self.assertEqual( len( h_data_container.getWallerHartreeAtomicFormFactorMomentumGrid() ), 1582 )
+        self.assertEqual( h_data_container.getWallerHartreeAtomicFormFactorMomentumGrid()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeAtomicFormFactorMomentumGrid()[-1], 1.0e+17, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getWallerHartreeAtomicFormFactor() ), 1582 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeAtomicFormFactor()[0], 1.0e+00, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeAtomicFormFactor()[-1], 8.18290000000000004e-39, delta=1e-15 )
+
+        # Check the Waller-Hartree squared form factor
+        self.assertEqual( len( h_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid() ), 3231 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid()[0], 0.0, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid()[-1], 1.0e+34, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getWallerHartreeSquaredAtomicFormFactor() ), 3231 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeSquaredAtomicFormFactor()[0], 1.0, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeSquaredAtomicFormFactor()[-1], 6.695985241e-77, delta=1e-15 )
+
+        # Check that adjoint photon energy grid
+        self.assertEqual( len( h_data_container.getAdjointPhotonEnergyGrid() ), 949 )
+        self.assertAlmostEqual( h_data_container.getAdjointPhotonEnergyGrid()[0], 1e-3, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointPhotonEnergyGrid()[-1], 20.0, delta=1e-15 )
+
+        # Check the adjoint Waller-Hartree incoherent cross section data
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[0] ), 4 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[0][0], 1e-3, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[0][-1], 20.2, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[-1][0], 20.0, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid()[-1][-1], 20.2, delta=1e-15 )
+
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentCrossSection() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[0] ), 4 )
+        self.assertEqual( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[0][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[0][-1], 0.0852609950388300425, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[-1] ), 3 )
+        self.assertEqual( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[-1][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeIncoherentCrossSection()[-1][-1], 0.000126201219662383057, delta=1e-15 )
+
+        # Check the adjoint impulse approx. incoherent cross section data
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[0] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[0][0], 1e-3 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[0][-1], 20.2 + 1.361e-5, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[-1][0], 20.0 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentMaxEnergyGrid()[-1][-1], 20.2 + 1.361e-5, delta=1e-15 )
+
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentCrossSection() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[0] ), 3 )
+        self.assertEqual( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[0][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[0][-1], 0.023532843589338676, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[-1] ), 3 )
+        self.assertEqual( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[-1][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxIncoherentCrossSection()[-1][-1], 0.00012620704762579234, delta=1e-15 )
+
+        # Check the adjoint subshell impulse approx. incoherent cross section data
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1) ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[0] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[0][0], 1e-3 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[0][-1], 20.2 + 1.361e-5, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[-1][0], 20.0 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid(1)[-1][-1], 20.2 + 1.361e-5, delta=1e-15 )
+
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1) ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[0] ), 3 )
+        self.assertEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[0][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[0][-1], 0.023532843589338676, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[-1] ), 3 )
+        self.assertEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[-1][0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)[-1][-1], 0.00012620704762579234, delta=1e-15 )
+
+        # Check the adjoint Waller-Hartree coherent cross section
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeCoherentCrossSection() ), 949 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeCoherentCrossSection()[0], 5.81790484064093394e-01, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeCoherentCrossSection()[-1], 1.15654029975768264e-08, delta=1e-15 )
+
+        # Check the adjoint Waller-Hartree total cross section
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[0] ), 4 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[0][0], 1e-3, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[0][-1], 20.2, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[-1][0], 20.0, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalMaxEnergyGrid()[-1][-1], 20.2, delta=1e-15 )
+
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalCrossSection() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalCrossSection()[0] ), 4 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalCrossSection()[0][0], 0.581790484064093394, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalCrossSection()[0][-1], 0.6670514791029234, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointWallerHartreeTotalCrossSection()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalCrossSection()[-1][0], 1.15654029975768264e-08, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointWallerHartreeTotalCrossSection()[-1][-1], 0.00012621278506538063, delta=1e-15 )
+
+        # Check the adjoint impulse approx. total cross section
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxTotalCrossSection() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[0] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[0][0], 1e-3 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[0][-1], 20.2 + 1.361e-5, delta=1e-15 )
+        self.assertEqual(len( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[-1][0], 20.0 + 1.361e-5, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalMaxEnergyGrid()[-1][-1], 20.2 + 1.361e-5, delta=1e-15 )
+
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxTotalCrossSection() ), 949 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxTotalCrossSection()[0] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalCrossSection()[0][0], 0.581790484064093394, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalCrossSection()[0][-1], 0.6053233276534322, delta=1e-15 )
+        self.assertEqual( len( h_data_container.getAdjointImpulseApproxTotalCrossSection()[-1] ), 3 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalCrossSection()[-1][0], 1.15654029975768264e-08, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getAdjointImpulseApproxTotalCrossSection()[-1][-1], 0.0001262186130287899, delta=1e-15 )
+
+        # Check the forward Waller-Hartee total cross section
+        self.assertEqual( len( h_data_container.getWallerHartreeTotalCrossSection() ), 949 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeTotalCrossSection()[0], 1.20745489798488403e+01, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getWallerHartreeTotalCrossSection()[-1], 0.0358863942741229694, delta=1e-15 )
+
+        # Check the forward impulse approx total cross section
+        self.assertEqual( len( h_data_container.getImpulseApproxTotalCrossSection() ), 949 )
+        self.assertAlmostEqual( h_data_container.getImpulseApproxTotalCrossSection()[0], 12.0133313565812934, delta=1e-15 )
+        self.assertAlmostEqual( h_data_container.getImpulseApproxTotalCrossSection()[-1], 0.0359008637199275463, delta=1e-15 )
+
+        electron_rest_mass_energy = 0.51099891013
+        # Check the adjoint pair production energy distribution
+        self.assertEqual( len( h_data_container.getAdjointPairProductionEnergyDistributionGrid() ), 518 )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistributionGrid()[0], 2*electron_rest_mass_energy )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistributionGrid()[-1], 20.0 )
+
+        self.assertEqual( len( h_data_container.getAdjointPairProductionEnergyDistribution() ), 518 )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistribution()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointPairProductionEnergyDistribution()[-1], 0.00329199999999999979, delta=1e-15 )
+
+        # Check the adjoint pair production energy distribution norm constant data
+        self.assertEqual( len( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid() ), 552 )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid()[0], 2*electron_rest_mass_energy )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistributionNormConstantGrid()[-1], 20.0 )
+
+        self.assertEqual( len( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant() ), 552 )
+        self.assertEqual( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointPairProductionEnergyDistributionNormConstant()[-1], 0.0380684241862887934, delta=1e-15 )
+
+        # Check the adjoint triplet production energy distribution
+        self.assertEqual( len( h_data_container.getAdjointTripletProductionEnergyDistributionGrid() ), 244 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistributionGrid()[0], 4*electron_rest_mass_energy )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistributionGrid()[-1], 20.0 )
+
+        self.assertEqual( len( h_data_container.getAdjointTripletProductionEnergyDistribution() ), 244 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistribution()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointTripletProductionEnergyDistribution()[-1], 0.00235899999999999999, delta=1e-15 )
+
+        # Check the adjoint triplet production energy distribution norm const data
+        self.assertEqual( len( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstantGrid() ), 504 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstantGrid()[0], 4*electron_rest_mass_energy )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstantGrid()[-1], 20.0 )
+
+        self.assertEqual( len( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstant() ), 504 )
+        self.assertEqual( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstant()[0], 0.0 )
+        self.assertAlmostEqual( h_data_container.getAdjointTripletProductionEnergyDistributionNormConstant()[-1], 0.0222633493680759083, delta=1e-15 )
+
+        # Check the electron data
+        self.assertEqual( h_data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" )
+        self.assertEqual( h_data_container.getElectronTwoDGridPolicy(), "Unit-base" )
+        self.assertEqual( h_data_container.getAdjointElectronGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointElectronGridAbsoluteDifferenceTolerance(), 1e-16 )
+        self.assertEqual( h_data_container.getAdjointElectronGridDistanceTolerance(), 1e-9 )
+
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(), 1e-12 )
+        self.assertEqual( h_data_container.getAdjointBremsstrahlungDistanceTolerance(), 1e-14 )
+
+        self.assertEqual( h_data_container.getAdjointElectroionizationMinEnergyNudgeValue(), 1e-9 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationMaxEnergyNudgeValue(), 1e-2 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationEvaluationTolerance(), 1e-3 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationGridConvergenceTolerance(), 0.5 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(), 1e-12 )
+        self.assertEqual( h_data_container.getAdjointElectroionizationDistanceTolerance(), 1e-14 )
+
+        energy_grid = h_data_container.getAdjointElectronEnergyGrid()
+        self.assertEqual( energy_grid[0], 1.0e-5 )
+        self.assertEqual( energy_grid[-1], 20.0 )
+        self.assertEqual( len( energy_grid ), 6 )
+
+        # Check the elastic data
+        threshold = h_data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section = h_data_container.getAdjointCutoffElasticCrossSection()
+
+        self.assertEqual( cross_section[0], 2.74896e+8 )
+        self.assertEqual( cross_section[-1], 304.72762372903747519 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        threshold = h_data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 3 )
+
+        cross_section = h_data_container.getAdjointScreenedRutherfordElasticCrossSection()
+
+        self.assertEqual( cross_section[0], 2.574552047073666472 )
+        self.assertEqual( cross_section[-1], 1.271739489125800355e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        angular_grid = h_data_container.getAdjointElasticAngularEnergyGrid()
+
+        self.assertEqual( angular_grid[0], 1.0e-5 )
+        self.assertEqual( angular_grid[-1], 20.0 )
+        self.assertEqual( len( angular_grid ), 12 )
+
+        elastic_angles = h_data_container.getAdjointCutoffElasticAngles(1.0e-5)
+
+        self.assertEqual( elastic_angles[0], -1.0 )
+        self.assertEqual( elastic_angles[-1], 0.999999 )
+        self.assertEqual( len( elastic_angles ), 2 )
+
+        elastic_angles = h_data_container.getAdjointCutoffElasticAngles(20.0)
+
+        self.assertEqual( elastic_angles[0], -1.0 )
+        self.assertEqual( elastic_angles[-1], 0.999999 )
+        self.assertEqual( len( elastic_angles ), 95 )
+
+        elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 1e-5 )
+
+        self.assertEqual( elastic_pdf[0], 0.5 )
+        self.assertEqual( elastic_pdf[-1], 0.5 )
+        self.assertEqual( len( elastic_pdf ), 2 )
+
+        elastic_pdf = h_data_container.getAdjointCutoffElasticPDF( 20.0 )
+
+        self.assertEqual( elastic_pdf[0], 1.5765713672440115e-10 )
+        self.assertEqual( elastic_pdf[-1], 9.610231719778873958e+05 )
+        self.assertEqual( len( elastic_pdf ), 95 )
+
+        self.assertTrue( h_data_container.hasAdjointMomentPreservingData() )
+
+        mp_cross_section_reduction = h_data_container.getAdjointMomentPreservingCrossSectionReduction()
+
+        self.assertEqual( mp_cross_section_reduction[0], 7.50007499925003707e-01 )
+        self.assertEqual( mp_cross_section_reduction[-1], 4.942770535587320320e-05 )
+        self.assertEqual( len( mp_cross_section_reduction ), 12 )
+
+        discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 1.0e-5 )
+
+        self.assertEqual( discrete_angles[0], 9.33333333326667125e-01 )
+        self.assertEqual( discrete_angles[-1], 9.33333333326667125e-01 )
+        self.assertEqual( len( discrete_angles ), 1 )
+
+        discrete_angles = h_data_container.getAdjointMomentPreservingElasticDiscreteAngles( 20.0 )
+
+        self.assertEqual( discrete_angles[0], 9.93103540436863e-01 )
+        self.assertEqual( discrete_angles[-1], 9.93103540436863e-01 )
+        self.assertEqual( len( discrete_angles ), 1 )
+
+        discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 1.0e-5 )
+
+        self.assertEqual( discrete_weights[0], 1.0 )
+        self.assertEqual( discrete_weights[-1], 1.0 )
+        self.assertEqual( len( discrete_weights ), 1 )
+
+        discrete_weights = h_data_container.getAdjointMomentPreservingElasticWeights( 20.0 )
+
+        self.assertEqual( discrete_weights[0], 1.0 )
+        self.assertEqual( discrete_weights[-1], 1.0 )
+        self.assertEqual( len( discrete_weights ), 1 )
+
+        # Check the forward brem cross section data
+        threshold = h_data_container.getForwardBremsstrahlungElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section = h_data_container.getForwardBremsstrahlungElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 2.97832e+01 )
+        self.assertEqual( cross_section[-1], 9.717679999999999652e-01 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+         # Check the forward electroionization cross section data
+        threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
+        self.assertEqual( cross_section[-1], 8.284008376199545455e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+         # Check the forward atomic excitation cross section data
+        threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 5.398785827404625e+07 )
+        self.assertEqual( cross_section[-1], 8.18293e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        # Check the forward electroionization cross section data
+        threshold = h_data_container.getForwardElectroionizationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardElectroionizationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.0427802764032364e+07 )
+        self.assertEqual( cross_section[-1], 8.284008376199545e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        # Check the forward atomic excitation cross section data
+        threshold = h_data_container.getForwardAtomicExcitationElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 1 )
+
+        cross_section = h_data_container.getForwardAtomicExcitationElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 5.398785827404625e+07 )
+        self.assertEqual( cross_section[-1], 8.18293e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        # Check the atomic excitation data
+        threshold =  h_data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section = h_data_container.getAdjointAtomicExcitationCrossSection()
+
+        self.assertEqual( cross_section[0], 6.1240558282823466e+07 )
+        self.assertEqual( cross_section[-1], 8.18292998361299251e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        atomic_excitation_energy_grid = h_data_container.getAdjointAtomicExcitationEnergyGrid()
+
+        self.assertAlmostEqual( atomic_excitation_energy_grid[0], 1e-5, delta=1e-13 )
+        self.assertAlmostEqual( atomic_excitation_energy_grid[-1], 20.0, delta=1e-15 )
+        self.assertEqual( len( atomic_excitation_energy_grid ), 6 )
+
+        atomic_excitation_energy_gain = h_data_container.getAdjointAtomicExcitationEnergyGain()
+
+        self.assertEqual( atomic_excitation_energy_gain[0], 1.580912062248717e-05 )
+        self.assertEqual( atomic_excitation_energy_gain[-1], 2.101080001930054575e-05 )
+        self.assertEqual( len( atomic_excitation_energy_gain ), 6 )
+
+
+        # Check the bremsstrahlung data
+        threshold = h_data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex()
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section = h_data_container.getAdjointBremsstrahlungElectronCrossSection()
+
+        self.assertEqual( cross_section[0], 4.8272321177547376e+01 )
+        self.assertEqual( cross_section[-1], 5.960300454096509e-01 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        brem_energy_grid = h_data_container.getAdjointElectronBremsstrahlungEnergyGrid()
+        self.assertEqual( brem_energy_grid[0], 1.0e-5 )
+        self.assertEqual( brem_energy_grid[-1], 20.0 )
+        self.assertEqual( len( brem_energy_grid ), 6 )
+
+        electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 1e-5 )
+
+        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-7 + 1e-9, delta=1e-7 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 20.009990100000003 )
+        self.assertEqual( len( electron_bremsstrahlung_energy ), 4 )
+
+        electron_bremsstrahlung_energy = h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 )
+
+        self.assertAlmostEqual( electron_bremsstrahlung_energy[0], 1e-7 + 1e-9, delta=1e-7 )
+        self.assertEqual( electron_bremsstrahlung_energy[-1], 1.000010000000273180e-02 )
+        self.assertEqual( len( electron_bremsstrahlung_energy ), 15 )
+
+        electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 )
+
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 1.3093688418101026e+06 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 4.2551950836329277e-08 )
+        self.assertEqual( len( electron_bremsstrahlung_pdf ), 4 )
+
+        electron_bremsstrahlung_pdf = h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 )
+
+        self.assertEqual( electron_bremsstrahlung_pdf[0], 9.311174437081972137e+05 )
+        self.assertEqual( electron_bremsstrahlung_pdf[-1], 7.892850551596039210 )
+        self.assertEqual( len( electron_bremsstrahlung_pdf ), 15 )
+
+        # Check the electroionization data
+        threshold = h_data_container.getAdjointElectroionizationCrossSectionThresholdEnergyIndex( 1 )
+
+        self.assertEqual( threshold, 0 )
+
+        cross_section = h_data_container.getAdjointElectroionizationCrossSection( 1 )
+
+        self.assertEqual( cross_section[0], 4.248982587949845e+10 )
+        self.assertEqual( cross_section[-1], 8.272800034432033135e+04 )
+        self.assertEqual( len( cross_section ), 6-threshold )
+
+        self.assertFalse( h_data_container.separateAdjointElectroionizationEnergyGrid() )
+
+        electroionization_recoil_energy = h_data_container.getAdjointElectroionizationRecoilEnergy( 1, 1e-5 )
+
+        self.assertAlmostEqual( electroionization_recoil_energy[0], 2.366937698580867e-05, delta=1e-12 )
+        self.assertEqual( electroionization_recoil_energy[-1], 2.001001371000000262e+01 )
+        self.assertEqual( len( electroionization_recoil_energy ), 4 )
+
+        electroionization_recoil_energy = h_data_container.getAdjointElectroionizationRecoilEnergy( 1, 20.0 )
+
+        self.assertAlmostEqual( electroionization_recoil_energy[0], 20.0 + 1.361e-5 + 1e-7 + 1e-9, delta=1e-15 )
+        self.assertEqual( electroionization_recoil_energy[-1], 2.001001371000000262e+01 )
+        self.assertEqual( len( electroionization_recoil_energy ), 9 )
+
+        electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 1e-5 )
+
+        self.assertEqual( electroionization_recoil_pdf[0], 2.2418784207825794e+02 )
+        self.assertEqual( electroionization_recoil_pdf[-1], 4.4001284765551985e-02 )
+        self.assertEqual( len( electroionization_recoil_pdf ), 4 )
+
+        electroionization_recoil_pdf = h_data_container.getAdjointElectroionizationRecoilPDF( 1, 20.0 )
+
+        self.assertEqual( electroionization_recoil_pdf[0], 3.889439151952950488e+04 )
+        self.assertEqual( electroionization_recoil_pdf[-1], 1.333812016846420145e-01 )
+        self.assertEqual( len( electroionization_recoil_pdf ), 9 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(StandardAdjointElectronPhotonRelaxationDataGenerator))
+
+    print >>sys.stderr, \
+        "\n*******************************************************************\n" + \
+        "Testing DataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator \n" + \
+        "********************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstDataGen.ElectronPhoton.AdjointElectronPhotonRelaxationDataGenerator.py
+#-----------------------------------------------------------------------------#

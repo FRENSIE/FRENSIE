@@ -1,0 +1,22 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie.Geometry init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie.Geometry ${GEOMETRY_MODULE_DOCSTRING}
+"""
+
+# Import the special init submodule
+${GEOMETRY_MODULE_INIT}
+
+# Set the __all__ special variable
+${GEOMETRY_MODULE_ALL}
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

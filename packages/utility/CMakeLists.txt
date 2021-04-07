@@ -1,18 +1,37 @@
 # Set up the utility package directory hierarchy
-ADD_SUBDIRECTORY(units)
-INCLUDE_DIRECTORIES(units/src)
-
 ADD_SUBDIRECTORY(core)
 INCLUDE_DIRECTORIES(core/src)
 
-ADD_SUBDIRECTORY(hdf5)
-INCLUDE_DIRECTORIES(hdf5/src)
+ADD_SUBDIRECTORY(mpi)
+INCLUDE_DIRECTORIES(mpi/src)
+
+ADD_SUBDIRECTORY(archive)
+INCLUDE_DIRECTORIES(archive/src)
+INCLUDE_DIRECTORIES(archive/test)
+
+ADD_SUBDIRECTORY(system)
+INCLUDE_DIRECTORIES(system/src)
 
 ADD_SUBDIRECTORY(prng)
 INCLUDE_DIRECTORIES(prng/src)
 
+ADD_SUBDIRECTORY(interpolation)
+INCLUDE_DIRECTORIES(interpolation/src)
+
+ADD_SUBDIRECTORY(grid)
+INCLUDE_DIRECTORIES(grid/src)
+
 ADD_SUBDIRECTORY(distribution)
 INCLUDE_DIRECTORIES(distribution/src)
 
+ADD_SUBDIRECTORY(stats)
+INCLUDE_DIRECTORIES(stats/src)
+
 ADD_SUBDIRECTORY(integrator)
 INCLUDE_DIRECTORIES(integrator/src)
+
+ADD_SUBDIRECTORY(mesh)
+INCLUDE_DIRECTORIES(mesh/src)
+
+ADD_SUBDIRECTORY(direction_discretization)
+INCLUDE_DIRECTORIES(direction_discretization/src)

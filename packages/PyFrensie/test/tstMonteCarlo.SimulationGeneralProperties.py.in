@@ -1,0 +1,180 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationGeneralProperties class unit tests
+#  \file   tstMonteCarlo.SimulationGeneralProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationGeneralProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationGeneralProperties class
+class SimulationGeneralPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationGeneralProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationGeneralProperties defaults"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        self.assertEqual( properties.getParticleMode(), MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getSimulationWallTime(), float('Inf') )
+        self.assertEqual( properties.getNumberOfHistories(), 0 )
+        self.assertEqual( properties.getMinNumberOfRendezvous(), 1 )
+        self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000000 )
+        self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
+        self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 1 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 1 )
+        self.assertFalse( properties.isImplicitCaptureModeOn() )
+
+    def testSetParticleMode(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setParticleMode"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(), MonteCarlo.PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.PHOTON_ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ADJOINT_PHOTON_MODE )
+
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+    def testSetSimulationWallTime(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setSimulationWallTime"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setSimulationWallTime( 300.0 )
+        self.assertEqual( properties.getSimulationWallTime(), 300.0 )
+
+    def testSetNumberOfHistories(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfHistories"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setNumberOfHistories( 1000000000 )
+        self.assertEqual( properties.getNumberOfHistories(), 1000000000 )
+
+        properties.setNumberOfHistories( 1e7 )
+        self.assertEqual( properties.getNumberOfHistories(), 1e7 )
+
+    def testSetMinNumberOfRendezvous(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMinNumberOfRendezvous"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMinNumberOfRendezvous( 10 )
+        self.assertEqual( properties.getMinNumberOfRendezvous(), 10 )
+
+    def testSetMaxRendezvousBatchSize(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMaxRendezvousBatchSize"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMaxRendezvousBatchSize( 1000000 )
+        self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000 )
+
+    def testSetMinNumberOfBatchesPerRendezvous(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMinNumberOfBatchesPerRendezvous"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMinNumberOfBatchesPerRendezvous( 20 )
+        self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 20 )
+
+    def testSetMaxBatchSize(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setMaxBatchSize"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setMaxBatchSize( 100000 )
+        self.assertEqual( properties.getMaxBatchSize(), 100000 )
+
+    def testSetNumberOfBatchesPerProcessor(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfBatchesPerProcessor"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setNumberOfBatchesPerProcessor( 25 )
+        self.assertEqual( properties.getNumberOfBatchesPerProcessor(), 25 )
+
+    def testSetNumberOfSnapshotsPerBatch(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setNumberOfSnapshotsPerBatch"
+        properties = MonteCarlo.SimulationGeneralProperties()
+        properties.setNumberOfSnapshotsPerBatch( 2 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 2 )
+
+    def testSetImplicitCaptureModeOnOff(self):
+        "*Test MonteCarlo.SimulationGeneralProperties setImplicitCaptureModeOnOff"
+        properties = MonteCarlo.SimulationGeneralProperties()
+
+        properties.setImplicitCaptureModeOn()
+        self.assertTrue( properties.isImplicitCaptureModeOn() )
+
+        properties.setAnalogueCaptureModeOn()
+        self.assertFalse( properties.isImplicitCaptureModeOn() )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationGeneralPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationGeneralProperties.py
+#-----------------------------------------------------------------------------#

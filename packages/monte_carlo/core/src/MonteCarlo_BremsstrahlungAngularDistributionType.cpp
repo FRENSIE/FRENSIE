@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_BremsstrahlungAngularDistributionType.cpp
 //! \author Luke Kersting
-//! \brief  Electroatomic reaction type helper function definitions.
+//! \brief  Bremsstrahlung angular distribution type helper function definitions.
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,30 +12,36 @@
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
-// Convert a BremsstrahlungAngularDistributionType enum to a string
-std::string convertBremsstrahlungAngularDistributionEnumToString( 
-				       const BremsstrahlungAngularDistributionType reaction )
+// Convert a MonteCarlo::BremsstrahlungAngularDistributionType to a string
+std::string ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toString(
+             const MonteCarlo::BremsstrahlungAngularDistributionType reaction )
 {
   switch( reaction )
   {
-  case DIPOLE_DISTRIBUTION: 
+  case MonteCarlo::DIPOLE_DISTRIBUTION:
     return "Dipole Distribution";
-  case TABULAR_DISTRIBUTION: 
+  case MonteCarlo::TABULAR_DISTRIBUTION:
     return "Tabular Distribution";
-  case TWOBS_DISTRIBUTION:
+  case MonteCarlo::TWOBS_DISTRIBUTION:
     return "2BS Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: cannot convert the Bremsstrahlung angular distribution "
-		     "type to a string!" );
+                     "Cannot convert the Bremsstrahlung angular distribution "
+                     "type to a string!" );
   }
 }
 
-} // end MonteCarlo namespace
+// Place the MonteCarlo::BremsstrahlungAngularDistributionType in a stream
+void ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toStream( std::ostream& os, const MonteCarlo::BremsstrahlungAngularDistributionType type )
+{
+  os << ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toString( type );
+}
+
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungAngularDistributionType.cpp

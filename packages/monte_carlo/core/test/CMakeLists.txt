@@ -1,108 +1,113 @@
-ADD_EXECUTABLE(tstParticleState
-  tstParticleState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleState monte_carlo_core)
-ADD_TEST(ParticleState_test tstParticleState)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_core)
 
-ADD_EXECUTABLE(tstPhotonState
-  tstPhotonState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
-ADD_TEST(PhotonState_test tstPhotonState)
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_core_test_root_geometry)
 
-ADD_EXECUTABLE(tstAdjointPhotonState
-  tstAdjointPhotonState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
-ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
+ADD_SUBDIRECTORY(test_files)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_EXECUTABLE(tstAdjointPhotonProbeState
-  tstAdjointPhotonProbeState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
-ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
+FRENSIE_ADD_TEST_EXECUTABLE(KinematicHelpers DEPENDS tstKinematicHelpers.cpp)
+FRENSIE_ADD_TEST(KinematicHelpers)
 
-ADD_EXECUTABLE(tstNeutronState
-  tstNeutronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstNeutronState monte_carlo_core)
-ADD_TEST(NeutronState_test tstNeutronState)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleType DEPENDS tstParticleType.cpp)
+FRENSIE_ADD_TEST(ParticleType)
 
-ADD_EXECUTABLE(tstElectronState
-  tstElectronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
-ADD_TEST(ElectronState_test tstElectronState)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleState DEPENDS tstParticleState.cpp)
+FRENSIE_ADD_TEST(ParticleState)
 
-ADD_EXECUTABLE(tstAdjointElectronState
-  tstAdjointElectronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronState monte_carlo_core)
-ADD_TEST(AdjointElectronState_test tstAdjointElectronState)
+IF(FRENSIE_ENABLE_ROOT)
+  FRENSIE_ADD_TEST_EXECUTABLE(RootParticleState
+    DEPENDS tstRootParticleState.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET}
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(RootParticleState
+    EXTRA_ARGS
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+ENDIF()
 
-ADD_EXECUTABLE(tstAdjointElectronProbeState
-  tstAdjointElectronProbeState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
-ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
+IF(FRENSIE_ENABLE_DAGMC)
+  FRENSIE_ADD_TEST_EXECUTABLE(DagMCParticleState
+    DEPENDS tstDagMCParticleState.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(DagMCParticleState
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
+ENDIF()
 
-ADD_EXECUTABLE(tstParticleBank
-  tstParticleBank.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
-ADD_TEST(ParticleBank_test tstParticleBank)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonState DEPENDS tstPhotonState.cpp)
+FRENSIE_ADD_TEST(PhotonState)
 
-ADD_EXECUTABLE(tstSimulationGeneralProperties 
-  tstSimulationGeneralProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationGeneralProperties monte_carlo_core)
-ADD_TEST(SimulationGeneralProperties_test tstSimulationGeneralProperties)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonState DEPENDS tstAdjointPhotonState.cpp)
+FRENSIE_ADD_TEST(AdjointPhotonState)
 
-ADD_EXECUTABLE(tstSimulationNeutronProperties 
-  tstSimulationNeutronProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationNeutronProperties monte_carlo_core)
-ADD_TEST(SimulationNeutronProperties_test tstSimulationNeutronProperties)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonProbeState DEPENDS tstAdjointPhotonProbeState.cpp)
+FRENSIE_ADD_TEST(AdjointPhotonProbeState)
 
-ADD_EXECUTABLE(tstSimulationPhotonProperties 
-  tstSimulationPhotonProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
-ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
+FRENSIE_ADD_TEST_EXECUTABLE(NeutronState DEPENDS tstNeutronState.cpp)
+FRENSIE_ADD_TEST(NeutronState)
 
-ADD_EXECUTABLE(tstSimulationElectronProperties 
-  tstSimulationElectronProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationElectronProperties monte_carlo_core)
-ADD_TEST(SimulationElectronProperties_test tstSimulationElectronProperties)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronState DEPENDS tstElectronState.cpp)
+FRENSIE_ADD_TEST(ElectronState)
 
-ADD_EXECUTABLE(tstSimulationPropertiesFactory 
-  tstSimulationPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronState DEPENDS tstAdjointElectronState.cpp)
+FRENSIE_ADD_TEST(AdjointElectronState)
 
-ADD_EXECUTABLE(tstSimulationGeneralPropertiesFactory 
-  tstSimulationGeneralPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationGeneralPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationGeneralPropertiesFactory_test tstSimulationGeneralPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronProbeState DEPENDS tstAdjointElectronProbeState.cpp)
+FRENSIE_ADD_TEST(AdjointElectronProbeState)
 
-ADD_EXECUTABLE(tstSimulationNeutronPropertiesFactory 
-  tstSimulationNeutronPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationNeutronPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationNeutronPropertiesFactory_test tstSimulationNeutronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+FRENSIE_ADD_TEST_EXECUTABLE(PositronState DEPENDS tstPositronState.cpp)
+FRENSIE_ADD_TEST(PositronState)
 
-ADD_EXECUTABLE(tstSimulationPhotonPropertiesFactory 
-  tstSimulationPhotonPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationPhotonPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationPhotonPropertiesFactory_test tstSimulationPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleBank DEPENDS tstParticleBank.cpp)
+FRENSIE_ADD_TEST(ParticleBank)
 
-ADD_EXECUTABLE(tstSimulationElectronPropertiesFactory 
-  tstSimulationElectronPropertiesFactory.cpp)
-TARGET_LINK_LIBRARIES(tstSimulationElectronPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationElectronPropertiesFactory_test tstSimulationElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentModelTypeHelpers DEPENDS tstIncoherentModelTypeHelpers.cpp)
+FRENSIE_ADD_TEST(IncoherentModelTypeHelpers)
 
-ADD_EXECUTABLE(tstParticleModeType 
-  tstParticleModeType.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
-ADD_TEST(ParticleModeType_test tstParticleModeType)
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointModelTypeHelpers DEPENDS tstIncoherentAdjointModelTypeHelpers.cpp)
+FRENSIE_ADD_TEST(IncoherentAdjointModelTypeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointKleinNishinaSamplingTypeHelpers DEPENDS tstAdjointKleinNishinaSamplingTypeHelpers.cpp)
+FRENSIE_ADD_TEST(AdjointKleinNishinaSamplingTypeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronDistributionType DEPENDS tstElasticElectronDistributionType.cpp)
+FRENSIE_ADD_TEST(ElasticElectronDistributionType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(BremsstrahlungAngularDistributionType DEPENDS tstBremsstrahlungAngularDistributionType.cpp)
+FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDInterpolationType DEPENDS tstTwoDInterpolationType.cpp)
+FRENSIE_ADD_TEST(TwoDInterpolationType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDGridType DEPENDS tstTwoDGridType.cpp)
+FRENSIE_ADD_TEST(TwoDGridType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
+FRENSIE_ADD_TEST(ParticleModeType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeTypeTraits DEPENDS tstParticleModeTypeTraits.cpp)
+FRENSIE_ADD_TEST(ParticleModeTypeTraits)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationGeneralProperties DEPENDS tstSimulationGeneralProperties.cpp)
+FRENSIE_ADD_TEST(SimulationGeneralProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationNeutronProperties DEPENDS tstSimulationNeutronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationNeutronProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationPhotonProperties DEPENDS tstSimulationPhotonProperties.cpp)
+FRENSIE_ADD_TEST(SimulationPhotonProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationAdjointPhotonProperties DEPENDS tstSimulationAdjointPhotonProperties.cpp)
+FRENSIE_ADD_TEST(SimulationAdjointPhotonProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationElectronProperties DEPENDS tstSimulationElectronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationElectronProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationAdjointElectronProperties DEPENDS tstSimulationAdjointElectronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationAdjointElectronProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationProperties DEPENDS tstSimulationProperties.cpp)
+FRENSIE_ADD_TEST(SimulationProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(UniqueIdManager DEPENDS tstUniqueIdManager.cpp)
+FRENSIE_ADD_TEST(UniqueIdManager)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_core)

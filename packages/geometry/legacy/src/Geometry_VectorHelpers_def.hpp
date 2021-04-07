@@ -22,7 +22,7 @@ Vector<ScalarType> createVector( const ScalarType x,
 
 // Create a vector from a tuple struct
 template<typename ScalarType>
-Vector<ScalarType> createVector( 
+Vector<ScalarType> createVector(
 		 const Utility::Trip<ScalarType,ScalarType,ScalarType> &tuple )
 {
   return Vector<ScalarType>( tuple );
@@ -30,7 +30,7 @@ Vector<ScalarType> createVector(
 
 // Create a x-axis vector
 template<typename ScalarType>
-Vector<ScalarType> createXAxisVector( 
+Vector<ScalarType> createXAxisVector(
 				 const Utility::AxisVectorDirection direction )
 {
   if( direction == Utility::POSITIVE_DIRECTION )
@@ -41,7 +41,7 @@ Vector<ScalarType> createXAxisVector(
 
 // Create a y-axis vector
 template<typename ScalarType>
-Vector<ScalarType> createYAxisVector( 
+Vector<ScalarType> createYAxisVector(
 				 const Utility::AxisVectorDirection direction )
 {
   if( direction == Utility::POSITIVE_DIRECTION )
@@ -52,7 +52,7 @@ Vector<ScalarType> createYAxisVector(
 
 // Create a z-axis vector
 template<typename ScalarType>
-Vector<ScalarType> createZAxisVector( 
+Vector<ScalarType> createZAxisVector(
 				 const Utility::AxisVectorDirection direction )
 {
   if( direction == Utility::POSITIVE_DIRECTION )

@@ -1,0 +1,141 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACENuclearDataProperties class unit tests
+#  \file   tstData.ACE.ACENuclearDataProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ACE.ACENuclearDataProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ACENuclearDataProperties class
+class ACENuclearDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.ACE.ACENuclearDataProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = ACE.ACENuclearDataProperties(
+                                              1.0,
+                                              2.5301e-8,
+                                              "neutron_data/h_data.txt",
+                                              10,
+                                              "1001.70c" )
+
+    def testConstructor(self):
+        "*Test Data.ACENuclearDataProperties constructor"
+        with self.assertRaises(ValueError):
+            ACE.ACENuclearDataProperties( -1.0,
+                                          2.5301e-8,
+                                          "neutron_data/h_data.txt",
+                                          10,
+                                          "1001.70c" )
+
+    def testZaid(self):
+        "*Test Data.ACENuclearDataProperties zaid"
+        self.assertEqual( self.properties.zaid().atom(), Data.H_ATOM )
+        self.assertEqual( self.properties.zaid().atomicMassNumber(), 1 )
+        self.assertEqual( self.properties.zaid().isomerNumber(), 0 )
+
+    def testFileType(self):
+        "*Test Data.ACENuclearDataProperties fileType"
+        self.assertEqual( self.properties.fileType(),
+                          Data.NuclearDataProperties.ACE_FILE )
+
+    def testAtomicWeightRatio(self):
+        "*Test Data.ACENuclearDataProperties atomicWeightRatio"
+        self.assertEqual( self.properties.atomicWeightRatio(), 1.0 )
+
+    def testEvaluationTemperatureInMeV(self):
+        "*Test Data.ACENuclearDataProperties evaluationTemperatureInMeV"
+        self.assertEqual( self.properties.evaluationTemperatureInMeV(),
+                          2.5301e-8)
+
+    def testEvaluationTemperature(self):
+        "*Test Data.ACENuclearDataProperties evaluationTemperature"
+        self.assertAlmostEqual( self.properties.evaluationTemperature(),
+                                293.6059397103837227,
+                                1e-15 )
+
+    def testFilePath(self):
+        "*Test Data.ACENuclearDataProperties filePath"
+        self.assertEqual( self.properties.filePath(),
+                          "neutron_data/h_data.txt" )
+
+    def testFileStartLine(self):
+        "*Test Data.ACENuclearDataProperties fileStartLine"
+        self.assertEqual( self.properties.fileStartLine(), 10 )
+
+    def testFileMajorVersion(self):
+        "*Test Data.ACENuclearDataProperties fileMajorVersion"
+        self.assertEqual( self.properties.fileMajorVersion(), 7 )
+
+    def testFileVersion(self):
+        "*Test Data.ACENuclearDataProperties fileVersion"
+        self.assertEqual( self.properties.fileVersion(), 70 )
+
+    def testTableName(self):
+        "*Test Data.ACENuclearDataProperties tableName"
+        self.assertEqual( self.properties.tableName(), "1001.70c" )
+
+    def testClone(self):
+        "*Test Data.ACENuclearDataProperties constructor"
+        properties_clone = self.properties.clone()
+
+        self.assertTrue( properties_clone )
+        self.assertEqual( properties_clone.atomicWeightRatio(), 1.0 )
+        self.assertEqual( properties_clone.filePath(),
+                          "neutron_data/h_data.txt" )
+        self.assertEqual( properties_clone.fileStartLine(), 10 )
+        self.assertEqual( properties_clone.fileVersion(), 70 )
+        self.assertEqual( properties_clone.tableName(), "1001.70c" )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test Suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ACENuclearDataPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ACENuclearDataProperties.py
+#-----------------------------------------------------------------------------#

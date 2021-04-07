@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------#
 ## Data.Native.ElectronPhotonRelaxationDataContainer class unit tests
 #  \file   tstData.Native.ElectronPhotonRelaxationDataContainer.py
-#  \author Alex Robinson
+#  \author Luke Kersting
 #  \brief  Unit tests for the Data.ElectronPhotonRelaxationDataContainer class
 #-----------------------------------------------------------------------------#
 
@@ -23,7 +23,209 @@ options,args = parser.parse_args()
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Native = importPyFrensieModuleFromBuildDir('Data.Native')
 
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ElectronPhotonRelaxationDataContainer for Carbon
+class ElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
+    "TestCase for Data.Native.ElectronPhotonRelaxationDataContainer class using C data"
+    @classmethod
+    def setUpClass(cls):
+        cls.native_data = Native.ElectronPhotonRelaxationDataContainer( options.nativefile )
 
+    def testConstructor(self):
+        "*Test Data.Native.ElectronPhotonRelaxationDataContainer constructor"
+        self.assertTrue(isinstance(self.native_data, Native.ElectronPhotonRelaxationDataContainer))
+
+    def testTableData(self):
+        "*Test Data.Native.ElectronPhotonRelaxationDataContainer table data methods"
+        self.assertEqual(self.native_data.getAtomicNumber(), 6)
+        self.assertEqual(self.native_data.getAtomicWeight(), 12.011)
+        self.assertEqual(self.native_data.getMinPhotonEnergy(), 1e-3)
+        self.assertEqual(self.native_data.getMaxPhotonEnergy(), 20.0)
+        self.assertEqual(self.native_data.getMinElectronEnergy(), 1e-5)
+        self.assertEqual(self.native_data.getMaxElectronEnergy(), 1e5)
+        self.assertEqual(self.native_data.getCutoffAngleCosine(), 1.0)
+        self.assertEqual(self.native_data.getNumberOfMomentPreservingAngles(), 0)
+
+    def testRelaxationData(self):
+        "*Test Data.Native.ElectronPhotonRelaxationDataContainer get relaxation data methods"
+        self.assertTrue(self.native_data.hasRelaxationData() )
+        self.assertTrue(self.native_data.hasSubshellRelaxationData(1) )
+        self.assertFalse(self.native_data.hasSubshellRelaxationData(2) )
+
+        self.assertEqual(len(self.native_data.getSubshells() ), 4 )
+        self.assertTrue(1 in self.native_data.getSubshells() )
+        self.assertTrue(2 in self.native_data.getSubshells() )
+        self.assertTrue(3 in self.native_data.getSubshells() )
+        self.assertTrue(4 in self.native_data.getSubshells() )
+        self.assertFalse(5 in self.native_data.getSubshells() )
+
+        self.assertEqual(self.native_data.getSubshellOccupancy( 1 ), 2.0 )
+        self.assertEqual(self.native_data.getSubshellBindingEnergy( 1 ), 2.9101e-4 )
+
+        data = self.native_data.getSubshellRelaxationVacancies(1)
+        self.assertEqual( len(data), 8 )
+        self.assertEqual( data[0], (3, 0) )
+        self.assertEqual( data[len(data)-1], (4, 4) )
+
+        data = self.native_data.getSubshellRelaxationParticleEnergies(1)
+        self.assertEqual( len(data), 8 )
+        self.assertEqual( data[0], 2.8202e-04 )
+        self.assertEqual( data[len(data)-1], 2.7305e-04 )
+
+    def testPhotonData(self):
+        "*Test Data.Native.ElectronPhotonRelaxationDataContainer photon data methods"
+        data = self.native_data.getPhotonEnergyGrid()
+        self.assertEqual( len(data), 1004 )
+        self.assertEqual( data[0], 1e-3 )
+        self.assertEqual( data[len(data)-1], 20.0 )
+
+        data = self.native_data.getWallerHartreeIncoherentCrossSection()
+        threshold = self.native_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 2.52250000000042829e-01 )
+        self.assertEqual( data[len(data)-1], 1.81486137923699359e-01 )
+
+        data = self.native_data.getImpulseApproxIncoherentCrossSection()
+        threshold = self.native_data.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 2.69035516052228640e-01 )
+        self.assertEqual( data[len(data)-1], 1.81499107697665807e-01 )
+
+        data = self.native_data.getImpulseApproxSubshellIncoherentCrossSection(1)
+        threshold = self.native_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(1)
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 6.79814163839652694e-05 )
+        self.assertEqual( data[len(data)-1], 6.04996839703196426e-02 )
+
+        data = self.native_data.getWallerHartreeCoherentCrossSection()
+        threshold = self.native_data.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 2.45600299049398139e+01 )
+        self.assertEqual( data[len(data)-1], 1.92198769740615498e-06 )
+
+        data = self.native_data.getPairProductionCrossSection()
+        threshold = self.native_data.getPairProductionCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.177e-01 )
+
+        data = self.native_data.getTripletProductionCrossSection()
+        threshold = self.native_data.getTripletProductionCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.415e-02 )
+
+        data = self.native_data.getPhotoelectricCrossSection()
+        threshold = self.native_data.getPhotoelectricCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 4.40346567781178965e+04 )
+        self.assertEqual( data[len(data)-1], 4.78641586632171115e-07 )
+
+        data = self.native_data.getSubshellPhotoelectricCrossSection(1)
+        threshold = self.native_data.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(1)
+        self.assertEqual( len(data), 1004 - threshold )
+        self.assertEqual( data[0], 4.20106634766030475e+04 )
+        self.assertEqual( data[len(data)-1], 4.54467548753621907e-07 )
+
+        data = self.native_data.getWallerHartreeTotalCrossSection()
+        self.assertEqual( len(data), 1004 )
+        self.assertEqual( data[0], 4.40594690580228344e+04 )
+        self.assertEqual( data[len(data)-1], 3.13338538552983381e-01 )
+
+        data = self.native_data.getImpulseApproxTotalCrossSection()
+        self.assertEqual( len(data), 1004 )
+        self.assertEqual( data[0], 4.40594858435388887e+04 )
+        self.assertEqual( data[len(data)-1], 3.13351508326949857e-01 )
+
+    def testElectronData(self):
+        "*Test Data.Native.ElectronPhotonRelaxationDataContainer electron data methods"
+        self.assertEqual( self.native_data.getCutoffElasticInterpPolicy(), "Lin-Lin" )
+
+        data = self.native_data.getCutoffElasticAngles()
+        self.assertEqual( len(data), 16 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[1e5]), 96 )
+
+        data = self.native_data.getCutoffElasticPDF()
+        self.assertEqual( len(data), 16 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[1e5]), 96 )
+
+        data = self.native_data.getElectronEnergyGrid()
+        self.assertEqual( len(data), 354 )
+        self.assertEqual( data[0], 1e-5 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.native_data.getTotalElectronCrossSection()
+        self.assertEqual( len(data), 354 )
+        self.assertEqual( data[0], 3.09812823312799978e+09 )
+        self.assertEqual( data[len(data)-1], 6.525988715e+05 )
+
+        data = self.native_data.getCutoffElasticCrossSection()
+        threshold = self.native_data.getCutoffElasticCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 3.06351e+09 )
+        self.assertEqual( data[len(data)-1], 4.72309e-04 )
+
+        data = self.native_data.getScreenedRutherfordElasticCrossSection()
+        threshold = self.native_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 1.93634596180636436e+01 )
+        self.assertEqual( data[len(data)-1], 1.40721999527690990e+05 )
+
+        data = self.native_data.getTotalElasticCrossSection()
+        threshold = self.native_data.getTotalElasticCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 3.06351e+09 )
+        self.assertEqual( data[len(data)-1], 1.40722e+05 )
+
+        data = self.native_data.getElectroionizationCrossSection(1)
+        threshold = self.native_data.getElectroionizationCrossSectionThresholdEnergyIndex(1)
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.33805e+04 )
+
+        data = self.native_data.getBremsstrahlungCrossSection()
+        threshold = self.native_data.getBremsstrahlungCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 6.03128e2 )
+        self.assertEqual( data[len(data)-1], 1.69715e+01 )
+
+        data = self.native_data.getAtomicExcitationCrossSection()
+        threshold = self.native_data.getAtomicExcitationCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 354 - threshold )
+        self.assertEqual( data[0], 3.16863e+06 )
+        self.assertEqual( data[len(data)-1], 1.19892e+05 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(ElectronPhotonRelaxationDataContainerTestCase))
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.ElectronPhotonRelaxation \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
 # end tstData.Native.ElectronPhotonRelaxationDataContainer.py

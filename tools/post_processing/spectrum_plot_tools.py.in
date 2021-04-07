@@ -1,0 +1,212 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   spectrum_plot_tools.py
+##! \author Alex Robinson
+##! \brief  tools to plot spectrum data
+##!
+##---------------------------------------------------------------------------##
+
+import math as m
+import matplotlib.pyplot as plt
+import os
+import sys
+
+def plotSpectralDataWithErrors( frensie_data_name,
+                                frensie_data,
+                                test_data_name,
+                                test_data,
+                                data_name,
+                                log_spacing,
+                                per_lethargy = False,
+                                top_ylims = None,
+                                bottom_ylims = None,
+                                xlims = None,
+                                legend_pos = None,
+                                output_plot_names = None,
+                                frensie_data_abrv = None,
+                                test_data_abrv = None,
+                                y_log_spacing = None ):
+
+    # Make sure that the FRENSIE data is a dictionary
+    if not isinstance(frensie_data, dict):
+        print "The frensie data must be a dictionary with keys \"e_bins\", \"mean\" and \"re\""
+        sys.exit(1)
+
+    # Make sure that the test data is a dictionary
+    if not isinstance(test_data, dict):
+        print "The test data must be a dictionary with keys \"mean\" and \"re\""
+        sys.exit(1)
+
+    # Compute the energy bin midpoints and bin norm constants
+    energy_mid_pts = []
+    bin_norm_consts = []
+
+    for i in range(0, len(frensie_data["e_bins"])-1):
+        e_bin_lower = frensie_data["e_bins"][i]
+        e_bin_upper = frensie_data["e_bins"][i+1]
+
+        if log_spacing:
+            energy_mid_pt = m.exp((m.log(e_bin_lower)+m.log(e_bin_upper))/2)
+        else:
+            energy_mid_pt = (e_bin_lower+e_bin_upper)/2
+
+        energy_mid_pts.append( energy_mid_pt )
+
+        if per_lethargy:
+            bin_norm_const = m.log(e_bin_upper/e_bin_lower)
+        else:
+            bin_norm_const = e_bin_upper-e_bin_lower
+
+        bin_norm_consts.append( bin_norm_const )
+
+    # Convert the mean values to mean per lethargy or mean per energy
+    frensie_normalized_mean = []
+    test_normalized_mean = []
+
+    for i in range(0, len(energy_mid_pts)):
+        frensie_normalized_mean.append( frensie_data["mean"][i]/bin_norm_consts[i] )
+        test_normalized_mean.append( test_data["mean"][i]/bin_norm_consts[i] )
+
+    # Compute the F/T values and uncertainties
+    f_over_t = []
+    f_over_t_unc = []
+
+    for i in range(0, len(frensie_normalized_mean)):
+        if test_normalized_mean[i] == 0.0:
+            f_over_t.append( 0.0 )
+            f_over_t_unc.append( 0.0 )
+        else:
+            f_over_t.append( frensie_normalized_mean[i]/test_normalized_mean[i] )
+
+            sigma_f = frensie_normalized_mean[i]*frensie_data["re"][i]
+            sigma_t = test_normalized_mean[i]*test_data["re"][i]
+
+            f_squared = frensie_normalized_mean[i]*frensie_normalized_mean[i]
+            t_squared = test_normalized_mean[i]*test_normalized_mean[i]
+
+            f_over_t_unc.append( m.sqrt( sigma_f*sigma_f + (f_squared/t_squared)*sigma_t*sigma_t )/test_normalized_mean[i] )
+
+    edge_thickness = 1.1
+
+    # Initialize the plot
+    fig, ax = plt.subplots(2, 1, sharex=True)
+    plt.subplots_adjust( top=0.95, bottom=0.1, hspace=0.0 )
+
+    # Set up the top subplot
+    if log_spacing:
+        line1, = ax[0].semilogx( energy_mid_pts, test_normalized_mean, label=test_data_name )
+    elif not y_log_spacing is None:
+        line1, = ax[0].semilogy( energy_mid_pts, test_normalized_mean, label=test_data_name )
+    else:
+        line1, = ax[0].plot( energy_mid_pts, test_normalized_mean, label=test_data_name )
+
+    line1.set_color("black")
+    line1.set_linewidth( 1 )
+
+    if log_spacing:
+        line2, = ax[0].semilogx( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+    elif not y_log_spacing is None:
+        line2, = ax[0].semilogy( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+    else:
+        line2, = ax[0].plot( energy_mid_pts, frensie_normalized_mean, label=frensie_data_name )
+
+    line2.set_dashes([2, 1, 2, 1])
+    line2.set_color('r')
+    line2.set_linewidth( 1 )
+
+    y_label = data_name
+
+    if per_lethargy:
+        y_label += " Per Lethargy"
+    else:
+        y_label += " Spectrum"
+
+    ax[0].set_ylabel( y_label )
+
+    if not legend_pos is None:
+        ax[0].legend(frameon=False, bbox_to_anchor=legend_pos)
+    else:
+        ax[0].legend(frameon=False)
+
+    # Turn on the grid
+    ax[0].grid(True, linestyle=':', linewidth=1)
+
+    # Set the x limits
+    if not xlims is None:
+        ax[0].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[0].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+
+    if not top_ylims is None:
+        ax[0].set_ylim( top_ylims[0], top_ylims[1] )
+
+    # Set the y tic labels
+    yticklabels = ax[0].yaxis.get_ticklabels()
+    yticklabels[0].set_visible(False)
+    yticklabels[-1].set_visible(False)
+
+    # Set the tic properties
+    ax[0].yaxis.set_ticks_position("both")
+    ax[0].xaxis.set_ticks_position("both")
+    ax[0].tick_params(direction="in", width=edge_thickness)
+    ax[0].tick_params(which="minor", direction="in", width=edge_thickness)
+
+    for axis in ['top','bottom','left','right']:
+        ax[0].spines[axis].set_linewidth(edge_thickness)
+
+    # Set up the bottom subplot
+    if log_spacing:
+        ax[1].set_xscale("log")
+
+    ax[1].errorbar( energy_mid_pts, f_over_t, yerr=f_over_t_unc, capsize=1.5, fmt='o', ecolor="black", color="black", linewidth=0.5, markersize=1.9 )
+
+    if not frensie_data_abrv is None:
+        comp_plot_label = frensie_data_abrv
+    else:
+        comp_plot_label = "F"
+
+    comp_plot_label += "/"
+
+    if not test_data_abrv is None:
+        comp_plot_label += test_data_abrv
+    else:
+        comp_plot_label += test_data_name[0]
+
+    ax[1].set_ylabel( comp_plot_label )
+    ax[1].set_xlabel( "Energy (MeV)" )
+
+    # Turn on the grid
+    ax[1].grid(True, linestyle=':', linewidth=1)
+
+    # Set the x limits
+    if not xlims is None:
+        ax[1].set_xlim( xlims[0], xlims[-1] )
+    else:
+        ax[1].set_xlim( frensie_data["e_bins"][0], frensie_data["e_bins"][-1] )
+
+    if not bottom_ylims is None:
+        ax[1].set_ylim( bottom_ylims[0], bottom_ylims[1] )
+
+    # Set the y tic labels
+    yticklabels = ax[1].yaxis.get_ticklabels()
+    yticklabels[0].set_visible(False)
+    yticklabels[-1].set_visible(False)
+
+    # Set the tic properties
+    ax[1].yaxis.set_ticks_position("both")
+    ax[1].xaxis.set_ticks_position("both")
+    ax[1].tick_params(direction="in", width=edge_thickness)
+    ax[1].tick_params(which="minor", direction="in", width=edge_thickness)
+
+    for axis in ['top','bottom','left','right']:
+        ax[1].spines[axis].set_linewidth(edge_thickness)
+
+    # Save the figure
+    if not output_plot_names is None:
+        for i in range(0,len(output_plot_names)):
+            fig.savefig( output_plot_names[i] )
+    else:
+        fig.savefig("spectrum.eps")
+
+    plt.show()

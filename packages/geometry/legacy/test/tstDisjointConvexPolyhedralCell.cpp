@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 							      -2 ) );
 
   global_surface_map[1] = surface;
-  
+
   surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      2 ) );
@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 						     cell_definition,
 						     global_surface_map,
 						     true ) );
-  
+
   TEST_EQUALITY_CONST( cell->getVolume(), 64.0 );
   TEST_EQUALITY_CONST( cell->getSurfaceArea( 1 ), 16.0 );
   TEST_EQUALITY_CONST( cell->getSurfaceArea( 2 ), 16.0 );
@@ -116,13 +116,13 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      0 ) );
-  
+
   global_surface_map[2] = surface;
 
   surface.reset( new FRENSIE::Surface( 3,
 				      1, 0, 0,
 				      2 ) );
-  
+
   global_surface_map[3] = surface;
 
   surface.reset( new FRENSIE::Surface( 4,
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 				      1 ) );
 
   global_surface_map[6] = surface;
-  
+
   surface.reset( new FRENSIE::Surface( 7,
 				      0, 1, 0,
 				      3 ) );
@@ -152,7 +152,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   surface.reset( new FRENSIE::Surface( 8,
 				      0, 0, 1,
 				      -2 ) );
-  
+
   global_surface_map[8] = surface;
 
   surface.reset( new FRENSIE::Surface( 9,

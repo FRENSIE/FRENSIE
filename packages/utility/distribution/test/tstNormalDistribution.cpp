@@ -14,91 +14,114 @@
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
 
 using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
 
+typedef TestArchiveHelper::TestArchives TestArchives;
+
+typedef std::tuple<
+  std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
+  std::tuple<cgs::energy,si::amount,si::energy,si::amount>,
+  std::tuple<si::energy,si::length,cgs::energy,cgs::length>,
+  std::tuple<cgs::energy,cgs::length,si::energy,si::length>,
+  std::tuple<si::energy,si::mass,cgs::energy,cgs::mass>,
+  std::tuple<cgs::energy,cgs::mass,si::energy,si::mass>,
+  std::tuple<si::energy,si::dimensionless,cgs::energy,cgs::dimensionless>,
+  std::tuple<cgs::energy,cgs::dimensionless,si::energy,si::dimensionless>,
+  std::tuple<si::energy,void*,cgs::energy,void*>,
+  std::tuple<cgs::energy,void*,si::energy,void*>,
+  std::tuple<ElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<ElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<void*,MegaElectronVolt,void*,KiloElectronVolt>
+ > TestUnitTypeQuads;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
-
-Teuchos::RCP<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 				 new Utility::NormalDistribution( 0.0, 1.0 ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( NormalDistribution, evaluate )
+FRENSIE_UNIT_TEST( NormalDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 1.0 );
-  TEST_EQUALITY( distribution->evaluate( 2.0 ), exp( -4.0/2.0 ) );
-  TEST_EQUALITY( distribution->evaluate( -2.0 ), exp( -4.0/2.0 ) );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0 ), exp( -4.0/2.0 ) );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -2.0 ), exp( -4.0/2.0 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, evaluate )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*cgs::centimeter ), 
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*cgs::centimeter ),
 		       0.5*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*cgs::centimeter ),
 		       0.5*exp( -4.0/2.0 )*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -2.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -2.0*cgs::centimeter ),
 		       0.5*exp( -4.0/2.0 )*si::mole );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( NormalDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( NormalDistribution, evaluatePDF )
 {
   double center_value = 1.0/sqrt( 2.0*Utility::PhysicalConstants::pi );
   double off_center_value = center_value*exp( -4.0/2.0 );
-  
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), center_value);
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), off_center_value );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( -2.0 ), off_center_value );
+
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.0 ), center_value);
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 2.0 ), off_center_value );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( -2.0 ), off_center_value );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, evaluatePDF )
 {
   double center_value = 1.0/sqrt( 2.0*Utility::PhysicalConstants::pi );
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 0.0*cgs::centimeter ),
 		       center_value/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 2.0*cgs::centimeter ),
 		       center_value*exp( -4.0/2.0 )/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -2.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( -2.0*cgs::centimeter ),
 		       center_value*exp( -4.0/2.0 )/cgs::centimeter );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( NormalDistribution, sample_static )
+FRENSIE_UNIT_TEST( NormalDistribution, sample_static )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -116,20 +139,20 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sample_static )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = Utility::NormalDistribution::sample( 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
 
   sample = Utility::NormalDistribution::sample( 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
 
   sample = Utility::NormalDistribution::sample( 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample_static )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, sample_static )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -146,23 +169,23 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  quantity<cgs::length> sample = 
-    Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  quantity<cgs::length> sample =
+    Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sample(
 				    0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -170,7 +193,7 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample_static )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials_static )
+FRENSIE_UNIT_TEST( NormalDistribution, sampleAndRecordTrials_static )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -187,29 +210,29 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
-  double sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  double sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
-  sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
-  sample = Utility::NormalDistribution::sampleAndRecordTrials( 
+  sample = Utility::NormalDistribution::sampleAndRecordTrials(
 							    trials, 0.0, 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials_static )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials_static )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -226,36 +249,36 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials_static )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
-  quantity<cgs::length> sample = 
-    Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  quantity<cgs::length> sample =
+    Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
-  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials( 
+  sample = Utility::UnitAwareNormalDistribution<cgs::length>::sampleAndRecordTrials(
 			    trials, 0.0*cgs::centimeter, 1.0*cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( NormalDistribution, sample )
+FRENSIE_UNIT_TEST( NormalDistribution, sample )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -273,20 +296,20 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, sample )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -304,18 +327,18 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::length> sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -323,7 +346,7 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sample )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( NormalDistribution, sampleAndRecordTrials )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -340,26 +363,26 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
-  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
 {
   std::vector<double> fake_stream( 11 );
   fake_stream[0] = 0.5;
@@ -376,26 +399,26 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
-  quantity<cgs::length> sample = 
+  quantity<cgs::length> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 
-				  -0.69314718055995*cgs::centimeter, 
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample,
+				  -0.69314718055995*cgs::centimeter,
 				  1e-14 );
-  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -403,285 +426,685 @@ TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, sampleAndRecordTrials )
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST( NormalDistribution, getUpperBoundOfIndepVar )
+FRENSIE_UNIT_TEST( NormalDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(),
 		       std::numeric_limits<double>::infinity() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, getUpperBoundOfIndepVar )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST( NormalDistribution, getLowerBoundOfIndepVar )
+FRENSIE_UNIT_TEST( NormalDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(),
 		       -std::numeric_limits<double>::infinity() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, getLowerBoundOfIndepVar )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       -Utility::QuantityTraits<quantity<cgs::length> >::inf());
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
-TEUCHOS_UNIT_TEST( NormalDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( NormalDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+  FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
 		       Utility::NORMAL_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type can be returned
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
 		       Utility::NORMAL_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-TEUCHOS_UNIT_TEST( NormalDistribution, isTabular )
+FRENSIE_UNIT_TEST( NormalDistribution, isTabular )
 {
-  TEST_ASSERT( !distribution->isTabular() );
+  FRENSIE_CHECK( !distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is tabular
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, isTabular )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, isTabular )
 {
-  TEST_ASSERT( !unit_aware_distribution->isTabular() );
+  FRENSIE_CHECK( !unit_aware_distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
-TEUCHOS_UNIT_TEST( NormalDistribution, isContinuous )
+FRENSIE_UNIT_TEST( NormalDistribution, isContinuous )
 {
-  TEST_ASSERT( distribution->isContinuous() );
+  FRENSIE_CHECK( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is continuous
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, isContinuous )
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, isContinuous )
 {
-  TEST_ASSERT( unit_aware_distribution->isContinuous() );
+  FRENSIE_CHECK( unit_aware_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( NormalDistribution, toParameterList )
+// Check if the distribution is compatible with the interpolation type
+FRENSIE_UNIT_TEST( NormalDistribution, isCompatibleWithInterpType )
 {
-  Teuchos::RCP<Utility::NormalDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution );
-  
-  Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::NormalDistribution>( "test distribution", 
-						     *true_distribution );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"normal_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
-    Teuchos::getParametersFromXmlFile( "normal_dist_test_list.xml" );
-  
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::NormalDistribution test_dist( 10.0, 1.0, 1.0, 19.0 );
 
-  Teuchos::RCP<Utility::NormalDistribution> 
-    copy_distribution( new Utility::NormalDistribution );
-
-  *copy_distribution = read_parameter_list->get<Utility::NormalDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, toParameterList )
+// Check if the unit-aware distribution is compatible with the interp type
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, isCompatibleWithInterpType )
 {
-  typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
-    UnitAwareNormalDistribution;
-  
-  Teuchos::RCP<UnitAwareNormalDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwareNormalDistribution>( unit_aware_distribution );
-  
-  Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareNormalDistribution>( "test distribution", 
-						   *true_distribution );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-				       "unit_aware_normal_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
-    Teuchos::getParametersFromXmlFile( "unit_aware_normal_dist_test_list.xml" );
-  
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
+  // Create another distribution that is compatible with all interpolation
+  // types
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
+    test_dist( 10.0*si::meter,
+               1.0*si::meter,
+               1.0*si::mole,
+               1.0*si::meter,
+               19.0*si::meter );
 
-  Teuchos::RCP<UnitAwareNormalDistribution> 
-    copy_distribution( new UnitAwareNormalDistribution );
-
-  *copy_distribution = read_parameter_list->get<UnitAwareNormalDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( test_dist.isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( NormalDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+FRENSIE_UNIT_TEST( NormalDistribution, ostream_operator )
 {
-  Utility::NormalDistribution read_distribution = 
-    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution A" );
-
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-		       -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-		       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
-
-  read_distribution = 
-    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution B" );
+  std::ostringstream oss;
   
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-		       -Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-		       Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
+  oss << Utility::NormalDistribution();
 
-  read_distribution = 
-    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution C" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 2.0 );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), 0.5 );
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(),
+                       -Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
-  read_distribution = 
-    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution D" );
+  oss.str( "" );
+  oss.clear();
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-		       -std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-		       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), 1.0 );
+  oss << Utility::NormalDistribution( 2.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(),
+                       -Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::NormalDistribution( 2.0, 3.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(),
+                       -Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::NormalDistribution( 2.0, 3.0, 4.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(),
+                       -Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf(), SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 4.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::NormalDistribution( -2.0, 3.0, 4.0, -1.0, 1.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), -2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), -1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 4.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(),
+                       -Utility::QuantityTraits<double>::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareNormalDistribution, fromParameterList )
+// Check that a unit-aware distribution can be placed in a stream
+FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, ostream_operator )
 {
-  typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount>
-    UnitAwareNormalDistribution;
+  std::ostringstream oss;
   
-  UnitAwareNormalDistribution read_distribution = 
-    test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution A" );
+  oss << Utility::UnitAwareNormalDistribution<cgs::length,si::amount>();
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-		       -Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-		       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
-		       1.0*si::mole );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution B" );
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       2.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       2.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       3.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
   
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-  		       -Utility::PhysicalConstants::pi*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-  		       Utility::PhysicalConstants::pi*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*cgs::centimeter ), 
-		       1.0*si::mole );
+  oss.str( "" );
+  oss.clear();
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution C" );
+  oss << Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 
-		       0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 
-		       2.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ), 
-		       0.5*si::mole );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareNormalDistribution>( "Unit-Aware Normal Distribution D" );
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       2.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       3.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       4.0*si::mole,
+                       SHOW_LHS );
 
-  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(),
-  		       -Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
-  		       Utility::QuantityTraits<quantity<cgs::length> >::inf());
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*cgs::centimeter ), 
-		       1.0*si::mole );
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( -2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       -2.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       3.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -1.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       4.0*si::mole,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *unit_aware_distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Normal Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["mean"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["standard dev"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       -Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       0.5*si::mole,
+                       SHOW_LHS );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( NormalDistribution, archive, TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_normal_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some normal distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
+    Utility::NormalDistribution dist_a;
+    Utility::NormalDistribution dist_b( 2.0 );
+    Utility::NormalDistribution dist_c( 2.0, 3.0 );
+    Utility::NormalDistribution dist_d( 2.0, 3.0, 4.0 );
+    Utility::NormalDistribution dist_e( 2.0, 3.0, 4.0, -1.0 );
+    Utility::NormalDistribution dist_f( 2.0, 3.0, 4.0, -1.0, 1.0 );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_f ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                          (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Utility::NormalDistribution dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, Utility::NormalDistribution() );
+
+  Utility::NormalDistribution dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
+  FRENSIE_CHECK_EQUAL( dist_b, Utility::NormalDistribution( 2.0 ) );
+
+  Utility::NormalDistribution dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
+  FRENSIE_CHECK_EQUAL( dist_c, Utility::NormalDistribution( 2.0, 3.0 ) );
+
+  Utility::NormalDistribution dist_d;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
+  FRENSIE_CHECK_EQUAL( dist_d, Utility::NormalDistribution( 2.0, 3.0, 4.0 ) );
+
+  Utility::NormalDistribution dist_e;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
+  FRENSIE_CHECK_EQUAL( dist_e, Utility::NormalDistribution( 2.0, 3.0, 4.0, -1.0 ) );
+
+  Utility::NormalDistribution dist_f;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_f ) );
+  FRENSIE_CHECK_EQUAL( dist_f, Utility::NormalDistribution( 2.0, 3.0, 4.0, -1.0, 1.0 ) );
+
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::NormalDistribution*>( shared_dist.get() ),
+                       *dynamic_cast<Utility::NormalDistribution*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareNormalDistribution,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_normal_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some normal distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_a;
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_b( 2.0*cgs::centimeter );
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_c( 2.0*cgs::centimeter, 3.0*cgs::centimeter );
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_d( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole );
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_e( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter );
+    Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_f( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter );
+
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_f ) );
+    FRENSIE_REQUIRE_NO_THROW(
+               (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>()) );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
+  FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter )) );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
+  FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter )) );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_d;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
+  FRENSIE_CHECK_EQUAL( dist_d, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole )) );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_e;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
+  FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter )) );
+
+  Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_f;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_f ) );
+  FRENSIE_CHECK_EQUAL( dist_f, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter )) );
+
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareNormalDistribution<cgs::length,si::amount>*>( shared_dist.get() )),
+                       (*dynamic_cast<Utility::UnitAwareNormalDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that distributions can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareNormalDistribution,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareNormalDistribution,
 				   explicit_conversion,
-				   IndepUnitA,
-				   DepUnitA,
-				   IndepUnitB,
-				   DepUnitB )
+                                   TestUnitTypeQuads )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawIndepUnitA );
+  FETCH_TEMPLATE_PARAM( 1, RawDepUnitA );
+  FETCH_TEMPLATE_PARAM( 2, RawIndepUnitB );
+  FETCH_TEMPLATE_PARAM( 3, RawDepUnitB );
+
+  typedef typename std::remove_pointer<RawIndepUnitA>::type IndepUnitA;
+  typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
+  typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
+  typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
+  
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
-  
+
   // Copy from unitless distribution to distribution type A (static method)
   Utility::UnitAwareNormalDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareNormalDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareNormalDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::NormalDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B (explicit cast)
   Utility::UnitAwareNormalDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1.0/sqrt( 2.0*Utility::PhysicalConstants::pi ) );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
+
   Utility::setQuantity( indep_quantity_a, 2.0 );
   Utility::setQuantity( inv_indep_quantity_a, exp( -4.0/2.0 )/sqrt( 2.0*Utility::PhysicalConstants::pi ) );
   Utility::setQuantity( dep_quantity_a, exp( -4.0/2.0 ) );
@@ -690,219 +1113,36 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareNormalDistribution,
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
 }
 
-typedef si::energy si_energy;
-typedef cgs::energy cgs_energy;
-typedef si::amount si_amount;
-typedef si::length si_length;
-typedef cgs::length cgs_length;
-typedef si::mass si_mass;
-typedef cgs::mass cgs_mass;
-typedef si::dimensionless si_dimensionless;
-typedef cgs::dimensionless cgs_dimensionless;
-
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_length,
-				      cgs_energy,
-				      cgs_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_length,
-				      si_energy,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_mass,
-				      cgs_energy,
-				      cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_mass,
-				      si_energy,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_dimensionless,
-				      cgs_energy,
-				      cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_dimensionless,
-				      si_energy,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      void,
-				      cgs_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      void,
-				      si_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareNormalDistribution,
-				      explicit_conversion,
-				      void,
-				      MegaElectronVolt,
-				      void,
-				      KiloElectronVolt );
-
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  std::string test_dists_xml_file;
-  
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::NormalDistribution );
-  typedef Utility::UnitAwareNormalDistribution<cgs::length,si::amount> UnitAwareNormalDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareNormalDistribution );
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNormalDistribution.cpp

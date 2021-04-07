@@ -9,170 +9,252 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test the simulation properties defaults
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, defaults )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, defaults )
 {
-  TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationPhotonProperties::getAbsoluteMinPhotonEnergy(),
-               1e-3 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy(),
-		       1e-3 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy(),
-                       20.0 );
-  TEST_EQUALITY_CONST( 
-                MonteCarlo::SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy(),
-                20.0 );    
-  TEST_EQUALITY_CONST(
-	       MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-	       3.0 );
-  TEST_EQUALITY_CONST(
-	     MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-	     1000 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getIncoherentModelType(),
-		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
+  MonteCarlo::SimulationPhotonProperties properties;
 
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinPhotonEnergy(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( properties.getMinPhotonEnergy(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getKahnSamplingCutoffEnergy(), 3.0 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfPhotonHashGridBins(), 1000 );
+  FRENSIE_CHECK_EQUAL( properties.getIncoherentModelType(),
+		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( !properties.isDetailedPairProductionModeOn() );
+  FRENSIE_CHECK( !properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getPhotonRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the min photon energy can be set
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMinPhotonEnergy )
 {
-  double default_value = 
-    MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( 1e-2 );
+  properties.setMinPhotonEnergy( 1e-2 );
 
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy(),
-		       1e-2 );
-
-  // Reset the default value
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getMinPhotonEnergy(), 1e-2 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the max photon energy can be set
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setMaxPhotonEnergy )
 {
-  double default_value = 
-    MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( 15.0 );
+  properties.setMaxPhotonEnergy( 15.0 );
 
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy(),
-		       15.0 );
-
-  // Reset the default value
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getMaxPhotonEnergy(), 15.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the Kahn sampling cutoff energy can be set
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setKahnSamplingCutoffEnergy )
 {
-  double default_value = 
-    MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  MonteCarlo::SimulationPhotonProperties::setKahnSamplingCutoffEnergy( 2.5 );
+  properties.setKahnSamplingCutoffEnergy( 2.5 );
 
-  TEST_ASSERT( 
-	    MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy() !=
-	    default_value );
-  TEST_EQUALITY_CONST(
-	      MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
-	      2.5 );
-  
-  // Reset the default value
-  MonteCarlo::SimulationPhotonProperties::setKahnSamplingCutoffEnergy( 
-							       default_value );
+  FRENSIE_CHECK_EQUAL( properties.getKahnSamplingCutoffEnergy(), 2.5 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of photon hash grid bins can be set
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setNumberOfPhotonHashGridBins )
 {
-  unsigned default_value = 
-    MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  MonteCarlo::SimulationPhotonProperties::setNumberOfPhotonHashGridBins( 500 );
+  properties.setNumberOfPhotonHashGridBins( 500 );
 
-  TEST_ASSERT( 
-	  MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins() !=
-	  default_value );
-  TEST_EQUALITY_CONST( 
-	     MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
-	     500 );
-  
-  // Reset the default value
-  MonteCarlo::SimulationPhotonProperties::setNumberOfPhotonHashGridBins( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfPhotonHashGridBins(), 500 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the incoherent model type can be set
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setIncoherentModelType )
 {
-  MonteCarlo::IncoherentModelType default_model = 
-    MonteCarlo::SimulationPhotonProperties::getIncoherentModelType();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  MonteCarlo::SimulationPhotonProperties::setIncoherentModelType(
-					     MonteCarlo::KN_INCOHERENT_MODEL );
+  properties.setIncoherentModelType( MonteCarlo::KN_INCOHERENT_MODEL );
 
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::getIncoherentModelType() !=
-	       default_model );
-  TEST_EQUALITY_CONST(
-		    MonteCarlo::SimulationPhotonProperties::getIncoherentModelType(),
-		    MonteCarlo::KN_INCOHERENT_MODEL );
-  
-  // Reset the default model
-  MonteCarlo::SimulationPhotonProperties::setIncoherentModelType( default_model );
+  FRENSIE_CHECK_EQUAL( properties.getIncoherentModelType(),
+                       MonteCarlo::KN_INCOHERENT_MODEL );
 }
 
 //---------------------------------------------------------------------------//
 // Test that atomic relaxation mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setAtomicRelaxationModeOff )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setAtomicRelaxationModeOffOn )
 {
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
-  
-  MonteCarlo::SimulationPhotonProperties::setAtomicRelaxationModeOff();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
+  properties.setAtomicRelaxationModeOff();
+
+  FRENSIE_CHECK( !properties.isAtomicRelaxationModeOn() );
+
+  properties.setAtomicRelaxationModeOn();
+
+  FRENSIE_CHECK( properties.isAtomicRelaxationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the detailed pair production mode can be turned on
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setDetailedPairProductionModeOn )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setDetailedPairProductionModeOnOff )
 {
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
-  
-  MonteCarlo::SimulationPhotonProperties::setDetailedPairProductionModeOn();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
+  properties.setDetailedPairProductionModeOn();
+
+  FRENSIE_CHECK( properties.isDetailedPairProductionModeOn() );
+
+  properties.setDetailedPairProductionModeOff();
+
+  FRENSIE_CHECK( !properties.isDetailedPairProductionModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the photonuclear interaction mode can be turned on
-TEUCHOS_UNIT_TEST( SimulationPhotonProperties, setPhotonuclearInteractionModeOn )
+FRENSIE_UNIT_TEST( SimulationPhotonProperties, setPhotonuclearInteractionModeOnOff )
 {
-  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
-  
-  MonteCarlo::SimulationPhotonProperties::setPhotonuclearInteractionModeOn();
+  MonteCarlo::SimulationPhotonProperties properties;
 
-  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
+  properties.setPhotonuclearInteractionModeOn();
+
+  FRENSIE_CHECK( properties.isPhotonuclearInteractionModeOn() );
+
+  properties.setPhotonuclearInteractionModeOff();
+
+  FRENSIE_CHECK( !properties.isPhotonuclearInteractionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationPhotonProperties,
+                   getPhotonRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationPhotonProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setPhotonRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getPhotonRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationPhotonProperties,
+                   getPhotonRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationPhotonProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setPhotonRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getPhotonRouletteSurvivalWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationPhotonProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_simulation_photon_props" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::SimulationPhotonProperties default_properties;
+
+    MonteCarlo::SimulationPhotonProperties custom_properties;
+    custom_properties.setMinPhotonEnergy( 1e-2 );
+    custom_properties.setMaxPhotonEnergy( 15.0 );
+    custom_properties.setKahnSamplingCutoffEnergy( 2.5 );
+    custom_properties.setNumberOfPhotonHashGridBins( 500 );
+    custom_properties.setIncoherentModelType( MonteCarlo::KN_INCOHERENT_MODEL );
+    custom_properties.setAtomicRelaxationModeOff();
+    custom_properties.setDetailedPairProductionModeOn();
+    custom_properties.setPhotonuclearInteractionModeOn();
+    custom_properties.setPhotonRouletteThresholdWeight( 1e-15 );
+    custom_properties.setPhotonRouletteSurvivalWeight( 1e-13 );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::SimulationPhotonProperties default_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
+
+  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMinPhotonEnergy(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinPhotonEnergy(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getKahnSamplingCutoffEnergy(), 3.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfPhotonHashGridBins(), 1000 );
+  FRENSIE_CHECK_EQUAL( default_properties.getIncoherentModelType(),
+		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  FRENSIE_CHECK( default_properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( !default_properties.isDetailedPairProductionModeOn() );
+  FRENSIE_CHECK( !default_properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_SMALL( default_properties.getPhotonRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getPhotonRouletteSurvivalWeight(), 1e-30  );
+
+  MonteCarlo::SimulationPhotonProperties custom_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
+
+  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMinPhotonEnergy(), 1e-3 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinPhotonEnergy(), 1e-2 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxPhotonEnergy(), 15.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMaxPhotonEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getKahnSamplingCutoffEnergy(), 2.5 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfPhotonHashGridBins(), 500 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getIncoherentModelType(),
+		       MonteCarlo::KN_INCOHERENT_MODEL );
+  FRENSIE_CHECK( !custom_properties.isAtomicRelaxationModeOn() );
+  FRENSIE_CHECK( custom_properties.isDetailedPairProductionModeOn() );
+  FRENSIE_CHECK( custom_properties.isPhotonuclearInteractionModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getPhotonRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getPhotonRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//

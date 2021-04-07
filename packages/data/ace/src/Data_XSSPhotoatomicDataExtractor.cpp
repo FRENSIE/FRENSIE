@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Data_XSSPhotoatomicDataExtractor.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -16,26 +16,44 @@ namespace Data{
 /*! \details A copy of the jxs array will be made so that it can be modified.
  * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
- */ 
+ */
 XSSPhotoatomicDataExtractor::XSSPhotoatomicDataExtractor(
-				  const Teuchos::ArrayView<const int>& nxs,
-				  const Teuchos::ArrayView<const int>& jxs,
-		                  const Teuchos::ArrayRCP<const double>& xss )
-  : d_nxs( nxs ),
-    d_jxs( jxs ),
-    d_xss( xss )
+                       const Utility::ArrayView<const int>& nxs,
+                       const Utility::ArrayView<const int>& jxs,
+		       const std::shared_ptr<const std::vector<double> >& xss )
+  : d_nxs( nxs.begin(), nxs.end() ),
+    d_jxs( jxs.begin(), jxs.end() ),
+    d_xss( xss ),
+    d_xss_view(),
+    d_eszg_block()
 {
+  // Make sure that the xss array exists
+  testPrecondition( xss.get() );
+  
   // Make sure the arrays have the correct size
-  testPrecondition( nxs.size() == 16 );
-  testPrecondition( jxs.size() == 32 );
-  testPrecondition( xss.size() == nxs[0] );
+  TEST_FOR_EXCEPTION( nxs.size() != 16,
+                      std::runtime_error,
+                      "Invalid nxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( jxs.size() != 32,
+                      std::runtime_error,
+                      "Invalid jxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( xss->size() != nxs[0],
+                      std::runtime_error,
+                      "The nxs array expected the xss array to have size "
+                      << nxs[0] << " but it was found to have size "
+                      << xss->size() << "!" );
 
   // Adjust the indices in the JXS array so that they correspond to a C-array
-  for( unsigned i = 0; i < d_jxs.size(); ++i )
+  for( size_t i = 0; i < d_jxs.size(); ++i )
     d_jxs[i] -= 1;
 
+  // Create the XSS view
+  d_xss_view = Utility::arrayViewOfConst( *d_xss );
+  
   // Extract and cache the ESZG block
-  d_eszg_block = d_xss( d_jxs[0], d_nxs[2]*5 );
+  d_eszg_block = d_xss_view( d_jxs[0], d_nxs[2]*5 );
 }
 
 // Check if fluorescence data is present
@@ -57,7 +75,7 @@ bool XSSPhotoatomicDataExtractor::hasComptonProfileData() const
 }
 
 // Extract the ESZG block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractESZGBlock() const
 {
   return d_eszg_block;
@@ -66,7 +84,7 @@ XSSPhotoatomicDataExtractor::extractESZGBlock() const
 // Extract the energy grid
 /*! \details the values stored are the logarithms of the incoming energies.
  */
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractEnergyGrid() const
 {
   return d_eszg_block( 0, d_nxs[2] );
@@ -75,7 +93,7 @@ XSSPhotoatomicDataExtractor::extractEnergyGrid() const
 // Extract the incoherent cross section
 /*! \details the values stored are the logarithms of the incoherent cross sec.
  */
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractIncoherentCrossSection() const
 {
   return d_eszg_block( d_nxs[2], d_nxs[2] );
@@ -84,111 +102,111 @@ XSSPhotoatomicDataExtractor::extractIncoherentCrossSection() const
 // Extract the coherent cross section
 /*! \details the values stored are the logarithms of the coherent cross sec.
  */
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractCoherentCrossSection() const
 {
   return d_eszg_block( 2*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the photoelectric cross section
-/*! \details the values stored are the logarithms of the photoelectric cross 
+/*! \details the values stored are the logarithms of the photoelectric cross
  * sec.
  */
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractPhotoelectricCrossSection() const
 {
   return d_eszg_block( 3*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the pair production cross section
-/*! \details the values stored are the logarithms of the pair production cross 
+/*! \details the values stored are the logarithms of the pair production cross
  * sec.
  */
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractPairProductionCrossSection() const
 {
   return d_eszg_block( 4*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the JINC block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJINCBlock() const
 {
-  return d_xss( d_jxs[1], 21 );
+  return d_xss_view( d_jxs[1], 21 );
 }
 
 // Extract the JCOH block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJCOHBlock() const
 {
-  return d_xss( d_jxs[2], 110 );
+  return d_xss_view( d_jxs[2], 110 );
 }
 
 // Extract the JFLO block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJFLOBlock() const
 {
-  if( hasFluorescenceData() )
-    return d_xss( d_jxs[3], 4*d_nxs[3] );
+  if( this->hasFluorescenceData() )
+    return d_xss_view( d_jxs[3], 4*d_nxs[3] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the LHNM block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLHNMBlock() const
 {
-  return d_xss( d_jxs[4], d_nxs[2] );
+  return d_xss_view( d_jxs[4], d_nxs[2] );
 }
- 
+
 // Extract the LNEPS block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLNEPSBlock() const
 {
-  if( hasElectronShellOccupancyData() )
-    return d_xss( d_jxs[5], d_nxs[4] );
+  if( this->hasElectronShellOccupancyData() )
+    return d_xss_view( d_jxs[5], d_nxs[4] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the LBEPS block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLBEPSBlock() const
 {
-  if( hasElectronShellOccupancyData() )
-    return d_xss( d_jxs[6], d_nxs[4] );
+  if( this->hasElectronShellOccupancyData() )
+    return d_xss_view( d_jxs[6], d_nxs[4] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the LPIPS block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLPIPSBlock() const
 {
-  if( hasElectronShellOccupancyData() )
-    return d_xss( d_jxs[7], d_nxs[4] );
+  if( this->hasElectronShellOccupancyData() )
+    return d_xss_view( d_jxs[7], d_nxs[4] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the LSWD block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLSWDBlock() const
 {
-  if( hasComptonProfileData() )
-    return d_xss( d_jxs[8], d_nxs[4] );
+  if( this->hasComptonProfileData() )
+    return d_xss_view( d_jxs[8], d_nxs[4] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the SWD block
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractSWDBlock() const
 {
-  if( hasComptonProfileData() )
-    return d_xss( d_jxs[9], d_nxs[0] - d_jxs[9] );
+  if( this->hasComptonProfileData() )
+    return d_xss_view( d_jxs[9], d_nxs[0] - d_jxs[9] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 } // end Data namespace

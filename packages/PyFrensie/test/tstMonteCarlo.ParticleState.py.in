@@ -1,0 +1,1199 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ParticleState class unit tests
+#  \file   tstMonteCarlo.ParticleState.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ParticleState class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the NeutronState class
+class NeutronStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.NeutronState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.NeutronState getParticleType"
+        particle = MonteCarlo.NeutronState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.NEUTRON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.NeutronState getCharge"
+        particle = MonteCarlo.NeutronState( 1 )
+        self.assertEqual( particle.getCharge(), 0 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.NeutronState getSpeed"
+        particle = MonteCarlo.NeutronState( 1 )
+        self.assertEqual( particle.getSpeed(), 0.0 )
+
+    def testGetSourceCell(self):
+        "*Test MonteCarlo.NeutronState getSourceCell"
+        particle = MonteCarlo.NeutronState( 1 )
+        self.assertEqual( particle.getSourceCell(), 0 )
+
+        particle.setSourceCell( 1 )
+        self.assertEqual( particle.getSourceCell(), 1 )
+
+    def testGetSourceCell(self):
+        "*Test MonteCarlo.NeutronState embedInModel"
+        particle = MonteCarlo.NeutronState( 1 )
+        local_model = Geometry.InfiniteMediumModel(1)
+        particle.embedInModel( local_model )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.NeutronState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.NeutronState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        speed_of_light = 29979245800
+        rest_mass = 939.56537821
+        time = 1.7320508075688772 / ( speed_of_light * numpy.sqrt( 1 - rest_mass * rest_mass / ((1 + rest_mass) * (1 + rest_mass))))
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), time, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.NeutronState clone"
+        particle = MonteCarlo.NeutronState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), 0 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.NEUTRON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.NeutronState clone_new_hist"
+    #     particle = MonteCarlo.NeutronState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.Neutron )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.NeutronState copy_constructor"
+        particle_gen_a = MonteCarlo.NeutronState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.NeutronState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.NeutronState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Test the PhotonState class
+class PhotonStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.PhotonState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.PhotonState getParticleType"
+        particle = MonteCarlo.PhotonState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.PHOTON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.PhotonState getCharge"
+        particle = MonteCarlo.PhotonState( 1 )
+        self.assertEqual( particle.getCharge(), 0 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.PhotonState getSpeed"
+        particle = MonteCarlo.PhotonState( 1 )
+        self.assertEqual( particle.getSpeed(), 29979245800 )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.PhotonState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.PhotonState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), 5.7774996046392e-11, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.PhotonState clone"
+        particle = MonteCarlo.PhotonState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), 0 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.PHOTON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.PhotonState clone_new_hist"
+    #     particle = MonteCarlo.PhotonState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.PHOTON )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.PhotonState copy_constructor"
+        particle_gen_a = MonteCarlo.PhotonState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.PhotonState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.PhotonState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Test the ElectronState class
+class ElectronStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ElectronState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.ElectronState getParticleType"
+        particle = MonteCarlo.ElectronState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.ELECTRON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.ElectronState getCharge"
+        particle = MonteCarlo.ElectronState( 1 )
+        self.assertEqual( particle.getCharge(), -1 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.ElectronState getSpeed"
+        particle = MonteCarlo.ElectronState( 1 )
+        self.assertEqual( particle.getSpeed(), 0.0 )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.ElectronState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.ElectronState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        speed_of_light = 29979245800
+        rest_mass = 0.51099891013
+        time = 1.7320508075688772 / ( speed_of_light * numpy.sqrt( 1 - rest_mass * rest_mass / ((1 + rest_mass) * (1 + rest_mass))))
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), time, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.ElectronState clone"
+        particle = MonteCarlo.ElectronState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), -1 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ELECTRON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.ElectronState clone_new_hist"
+    #     particle = MonteCarlo.ElectronState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ELECTRON )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.ElectronState copy_constructor"
+        particle_gen_a = MonteCarlo.ElectronState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.ElectronState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.ElectronState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Test the PositronState class
+class PositronStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.PositronState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.PositronState getParticleType"
+        particle = MonteCarlo.PositronState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.POSITRON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.PositronState getCharge"
+        particle = MonteCarlo.PositronState( 1 )
+        self.assertEqual( particle.getCharge(), 1 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.PositronState getSpeed"
+        particle = MonteCarlo.PositronState( 1 )
+        self.assertEqual( particle.getSpeed(), 0.0 )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.PositronState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.PositronState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        speed_of_light = 29979245800
+        rest_mass = 0.51099891013
+        time = 1.7320508075688772 / ( speed_of_light * numpy.sqrt( 1 - rest_mass * rest_mass / ((1 + rest_mass) * (1 + rest_mass))))
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), time, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.PositronState clone"
+        particle = MonteCarlo.PositronState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), 1 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.POSITRON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.PositronState clone_new_hist"
+    #     particle = MonteCarlo.PositronState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.POSITRON )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.PositronState copy_constructor"
+        particle_gen_a = MonteCarlo.PositronState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.PositronState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.PositronState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Test the AdjointPhotonState class
+class AdjointPhotonStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.AdjointPhotonState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.AdjointPhotonState getParticleType"
+        particle = MonteCarlo.AdjointPhotonState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.ADJOINT_PHOTON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.AdjointPhotonState getCharge"
+        particle = MonteCarlo.AdjointPhotonState( 1 )
+        self.assertEqual( particle.getCharge(), 0 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.AdjointPhotonState getSpeed"
+        particle = MonteCarlo.AdjointPhotonState( 1 )
+        self.assertEqual( particle.getSpeed(), 29979245800 )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.AdjointPhotonState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.AdjointPhotonState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), 5.7774996046392e-11, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.AdjointPhotonState clone"
+        particle = MonteCarlo.AdjointPhotonState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), 0 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ADJOINT_PHOTON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.AdjointPhotonState clone_new_hist"
+    #     particle = MonteCarlo.AdjointPhotonState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ADJOINT_PHOTON )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.AdjointPhotonState copy_constructor"
+        particle_gen_a = MonteCarlo.AdjointPhotonState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.AdjointPhotonState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.AdjointPhotonState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Test the AdjointElectronState class
+class AdjointElectronStateTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.AdjointElectronState class"
+
+    def testGetParticleType(self):
+        "*Test MonteCarlo.AdjointElectronState getParticleType"
+        particle = MonteCarlo.AdjointElectronState( 1 )
+        self.assertEqual( particle.getParticleType(), MonteCarlo.ADJOINT_ELECTRON )
+
+    def testGetCharge(self):
+        "*Test MonteCarlo.AdjointElectronState getCharge"
+        particle = MonteCarlo.AdjointElectronState( 1 )
+        self.assertEqual( particle.getCharge(), -1 )
+
+    def testGetSpeed(self):
+        "*Test MonteCarlo.AdjointElectronState getSpeed"
+        particle = MonteCarlo.AdjointElectronState( 1 )
+        self.assertEqual( particle.getSpeed(), 0.0 )
+
+    def testAdvance(self):
+        "*Test MonteCarlo.AdjointElectronState advance"
+        position = [1.0, 1.0, 1.0]
+        direction = [0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+
+        particle = MonteCarlo.AdjointElectronState( 1 )
+        particle.setPosition( position )
+        particle.setDirection( direction )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.0 )
+
+        particle.advance( 1.7320508075688772 )
+
+        speed_of_light = 29979245800
+        rest_mass = 0.51099891013
+        time = 1.7320508075688772 / ( speed_of_light * numpy.sqrt( 1 - rest_mass * rest_mass / ((1 + rest_mass) * (1 + rest_mass))))
+
+        self.assertAlmostEqual( particle.getXPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getYPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getZPosition(), 2.0, 1e-12 )
+        self.assertAlmostEqual( particle.getTime(), time, delta=1e-12 )
+
+    def testClone(self):
+        "*Test MonteCarlo.AdjointElectronState clone"
+        particle = MonteCarlo.AdjointElectronState( 0 )
+        particle.setPosition( 1.0, 1.0, 1.0 )
+        particle.setDirection( 0.0, 0.0, 1.0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 0.5 )
+        particle.setWeight( 0.25 )
+
+        particle_clone = particle.clone()
+
+        self.assertEqual( particle_clone.getXPosition(), 1.0 )
+        self.assertEqual( particle_clone.getYPosition(), 1.0 )
+        self.assertEqual( particle_clone.getZPosition(), 1.0 )
+        self.assertEqual( particle_clone.getXDirection(), 0.0 )
+        self.assertEqual( particle_clone.getYDirection(), 0.0 )
+        self.assertEqual( particle_clone.getZDirection(), 1.0 )
+        self.assertEqual( particle_clone.getEnergy(), 1.0 )
+        self.assertEqual( particle_clone.getCharge(), -1 )
+        self.assertEqual( particle_clone.getTime(), 0.5 )
+        self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+        self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+        self.assertEqual( particle_clone.getWeight(), 0.25 )
+        self.assertEqual( particle_clone.getHistoryNumber(), 0 )
+        self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ADJOINT_ELECTRON )
+
+    # def testClone_new_hist(self):
+    #     "*Test MonteCarlo.AdjointElectronState clone_new_hist"
+    #     particle = MonteCarlo.AdjointElectronState( 0 )
+    #     particle.setPosition( 1.0, 1.0, 1.0 )
+    #     particle.setDirection( 0.0, 0.0, 1.0 )
+    #     particle.setEnergy( 1.0 )
+    #     particle.setTime( 0.5 )
+    #     particle.setWeight( 0.25 )
+
+    #     particle_clone = particle.clone( 10 )
+
+    #     self.assertEqual( particle_clone.getXPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getYPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getZPosition(), 1.0 )
+    #     self.assertEqual( particle_clone.getXDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getYDirection(), 0.0 )
+    #     self.assertEqual( particle_clone.getZDirection(), 1.0 )
+    #     self.assertEqual( particle_clone.getEnergy(), 1.0 )
+    #     self.assertEqual( particle_clone.getCharge(), 0 )
+    #     self.assertEqual( particle_clone.getTime(), 0.5 )
+    #     self.assertEqual( particle_clone.getCollisionNumber(), 0 )
+    #     self.assertEqual( particle_clone.getGenerationNumber(), 0 )
+    #     self.assertEqual( particle_clone.getWeight(), 0.25 )
+    #     self.assertEqual( particle_clone.getHistoryNumber(), 10 )
+    #     self.assertEqual( particle_clone.getParticleType(), MonteCarlo.ADJOINT_ELECTRON )
+
+    def testCopy_constructor(self):
+        "*Test MonteCarlo.AdjointElectronState copy_constructor"
+        particle_gen_a = MonteCarlo.AdjointElectronState( 1 )
+        particle_gen_a.setPosition( 1.0, 1.0, 1.0 )
+        particle_gen_a.setPosition( 0.0, 0.0, 1.0 )
+        particle_gen_a.setEnergy( 1.0 )
+        particle_gen_a.setTime( 1.0 )
+        particle_gen_a.incrementCollisionNumber()
+        particle_gen_a.setWeight( 0.5 )
+
+        particle_gen_a_copy = particle_gen_a
+
+        self.assertEqual( particle_gen_a_copy.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_a_copy.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_a_copy.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_a_copy.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_a_copy.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_a_copy.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() )
+        self.assertEqual( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() )
+        self.assertEqual( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a second generation particle with the same collision number
+        particle_gen_b = MonteCarlo.AdjointElectronState( particle_gen_a, True )
+
+        self.assertEqual( particle_gen_b.getXPosition(),
+		 particle_gen_a.getXPosition() )
+        self.assertEqual( particle_gen_b.getYPosition(),
+		 particle_gen_a.getYPosition() )
+        self.assertEqual( particle_gen_b.getZPosition(),
+		 particle_gen_a.getZPosition() )
+        self.assertEqual( particle_gen_b.getXDirection(),
+		 particle_gen_a.getXDirection() )
+        self.assertEqual( particle_gen_b.getYDirection(),
+		 particle_gen_a.getYDirection() )
+        self.assertEqual( particle_gen_b.getZDirection(),
+		 particle_gen_a.getZDirection() )
+        self.assertEqual( particle_gen_b.getEnergy(),
+		 particle_gen_a.getEnergy() )
+        self.assertEqual( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() )
+        self.assertEqual( particle_gen_b.getTime(),
+		 particle_gen_a.getTime() )
+        self.assertEqual( particle_gen_b.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() )
+        self.assertEqual( particle_gen_b.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_b.getWeight(),
+		 particle_gen_a.getWeight() )
+
+        # Create a third generation particle and reset the collision counter
+        particle_gen_c = MonteCarlo.AdjointElectronState( particle_gen_b, True, True )
+
+        self.assertEqual( particle_gen_c.getXPosition(),
+		 particle_gen_b.getXPosition() )
+        self.assertEqual( particle_gen_c.getYPosition(),
+		 particle_gen_b.getYPosition() )
+        self.assertEqual( particle_gen_c.getZPosition(),
+		 particle_gen_b.getZPosition() )
+        self.assertEqual( particle_gen_c.getXDirection(),
+		 particle_gen_b.getXDirection() )
+        self.assertEqual( particle_gen_c.getYDirection(),
+		 particle_gen_b.getYDirection() )
+        self.assertEqual( particle_gen_c.getZDirection(),
+		 particle_gen_b.getZDirection() )
+        self.assertEqual( particle_gen_c.getEnergy(),
+		 particle_gen_b.getEnergy() )
+        self.assertEqual( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() )
+        self.assertEqual( particle_gen_c.getTime(),
+		 particle_gen_b.getTime() )
+        self.assertEqual( particle_gen_c.getCollisionNumber(), 0 )
+        self.assertEqual( particle_gen_c.getGenerationNumber(),
+		 particle_gen_b.getGenerationNumber()+1 )
+        self.assertEqual( particle_gen_c.getWeight(),
+		 particle_gen_b.getWeight() )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(NeutronStateTestCase))
+    suite.addTest(unittest.makeSuite(PhotonStateTestCase))
+    suite.addTest(unittest.makeSuite(ElectronStateTestCase))
+    suite.addTest(unittest.makeSuite(PositronStateTestCase))
+    suite.addTest(unittest.makeSuite(AdjointPhotonStateTestCase))
+    suite.addTest(unittest.makeSuite(AdjointElectronStateTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ParticleState.py
+#-----------------------------------------------------------------------------#

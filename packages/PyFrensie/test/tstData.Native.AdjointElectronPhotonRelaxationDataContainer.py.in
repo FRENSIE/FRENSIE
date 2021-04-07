@@ -1,0 +1,220 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.Native.AdjointElectronPhotonRelaxationDataContainer class unit tests
+#  \file   tstData.Native.AdjointElectronPhotonRelaxationDataContainer.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.AdjointElectronPhotonRelaxationDataContainer class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--nativefile", type="string", dest="nativefile",
+                  help="set the Native file to test.")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the AdjointElectronPhotonRelaxationDataContainer for Carbon
+class AdjointElectronPhotonRelaxationDataContainerTestCase(unittest.TestCase):
+    "TestCase for Data.Native.AdjointElectronPhotonRelaxationDataContainer class using C data"
+    @classmethod
+    def setUpClass(cls):
+        cls.native_data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
+
+    def testConstructor(self):
+        "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer constructor"
+        self.assertTrue(isinstance(self.native_data, Native.AdjointElectronPhotonRelaxationDataContainer))
+
+    def testTableData(self):
+        "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer table data methods"
+        self.assertEqual(self.native_data.getAtomicNumber(), 6)
+        self.assertEqual(self.native_data.getAtomicWeight(), 12.011)
+        self.assertEqual(self.native_data.getMinPhotonEnergy(), 1e-3)
+        self.assertEqual(self.native_data.getMaxPhotonEnergy(), 20.0)
+        self.assertEqual(self.native_data.getMinElectronEnergy(), 1e-5)
+        self.assertEqual(self.native_data.getMaxElectronEnergy(), 20.0)
+        self.assertEqual(self.native_data.getCutoffAngleCosine(), 0.9)
+        self.assertEqual(self.native_data.getNumberOfAdjointMomentPreservingAngles(), 2)
+
+    def testRelaxationData(self):
+        "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer get relaxation data methods"
+        self.assertFalse(self.native_data.hasAdjointRelaxationData() )
+
+        self.assertEqual(len(self.native_data.getSubshells() ), 4 )
+        self.assertTrue(1 in self.native_data.getSubshells() )
+        self.assertTrue(2 in self.native_data.getSubshells() )
+        self.assertTrue(3 in self.native_data.getSubshells() )
+        self.assertTrue(4 in self.native_data.getSubshells() )
+        self.assertFalse(5 in self.native_data.getSubshells() )
+
+        self.assertEqual(self.native_data.getSubshellOccupancy( 1 ), 2.0 )
+        self.assertEqual(self.native_data.getSubshellBindingEnergy( 1 ), 2.9101e-4 )
+
+    def testPhotonData(self):
+        "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer photon data methods"
+        data = self.native_data.getAdjointPhotonEnergyGrid()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( data[0], 1e-3 )
+        self.assertEqual( data[-1], 20.0 )
+
+        data = self.native_data.getAdjointWallerHartreeIncoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
+
+        data = self.native_data.getAdjointImpulseApproxIncoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 12 )
+        self.assertEqual( len(data[len(data)-1]), 12 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxIncoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 12 )
+        self.assertEqual( len(data[-1]), 12 )
+
+        data = self.native_data.getAdjointImpulseApproxSubshellIncoherentCrossSection(1)
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[len(data)-1]), 3 )
+
+        data = self.native_data.getAdjointDopplerBroadenedImpulseApproxSubshellIncoherentCrossSection(1)
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
+
+        data = self.native_data.getAdjointWallerHartreeCoherentCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( data[0], 2.45600299049398139e+01 )
+        self.assertEqual( data[-1], 1.92198769740615498e-06 )
+
+        data = self.native_data.getAdjointWallerHartreeTotalCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 3 )
+        self.assertEqual( len(data[-1]), 3 )
+
+        data = self.native_data.getAdjointImpulseApproxTotalCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( len(data[0]), 12 )
+        self.assertEqual( len(data[-1]), 12 )
+
+        data = self.native_data.getWallerHartreeTotalCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( data[0], 4.40594690580228344e+04 )
+        self.assertEqual( data[-1], 3.13338538552983381e-01 )
+
+        data = self.native_data.getImpulseApproxTotalCrossSection()
+        self.assertEqual( len(data), 1009 )
+        self.assertEqual( data[0], 4.40594858435388887e+04 )
+        self.assertEqual( data[-1], 3.13351508326949857e-01 )
+
+    def testElectronData(self):
+        "*Test Data.Native.AdjointElectronPhotonRelaxationDataContainer electron data methods"
+        self.assertEqual( self.native_data.getElectronTwoDInterpPolicy(), "Log-Log-Log" )
+        self.assertEqual( self.native_data.getElectronTwoDGridPolicy(), "Unit-base Correlated" )
+
+        data = self.native_data.getAdjointCutoffElasticAngles()
+        self.assertEqual( len(data), 12 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[20.0]), 164 )
+
+        data = self.native_data.getAdjointCutoffElasticPDF()
+        self.assertEqual( len(data), 12 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[20.0]), 164 )
+
+        data = self.native_data.getAdjointElectronEnergyGrid()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 1e-5 )
+        self.assertEqual( data[-1], 20.0 )
+
+        data = self.native_data.getAdjointCutoffElasticCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.06351e+09 )
+        self.assertEqual( data[-1], 1.04023584578018363e+04 )
+
+        data = self.native_data.getAdjointScreenedRutherfordElasticCrossSection()
+        threshold = self.native_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex()
+        self.assertEqual( len(data), 88 - threshold )
+        self.assertEqual( data[0], 1.9363459618063644e+01 )
+        self.assertEqual( data[-1], 1.30888131403400272e+05 )
+
+        data = self.native_data.getAdjointTotalElasticCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.06351e+09 )
+        self.assertEqual( data[-1], 1.412904898612021e+05 )
+
+        data = self.native_data.getAdjointElectroionizationCrossSection(1)
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 4.0099376757954115e+08 )
+        self.assertEqual( data[-1], 1.2491122082781872e+04 )
+
+        data = self.native_data.getAdjointBremsstrahlungElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 9.383751316029665e+02 )
+        self.assertEqual( data[-1], 4.46027232691087 )
+
+        data = self.native_data.getAdjointAtomicExcitationCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 5.90009144459967241e+07 )
+        self.assertEqual( data[-1], 1.24076998649746980e+05 )
+
+        # Check the forward brem cross section data
+        data = self.native_data.getForwardBremsstrahlungElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 6.03128e+02 )
+        self.assertEqual( data[-1], 1.32769004460848929e+01 )
+
+         # Check the forward electroionization cross section data
+        data = self.native_data.getForwardElectroionizationElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.1449e+07 )
+        self.assertEqual( data[-1], 4.00458584513825655e+05 )
+
+        data = self.native_data.getForwardAtomicExcitationElectronCrossSection()
+        self.assertEqual( len(data), 88 )
+        self.assertEqual( data[0], 3.16863e+06 )
+        self.assertEqual( data[-1], 1.24077e+05 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(AdjointElectronPhotonRelaxationDataContainerTestCase))
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.AdjointElectronPhotonRelaxation \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.Native.AdjointElectronPhotonRelaxationDataContainer.py
+#-----------------------------------------------------------------------------#

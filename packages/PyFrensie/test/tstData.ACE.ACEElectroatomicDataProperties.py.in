@@ -1,0 +1,132 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACEElectroatomicDataProperties class unit tests
+#  \file   tstData.ACE.ACEElectroatomicDataProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ACE.ACEElectroatomicDataProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ACEElectroatomicDataProperties class
+class ACEElectroatomicDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.ACE.ACEElectroatomicDataProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = ACE.ACEElectroatomicDataProperties(
+                                              1.0,
+                                              "electroatomic_data/h_data.txt",
+                                              10,
+                                              "1000.12p" )
+
+    def testConstructor(self):
+        "*Test Data.ACEElectroatomicDataProperties constructor"
+        with self.assertRaises(ValueError):
+            ACE.ACEElectroatomicDataProperties( -1.0,
+                                                "electroatomic_data/h_data.txt",
+                                                10,
+                                                "1000.12p" )
+
+    def testAtom(self):
+        "*Test Data.ACEElectroatomicDataProperties atom"
+        self.assertEqual( self.properties.atom(), Data.H_ATOM )
+
+    def testFileType(self):
+        "*Test Data.ACEElectroatomicDataProperties fileType"
+        self.assertEqual( self.properties.fileType(),
+                          Data.ElectroatomicDataProperties.ACE_EPR_FILE )
+
+        with self.assertRaises(RuntimeError) as err:
+            ACE.ACEElectroatomicDataProperties(
+                                              1.0,
+                                              "photoatomic_data/h_data.txt",
+                                              10,
+                                              "1000.04p" )
+
+        self.assertEqual( 'Error: The electroatomic table version is not supported',
+                          err.exception.message.split('!')[0] )
+
+    def testAtomicWeight(self):
+        "*Test Data.ACEElectroatomicDataProperties atomicWeight"
+        self.assertEqual( self.properties.atomicWeight(), 1.0 )
+
+    def testFilePath(self):
+        "*Test Data.ACEElectroatomicDataProperties filePath"
+        self.assertEqual( self.properties.filePath(),
+                          "electroatomic_data/h_data.txt" )
+
+    def testFileStartLine(self):
+        "*Test Data.ACEElectroatomicDataProperties fileStartLine"
+        self.assertEqual( self.properties.fileStartLine(), 10 )
+
+    def testFileVersion(self):
+        "*Test Data.ACEElectroatomicDataProperties fileVersion"
+        self.assertEqual( self.properties.fileVersion(), 12 )
+
+    def testTableName(self):
+        "*Test Data.ACEElectroatomicDataProperties tableName"
+        self.assertEqual( self.properties.tableName(), "1000.12p" )
+
+    def testClone(self):
+        "*Test Data.ACEElectroatomicDataProperties constructor"
+        properties_clone = self.properties.clone()
+
+        self.assertTrue( properties_clone )
+        self.assertEqual( properties_clone.atomicWeight(), 1.0 )
+        self.assertEqual( properties_clone.filePath(),
+                          "electroatomic_data/h_data.txt" )
+        self.assertEqual( properties_clone.fileStartLine(), 10 )
+        self.assertEqual( properties_clone.fileVersion(), 12 )
+        self.assertEqual( properties_clone.tableName(), "1000.12p" )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test Suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ACEElectroatomicDataPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ACEElectroatomicDataProperties.py
+#-----------------------------------------------------------------------------#

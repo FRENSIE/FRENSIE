@@ -1,0 +1,135 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationAdjointPhotonProperties class unit tests
+#  \file   tstMonteCarlo.SimulationAdjointPhotonProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationAdjointPhotonProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationAdjointPhotonProperties class
+class SimulationAdjointPhotonPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationAdjointPhotonProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties defaults"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        self.assertEqual( properties.getAbsoluteMinAdjointPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMinAdjointPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMaxAdjointPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxAdjointPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getNumberOfAdjointPhotonHashGridBins(), 500 )
+        self.assertEqual( properties.getIncoherentAdjointModelType(),
+                          MonteCarlo.DB_IMPULSE_INCOHERENT_ADJOINT_MODEL )
+        self.assertEqual( len(properties.getCriticalAdjointPhotonLineEnergies()), 0 )
+        self.assertEqual( properties.getAdjointPhotonRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getAdjointPhotonRouletteSurvivalWeight(), 0.0 )
+
+    def testSetMinAdjointPhotonEnergy(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setMinAdjointPhotonEnergy"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        properties.setMinAdjointPhotonEnergy( 1e-2 )
+        self.assertEqual( properties.getMinAdjointPhotonEnergy(), 1e-2 )
+
+    def testSetMaxAdjointPhotonEnergy(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setMaxAdjointPhotonEnergy"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        properties.setMaxAdjointPhotonEnergy( 15.0 )
+        self.assertEqual( properties.getMaxAdjointPhotonEnergy(), 15.0 )
+
+    def testSetNumberOfAdjointPhotonHashGridBins(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setNumberOfAdjointPhotonHashGridBins"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        properties.setNumberOfAdjointPhotonHashGridBins( 750 )
+        self.assertEqual( properties.getNumberOfAdjointPhotonHashGridBins(), 750 )
+
+    def testSetIncoherentAdjointModelType(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setIncoherentAdjointModelType"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        properties.setIncoherentAdjointModelType( MonteCarlo.KN_INCOHERENT_ADJOINT_MODEL )
+        self.assertEqual( properties.getIncoherentAdjointModelType(),
+                          MonteCarlo.KN_INCOHERENT_ADJOINT_MODEL )
+
+    def testGetCriticalAdjointPhotonLineEnergies(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setCriticalAdjointPhotonLineEnergies"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        critical_line_energies = (1.0, 10.0)
+        properties.setCriticalAdjointPhotonLineEnergies( critical_line_energies )
+        self.assertEqual( properties.getCriticalAdjointPhotonLineEnergies(),
+                          critical_line_energies )
+
+    def testGetAdjointPhotonRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setAdjointPhotonRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        weight = 1e-14
+        properties.setAdjointPhotonRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getAdjointPhotonRouletteThresholdWeight(),
+                          weight )
+
+    def testGetAdjointPhotonRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationAdjointPhotonProperties setAdjointPhotonRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationAdjointPhotonProperties()
+
+        weight = 1e-12
+        properties.setAdjointPhotonRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getAdjointPhotonRouletteSurvivalWeight(),
+                          weight )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationAdjointPhotonPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationAdjointPhotonProperties.py
+#-----------------------------------------------------------------------------#

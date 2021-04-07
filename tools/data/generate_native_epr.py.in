@@ -1,0 +1,375 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   generate_native_epr.py
+##! \author Alex Robinson
+##! \brief  tool to generate the native epr library
+##!
+##---------------------------------------------------------------------------##
+
+import sys
+from os import path
+from optparse import *
+from native_endl_to_native_epr import generateData, addToDatabase
+import PyFrensie.Utility as Utility
+import PyFrensie.Data as Data
+import PyFrensie.Data.Native as Native
+import PyFrensie.MonteCarlo as MonteCarlo
+
+# Generate the native epr library using cached parameters
+def generateNativeEPRLibrary( endl_directory,
+                              native_directory,
+                              overwrite,
+                              db_name,
+                              log_file ):
+
+    # Check if the endl directory exists
+    if not path.isdir( options.endl_directory ):
+        print "The endl directory " + options.endl_directory + " does not exist!"
+        sys.exit(1)
+
+    # Check if the native directory exists
+    if not path.isdir( options.endl_directory ):
+        print "The native directory " + options.native_directory + " does not exist!"
+        sys.exit(1)
+
+    # Open the database
+    database = Data.ScatteringCenterPropertiesDatabase( db_name )
+
+    # The table of parameters used to generate the epr library
+    parameter_table = \
+    {"header": ["In"                 , "Out"               , "ACE In", "Db In"       , "Ep,min", "Ep,max", "Ee,min", "Ee,max", "Conv tol p", "Abs Diff tol p", "Dist tol p", "Conv tol e", "Abs Diff tol e", "Dist tol e", "Occup. # eval tol", "subshell incoh eval tol", "photon thresh. energy nudge factor", "electron total elastic int. mode on", "Cutoff angle cosine", "num moment pres. angles", "tabular eval tol", "electron secondary grid refinement", "electron two d interp policy",  "electron two d grid policy"],
+     1       : ["endl_native_1.xml"  , "epr_native_1.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     2       : ["endl_native_2.xml"  , "epr_native_2.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     3       : ["endl_native_3.xml"  , "epr_native_3.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     4       : ["endl_native_4.xml"  , "epr_native_4.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     5       : ["endl_native_5.xml"  , "epr_native_5.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     6       : ["endl_native_6.xml"  , "epr_native_6.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     7       : ["endl_native_7.xml"  , "epr_native_7.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     8       : ["endl_native_8.xml"  , "epr_native_8.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     9       : ["endl_native_9.xml"  , "epr_native_9.xml"  , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     10      : ["endl_native_10.xml" , "epr_native_10.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     11      : ["endl_native_11.xml" , "epr_native_11.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     12      : ["endl_native_12.xml" , "epr_native_12.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     13      : ["endl_native_13.xml" , "epr_native_13.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     14      : ["endl_native_14.xml" , "epr_native_14.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     15      : ["endl_native_15.xml" , "epr_native_15.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     16      : ["endl_native_16.xml" , "epr_native_16.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     17      : ["endl_native_17.xml" , "epr_native_17.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     18      : ["endl_native_18.xml" , "epr_native_18.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     19      : ["endl_native_19.xml" , "epr_native_19.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     20      : ["endl_native_20.xml" , "epr_native_20.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     21      : ["endl_native_21.xml" , "epr_native_21.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     22      : ["endl_native_22.xml" , "epr_native_22.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     23      : ["endl_native_23.xml" , "epr_native_23.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     24      : ["endl_native_24.xml" , "epr_native_24.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     25      : ["endl_native_25.xml" , "epr_native_25.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     26      : ["endl_native_26.xml" , "epr_native_26.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     27      : ["endl_native_27.xml" , "epr_native_27.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     28      : ["endl_native_28.xml" , "epr_native_28.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     29      : ["endl_native_29.xml" , "epr_native_29.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     30      : ["endl_native_30.xml" , "epr_native_30.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     31      : ["endl_native_31.xml" , "epr_native_31.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     32      : ["endl_native_32.xml" , "epr_native_32.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     33      : ["endl_native_33.xml" , "epr_native_33.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     34      : ["endl_native_34.xml" , "epr_native_34.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     35      : ["endl_native_35.xml" , "epr_native_35.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     36      : ["endl_native_36.xml" , "epr_native_36.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     37      : ["endl_native_37.xml" , "epr_native_37.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     38      : ["endl_native_38.xml" , "epr_native_38.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     39      : ["endl_native_39.xml" , "epr_native_39.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     40      : ["endl_native_40.xml" , "epr_native_40.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     41      : ["endl_native_41.xml" , "epr_native_41.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     42      : ["endl_native_42.xml" , "epr_native_42.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     43      : ["endl_native_43.xml" , "epr_native_43.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     44      : ["endl_native_44.xml" , "epr_native_44.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     45      : ["endl_native_45.xml" , "epr_native_45.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     46      : ["endl_native_46.xml" , "epr_native_46.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     47      : ["endl_native_47.xml" , "epr_native_47.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     48      : ["endl_native_48.xml" , "epr_native_48.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     49      : ["endl_native_49.xml" , "epr_native_49.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     50      : ["endl_native_50.xml" , "epr_native_50.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     51      : ["endl_native_51.xml" , "epr_native_51.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     52      : ["endl_native_52.xml" , "epr_native_52.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     53      : ["endl_native_53.xml" , "epr_native_53.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     54      : ["endl_native_54.xml" , "epr_native_54.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     55      : ["endl_native_55.xml" , "epr_native_55.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     56      : ["endl_native_56.xml" , "epr_native_56.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     57      : ["endl_native_57.xml" , "epr_native_57.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     58      : ["endl_native_58.xml" , "epr_native_58.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     59      : ["endl_native_59.xml" , "epr_native_59.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     60      : ["endl_native_60.xml" , "epr_native_60.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     61      : ["endl_native_61.xml" , "epr_native_61.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     62      : ["endl_native_62.xml" , "epr_native_62.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     63      : ["endl_native_63.xml" , "epr_native_63.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     64      : ["endl_native_64.xml" , "epr_native_64.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     65      : ["endl_native_65.xml" , "epr_native_65.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     66      : ["endl_native_66.xml" , "epr_native_66.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     67      : ["endl_native_67.xml" , "epr_native_67.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     68      : ["endl_native_68.xml" , "epr_native_68.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     69      : ["endl_native_69.xml" , "epr_native_69.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     70      : ["endl_native_70.xml" , "epr_native_70.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     71      : ["endl_native_71.xml" , "epr_native_71.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     72      : ["endl_native_72.xml" , "epr_native_72.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     73      : ["endl_native_73.xml" , "epr_native_73.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     74      : ["endl_native_74.xml" , "epr_native_74.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     75      : ["endl_native_75.xml" , "epr_native_75.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     76      : ["endl_native_76.xml" , "epr_native_76.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     77      : ["endl_native_77.xml" , "epr_native_77.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     78      : ["endl_native_78.xml" , "epr_native_78.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     79      : ["endl_native_79.xml" , "epr_native_79.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     80      : ["endl_native_80.xml" , "epr_native_80.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     81      : ["endl_native_81.xml" , "epr_native_81.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     82      : ["endl_native_82.xml" , "epr_native_82.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     83      : ["endl_native_83.xml" , "epr_native_83.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     84      : ["endl_native_84.xml" , "epr_native_84.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     85      : ["endl_native_85.xml" , "epr_native_85.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     86      : ["endl_native_86.xml" , "epr_native_86.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     87      : ["endl_native_87.xml" , "epr_native_87.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     88      : ["endl_native_88.xml" , "epr_native_88.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     89      : ["endl_native_89.xml" , "epr_native_89.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     90      : ["endl_native_90.xml" , "epr_native_90.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     91      : ["endl_native_91.xml" , "epr_native_91.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     92      : ["endl_native_92.xml" , "epr_native_92.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     93      : ["endl_native_93.xml" , "epr_native_93.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     94      : ["endl_native_94.xml" , "epr_native_94.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     95      : ["endl_native_95.xml" , "epr_native_95.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     96      : ["endl_native_96.xml" , "epr_native_96.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     97      : ["endl_native_97.xml" , "epr_native_97.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     98      : ["endl_native_98.xml" , "epr_native_98.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     99      : ["endl_native_99.xml" , "epr_native_99.xml" , None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ],
+     100     : ["endl_native_100.xml", "epr_native_100.xml", None    , None          , None    , None    , None    , None    ,  1e-3       ,  1e-80          , 1e-18       , 1e-3        , 1e-80           , 1e-18       , 1e-3               , 1e-3                     , None                                , 0.9                  , 2                        , 1e-15             , None                          , None                          ,  None                        ]
+     }
+
+    database_save_required = False
+
+    for i in range(1,101):
+        element_parameters = parameter_table[i]
+
+        endl_file_path = endl_directory + "/" + element_parameters[0]
+        output_file_path = native_directory + "/" + element_parameters[1]
+
+        # Check if the endl file exists
+        if not path.isfile( endl_file_path ):
+            print "The endl directory does not contain the required endl data file", element_parameters[0]
+            sys.exit(1)
+
+        generation_required = True
+
+        # Check if the output file has already been generated
+        if path.exists( output_file_path ) and not overwrite:
+            generation_required = False
+
+        if generation_required:
+            notification_string = "Generating " + output_file_path + " from " + endl_file_path + " ... "
+
+            Utility.logNotification( notification_string )
+
+            if not log_file is None:
+                sys.stdout.write(notification_string)
+                sys.stdout.flush()
+
+            data_container = \
+            generateData( endl_file_path,
+                          output_file_path,
+                          ace_table_name = element_parameters[2],
+                          db_name = element_parameters[3],
+                          overwrite = overwrite,
+                          notes = "Generated by generate_native_epr.py",
+                          min_photon_energy = element_parameters[4],
+                          max_photon_energy = element_parameters[5],
+                          min_electron_energy = element_parameters[6],
+                          max_electron_energy = element_parameters[7],
+                          photon_grid_convergence_tol = element_parameters[8],
+                          photon_grid_abs_diff_tol = element_parameters[9],
+                          photon_grid_dist_tol = element_parameters[10],
+                          electron_grid_convergence_tol = element_parameters[11],
+                          electron_grid_abs_diff_tol = element_parameters[12],
+                          electron_grid_dist_tol = element_parameters[13],
+                          occupation_number_eval_tol = element_parameters[14],
+                          subshell_incoherent_eval_tol = element_parameters[15],
+                          photon_threshold_energy_nudge_factor = element_parameters[16],
+                          cutoff_angle_cosine = element_parameters[17],
+                          num_moment_preserving_angles = element_parameters[18],
+                          tabular_evaluation_tol = element_parameters[19],
+                          electron_secondary_grid_refinement = element_parameters[20],
+                          electron_two_d_interp_policy = element_parameters[21],
+                          electron_two_d_grid_policy = element_parameters[22] )
+
+            # Update the database
+            database_save_required = \
+                addToDatabase( output_file_path,
+                               path.dirname( db_name ),
+                               database,
+                               data_container.getAtomicNumber(),
+                               data_container.getAtomicWeight(),
+                               True,
+                               database_save_required )
+
+            notification_string = "done."
+
+            Utility.logNotification( notification_string )
+
+            if not log_file is None:
+                sys.stdout.write(notification_string + "\n")
+                sys.stdout.flush()
+
+        else:
+            data_container = Native.ElectronPhotonRelaxationDataContainer( output_file_path )
+
+            # Update the database
+            database_save_required = \
+                addToDatabase( output_file_path,
+                               path.dirname( db_name ),
+                               database,
+                               data_container.getAtomicNumber(),
+                               data_container.getAtomicWeight(),
+                               False,
+                               database_save_required )
+
+    # Save the updated database
+    if database_save_required:
+        database.saveToFile( db_name, True )
+
+
+# Update a specific file in the native EPR library
+def updateNativeEPRFile( db_name,
+                         zaid,
+                         version,
+                         log_file ):
+
+    # Open the database
+    database = Data.ScatteringCenterPropertiesDatabase( db_name )
+
+    # Get the atom properties for the zaid
+    element_properties = database.getAtomProperties( Data.ZAID( zaid ) )
+
+    # Check if the native file exists
+    if not element_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE ):
+        print "The database does not contain the required native data (", zaid, ")"
+        sys.exit(1)
+
+    # Check if the native file exists
+    if not element_properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE, version ):
+        print "The database does not contain the required version of the native data (", zaid, version, ")"
+        sys.exit(1)
+
+    data_properties = element_properties.getSharedPhotoatomicDataProperties( Data.PhotoatomicDataProperties.Native_EPR_FILE, version )
+
+    native_file_path = path.dirname(db_name) + "/" + data_properties.filePath()
+
+    # Check if the native file exists
+    if not path.exists( native_file_path ):
+      print "The native data file does not exist!"
+      sys.exit(1)
+
+    native_data = Native.ElectronPhotonRelaxationDataContainer( native_file_path )
+
+    endl_file_path = path.dirname(db_name) + "/endldata/endl_native_" + str(int(zaid/1000)) + ".xml"
+
+    # Check if the endl file exists
+    if not path.isfile( endl_file_path ):
+        print "The endl data file does not exist!"
+        sys.exit(1)
+
+    if native_data.getElectronTwoDInterpPolicy() == "Log-Log-Log":
+      interp = "LogLogLog"
+    elif native_data.getElectronTwoDInterpPolicy() == "Lin-Lin-Lin":
+      interp = "LinLinLin"
+    elif native_data.getElectronTwoDInterpPolicy() == "Lin-Lin-Log":
+      interp = "LinLinLog"
+
+    if native_data.getElectronTwoDGridPolicy() == "Unit-base Correlated":
+      grid = "UnitBaseCorrelatedGrid"
+    if native_data.getElectronTwoDGridPolicy() == "Correlated":
+      grid = "CorrelatedGrid"
+    if native_data.getElectronTwoDGridPolicy() == "Unit-base":
+      grid = "UnitBaseGrid"
+
+    notification_string = "Updating " + native_file_path + " from " + endl_file_path + " ... "
+
+    Utility.logNotification( notification_string )
+
+    if not log_file is None:
+        sys.stdout.write(notification_string)
+        sys.stdout.flush()
+
+    data_container = \
+    generateData( endl_file_path,
+                  native_file_path,
+                  ace_table_name = None,
+                  db_name = db_name,
+                  overwrite = True,
+                  notes = "Generated by update_native_epr.py",
+                  min_photon_energy = native_data.getMinPhotonEnergy(),
+                  max_photon_energy = native_data.getMaxPhotonEnergy(),
+                  min_electron_energy = native_data.getMinElectronEnergy(),
+                  max_electron_energy = native_data.getMaxElectronEnergy(),
+                  photon_grid_convergence_tol = native_data.getPhotonGridConvergenceTolerance(),
+                  photon_grid_abs_diff_tol = native_data.getPhotonGridAbsoluteDifferenceTolerance(),
+                  photon_grid_dist_tol = native_data.getPhotonGridDistanceTolerance(),
+                  electron_grid_convergence_tol = native_data.getElectronGridConvergenceTolerance(),
+                  electron_grid_abs_diff_tol = native_data.getElectronGridAbsoluteDifferenceTolerance(),
+                  electron_grid_dist_tol = native_data.getElectronGridDistanceTolerance(),
+                  occupation_number_eval_tol = native_data.getOccupationNumberEvaluationTolerance(),
+                  subshell_incoherent_eval_tol = native_data.getSubshellIncoherentEvaluationTolerance(),
+                  photon_threshold_energy_nudge_factor = native_data.getPhotonThresholdEnergyNudgeFactor(),
+                  cutoff_angle_cosine = native_data.getCutoffAngleCosine(),
+                  num_moment_preserving_angles = native_data.getNumberOfMomentPreservingAngles(),
+                  tabular_evaluation_tol = native_data.getElectronTabularEvaluationTolerance(),
+                  electron_secondary_grid_refinement = False,
+                  electron_two_d_interp_policy = interp,
+                  electron_two_d_grid_policy = grid )
+
+    notification_string = "done."
+
+    Utility.logNotification( notification_string )
+
+    if not log_file is None:
+        sys.stdout.write(notification_string + "\n")
+        sys.stdout.flush()
+
+
+if __name__ == "__main__":
+
+    # Parse the command-line arguments
+    parser = OptionParser()
+    parser.add_option("-e", "--endl_directory", type="string", dest="endl_directory", default="endldata",
+                      help="the endl data directory path")
+    parser.add_option("-n", "--native_directory", type="string", dest="native_directory", default="native/epr",
+                      help="the native data directory path")
+    parser.add_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False,
+                      help="overwrite existing native files")
+    parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                      help="the database file with path")
+    parser.add_option("-z", "--zaid", type="int", dest="zaid",
+                      help="the zaid of the element to be updated in an existing database")
+    parser.add_option("-v", "--version", type="int", dest="version", default=0,
+                      help="the file version of the element to be updated in an existing database")
+    parser.add_option("-l", "--log_file", type="string", dest="log_file",
+                      help="the file that will log data generation messages")
+    options,args = parser.parse_args()
+
+    if not options.log_file is None:
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousLogs( options.log_file )
+
+
+    if options.zaid:
+      # Update the a specific file
+      updateNativeEPRFile( options.db_name,
+                           options.zaid,
+                           options.version,
+                           options.log_file )
+    else:
+      # Generate the native data library
+      generateNativeEPRLibrary( options.endl_directory,
+                                options.native_directory,
+                                options.overwrite,
+                                options.db_name,
+                                options.log_file )
+
+##---------------------------------------------------------------------------##
+## end generate_native_epr.py
+##---------------------------------------------------------------------------##
+

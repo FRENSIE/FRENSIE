@@ -38,7 +38,7 @@ public:
 							 atomic_weight_ratio,
 							 raw_nuclide_data )
   { /* ... */ }
-  
+
   ~TransNeutronNuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
@@ -71,52 +71,52 @@ int main( int argc, char** argv )
   clp.setOption( "number_of_samples",
 		 &number_of_samples,
 		 "The number of samples to make from the distribution",
-		 true );  
+		 true );
   clp.setOption( "mt_number",
 		 &mt_number,
 		 "The reaction mt number",
 		 true );
-		 
+
   clp.throwExceptions( false );
 
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-  Teuchos::RCP<TransNeutronNuclearScatteringDistributionACEFactory> 
+  Teuchos::RCP<TransNeutronNuclearScatteringDistributionACEFactory>
     neutron_distribution_factory;
   Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> reaction_factory;
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     clp.printHelpMessage( argv[0], *out );
-    
+
     return parse_return;
   }
 
   std::string cross_sections_xml_file = cross_section_directory;
   cross_sections_xml_file += "/cross_sections.xml";
 
-  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
-  Teuchos::ParameterList& table_info = 
+  Teuchos::ParameterList& table_info =
     cross_sections_table_info->get<Teuchos::ParameterList>( isotope );
 
   // Convert the mt number to a reaction type
-  MonteCarlo::NuclearReactionType reaction = 
+  MonteCarlo::NuclearReactionType reaction =
     MonteCarlo::convertUnsignedToNuclearReactionType( mt_number );
 
-  ace_file_handler.reset( new Data::ACEFileHandler( 
+  ace_file_handler.reset( new Data::ACEFileHandler(
 			      table_info.get<std::string>( "file_path" ),
 			      table_info.get<std::string>( "table_name" ),
 			      table_info.get<int>( "start_line" ) ) );
-						    
-  xss_data_extractor.reset( new Data::XSSNeutronDataExtractor( 
+
+  xss_data_extractor.reset( new Data::XSSNeutronDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -125,11 +125,11 @@ int main( int argc, char** argv )
 			         table_info.get<std::string>( "table_name" ),
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 *xss_data_extractor ) );
-  
+
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  reaction_factory.reset( new MonteCarlo::NuclearReactionACEFactory( 
+  reaction_factory.reset( new MonteCarlo::NuclearReactionACEFactory(
 				   table_info.get<std::string>( "table_name" ),
 				   ace_file_handler->getTableAtomicWeightRatio(),
 				   ace_file_handler->getTableTemperature(),
@@ -137,17 +137,17 @@ int main( int argc, char** argv )
 				   *xss_data_extractor ) );
 
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
+
   neutron_distribution_factory->createScatteringDistribution(
 							     reaction,
 							     scattering_dist );
 
   boost::unordered_map<MonteCarlo::NuclearReactionType,Teuchos::RCP<MonteCarlo::NuclearReaction> >
     scattering_reactions;
-  
+
   reaction_factory->createScatteringReactions( scattering_reactions );
-  
-  Teuchos::RCP<MonteCarlo::NuclearReaction> scattering_reaction = 
+
+  Teuchos::RCP<MonteCarlo::NuclearReaction> scattering_reaction =
     scattering_reactions.find( reaction )->second;
 
   // Turn off free gas treatment
@@ -162,14 +162,14 @@ int main( int argc, char** argv )
   double cm_angle;
   for( unsigned i = 0; i < number_of_samples; ++i )
   {
-    scattering_reaction->react( neutron, bank ); 
-    //scattering_dist->scatterNeutron(neutron, 
+    scattering_reaction->react( neutron, bank );
+    //scattering_dist->scatterNeutron(neutron,
     //			     ace_file_handler->getTableTemperature() );
-    
-    cm_angle = 
+
+    cm_angle =
       ((neutron.getEnergy()/incoming_energy)*(A+1)*(A+1) - A*A*arg -1)/
       (2*A*sqrt(arg));
-    
+
     std::cout << cm_angle << std::endl;
 
     neutron.setEnergy( incoming_energy );

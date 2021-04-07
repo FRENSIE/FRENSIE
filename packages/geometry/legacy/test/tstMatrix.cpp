@@ -3,7 +3,7 @@
 //! \file   tstMatrix.hpp
 //! \author Alex Robinson
 //! \brief  Matrix (3x3) unit tests.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )  
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -59,7 +59,7 @@ UNIT_TEST_INSTANTIATION( Matrix, inequality );
 
 //---------------------------------------------------------------------------//
 // Check that a matrix can be set as a zero matrix
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   zero,
 				   ScalarType )
 {
@@ -103,7 +103,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   element_access,
 				   ScalarType )
 {
-  Geometry::Matrix<ScalarType> matrix( 1.0, 2.0, 3.0, 
+  Geometry::Matrix<ScalarType> matrix( 1.0, 2.0, 3.0,
 				     4.0, 5.0, 6.0,
 				     7.0, 8.0, 9.0 );
 
@@ -117,10 +117,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   TEST_EQUALITY( matrix( 2, 1 ), 8.0 );
   TEST_EQUALITY( matrix( 2, 2 ), 9.0 );
 
-  const Geometry::Matrix<ScalarType> const_matrix( 1.0, 2.0, 3.0, 
+  const Geometry::Matrix<ScalarType> const_matrix( 1.0, 2.0, 3.0,
 						 4.0, 5.0, 6.0,
 						 7.0, 8.0, 9.0 );
-  
+
   TEST_EQUALITY( const_matrix( 0, 0 ), 1.0 );
   TEST_EQUALITY( const_matrix( 0, 1 ), 2.0 );
   TEST_EQUALITY( const_matrix( 0, 2 ), 3.0 );
@@ -136,7 +136,7 @@ UNIT_TEST_INSTANTIATION( Matrix, element_access );
 
 //---------------------------------------------------------------------------//
 // Check that a column of the matrix can be accessed
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   column_access,
 				   ScalarType )
 {
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 
   TEST_COMPARE_ARRAYS( col_1_view, ref_col_1 );
   TEST_COMPARE_ARRAYS( col_2_view, ref_col_2 );
-  TEST_COMPARE_ARRAYS( col_3_view, ref_col_3 );				   
+  TEST_COMPARE_ARRAYS( col_3_view, ref_col_3 );
 }
 
 UNIT_TEST_INSTANTIATION( Matrix, column_access );
@@ -189,7 +189,7 @@ UNIT_TEST_INSTANTIATION( Matrix, getRawPtr );
 
 //---------------------------------------------------------------------------//
 // Check that a view of the matrix can be made
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   view,
 				   ScalarType )
 {
@@ -214,7 +214,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 {
   Geometry::Matrix<ScalarType> matrix;
   matrix.identity();
-  
+
   Geometry::Matrix<ScalarType> second_matrix( 1.0, 1.0, 1.0,
 					    1.0, 1.0, 1.0,
 					    1.0, 1.0, 1.0 );
@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 					 1.0, 1.0, 2.0 );
 
   matrix += second_matrix;
-  
+
   TEST_EQUALITY( matrix, ref_matrix );
 }
 
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   Geometry::Matrix<ScalarType> matrix;
   matrix.identity();
 
-  Geometry::Matrix<ScalarType> second_matrix( 1.0, 1.0, 1.0, 
+  Geometry::Matrix<ScalarType> second_matrix( 1.0, 1.0, 1.0,
 					    1.0, 1.0, 1.0,
 					    1.0, 1.0, 1.0 );
 
@@ -264,7 +264,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   matrix.identity();
 
   ScalarType alpha = 5.0;
-  
+
   Geometry::Matrix<ScalarType> ref_matrix( 5.0, 0.0, 0.0,
 					 0.0, 5.0, 0.0,
 					 0.0, 0.0, 5.0 );
@@ -282,13 +282,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   multiply,
 				   ScalarType )
 {
-  Geometry::Matrix<ScalarType> A( 1.0, 
+  Geometry::Matrix<ScalarType> A( 1.0,
 				1.0, 1.0,
 				1.0, 1.0, 1.0 );
 
   Geometry::Matrix<ScalarType> B;
   B.identity();
-  
+
   Geometry::Matrix<ScalarType> matrix;
 
   matrix.multiply( 1.0, A, false, B, false, 0.0 );
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   matrix.multiply( 1.0, A, true, B, true, 1.0 );
 
   ref_matrix*= 2;
-  
+
   TEST_EQUALITY( matrix, ref_matrix );
 }
 
@@ -338,8 +338,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 
   matrix.swapColumns( 0, 2 );
   matrix.swapColumns( 1, 2 );
-  
-  TEST_EQUALITY( matrix, ref_matrix_3 );  
+
+  TEST_EQUALITY( matrix, ref_matrix_3 );
 }
 
 UNIT_TEST_INSTANTIATION( Matrix, swapColumns );
@@ -402,7 +402,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   Geometry::Matrix<ScalarType> symmetric_matrix( 1.0,
 					       2.0, 1.0,
 					       3.0, 2.0, 1.0 );
-  
+
   TEST_ASSERT( !general_matrix.isSymmetric() );
   TEST_ASSERT( symmetric_matrix.isSymmetric() );
 }

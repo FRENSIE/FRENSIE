@@ -23,12 +23,12 @@
 #include "Geometry_Surface.hpp"
 #include "Geometry_Vector.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
 //! The cell class
-template<typename CellOrdinalType, 
+template<typename CellOrdinalType,
 	 typename SurfaceOrdinalType,
 	 typename ScalarType>
 class Cell : public Utility::PrintableObject, public ThreeSpaceObject
@@ -39,7 +39,7 @@ private:
   //! Typedef for surface-sense pair
   typedef Utility::Pair<Teuchos::RCP<Surface<SurfaceOrdinalType,ScalarType> >,
 			SurfaceSense> SurfaceSensePair;
-  
+
   //! Typedef for surface-sense pairs container
   typedef Teuchos::Array<SurfaceSensePair> SurfaceSensePairContainer;
 
@@ -54,7 +54,7 @@ public:
   //! Typedef for scalar type
   typedef ScalarType scalarType;
   //! Typedef for surface-sense pairs array const iterator
-  typedef typename SurfaceSensePairContainer::const_iterator 
+  typedef typename SurfaceSensePairContainer::const_iterator
   SurfaceSensePairsIterator;
   //@}
 
@@ -72,7 +72,7 @@ private:
   typedef BooleanCellFunctor::BooleanArray BooleanArray;
 
 public:
-  
+
   //! Constructor
   template<typename SurfaceMap>
   Cell( const CellOrdinalType id,
@@ -116,7 +116,7 @@ public:
 
   //! Manually set the volume of the cell
   void setVolume( const ScalarType volume );
-  
+
   //! Return the cell id
   CellOrdinalType getId() const;
 
@@ -129,15 +129,15 @@ public:
   //@}
 
   //@{
-  //! Container based abstraction 
+  //! Container based abstraction
   //! Get a const iterator to beginning of the surface-sense pairs container
   inline SurfaceSensePairsIterator beginSurfaceSensePairs() const;
 
   //! Get a const iterator to end of the surface-sense pairs container
   inline SurfaceSensePairsIterator endSurfaceSensePairs() const;
 
-  //! Get a const iterator to first occurance of specific surface-sense pair
-  SurfaceSensePairsIterator getSurfaceSensePair( 
+  //! Get a const iterator to first occurrence of specific surface-sense pair
+  SurfaceSensePairsIterator getSurfaceSensePair(
 				   const SurfaceOrdinalType surface_id ) const;
   //@}
 
@@ -153,7 +153,7 @@ private:
 
   //! Assign surfaces to the cell
   template<typename SurfaceMap>
-  void assignSurfaces( std::string &cell_definition, 
+  void assignSurfaces( std::string &cell_definition,
 		       const SurfaceMap &global_surface_map );
 
   // Cell Id
@@ -167,7 +167,7 @@ private:
 
   // Surfaces and Senses that define the cell
   SurfaceSensePairContainer d_surface_sense_pairs;
-  
+
   // Surface information particular to this cell
   SurfaceAreaMap d_surface_id_area_map;
 

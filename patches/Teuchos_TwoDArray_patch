@@ -1,8 +1,0 @@
-110c110
-<   inline const ArrayView<T> operator[](size_type i) const;
----
->   inline ArrayView<const T> operator[](size_type i) const;
-264c264
-< const ArrayView<T> TwoDArray<T>::operator[](size_type i) const{
----
-> ArrayView<const T> TwoDArray<T>::operator[](size_type i) const{

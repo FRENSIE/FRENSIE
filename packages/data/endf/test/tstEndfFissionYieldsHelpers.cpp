@@ -9,27 +9,24 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Utils.hpp>
-#include <Teuchos_Array.hpp>
+#include <memory>
 
 // FRENSIE Includes
-#include "Utility_FortranFileHelperWrappers.hpp"
 #include "Data_ENDFFissionYieldsHelperWrappers.hpp"
+#include "Utility_FortranFileHelperWrappers.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables 
+// Testing Variables
 //---------------------------------------------------------------------------//
- 
+
 std::string test_endf_file_name;
 
 //---------------------------------------------------------------------------//
-// Tests 
+// Tests
 //---------------------------------------------------------------------------//
 // Check read ENDF Fission Yields Header
-TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsHeader )
+FRENSIE_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsHeader )
 {
    int file_id = 1;
 
@@ -44,13 +41,13 @@ TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsHeader )
 
    closeFileUsingFortran( file_id );
 
-   TEST_COMPARE( zaid, ==, 92235 );
-   TEST_COMPARE( number_energies, ==, 3 );
+   FRENSIE_CHECK_EQUAL( zaid, 92235 );
+   FRENSIE_CHECK_EQUAL( number_energies, 3 );
 
 }
 
 // Check read ENDF Fission Yields Data Header
-TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsDataHeader )
+FRENSIE_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsDataHeader )
 {
    int file_id = 1;
 
@@ -72,12 +69,12 @@ TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsDataHeader )
 
    closeFileUsingFortran( file_id );
 
-   TEST_COMPARE( number_data_sets, ==, 1247 );
-   TEST_FLOATING_EQUALITY( energy, 0.0253, 1e-15 )
+   FRENSIE_CHECK_EQUAL( number_data_sets, 1247 );
+   FRENSIE_CHECK_FLOATING_EQUALITY( energy, 0.0253, 1e-15 )
 }
 
 // Check read ENDF Fission Yields Data
-TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsData )
+FRENSIE_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsData )
 {
    int file_id = 1;
 
@@ -95,42 +92,44 @@ TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsData )
 
    readEndfFissionYieldsDataHeader( file_id, &number_data_sets, &energy );
 
-   Teuchos::Array<int> yield_zaid( number_data_sets );
-   Teuchos::Array<int> yield_meta_state( number_data_sets );
-   Teuchos::Array<double> yield( number_data_sets );
-   Teuchos::Array<double> yield_std( number_data_sets );
+   std::vector<int> yield_zaid( number_data_sets );
+   std::vector<int> yield_meta_state( number_data_sets );
+   std::vector<double> yield( number_data_sets );
+   std::vector<double> yield_std( number_data_sets );
 
-   readEndfFissionYieldsData( file_id, &number_data_sets, yield_zaid.getRawPtr(), 
-           yield_meta_state.getRawPtr(), yield.getRawPtr(), yield_std.getRawPtr() );
+   readEndfFissionYieldsData( file_id,
+                              &number_data_sets,
+                              yield_zaid.data(),
+                              yield_meta_state.data(),
+                              yield.data(),
+                              yield_std.data() );
 
    closeFileUsingFortran( file_id );
 
-   TEST_COMPARE( yield_zaid.front(), ==, 23066 );
-   TEST_COMPARE( yield_zaid.back(), ==, 72172 );
-   TEST_COMPARE( yield_meta_state.front(), ==, 0 );
-   TEST_COMPARE( yield_meta_state.back(), ==, 0 );
-   TEST_FLOATING_EQUALITY( yield.front(), 2.05032e-19, 1e-15 );
-   TEST_FLOATING_EQUALITY( yield.back(), 0.0, 1e-15 );
-   TEST_FLOATING_EQUALITY( yield_std.front(), 1.3122e-19, 1e-15);
-   TEST_FLOATING_EQUALITY( yield_std.back(), 0.0, 1e-15);
+   FRENSIE_CHECK_EQUAL( yield_zaid.front(), 23066 );
+   FRENSIE_CHECK_EQUAL( yield_zaid.back(), 72172 );
+   FRENSIE_CHECK_EQUAL( yield_meta_state.front(), 0 );
+   FRENSIE_CHECK_EQUAL( yield_meta_state.back(), 0 );
+   FRENSIE_CHECK_FLOATING_EQUALITY( yield.front(), 2.05032e-19, 1e-15 );
+   FRENSIE_CHECK_FLOATING_EQUALITY( yield.back(), 0.0, 1e-15 );
+   FRENSIE_CHECK_FLOATING_EQUALITY( yield_std.front(), 1.3122e-19, 1e-15);
+   FRENSIE_CHECK_SMALL( yield_std.back(), 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-// Custom Main Function 
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-   
-   clp.setOption( "test_endf_file",
-                  &test_endf_file_name,
-                  "Test file for checking ENDF fission yields helpers." );
-
-   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_endf_file",
+                                        test_endf_file_name, "",
+                                        "Test file for checking ENDF fission yields helpers." );
 }
 
- 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
+
 //---------------------------------------------------------------------------//
-// end tstEndfFissionYieldsHelpers.cpp 
+// end tstEndfFissionYieldsHelpers.cpp
 //---------------------------------------------------------------------------//

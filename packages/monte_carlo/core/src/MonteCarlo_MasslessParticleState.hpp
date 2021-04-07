@@ -9,8 +9,12 @@
 #ifndef MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 #define MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -19,9 +23,9 @@ class MasslessParticleState : public ParticleState
 {
 
 private:
-  
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -30,14 +34,16 @@ public:
 
   //! Constructor
   MasslessParticleState( const historyNumberType history_number,
-			 const ParticleType type );
+                         const ParticleType type,
+                         const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   MasslessParticleState( const ParticleState& existing_base_state,
-			 const ParticleType new_type,
-			 const bool increment_generation_number,
-			 const bool reset_collision_number );
-  
+                         const ParticleType new_type,
+                         const chargeType new_charge,
+                         const bool increment_generation_number,
+                         const bool reset_collision_number );
+
   //! Destructor
   virtual ~MasslessParticleState()
   { /* ... */ }
@@ -53,9 +59,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -63,7 +67,12 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MasslessParticleState );
-BOOST_CLASS_VERSION( MonteCarlo::MasslessParticleState, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( MasslessParticleState, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( MasslessParticleState, MonteCarlo, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MasslessParticleState );
 
 #endif // end MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
+
+//---------------------------------------------------------------------------//
+// end MontCarlo_MasslessParticleState.hpp
+//---------------------------------------------------------------------------//

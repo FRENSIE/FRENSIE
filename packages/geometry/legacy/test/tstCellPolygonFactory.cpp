@@ -26,7 +26,7 @@
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, short, double ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, double )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, long, double ) 
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, long, double )
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -103,13 +103,13 @@ void createTestingCell( Teuchos::RCP<Cell> &cell_ptr )
 				  0, 1, 0,
 				  -3 ) );
   surface_map[6] = surface_ptr;
-  
+
   // Surface 7: y = 2
   surface_ptr.reset( new Surface( 7,
 				  0, 1, 0,
 				  -2 ) );
   surface_map[7] = surface_ptr;
-  
+
   // Surface 8: y = 1
   surface_ptr.reset( new Surface( 8,
 				  0, 1, 0,
@@ -139,7 +139,7 @@ void createTestingCell( Teuchos::RCP<Cell> &cell_ptr )
 				  0, 0, 1,
 				  0 ) );
   surface_map[12] = surface_ptr;
-	      
+
   // Surface 13: z = -2
   surface_ptr.reset( new Surface( 13,
 				  0, 0, 1,
@@ -152,7 +152,7 @@ void createTestingCell( Teuchos::RCP<Cell> &cell_ptr )
 
 // Create the polygon corners on surface 1
 template<typename IntersectionPoint>
-void createSurface1PolygonCorners( 
+void createSurface1PolygonCorners(
 				std::list<IntersectionPoint> &polygon_corners )
 {
   polygon_corners.clear();
@@ -200,7 +200,7 @@ void createSurface1PolygonCorners(
 
 // Create the polygon corners on surface 2
 template<typename IntersectionPoint>
-void createSurface2PolygonCorners( 
+void createSurface2PolygonCorners(
 				std::list<IntersectionPoint> &polygon_corners )
 {
   polygon_corners.clear();
@@ -228,7 +228,7 @@ void createSurface2PolygonCorners(
 
 // Create the polygon corners on surface 3
 template<typename IntersectionPoint>
-void createSurface3PolygonCorners( 
+void createSurface3PolygonCorners(
 				std::list<IntersectionPoint> &polygon_corners )
 {
   polygon_corners.clear();
@@ -265,7 +265,7 @@ void createSurface4PolygonCorners(
   IntersectionPoint corner_1( -2.0, 2.0, 2.0,
 			      4, 7, 11 );
   polygon_corners.push_back( corner_1 );
-  
+
   // Second point at (-2,-2,2)
   IntersectionPoint corner_2( -2.0, -2.0, 2.0,
 			      4, 10, 11 );
@@ -295,7 +295,7 @@ void createSurface4PolygonCorners(
   IntersectionPoint corner_7( -2.0, 7.0, -2.0,
 			      4, 5, 13 );
   polygon_corners.push_back( corner_7 );
-  
+
   // Eighth point at (-2,7,0)
   IntersectionPoint corner_8( -2.0, 7.0, 0.0,
 			      4, 5, 12 );
@@ -304,7 +304,7 @@ void createSurface4PolygonCorners(
 
 // Create the polygon corners on surface 5
 template<typename IntersectionPoint>
-void createSurface5PolygonCorners( 
+void createSurface5PolygonCorners(
 				std::list<IntersectionPoint> &polygon_corners )
 {
   polygon_corners.clear();
@@ -323,7 +323,7 @@ void createSurface5PolygonCorners(
   IntersectionPoint corner_3( 2.0, 7.0, -2.0,
 			      1, 5, 13 );
   polygon_corners.push_back( corner_3 );
-  
+
   // Fourth point at (-2,7,-2)
   IntersectionPoint corner_4( -2.0, 7.0, -2.0,
 			      4, 5, 13 );
@@ -481,7 +481,7 @@ void createSurface11PolygonCorners(
   IntersectionPoint corner_1( -2.0, -2.0, 2.0,
 			      4, 10, 11 );
   polygon_corners.push_back( corner_1 );
-  
+
   // Second point at (-1,-1,2)
   IntersectionPoint corner_2( -1.0, -1.0, 2.0,
 			      3, 9, 11 );
@@ -562,7 +562,7 @@ void createSurface13PolygonCorners(
   IntersectionPoint corner_2( -2.0, 3.0, -2.0,
 			      4, 6, 13 );
   polygon_corners.push_back( corner_2 );
-  
+
   // Third point at (-2,2,-2)
   IntersectionPoint corner_3( -2.0, 2.0, -2.0,
 			      4, 7, 13 );
@@ -593,7 +593,7 @@ void createSurface13PolygonCorners(
 			      3, 9, 13 );
   polygon_corners.push_back( corner_8 );
 
-  // Nineth point at (1,1,-2)
+  // Ninth point at (1,1,-2)
   IntersectionPoint corner_9( 1.0, 1.0, -2.0,
 			      2, 8, 13 );
   polygon_corners.push_back( corner_9 );
@@ -611,7 +611,7 @@ void createSurface13PolygonCorners(
   // Twelfth point at (2,7,-2)
   IntersectionPoint corner_12( 2.0, 7.0, -2.0,
 			       1, 5, 13 );
-  polygon_corners.push_back( corner_12 );   
+  polygon_corners.push_back( corner_12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -632,7 +632,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   std::list<IntersectionPoint> polygon_7_corners;
   std::list<IntersectionPoint> polygon_11_corners;
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   // Create the lists of polygon corners
   createSurface1PolygonCorners( polygon_1_corners );
   createSurface7PolygonCorners( polygon_7_corners );
@@ -652,7 +652,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   TEST_ASSERT( CellPolygonFactory::allPointsOnSamePlane( polygon_7_corners ) );
   TEST_ASSERT( CellPolygonFactory::allPointsOnSamePlane( polygon_11_corners) );
   TEST_ASSERT( CellPolygonFactory::allPointsOnSamePlane( polygon_13_corners) );
-  TEST_ASSERT( !CellPolygonFactory::allPointsOnSamePlane( 
+  TEST_ASSERT( !CellPolygonFactory::allPointsOnSamePlane(
 						   invalid_polygon_corners ) );
 }
 
@@ -683,7 +683,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   std::list<IntersectionPoint> polygon_11_corners;
   std::list<IntersectionPoint> polygon_12_corners;
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   // Create the lists of polygon corners
   createSurface1PolygonCorners( polygon_1_corners );
   createSurface2PolygonCorners( polygon_2_corners );
@@ -699,31 +699,31 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   createSurface12PolygonCorners( polygon_12_corners );
   createSurface13PolygonCorners( polygon_13_corners );
 
-  OrdinalType plane_of_polygon_1_id = 
+  OrdinalType plane_of_polygon_1_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_1_corners );
-  OrdinalType plane_of_polygon_2_id = 
+  OrdinalType plane_of_polygon_2_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_2_corners );
-  OrdinalType plane_of_polygon_3_id = 
+  OrdinalType plane_of_polygon_3_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_3_corners );
-  OrdinalType plane_of_polygon_4_id = 
+  OrdinalType plane_of_polygon_4_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_4_corners );
-  OrdinalType plane_of_polygon_5_id = 
+  OrdinalType plane_of_polygon_5_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_5_corners );
-  OrdinalType plane_of_polygon_6_id = 
+  OrdinalType plane_of_polygon_6_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_6_corners );
-  OrdinalType plane_of_polygon_7_id = 
+  OrdinalType plane_of_polygon_7_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_7_corners );
-  OrdinalType plane_of_polygon_8_id = 
+  OrdinalType plane_of_polygon_8_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_8_corners );
-  OrdinalType plane_of_polygon_9_id = 
+  OrdinalType plane_of_polygon_9_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_9_corners );
-  OrdinalType plane_of_polygon_10_id = 
+  OrdinalType plane_of_polygon_10_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_10_corners );
-  OrdinalType plane_of_polygon_11_id = 
+  OrdinalType plane_of_polygon_11_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_11_corners );
-  OrdinalType plane_of_polygon_12_id = 
+  OrdinalType plane_of_polygon_12_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_12_corners );
-  OrdinalType plane_of_polygon_13_id = 
+  OrdinalType plane_of_polygon_13_id =
     CellPolygonFactory::getPlaneOfPolygonId( polygon_13_corners );
 
   OrdinalType ref_plane_of_polygon_1_id = 1;
@@ -782,7 +782,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   std::list<IntersectionPoint> polygon_11_corners;
   std::list<IntersectionPoint> polygon_12_corners;
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   // Create the lists of polygon corners
   createSurface1PolygonCorners( polygon_1_corners );
   createSurface2PolygonCorners( polygon_2_corners );
@@ -801,69 +801,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   typename std::list<IntersectionPoint>::iterator largest_corner;
 
   // Get the lexicographically largest points for each list
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_1_corners );
-  Geometry::Vector<ScalarType> polygon_1_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_1_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_2_corners );
-  Geometry::Vector<ScalarType> polygon_2_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_2_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_3_corners );
-  Geometry::Vector<ScalarType> polygon_3_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_3_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_4_corners );
-  Geometry::Vector<ScalarType> polygon_4_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_4_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_5_corners );
-  Geometry::Vector<ScalarType> polygon_5_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_5_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_6_corners );
-  Geometry::Vector<ScalarType> polygon_6_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_6_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_7_corners );
-  Geometry::Vector<ScalarType> polygon_7_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_7_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_8_corners );
-  Geometry::Vector<ScalarType> polygon_8_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_8_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_9_corners );
-  Geometry::Vector<ScalarType> polygon_9_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_9_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_10_corners );
-  Geometry::Vector<ScalarType> polygon_10_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_10_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_11_corners );
-  Geometry::Vector<ScalarType> polygon_11_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_11_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_12_corners );
-  Geometry::Vector<ScalarType> polygon_12_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_12_largest_corner =
     largest_corner->getRawPoint();
 
-  largest_corner = 
+  largest_corner =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_13_corners );
-  Geometry::Vector<ScalarType> polygon_13_largest_corner = 
+  Geometry::Vector<ScalarType> polygon_13_largest_corner =
     largest_corner->getRawPoint();
 
   // Set the reference corners
@@ -893,10 +893,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   TEST_EQUALITY( polygon_10_largest_corner, ref_polygon_10_largest_corner );
   TEST_EQUALITY( polygon_11_largest_corner, ref_polygon_11_largest_corner );
   TEST_EQUALITY( polygon_12_largest_corner, ref_polygon_12_largest_corner );
-  TEST_EQUALITY( polygon_13_largest_corner, ref_polygon_13_largest_corner );  
+  TEST_EQUALITY( polygon_13_largest_corner, ref_polygon_13_largest_corner );
 }
 
-UNIT_TEST_INSTANTIATION( CellPolygonFactory, 
+UNIT_TEST_INSTANTIATION( CellPolygonFactory,
 			 getLexicographicallyLargestPoint );
 
 //---------------------------------------------------------------------------//
@@ -912,7 +912,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   typedef Geometry::IntersectionPoint<OrdinalType,ScalarType> IntersectionPoint;
 
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   // Create the lists of polygon corners
   createSurface13PolygonCorners( polygon_13_corners );
 
@@ -926,7 +926,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 							   polygon_13_corners);
   IntersectionPoint ref_second_point( -2.0, 7.0, -2.0,
 				      4, 5, 13 );
-  
+
   TEST_EQUALITY( *current_point, ref_second_point );
 
   // Find the next point on surface 6
@@ -935,7 +935,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 							   polygon_13_corners);
   IntersectionPoint ref_third_point( -2.0, 3.0, -2.0,
 				     4, 6, 13 );
-  
+
   TEST_EQUALITY( *current_point, ref_third_point );
 
   // Find the next point on surface 1
@@ -944,7 +944,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 							   polygon_13_corners);
   IntersectionPoint ref_fourth_point( 2.0, 3.0, -2.0,
 				      1, 6, 13 );
-  
+
   TEST_EQUALITY( *current_point, ref_fourth_point )
 }
 
@@ -952,7 +952,7 @@ UNIT_TEST_INSTANTIATION( CellPolygonFactory, getNextPolygonCorner );
 
 //---------------------------------------------------------------------------//
 // Check that the ordering of the points can be tested as needing reversing
-TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory, 
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 				   cornerTripletNeedsReversing,
 				   CellOrdinalType,
 				   OrdinalType,
@@ -968,12 +968,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Create the cell polygon factory
   CellPolygonFactory factory( cell );
-  
+
   // Create the lists of polygon corners
   std::list<IntersectionPoint> polygon_2_corners;
   std::list<IntersectionPoint> polygon_7_corners;
   std::list<IntersectionPoint> polygon_11_corners;
-  
+
   createSurface2PolygonCorners( polygon_2_corners );
   createSurface7PolygonCorners( polygon_7_corners );
   createSurface11PolygonCorners( polygon_11_corners );
@@ -984,13 +984,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   typename std::list<IntersectionPoint>::iterator neighbor_point_a;
   typename std::list<IntersectionPoint>::iterator neighbor_point_b;
 
-  largest_point = 
+  largest_point =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_2_corners );
-  neighbor_point_a = 
+  neighbor_point_a =
     CellPolygonFactory::getNextPolygonCorner( 9,
 					      *largest_point,
 					      polygon_2_corners );
-  neighbor_point_b = 
+  neighbor_point_b =
     CellPolygonFactory::getNextPolygonCorner( 13,
 					      *largest_point,
 					      polygon_2_corners );
@@ -1007,13 +1007,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Find the lexicographically largest point and the two neighbor points
   // on surface 7
-  largest_point = 
+  largest_point =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_7_corners );
-  neighbor_point_a = 
+  neighbor_point_a =
     CellPolygonFactory::getNextPolygonCorner( 11,
 					      *largest_point,
 					      polygon_7_corners );
-  neighbor_point_b = 
+  neighbor_point_b =
     CellPolygonFactory::getNextPolygonCorner( 1,
 					      *largest_point,
 					      polygon_7_corners );
@@ -1027,15 +1027,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 						     *neighbor_point_b,
 						     *largest_point,
 						     *neighbor_point_a ) );
-  // Find the lexicographically largest point and the two neighbor points 
+  // Find the lexicographically largest point and the two neighbor points
   // on surface 11
-  largest_point = 
+  largest_point =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_11_corners );
-  neighbor_point_a = 
+  neighbor_point_a =
     CellPolygonFactory::getNextPolygonCorner( 1,
   					      *largest_point,
   					      polygon_11_corners );
-  neighbor_point_b = 
+  neighbor_point_b =
     CellPolygonFactory::getNextPolygonCorner( 7,
   					      *largest_point,
   					      polygon_11_corners );
@@ -1044,27 +1044,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 						    *neighbor_point_a,
 						    *largest_point,
 						    *neighbor_point_b ) );
-  
+
   TEST_ASSERT( !factory.cornerTripletNeedsReversing( 11, 7, 1,
 						     *neighbor_point_b,
 						     *largest_point,
 						     *neighbor_point_a ) );
 
-  // Find the lexicographically largest point and the two neighbor points 
+  // Find the lexicographically largest point and the two neighbor points
   // of the subpolygon on surface 11
   // The largest point of the subpolygon is the third largest point
   largest_point = polygon_11_corners.erase( largest_point );
-  largest_point = 
+  largest_point =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_11_corners );
   largest_point = polygon_11_corners.erase( largest_point );
-  largest_point = 
+  largest_point =
     CellPolygonFactory::getLexicographicallyLargestPoint( polygon_11_corners );
 
-  neighbor_point_a = 
+  neighbor_point_a =
     CellPolygonFactory::getNextPolygonCorner( 2,
   					      *largest_point,
   					      polygon_11_corners );
-  neighbor_point_b = 
+  neighbor_point_b =
     CellPolygonFactory::getNextPolygonCorner( 8,
   					      *largest_point,
   					      polygon_11_corners );
@@ -1100,7 +1100,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Create the cell polygon factory
   CellPolygonFactory factory( cell );
-  
+
   // Create the lists of polygon corners
   std::list<IntersectionPoint> polygon_1_corners;
   std::list<IntersectionPoint> polygon_2_corners;
@@ -1115,7 +1115,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   std::list<IntersectionPoint> polygon_11_corners;
   std::list<IntersectionPoint> polygon_12_corners;
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   createSurface1PolygonCorners( polygon_1_corners );
   createSurface2PolygonCorners( polygon_2_corners );
   createSurface3PolygonCorners( polygon_3_corners );
@@ -1130,7 +1130,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   createSurface12PolygonCorners( polygon_12_corners );
   createSurface13PolygonCorners( polygon_13_corners );
 
-  typename std::list<IntersectionPoint>::const_iterator first_point, 
+  typename std::list<IntersectionPoint>::const_iterator first_point,
     second_point, third_point;
 
   // Initialize polygon 1
@@ -1143,7 +1143,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_1_first_point( 2.0, 3.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_1_second_point( 2.0, 7.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_1_third_point( 2.0, 7.0, -2.0 );
@@ -1154,7 +1154,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Initialize polygon 2
   std::list<IntersectionPoint> ordered_polygon_2_corners;
-  
+
   first_point = factory.initializePolygonCorners( ordered_polygon_2_corners,
 						  polygon_2_corners,
 						  2 );
@@ -1162,7 +1162,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_2_first_point( 1.0, 1.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_2_second_point( 1.0, 1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_2_third_point( 1.0, -1.0, 2.0 );
@@ -1173,7 +1173,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Initialize polygon 3
   std::list<IntersectionPoint> ordered_polygon_3_corners;
-  
+
   first_point = factory.initializePolygonCorners( ordered_polygon_3_corners,
 						  polygon_3_corners,
 						  3 );
@@ -1181,7 +1181,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_3_first_point( -1.0, -1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_3_second_point( -1.0, 1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_3_third_point( -1.0, 1.0, -2.0 );
@@ -1200,7 +1200,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_4_first_point( -2.0, 7.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_4_second_point( -2.0, 7.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_4_third_point( -2.0, 3.0, 0.0 );
@@ -1219,7 +1219,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_5_first_point( 2.0, 7.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_5_second_point( 2.0, 7.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_5_third_point( -2.0, 7.0, 0.0 );
@@ -1227,7 +1227,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_5_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_5_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_5_third_point );
-  
+
   // Initialize polygon 6
   std::list<IntersectionPoint> ordered_polygon_6_corners;
 
@@ -1238,7 +1238,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_6_first_point( -2.0, 3.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_6_second_point( 2.0, 3.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_6_third_point( 2.0, 3.0, -2.0 );
@@ -1246,7 +1246,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_6_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_6_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_6_third_point );
-  
+
   // Initialize polygon 7
   std::list<IntersectionPoint> ordered_polygon_7_corners;
 
@@ -1257,18 +1257,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_7_first_point( 2.0, 2.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_7_second_point( 2.0, 2.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_7_third_point( -2.0, 2.0, 2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_7_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_7_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_7_third_point );
-  
+
   // Initialize polygon 8
   std::list<IntersectionPoint> ordered_polygon_8_corners;
-  
+
   first_point = factory.initializePolygonCorners( ordered_polygon_8_corners,
 						  polygon_8_corners,
 						  8 );
@@ -1276,15 +1276,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_8_first_point( -1.0, 1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_8_second_point( 1.0, 1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_8_third_point( 1.0, 1.0, -2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_8_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_8_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_8_third_point );
-  
+
   // Initialize polygon 9
   std::list<IntersectionPoint> ordered_polygon_9_corners;
 
@@ -1295,15 +1295,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_9_first_point( 1.0, -1.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_9_second_point( 1.0, -1.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_9_third_point( -1.0, -1.0, 2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_9_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_9_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_9_third_point );
-  
+
   // Initialize polygon 10
   std::list<IntersectionPoint> ordered_polygon_10_corners;
 
@@ -1314,11 +1314,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_10_first_point( -2.0, -2.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_10_second_point( 2.0, -2.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_10_third_point( 2.0, -2.0, -2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_10_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_10_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_10_third_point );
@@ -1333,11 +1333,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_11_first_point( -2.0, 2.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_11_second_point( 2.0, 2.0, 2.0 );
   Geometry::Vector<ScalarType> ref_polygon_11_third_point( 2.0, -2.0, 2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_11_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_11_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_11_third_point );
@@ -1352,11 +1352,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_12_first_point( -2.0, 7.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_12_second_point( 2.0, 7.0, 0.0 );
   Geometry::Vector<ScalarType> ref_polygon_12_third_point( 2.0, 3.0, 0.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_12_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_12_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_12_third_point );
@@ -1371,11 +1371,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ++second_point;
   third_point = second_point;
   ++third_point;
-  
+
   Geometry::Vector<ScalarType> ref_polygon_13_first_point( 2.0, 3.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_13_second_point( 2.0, 7.0, -2.0 );
   Geometry::Vector<ScalarType> ref_polygon_13_third_point( -2.0, 7.0, -2.0 );
-  
+
   TEST_EQUALITY( first_point->getRawPoint(), ref_polygon_13_first_point );
   TEST_EQUALITY( second_point->getRawPoint(), ref_polygon_13_second_point );
   TEST_EQUALITY( third_point->getRawPoint(), ref_polygon_13_third_point );
@@ -1401,7 +1401,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
 
   // Create the cell polygon factory
   Geometry::CellPolygonFactory<Cell> factory( cell );
-  
+
   // Create the lists of polygon corners
   std::list<IntersectionPoint> polygon_1_corners;
   std::list<IntersectionPoint> polygon_2_corners;
@@ -1416,7 +1416,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   std::list<IntersectionPoint> polygon_11_corners;
   std::list<IntersectionPoint> polygon_12_corners;
   std::list<IntersectionPoint> polygon_13_corners;
-  
+
   createSurface1PolygonCorners( polygon_1_corners );
   createSurface2PolygonCorners( polygon_2_corners );
   createSurface3PolygonCorners( polygon_3_corners );
@@ -1445,7 +1445,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   PolygonPtr polygon_11 = factory.create( polygon_11_corners );
   PolygonPtr polygon_12 = factory.create( polygon_12_corners );
   PolygonPtr polygon_13 = factory.create( polygon_13_corners );
-  
+
   // Test that the polygons have been created correctly
   ScalarType ref_area_polygon_1 = 24.0;
   ScalarType ref_area_polygon_2 = 8.0;
@@ -1460,7 +1460,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellPolygonFactory,
   ScalarType ref_area_polygon_11 = 12.0;
   ScalarType ref_area_polygon_12 = 16.0;
   ScalarType ref_area_polygon_13 = 28.0;
-  
+
   TEST_EQUALITY( polygon_1->getArea(), ref_area_polygon_1 );
   TEST_EQUALITY( polygon_2->getArea(), ref_area_polygon_2 );
   TEST_EQUALITY( polygon_3->getArea(), ref_area_polygon_3 );

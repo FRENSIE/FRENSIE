@@ -59,9 +59,9 @@ void SurfaceInputValidator::validateSurface(
 
   // Validate the surface type
   bool valid_surface_type = true;
-  
+
   try{
-    validateSurfaceType( 
+    validateSurfaceType(
 	     surface.get<std::string>( SurfaceInputValidator::type_parameter ),
 	     name );
   }
@@ -70,7 +70,7 @@ void SurfaceInputValidator::validateSurface(
   {
     // record the error message
     error_message += parameterlist_exception.what();
-    
+
     valid_surface_type = false;
   }
   // The type is invalid
@@ -78,7 +78,7 @@ void SurfaceInputValidator::validateSurface(
   {
     // record the error message
     error_message += surface_exception.what();
-    
+
     valid_surface_type = false;
   }
 
@@ -86,7 +86,7 @@ void SurfaceInputValidator::validateSurface(
   if( valid_surface_type )
   {
     try{
-      validateSurfaceDefinition( surface.get<Teuchos::Array<double> >( 
+      validateSurfaceDefinition( surface.get<Teuchos::Array<double> >(
 				 SurfaceInputValidator::definition_parameter ),
 				 surface.get<std::string>( "type" ),
 				 name );
@@ -107,8 +107,8 @@ void SurfaceInputValidator::validateSurface(
 
   // Validate the surface special attribute
   try{
-    validateSurfaceSpecialAttribute( 
-                          surface.get<std::string>( 
+    validateSurfaceSpecialAttribute(
+                          surface.get<std::string>(
 			  SurfaceInputValidator::special_attribute_parameter ),
 			  name );
   }
@@ -121,7 +121,7 @@ void SurfaceInputValidator::validateSurface(
     error_message += surface_exception.what();
   }
 
-  // If any errors have occured, throw
+  // If any errors have occurred, throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );
@@ -130,8 +130,8 @@ void SurfaceInputValidator::validateSurface(
 
 // Validate all surfaces
 /*! \details All surface names will be stored
- */ 
-void SurfaceInputValidator::validateAllSurfaces( 
+ */
+void SurfaceInputValidator::validateAllSurfaces(
 				       const Teuchos::ParameterList& surfaces )
 {
   std::string error_message;
@@ -139,14 +139,14 @@ void SurfaceInputValidator::validateAllSurfaces(
   // Iterate over all surfaces defined in the surfaces parameter list
   Teuchos::ParameterList::ConstIterator parameter =
     surfaces.begin();
-  Teuchos::ParameterList::ConstIterator end_parameter = 
+  Teuchos::ParameterList::ConstIterator end_parameter =
     surfaces.end();
-  
+
   while( parameter != end_parameter )
   {
-    const Teuchos::ParameterEntry& parameter_entry = 
+    const Teuchos::ParameterEntry& parameter_entry =
       surfaces.entry( parameter );
-    
+
     // Every parameter must be a sublist
     if( !parameter_entry.isList() )
     {
@@ -156,7 +156,7 @@ void SurfaceInputValidator::validateAllSurfaces(
     }
     else
     {
-      const Teuchos::ParameterList& surface = 
+      const Teuchos::ParameterList& surface =
 	Teuchos::getValue<Teuchos::ParameterList>( parameter_entry );
 
       // Validate the surface
@@ -168,17 +168,17 @@ void SurfaceInputValidator::validateAllSurfaces(
       {
 	// record the error message
 	error_message += surface_exception.what();
-      }			  
+      }
     }
-    
+
     ++parameter;
   }
-  
+
   // If any error occurred throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );
-  }	
+  }
 }
 
 // Clear the surface names

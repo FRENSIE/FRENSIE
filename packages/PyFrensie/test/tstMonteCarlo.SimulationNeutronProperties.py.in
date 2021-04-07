@@ -1,0 +1,135 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationNeutronProperties class unit tests
+#  \file   tstMonteCarlo.SimulationNeutronProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationNeutronProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationNeutronProperties class
+class SimulationNeutronPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationNeutronProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationNeutronProperties defaults"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        self.assertEqual( properties.getAbsoluteMinNeutronEnergy(), 1e-11 )
+        self.assertEqual( properties.getMinNeutronEnergy(), 1e-11 )
+        self.assertEqual( properties.getMaxNeutronEnergy(), 20.0 )
+        self.assertEqual( properties.getNumberOfNeutronHashGridBins(), 1000 )
+        self.assertEqual( properties.getAbsoluteMaxNeutronEnergy(), 20.0 )
+        self.assertEqual( properties.getFreeGasThreshold(), 400.0 )
+        self.assertTrue( properties.isUnresolvedResonanceProbabilityTableModeOn() )
+        self.assertEqual( properties.getNeutronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getNeutronRouletteSurvivalWeight(), 0.0 )
+
+
+    def testSetMinNeutronEnergy(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setMinNeutronEnergy"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        properties.setMinNeutronEnergy( 1e-8 )
+        self.assertEqual( properties.getMinNeutronEnergy(), 1e-8 )
+
+    def testSetMaxNeutronEnergy(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setMaxNeutronEnergy"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        properties.setMaxNeutronEnergy( 15.0 )
+        self.assertEqual( properties.getMaxNeutronEnergy(), 15.0 )
+
+    def testGetNumberOfNeutronHashGridBins(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setNumberOfNeutronHashGridBins"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        properties.setNumberOfNeutronHashGridBins( 150 )
+        self.assertEqual( properties.getNumberOfNeutronHashGridBins(), 150 )
+
+    def testSetFreeGasThreshold(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setFreeGasThreshold"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        properties.setFreeGasThreshold( 1000.0 )
+        self.assertEqual( properties.getFreeGasThreshold(), 1000.0 )
+
+    def testSetUnresolvedResonanceProbabilityTableModeOn_Off(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setUnresolvedResonanceProbabilityTableModeOffOn"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        properties.setUnresolvedResonanceProbabilityTableModeOff()
+        self.assertFalse(properties.isUnresolvedResonanceProbabilityTableModeOn() )
+
+        properties.setUnresolvedResonanceProbabilityTableModeOn()
+        self.assertTrue(properties.isUnresolvedResonanceProbabilityTableModeOn() )
+
+    def testGetNeutronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setNeutronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        weight = 1e-14
+        properties.setNeutronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getNeutronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetNeutronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationNeutronProperties setNeutronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationNeutronProperties()
+
+        weight = 1e-12
+        properties.setNeutronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getNeutronRouletteSurvivalWeight(),
+                          weight )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationNeutronPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationNeutronProperties.py
+#-----------------------------------------------------------------------------#

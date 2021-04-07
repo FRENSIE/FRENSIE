@@ -36,7 +36,7 @@ TEUCHOS_UNIT_TEST( CellInputValidator, validateCell )
   surface_names.insert( "surface_3" );
   surface_names.insert( "surface_4" );
   surface_names.insert( "surface_5" );
-  
+
   Teuchos::ParameterList valid_cell( "test_cell" );
   valid_cell.set( "definition", "surface_1 n -surface_2 n surface_3 u (-surface_4 n surface_5)" );
   valid_cell.set( "material", "mat_1" );
@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( CellInputValidator, validateCell )
 	      std::invalid_argument );
 
   Teuchos::ParameterList invalid_cell_2( "test___cell" );
-  
+
   TEST_THROW( Geometry::CellInputValidator::validateCell( invalid_cell_2,
 							invalid_cell_2.name(),
 							surface_names ),
@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( CellInputValidator, validateAllCells )
 					Teuchos::inoutArg( geometry ) );
 
   // Validate the surfaces
-  Geometry::SurfaceInputValidator::validateAllSurfaces( 
+  Geometry::SurfaceInputValidator::validateAllSurfaces(
 					geometry.sublist( "surfaces", true ) );
 
   // Get the surface names
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( CellInputValidator, validateAllCells )
 // Check that cell names can be recovered
 TEUCHOS_UNIT_TEST( CellInputValidator, getCellNames )
 {
-  std::set<std::string> cell_names = 
+  std::set<std::string> cell_names =
     Geometry::CellInputValidator::getCellNames();
 
   TEST_EQUALITY_CONST( cell_names.size(), 4 );
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( CellInputValidator, getCellNames )
 // Check that cell material names can be recovered
 TEUCHOS_UNIT_TEST( CellInputValidator, getMaterialNames )
 {
-  std::set<std::string> material_names = 
+  std::set<std::string> material_names =
     Geometry::CellInputValidator::getMaterialNames();
 
   TEST_EQUALITY_CONST( material_names.size(), 1 );

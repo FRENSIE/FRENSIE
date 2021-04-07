@@ -14,7 +14,7 @@
 #include <Teuchos_LAPACK.hpp>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -71,17 +71,17 @@ const ScalarType* SerialDenseMatrixExtension<ScalarType>::getRawPtr() const
 
 // Return a const view of the data array
 template<typename ScalarType>
-Teuchos::ArrayView<const ScalarType> 
+Teuchos::ArrayView<const ScalarType>
 SerialDenseMatrixExtension<ScalarType>::view() const
 {
-  return Teuchos::ArrayView<const ScalarType>( 
-					     this->values(), 
+  return Teuchos::ArrayView<const ScalarType>(
+					     this->values(),
 					     this->numRows()*this->numCols() );
 }
 
 // Return a const view of the data array
 template<typename ScalarType>
-Teuchos::ArrayView<const ScalarType> 
+Teuchos::ArrayView<const ScalarType>
 SerialDenseMatrixExtension<ScalarType>::operator()() const
 {
   return view();
@@ -89,7 +89,7 @@ SerialDenseMatrixExtension<ScalarType>::operator()() const
 
 // Multiply alpha*A*B and add them to beta*<em>this</em>
 template<typename ScalarType>
-void SerialDenseMatrixExtension<ScalarType>::multiply( 
+void SerialDenseMatrixExtension<ScalarType>::multiply(
 			       const ScalarType alpha,
 			       const SerialDenseMatrixExtension<ScalarType> &A,
 			       const bool transpose_A,
@@ -97,7 +97,7 @@ void SerialDenseMatrixExtension<ScalarType>::multiply(
 			       const bool transpose_B,
 			       const ScalarType beta )
 {
-  Teuchos::SerialDenseMatrix<int,ScalarType> A_copy( 
+  Teuchos::SerialDenseMatrix<int,ScalarType> A_copy(
 				         Teuchos::View,
 				         const_cast<ScalarType*>( A.values() ),
 					 A.numCols(),
@@ -109,9 +109,9 @@ void SerialDenseMatrixExtension<ScalarType>::multiply(
 					 B.numCols(),
 					 B.numCols(),
 					 B.numCols() );
-						    
+
   remember( int multiply_success = )
-    Teuchos::SerialDenseMatrix<int,ScalarType>::multiply( 
+    Teuchos::SerialDenseMatrix<int,ScalarType>::multiply(
 			      transpose_A ? Teuchos::TRANS : Teuchos::NO_TRANS,
 			      transpose_B ? Teuchos::TRANS : Teuchos::NO_TRANS,
 			      alpha,
@@ -125,11 +125,11 @@ void SerialDenseMatrixExtension<ScalarType>::multiply(
 
 // Swap columns of this matrix
 template<typename ScalarType>
-void SerialDenseMatrixExtension<ScalarType>::swapColumns( 
+void SerialDenseMatrixExtension<ScalarType>::swapColumns(
 					     const ordinalType column_a_index,
 					     const ordinalType column_b_index )
 {
-  Teuchos::SerialDenseVector<typename SerialDenseMatrixExtension<ScalarType>::ordinalType,ScalarType> 
+  Teuchos::SerialDenseVector<typename SerialDenseMatrixExtension<ScalarType>::ordinalType,ScalarType>
   column_a = Teuchos::getCol( Teuchos::Copy, *this, column_a_index );
 
   Teuchos::SerialDenseVector<typename SerialDenseMatrixExtension<ScalarType>::ordinalType,ScalarType>
@@ -147,7 +147,7 @@ template<typename ScalarType>
 bool SerialDenseMatrixExtension<ScalarType>::isZeroMatrix() const
 {
   bool test_value = true;
-  
+
   for( int i = 0; i < this->numCols(); ++i )
   {
     for( int j = 0; j < this->numCols(); ++j )
@@ -155,7 +155,7 @@ bool SerialDenseMatrixExtension<ScalarType>::isZeroMatrix() const
       test_value = test_value && (this->operator()( i, j ) == ST::zero() );
     }
   }
-  
+
   return test_value;
 }
 
@@ -175,7 +175,7 @@ bool SerialDenseMatrixExtension<ScalarType>::isIdentityMatrix() const
 	test_value = test_value && (this->operator()( i, j ) == ST::zero());
     }
   }
-  
+
   return test_value;
 }
 
@@ -188,11 +188,11 @@ bool SerialDenseMatrixExtension<ScalarType>::isSymmetric() const
   {
     for( int j = i+1; j < this->numCols(); ++j )
     {
-      test_value = 
+      test_value =
 	test_value && (this->operator()( i, j ) == this->operator()( j, i ));
     }
   }
-  
+
   return test_value;
 }
 
@@ -201,33 +201,33 @@ template<typename ScalarType>
 bool SerialDenseMatrixExtension<ScalarType>::isOrthonormal() const
 {
   typedef typename SerialDenseMatrixExtension<ScalarType>::ordinalType ordinalType;
-  
+
   bool test_value = true;
 
   for( int i = 0; i < this->numCols()-1; ++i )
   {
     Teuchos::SerialDenseVector<ordinalType,ScalarType>
-      column_a( Teuchos::View, 
-		const_cast<ScalarType*>( this->operator[](i) ), 
+      column_a( Teuchos::View,
+		const_cast<ScalarType*>( this->operator[](i) ),
 		this->numCols() );
-    
+
     for( int j = i+1; j < this->numCols(); ++j )
     {
       Teuchos::SerialDenseVector<ordinalType,ScalarType>
-	column_b( Teuchos::View, 
-		  const_cast<ScalarType*>( this->operator[](j) ), 
+	column_b( Teuchos::View,
+		  const_cast<ScalarType*>( this->operator[](j) ),
 		  this->numCols() );
 
       ScalarType column_a_magnitude = column_a.normFrobenius();
       ScalarType column_b_magnitude = column_b.normFrobenius();
-      
-      bool normal_columns = 
+
+      bool normal_columns =
 	( ST::magnitude( column_a_magnitude - ST::one() ) < ST::prec() &&
 	  ST::magnitude( column_b_magnitude - ST::one() ) < ST::prec() );
-      
-      bool orthogonal_columns = 
+
+      bool orthogonal_columns =
 	( ST::magnitude( column_a.dot( column_b ) ) < ST::prec() );
-      
+
       test_value = test_value && normal_columns && orthogonal_columns;
     }
   }
@@ -240,9 +240,9 @@ template<typename ScalarType>
 bool SerialDenseMatrixExtension<ScalarType>::isNonsingular() const
 {
   // The matrix will be modified by the test (make a copy)
-  Teuchos::SerialDenseMatrix<ordinalType,ScalarType> 
-    data_copy( Teuchos::Copy, 
-	       this->values(), 
+  Teuchos::SerialDenseMatrix<ordinalType,ScalarType>
+    data_copy( Teuchos::Copy,
+	       this->values(),
 	       this->numCols(),
 	       this->numCols(),
 	       this->numCols() );
@@ -257,11 +257,11 @@ bool SerialDenseMatrixExtension<ScalarType>::isNonsingular() const
   ordinalType success;
 
   // If the LU factorization can be completed the matrix is nonsingular
-  lapack.GETRF( this->numCols(), 
-		this->numCols(), 
-		data_copy.values(), 
-		this->numCols(), 
-		ipiv, 
+  lapack.GETRF( this->numCols(),
+		this->numCols(),
+		data_copy.values(),
+		this->numCols(),
+		ipiv,
 		&success );
 
   if( success == 0 )

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NeutronState.hpp
 //! \author Alex Robinson
 //! \brief  Neutron state class declaration
@@ -9,19 +9,24 @@
 #ifndef MONTE_CARLO_NEUTRON_STATE_HPP
 #define MONTE_CARLO_NEUTRON_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The neutron state class
 class NeutronState : public MassiveParticleState
 {
-  
+
 private:
-  
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -42,13 +47,13 @@ public:
 
   //! Copy constructor (with possible creation of new generation)
   NeutronState( const ParticleState& existing_base_state,
-		const bool increment_generation_number = false,
-		const bool reset_collision_number = false );
+                const bool increment_generation_number = false,
+                const bool reset_collision_number = false );
 
   //! Copy constructor (with possible creation of new generation)
   NeutronState( const NeutronState& existing_base_state,
-		const bool increment_generation_number = false,
-		const bool reset_collision_number = false );
+                const bool increment_generation_number = false,
+                const bool reset_collision_number = false );
 
   //! Destructor
   ~NeutronState()
@@ -61,16 +66,14 @@ public:
   NeutronState* clone() const;
 
   //! Print the neutron state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -78,8 +81,10 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::NeutronState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::NeutronState, "NeutronState" );
+BOOST_SERIALIZATION_CLASS_VERSION( NeutronState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( NeutronState, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, NeutronState );
+TYPE_NAME_TRAITS_QUICK_DECL2( NeutronState, MonteCarlo );
 
 #endif // end MonteCarlo_NEUTRON_STATE_HPP
 

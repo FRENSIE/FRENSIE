@@ -1,0 +1,18 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_stats)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SampleMoment DEPENDS tstSampleMoment.cpp)
+FRENSIE_ADD_TEST(SampleMoment)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentCollection DEPENDS tstSampleMomentCollection.cpp)
+FRENSIE_ADD_TEST(SampleMomentCollection)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentCollectionSnapshots DEPENDS tstSampleMomentCollectionSnapshots.cpp)
+FRENSIE_ADD_TEST(SampleMomentCollectionSnapshots)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SampleMomentHistogram DEPENDS tstSampleMomentHistogram.cpp)
+FRENSIE_ADD_TEST(SampleMomentHistogram)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Measurement DEPENDS tstMeasurement.cpp)
+FRENSIE_ADD_TEST(Measurement)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_stats)

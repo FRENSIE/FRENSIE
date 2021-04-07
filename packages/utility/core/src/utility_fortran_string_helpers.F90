@@ -24,14 +24,14 @@ module utility_fortran_string_helpers
     subroutine convert_c_string_to_fortran( c_string, fortran_string, &
          string_size )
       use iso_c_binding
-      
+
       integer(c_int), intent(in), value :: string_size
       character(kind=c_char,len=1), dimension(string_size), intent(in) :: &
            c_string
       character(string_size), intent(out) :: fortran_string
 
       integer(c_int) :: i
-      
+
       do i=1, string_size
          fortran_string(i:i) = c_string(i)
       end do

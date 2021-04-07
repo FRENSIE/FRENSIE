@@ -15,20 +15,17 @@
 #include <boost/multiprecision/float128.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace DataGen{
 
 //! The free gas elastic s(alpha,beta) function
 class FreeGasElasticSAlphaBetaFunction
 {
-  
+
 private:
 
   // Typedef for bessel function error policy
@@ -40,13 +37,13 @@ private:
     boost::math::policies::throw_on_error> overflow_error;
   typedef boost::math::policies::evaluation_error<
     boost::math::policies::throw_on_error> evaluation_error;
-  
+
   typedef boost::math::policies::policy<
     domain_error,
     pole_error,
     overflow_error,
     evaluation_error> Policy;
-  
+
   // Typedef for extended precision floating point values
   typedef boost::multiprecision::float128 BoostLongDouble;
 
@@ -54,9 +51,9 @@ public:
 
   //! Constructor
   FreeGasElasticSAlphaBetaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const std::shared_ptr<Utility::UnivariateDistribution>&
 	  zero_temp_elastic_cross_section,
-          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT );
@@ -64,10 +61,10 @@ public:
   //! Destructor
   ~FreeGasElasticSAlphaBetaFunction()
   { /* ... */ }
-  
+
   //! Return the atomic weight ratio
   double getAtomicWeightRatio() const;
-  
+
   //! Return the temperature
   double getTemperature() const;
 
@@ -101,7 +98,7 @@ private:
   void findLimits( const double alpha,
 		   const double beta,
 		   const double E,
-		   double& lower_limit, 
+		   double& lower_limit,
 		   double& upper_limit ) const;
 
   // Find a CM scattering angle cosine where the function is non-zero
@@ -118,13 +115,13 @@ private:
   static double min_exp_arg;
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The zero temperature cross section
-  Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;
+  std::shared_ptr<Utility::UnivariateDistribution> d_zero_temp_elastic_cross_section;
 
   // The cm scattering angle PDF
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+  std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>
   d_cm_scattering_distribution;
 
   // The atomic weight ratio

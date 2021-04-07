@@ -18,15 +18,15 @@
 
 // FRENSIE includes
 #include "Utility_LinearCongruentialGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_OpenMPProperties.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
 //! Struct that is used to obtain random numbers
 class RandomNumberGenerator
 {
-  
+
 public:
 
   //! Check if the streams have been created
@@ -40,7 +40,7 @@ public:
 
   //! Initialize the generator for the next history
   static void initializeNextHistory();
-  
+
   //! Set a fake stream for the generator
   static void setFakeStream( const std::vector<double>& fake_stream,
 			     const unsigned thread_id = 0u );
@@ -51,17 +51,17 @@ public:
   //! Return a random number in interval [0,1)
   template<typename ScalarType>
   static ScalarType getRandomNumber();
-  
+
   //! Destructor
   ~RandomNumberGenerator()
   { /* ... */ }
 
 private:
-  
+
   // Constructor
   RandomNumberGenerator();
 
-  // Pointer to generator 
+  // Pointer to generator
   static boost::ptr_vector<LinearCongruentialGenerator> generator;
 };
 
@@ -70,12 +70,12 @@ template<typename ScalarType>
 inline ScalarType RandomNumberGenerator::getRandomNumber()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
-  
-  return static_cast<ScalarType>( 
-	     generator[GlobalOpenMPSession::getThreadId()].getRandomNumber() );
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
+
+  return static_cast<ScalarType>(
+	     generator[OpenMPProperties::getThreadId()].getRandomNumber() );
 }
 
 // Return a random double in interval [0,1)
@@ -83,26 +83,26 @@ template<>
 inline double RandomNumberGenerator::getRandomNumber<double>()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
-  
-  return generator[GlobalOpenMPSession::getThreadId()].getRandomNumber();
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
+
+  return generator[OpenMPProperties::getThreadId()].getRandomNumber();
 }
 
 // Return a random long long unsigned integer in [0,2^64)
 template<>
-inline unsigned long long 
+inline unsigned long long
 RandomNumberGenerator::getRandomNumber<unsigned long long>()
 {
   // Make sure the generator has been set up correctly
-  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  testPrecondition( OpenMPProperties::getThreadId() < generator.size() );
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
+  testPrecondition( !generator.is_null( OpenMPProperties::getThreadId() ) );
 
-  generator[GlobalOpenMPSession::getThreadId()].getRandomNumber();
+  generator[OpenMPProperties::getThreadId()].getRandomNumber();
 
-  return generator[GlobalOpenMPSession::getThreadId()].getGeneratorState();
+  return generator[OpenMPProperties::getThreadId()].getGeneratorState();
 }
 
 } // end Utility namespace

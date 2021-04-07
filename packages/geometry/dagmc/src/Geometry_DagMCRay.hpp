@@ -9,8 +9,8 @@
 #ifndef GEOMETRY_DAGMC_RAY_HPP
 #define GEOMETRY_DAGMC_RAY_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
+// Std Lib Includes
+#include <memory>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -25,7 +25,7 @@ class DagMCRay
 {
 
 public:
-  
+
   //! Constructor
   DagMCRay();
 
@@ -37,13 +37,22 @@ public:
             const double direction[3],
             const moab::EntityHandle cell_handle );
 
+  //! Constructor
+  DagMCRay( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle cell_handle );
+
   // Copy constructor
   DagMCRay( const DagMCRay& ray );
 
   //! Destructor
   ~DagMCRay()
   { /* ... */ }
-  
+
   //! Check if the ray is ready (basic ray data, current cell handle set)
   bool isReady() const;
 
@@ -51,17 +60,28 @@ public:
   void set( const Ray& ray, const moab::EntityHandle cell_handle );
 
   //! Set the ray (minimum data required)
-  void set( const double position[3], 
+  void set( const double position[3],
             const double direction[3],
             const moab::EntityHandle cell_handle );
 
+  //! Set the ray (minimum data required)
+  void set( const double x_position,
+            const double y_position,
+            const double z_position,
+            const double x_direction,
+            const double y_direction,
+            const double z_direction,
+            const moab::EntityHandle current_cell_handle );
+
   //! change the direction
-  void changeDirection( const double direction[3] );
+  void changeDirection( const double direction[3],
+                        const bool reflection = false );
 
   //! change the direction
   void changeDirection( const double x_direction,
                         const double y_direction,
-                        const double z_direction );
+                        const double z_direction,
+                        const bool reflection = false );
 
   //! Get the position
   const double* getPosition() const;
@@ -85,7 +105,7 @@ public:
   //! Get the distance to the intersection surface
   double getDistanceToIntersectionSurface() const;
 
-  //! Get the boundary surface 
+  //! Get the boundary surface
   moab::EntityHandle getIntersectionSurface() const;
 
   //! Get the ray history
@@ -95,7 +115,7 @@ public:
   moab::DagMC::RayHistory& getHistory();
 
   //! Advance the ray to the intersection surface
-  void advanceToIntersectionSurface( 
+  void advanceToIntersectionSurface(
                                    const moab::EntityHandle next_cell_handle );
 
   //! Advance the ray a substep
@@ -104,17 +124,17 @@ public:
 private:
 
   // The basic ray
-  boost::scoped_ptr<Ray> d_basic_ray;
-  
+  std::unique_ptr<Ray> d_basic_ray;
+
   // The current cell handle
   moab::EntityHandle d_cell_handle;
-  
+
   // The ray history
   moab::DagMC::RayHistory d_history;
-  
+
   // The distance to the next surface (-1 for not known)
   double d_intersection_distance;
-  
+
   // The boundary surface that will be intersected (0 for not known)
   moab::EntityHandle d_intersection_surface_handle;
 };

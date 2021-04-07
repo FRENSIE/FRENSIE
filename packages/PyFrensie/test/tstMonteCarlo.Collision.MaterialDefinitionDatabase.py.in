@@ -1,0 +1,295 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Collision.MaterialDefinitionDatabase class unit tests
+#  \file   tstMonteCarlo.Collision.MaterialDefinitionDatabase.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Collision.MaterialDefinitionDatabase class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the MaterialDefinitionDatabase class
+class MaterialDefinitionDatabaseTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Collision.MaterialDefinitionDatabase class"
+
+    def testAddDefinition(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase addDefinition"
+        database = Collision.MaterialDefinitionDatabase()
+
+        self.assertFalse( database.doesDefinitionExist( "1" ) )
+        self.assertFalse( database.doesDefinitionExist( 1 ) )
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+
+        self.assertTrue( database.doesDefinitionExist( "1" ) )
+        self.assertTrue( database.doesDefinitionExist( 1 ) )
+
+        self.assertFalse( database.doesDefinitionExist( "D2O" ) )
+        self.assertFalse( database.doesDefinitionExist( 2 ) )
+
+        database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+
+        self.assertTrue( database.doesDefinitionExist( "D2O" ) )
+        self.assertTrue( database.doesDefinitionExist( 2 ) )
+
+        # Invalid definition - not enough fractions
+        with self.assertRaises(RuntimeError):
+            database.addDefinition( 10, ("H", "O"), (1.0,) )
+
+        # Invalid definition - too many fractions
+        with self.assertRaises(RuntimeError):
+            database.addDefinition( 10, ("H"), (1.0, 2.0) )
+
+        # Invalid definition - name is not unique
+        with self.assertRaises(RuntimeError):
+            database.addDefinition( "D2O", 10, ("H2", "0"), (2.0, 1.0) )
+
+        # Invalid definition - id is not unique
+        with self.assertRaises(RuntimeError):
+            database.addDefinition( "Dummy", 2, ("H"), (1.0,) )
+
+        definition = ( ("H1", -0.3), ("C12", -0.6), ("O16", -0.1) )
+
+        self.assertFalse( database.doesDefinitionExist( "3" ) )
+        self.assertFalse( database.doesDefinitionExist( 3 ) )
+
+        database.addDefinition( 3, definition )
+
+        self.assertTrue( database.doesDefinitionExist( "3" ) )
+        self.assertTrue( database.doesDefinitionExist( 3 ) )
+
+        definition = ( ("U238", 1.0), )
+
+        self.assertFalse( database.doesDefinitionExist( "Depleted Uranium" ) )
+        self.assertFalse( database.doesDefinitionExist( 4 ) )
+
+        database.addDefinition( "Depleted Uranium", 4, definition )
+
+        self.assertTrue( database.doesDefinitionExist( "Depleted Uranium" ) )
+        self.assertTrue( database.doesDefinitionExist( 4 ) )
+
+        # # Invalid definition - empty
+        # definition = ((),)
+
+        # with self.assertRaises(RuntimeError):
+        #     database.addDefinition( 10, definition )
+
+    def testGetDefinition(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase getDefinition"
+        database = Collision.MaterialDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.getDefinition( "1" )
+        with self.assertRaises(RuntimeError):
+            database.getDefinition( 1 )
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+
+        reference_definition = ( ("H", 2.0), ("O", 1.0) )
+
+        definition = database.getDefinition( "1" )
+
+        self.assertEqual( database.getDefinition( "1" ), reference_definition )
+        self.assertEqual( database.getDefinition( 1 ), reference_definition )
+        self.assertTrue( database.getDefinition( "1" ) ==
+                         database.getDefinition( 1 ) )
+
+    def testGetMaterialId(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase getMaterialId"
+        database = Collision.MaterialDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.getMaterialId( "1" )
+        with self.assertRaises(RuntimeError):
+            database.getMaterialId( "D2O" )
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O16"), (2.0, 1.0) )
+
+        self.assertEqual( database.getMaterialId( "1" ), 1 )
+        self.assertEqual( database.getMaterialId( "D2O" ), 2 )
+
+    def testGetMaterialName(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase getMaterialName"
+        database = Collision.MaterialDefinitionDatabase()
+
+        with self.assertRaises(RuntimeError):
+            database.getMaterialName( 1 )
+        with self.assertRaises(RuntimeError):
+            database.getMaterialName( 2 )
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O16"), (2.0, 1.0) )
+
+        self.assertEqual( database.getMaterialName( 1 ), "1" )
+        self.assertEqual( database.getMaterialName( 2 ), "D2O" )
+
+    def testRemoveDefinition(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase removeDefinition"
+        database = Collision.MaterialDefinitionDatabase()
+
+        self.assertFalse( database.doesDefinitionExist( "1" ) )
+        self.assertFalse( database.doesDefinitionExist( 1 ) )
+        self.assertFalse( database.doesDefinitionExist( "D2O" ) )
+        self.assertFalse( database.doesDefinitionExist( 2 ) )
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+
+        self.assertTrue( database.doesDefinitionExist( "1" ) )
+        self.assertTrue( database.doesDefinitionExist( 1 ) )
+        self.assertTrue( database.doesDefinitionExist( "D2O" ) )
+        self.assertTrue( database.doesDefinitionExist( 2 ) )
+
+        database.removeDefinition( 1 )
+
+        self.assertFalse( database.doesDefinitionExist( "1" ) )
+        self.assertFalse( database.doesDefinitionExist( 1 ) )
+        self.assertTrue( database.doesDefinitionExist( "D2O" ) )
+        self.assertTrue( database.doesDefinitionExist( 2 ) )
+
+        database.removeDefinition( "D2O" )
+
+        self.assertFalse( database.doesDefinitionExist( "1" ) )
+        self.assertFalse( database.doesDefinitionExist( 1 ) )
+        self.assertFalse( database.doesDefinitionExist( "D2O" ) )
+        self.assertFalse( database.doesDefinitionExist( 2 ) )
+
+    # def testIterate(self):
+    #     "*Test MonteCarlo.Collision.MaterialDefinitionDatabase iterate"
+    #     database = Collision.MaterialDefinitionDatabase()
+
+    #     database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+    #     database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+
+    #     material_def_it = database.begin()
+
+    #     self.assertEqual( std::distance( material_def_it, database.end() ), 2 )
+
+    #     std::advance( material_def_it, 2 )
+
+    #     self.assertTrue( material_def_it == database.end() )
+
+    def testGetMaterialIds(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase getMaterialIds"
+        database = Collision.MaterialDefinitionDatabase()
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+
+        material_ids = set()
+        material_ids = database.getMaterialIds( material_ids )
+
+        self.assertEqual( len(material_ids), 2 )
+        self.assertTrue( 1 in material_ids )
+        self.assertTrue( 2 in material_ids )
+
+        material_ids = database.getMaterialIds()
+
+        self.assertEqual( len(material_ids), 2 )
+        self.assertTrue( 1 in material_ids )
+        self.assertTrue( 2 in material_ids )
+
+
+# //---------------------------------------------------------------------------//
+# // Check that the unique scattering center names can be returned
+    def testGetUniqueScatteringCenterNames(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase getUniqueScatteringCenterNames"
+        database = Collision.MaterialDefinitionDatabase()
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+
+        unique_scattering_center_names = database.getUniqueScatteringCenterNames()
+
+        self.assertEqual( len(unique_scattering_center_names), 3 )
+        self.assertTrue( "H" in unique_scattering_center_names )
+        self.assertTrue( "H2" in unique_scattering_center_names )
+        self.assertTrue( "O" in unique_scattering_center_names )
+
+        material_ids = set([2L])
+        unique_scattering_center_names = database.getUniqueScatteringCenterNamesFromIds( material_ids )
+
+        self.assertEqual( len(unique_scattering_center_names), 2 )
+        self.assertTrue( "H2" in unique_scattering_center_names )
+        self.assertTrue( "O" in unique_scattering_center_names )
+
+        database.addDefinition( 3, ("H", "C", "O"), (4, 1, 1) )
+
+        unique_scattering_center_names = set()
+        unique_scattering_center_names = database.getUniqueScatteringCenterNames( unique_scattering_center_names )
+
+        self.assertEqual( len(unique_scattering_center_names), 4 )
+        self.assertTrue( "H" in unique_scattering_center_names )
+        self.assertTrue( "H2" in unique_scattering_center_names )
+        self.assertTrue( "O" in unique_scattering_center_names )
+        self.assertTrue( "C" in unique_scattering_center_names )
+
+        unique_scattering_center_names = set()
+        unique_scattering_center_names = database.getUniqueScatteringCenterNamesFromIds( set([3L]), unique_scattering_center_names )
+
+
+        self.assertEqual( len(unique_scattering_center_names), 3 )
+        self.assertTrue( "H" in unique_scattering_center_names )
+        self.assertTrue( "O" in unique_scattering_center_names )
+        self.assertTrue( "C" in unique_scattering_center_names )
+
+    def testToStream(self):
+        "*Test MonteCarlo.Collision.MaterialDefinitionDatabase toStream"
+        database = Collision.MaterialDefinitionDatabase()
+
+        database.addDefinition( 1, ("H", "O"), (2.0, 1.0) )
+        database.addDefinition( "D2O", 2, ("H2", "O"), (2.0, 1.0) )
+        database.addDefinition( 3, ("H", "C", "O"), (4, 1, 1) )
+
+# #   FRENSIE_CHECK_NO_THROW( std.cout << "\n" << database << std.endl; )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(MaterialDefinitionDatabaseTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Collision.MaterialDefinitionDatabase.py
+#-----------------------------------------------------------------------------#

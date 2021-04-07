@@ -1,0 +1,79 @@
+# vtk DataFile Version 3.0
+MOAB 4.6.3
+ASCII
+DATASET UNSTRUCTURED_GRID
+POINTS 24 double
+0 0 0
+0 0 1
+1 0 1
+1 1 1
+0 0 0
+1 0 0
+1 0 1
+1 1 1
+0 0 0
+0 0 1
+1 1 1
+0 1 1
+0 0 0
+0 1 0
+1 1 1
+0 1 1
+0 0 0
+1 0 0
+1 1 0
+1 1 1
+0 0 0
+1 1 0
+0 1 0
+1 1 1
+CELLS 6 30
+4 0 1 2 3
+4 4 5 6 7
+4 8 9 10 11
+4 12 13 14 15
+4 16 17 18 19
+4 20 21 22 23
+CELL_TYPES 6
+10
+10
+10
+10
+10
+10
+POINT_DATA 24
+SCALARS GLOBAL_ID int 1
+LOOKUP_TABLE default
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+CELL_DATA 6
+SCALARS GLOBAL_ID int 1
+LOOKUP_TABLE default
+0
+0
+0
+0
+0
+0

@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )  
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -33,11 +33,11 @@
 // Check that a 3x3 matrix can be created
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 				   createMatrix,
-				   ScalarType) 
+				   ScalarType)
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
-  Geometry::Matrix<ScalarType> general_matrix = 
+
+  Geometry::Matrix<ScalarType> general_matrix =
     Geometry::createMatrix( ST::one(), ST::one(), ST::one(),
 			  ST::one(), ST::one(), ST::one(),
 			  ST::one(), ST::one(), ST::one() );
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 						 1.0, 1.0, 1.0,
 						 1.0, 1.0, 1.0 );
 
-  Geometry::Matrix<ScalarType> symmetric_matrix = 
+  Geometry::Matrix<ScalarType> symmetric_matrix =
     Geometry::createMatrix<ScalarType>( 1.0,
 				      2.0, 1.0,
 				      3.0, 2.0, 1.0 );
@@ -54,7 +54,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   Geometry::Matrix<ScalarType> ref_symmetric_matrix( 1.0,
 						   2.0, 1.0,
 						   3.0, 2.0, 1.0 );
-  
+
   TEST_EQUALITY( general_matrix, ref_general_matrix );
   TEST_EQUALITY( symmetric_matrix, ref_symmetric_matrix );
 }
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   Geometry::Vector<ScalarType> row_2( 4.0, 5.0, 6.0 );
   Geometry::Vector<ScalarType> row_3( 7.0, 8.0, 9.0 );
 
-  Geometry::Matrix<ScalarType> matrix = 
+  Geometry::Matrix<ScalarType> matrix =
     Geometry::createMatrixFromRows( row_1, row_2, row_3 );
 
   Geometry::Matrix<ScalarType> ref_matrix( 1.0, 2.0, 3.0,
@@ -85,7 +85,7 @@ UNIT_TEST_INSTANTIATION( MatrixHelpers, createMatrixFromRows );
 
 //---------------------------------------------------------------------------//
 // Check that a matrix can be created from columns
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 				   createMatrixFromColumns,
 				   ScalarType )
 {
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   Geometry::Vector<ScalarType> col_2( 4.0, 5.0, 6.0 );
   Geometry::Vector<ScalarType> col_3( 7.0, 8.0, 9.0 );
 
-  Geometry::Matrix<ScalarType> matrix = 
+  Geometry::Matrix<ScalarType> matrix =
     Geometry::createMatrixFromColumns( col_1, col_2, col_3 );
 
   Geometry::Matrix<ScalarType> ref_matrix( 1.0, 4.0, 7.0,
@@ -117,9 +117,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 
   ScalarType rotation_angle = Utility::PhysicalConstants::pi/4;
 
-  Geometry::Matrix<ScalarType> rotation_matrix = 
+  Geometry::Matrix<ScalarType> rotation_matrix =
     Geometry::createXAxisRotationMatrix( rotation_angle );
-  
+
   Geometry::Vector<ScalarType> x_prime_axis( x_axis );
   Geometry::Vector<ScalarType> y_prime_axis( 0.0, 1/sqrt(2.0), 1/sqrt(2.0) );
   Geometry::Vector<ScalarType> z_prime_axis( 0.0, -1/sqrt(2.0), 1/sqrt(2.0) );
@@ -127,9 +127,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   x_axis *= rotation_matrix;
   y_axis *= rotation_matrix;
   z_axis *= rotation_matrix;
-  
-  TEST_COMPARE_FLOATING_ARRAYS( x_axis(), 
-				x_prime_axis(), 
+
+  TEST_COMPARE_FLOATING_ARRAYS( x_axis(),
+				x_prime_axis(),
 				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_COMPARE_FLOATING_ARRAYS( y_axis(),
 				y_prime_axis(),
@@ -153,9 +153,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 
   ScalarType rotation_angle = Utility::PhysicalConstants::pi/4;
 
-  Geometry::Matrix<ScalarType> rotation_matrix = 
+  Geometry::Matrix<ScalarType> rotation_matrix =
     Geometry::createYAxisRotationMatrix( rotation_angle );
-  
+
   Geometry::Vector<ScalarType> x_prime_axis( 1/sqrt(2.0), 0.0, -1/sqrt(2.0) );
   Geometry::Vector<ScalarType> y_prime_axis( y_axis );
   Geometry::Vector<ScalarType> z_prime_axis( 1/sqrt(2.0), 0.0, 1/sqrt(2.0) );
@@ -163,9 +163,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   x_axis *= rotation_matrix;
   y_axis *= rotation_matrix;
   z_axis *= rotation_matrix;
-  
-  TEST_COMPARE_FLOATING_ARRAYS( x_axis(), 
-				x_prime_axis(), 
+
+  TEST_COMPARE_FLOATING_ARRAYS( x_axis(),
+				x_prime_axis(),
 				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_COMPARE_FLOATING_ARRAYS( y_axis(),
 				y_prime_axis(),
@@ -189,9 +189,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 
   ScalarType rotation_angle = Utility::PhysicalConstants::pi/4;
 
-  Geometry::Matrix<ScalarType> rotation_matrix = 
+  Geometry::Matrix<ScalarType> rotation_matrix =
     Geometry::createZAxisRotationMatrix( rotation_angle );
-  
+
   Geometry::Vector<ScalarType> x_prime_axis( 1/sqrt(2.0), 1/sqrt(2.0), 0.0 );
   Geometry::Vector<ScalarType> y_prime_axis( -1/sqrt(2.0), 1/sqrt(2.0), 0.0 );
   Geometry::Vector<ScalarType> z_prime_axis( z_axis );
@@ -199,9 +199,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   x_axis *= rotation_matrix;
   y_axis *= rotation_matrix;
   z_axis *= rotation_matrix;
-  
-  TEST_COMPARE_FLOATING_ARRAYS( x_axis(), 
-				x_prime_axis(), 
+
+  TEST_COMPARE_FLOATING_ARRAYS( x_axis(),
+				x_prime_axis(),
 				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_COMPARE_FLOATING_ARRAYS( y_axis(),
 				y_prime_axis(),
@@ -220,66 +220,66 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 				   ScalarType )
 {
   // x-axis to z-axis rotation
-  Geometry::Vector<ScalarType> initial_direction = 
+  Geometry::Vector<ScalarType> initial_direction =
     Geometry::createXAxisVector<ScalarType>();
-  Geometry::Vector<ScalarType> final_direction = 
+  Geometry::Vector<ScalarType> final_direction =
     Geometry::createZAxisVector<ScalarType>();
-  
-  Geometry::Matrix<ScalarType> rotation_matrix = 
+
+  Geometry::Matrix<ScalarType> rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
 						 final_direction );
 
   Geometry::Matrix<ScalarType> ref_rotation_matrix( 0.0, 0.0, -1.0,
 						  0.0, 1.0,  0.0,
 						  1.0, 0.0,  0.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
 				ref_rotation_matrix(),
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // x-axis to neg-z-axis rotation
-  final_direction = 
+  final_direction =
     Geometry::createZAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
-  
-  rotation_matrix = 
+
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   						 final_direction );
 
   ref_rotation_matrix = Geometry::createMatrix<ScalarType>( 0.0, 0.0, -1.0,
   							  0.0, 1.0, 0.0,
   							  -1.0, 0.0, 0.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
   				ref_rotation_matrix(),
   				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // x-axis to y-axis rotation
   final_direction = Geometry::createYAxisVector<ScalarType>();
-  
-  rotation_matrix = 
+
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   						 final_direction );
-  
+
   ref_rotation_matrix = Geometry::createMatrix<ScalarType>( 0.0, -1.0, 0.0,
   							  1.0,  0.0, 0.0,
   							  0.0,  0.0, 1.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
   				ref_rotation_matrix(),
   				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // x-axis to neg-y-axis rotation
-  final_direction = 
+  final_direction =
     Geometry::createYAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
 
-  rotation_matrix = 
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   						 final_direction );
 
   ref_rotation_matrix = Geometry::createMatrix<ScalarType>( 0.0, 1.0, 0.0,
   							  -1.0, 0.0, 0.0,
   							  0.0, 0.0, 1.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
   				ref_rotation_matrix(),
   				Teuchos::ScalarTraits<ScalarType>::prec() );
@@ -288,40 +288,40 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   initial_direction = Geometry::createZAxisVector<ScalarType>();
   final_direction = Geometry::createXAxisVector<ScalarType>();
 
-  rotation_matrix = 
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   						 final_direction );
 
   ref_rotation_matrix = Geometry::createMatrix<ScalarType>( 0.0, 0.0, 1.0,
   							  0.0, 1.0, 0.0,
   							  -1.0, 0.0, 0.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
   				ref_rotation_matrix(),
   				Teuchos::ScalarTraits<ScalarType>::prec() );
-  
+
   // neg-z-axis to x-axis rotation
-  initial_direction = 
+  initial_direction =
     Geometry::createZAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
   final_direction = Geometry::createXAxisVector<ScalarType>();
 
-  rotation_matrix = 
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   						 final_direction );
 
   ref_rotation_matrix = Geometry::createMatrix<ScalarType>( 0.0, 0.0, -1.0,
   							  0.0, 1.0,  0.0,
   							  -1.0, 0.0,  0.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( rotation_matrix(),
   				ref_rotation_matrix(),
   				Teuchos::ScalarTraits<ScalarType>::prec() );
-  
+
   // y-axis to x-axis rotation
   initial_direction = Geometry::createYAxisVector<ScalarType>();
   final_direction = Geometry::createXAxisVector<ScalarType>();
 
-  rotation_matrix = 
+  rotation_matrix =
     Geometry::createRotationMatrixFromUnitVectors( initial_direction,
   					      final_direction );
 

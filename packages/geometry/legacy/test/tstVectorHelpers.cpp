@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )  
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -33,8 +33,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 				   ScalarType )
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
-  Geometry::Vector<ScalarType> vector = Geometry::createVector( ST::one(), 
-							    ST::one()*2, 
+  Geometry::Vector<ScalarType> vector = Geometry::createVector( ST::one(),
+							    ST::one()*2,
 							    ST::one()*3 );
 
   Geometry::Vector<ScalarType> ref_vector( 1.0, 2.0, 3.0 );
@@ -67,9 +67,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 				   createXAxisVector,
 				   ScalarType )
 {
-  Geometry::Vector<ScalarType> pos_x_axis = 
+  Geometry::Vector<ScalarType> pos_x_axis =
     Geometry::createXAxisVector<ScalarType>();
-  Geometry::Vector<ScalarType> neg_x_axis = 
+  Geometry::Vector<ScalarType> neg_x_axis =
     Geometry::createXAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
 
   Geometry::Vector<ScalarType> ref_pos_x_axis( 1.0, 0.0, 0.0 );
@@ -87,9 +87,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 				   createYAxisVector,
 				   ScalarType )
 {
-  Geometry::Vector<ScalarType> pos_y_axis = 
+  Geometry::Vector<ScalarType> pos_y_axis =
     Geometry::createYAxisVector<ScalarType>();
-  Geometry::Vector<ScalarType> neg_y_axis = 
+  Geometry::Vector<ScalarType> neg_y_axis =
     Geometry::createYAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
 
   Geometry::Vector<ScalarType> ref_pos_y_axis( 0.0, 1.0, 0.0 );
@@ -107,9 +107,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 				   createZAxisVector,
 				   ScalarType )
 {
-  Geometry::Vector<ScalarType> pos_z_axis = 
+  Geometry::Vector<ScalarType> pos_z_axis =
     Geometry::createZAxisVector<ScalarType>();
-  Geometry::Vector<ScalarType> neg_z_axis = 
+  Geometry::Vector<ScalarType> neg_z_axis =
     Geometry::createZAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
 
   Geometry::Vector<ScalarType> ref_pos_z_axis( 0.0, 0.0, 1.0 );
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
   Geometry::Vector<ScalarType> vector( 3.0, 2.0, 1.0 );
   ScalarType constant_term = 4.0;
 
-  Geometry::Vector<ScalarType> zeroing_vector = 
+  Geometry::Vector<ScalarType> zeroing_vector =
     Geometry::createZeroingVector( vector, constant_term );
 
   Geometry::Vector<ScalarType> ref_zeroing_vector( -4.0/3, 0.0, 0.0 );

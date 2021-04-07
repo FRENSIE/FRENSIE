@@ -1,0 +1,352 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Geometry.ModelProperties class unit tests
+#  \file   tstGeometry.ModelProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Geometry.ModelProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import inspect
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
+                  help="set the dagmc .h5m file that will be used to create the model")
+parser.add_option("-r", "--root_file", type="string", dest="root_file", default="",
+                  help="set the root .c file that will be used to create the model")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+
+try:
+    DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+except ImportError:
+    DagMC = False
+
+try:
+    ROOT = importPyFrensieModuleFromBuildDir('Geometry.ROOT')
+except ImportError:
+    ROOT = False
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ModelProperties class with a DagMC geometry
+if inspect.ismodule( DagMC ):
+    class DagMCModelPropertiesTestCase(unittest.TestCase):
+        "TestCase class for Geometry.ModelProperties class using a DagMC geometry"
+
+        @classmethod
+        def setUpClass(cls):
+            cls.properties = DagMC.DagMCModelProperties( "test_dir/dummy.h5m" )
+
+        def testGetModelFileName(self):
+            "*Test Geometry.ModelProperties getModelFileName"
+            self.assertEqual( self.properties.getModelFileName(), "dummy.h5m")
+
+        def testGetModelFilePath(self):
+            "*Test Geometry.ModelProperties getModelFilePath"
+            self.assertEqual( self.properties.getModelFilePath(), "test_dir" )
+
+        def testGetModelFileNameWithPath(self):
+            "*Test Geometry.ModelProperties getModelFileNameWithPath"
+            self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.h5m" )
+
+        def testSetIdLookup(self):
+            "*Test Geometry.ModelProperties setIdLookup"
+            self.assertTrue( not self.properties.isFastIdLookupUsed() )
+            self.properties.useFastIdLookup()
+            self.assertTrue( self.properties.isFastIdLookupUsed() )
+            self.properties.useStandardIdLookup()
+            self.assertTrue( not self.properties.isFastIdLookupUsed() )
+
+        def testSetTerminationCellPropertyName(self):
+            "*Test Geometry.ModelProperties setTerminationCellPropertyName"
+            self.assertEqual( self.properties.getTerminationCellPropertyName(), "termination.cell" )
+            self.properties.setTerminationCellPropertyName( "graveyard" )
+            self.assertEqual( self.properties.getTerminationCellPropertyName(), "graveyard" )
+
+        def testSetReflectingSurfacePropertyName(self):
+            "*Test Geometry.ModelProperties setReflectingSurfacePropertyName"
+            self.assertEqual( self.properties.getReflectingSurfacePropertyName(), "reflecting.surface" )
+            self.properties.setReflectingSurfacePropertyName( "spec.reflect" )
+            self.assertEqual( self.properties.getReflectingSurfacePropertyName(), "spec.reflect" )
+
+        def testSetMaterialPropertyName(self):
+            "*Test Geometry.ModelProperties setMaterialPropertyName"
+            self.assertEqual( self.properties.getMaterialPropertyName(), "material" )
+            self.properties.setMaterialPropertyName( "mat" )
+            self.assertEqual( self.properties.getMaterialPropertyName(), "mat" )
+
+        def testSetDensityPropertyName(self):
+            "*Test Geometry.ModelProperties setDensityPropertyName"
+            self.assertEqual( self.properties.getDensityPropertyName(), "density" )
+            self.properties.setDensityPropertyName( "rho" )
+            self.assertEqual( self.properties.getDensityPropertyName(), "rho" )
+
+        def testSetEstimatorPropertyName(self):
+            "*Test Geometry.ModelProperties setEstimatorPropertyName"
+            self.assertEqual( self.properties.getEstimatorPropertyName(), "estimator" )
+            self.properties.setEstimatorPropertyName( "tally" )
+            self.assertEqual( self.properties.getEstimatorPropertyName(), "tally" )
+
+        def testSetPropertyNames(self):
+            "*Test Geometry.ModelProperties setPropertyNames"
+            property_names = self.properties.getPropertyNames()
+            self.assertEqual( len(property_names), 5 )
+            self.assertEqual( property_names[0], "termination.cell" )
+            self.assertEqual( property_names[1], "reflecting.surface" )
+            self.assertEqual( property_names[2], "mat" )
+            self.assertEqual( property_names[3], "rho" )
+            self.assertEqual( property_names[4], "tally" )
+
+        def testSetSurfaceCurrentName(self):
+            "*Test Geometry.ModelProperties setSurfaceCurrentName"
+            self.assertEqual( self.properties.getSurfaceCurrentName(), "surface.current" )
+            self.properties.setSurfaceCurrentName( "surf.cur" )
+            self.assertEqual( self.properties.getSurfaceCurrentName(), "surf.cur" )
+
+        def testSetSurfaceFluxName(self):
+            "*Test Geometry.ModelProperties setSurfaceFluxName"
+            self.assertEqual( self.properties.getSurfaceFluxName(),  "surface.flux" )
+            self.properties.setSurfaceFluxName( "surf.flux" )
+            self.assertEqual( self.properties.getSurfaceFluxName(), "surf.flux" )
+
+        def testSetCellPulseHeightName(self):
+            "*Test Geometry.ModelProperties setCellPulseHeightName"
+            self.assertEqual( self.properties.getCellPulseHeightName(), "cell.pulse.height" )
+            self.properties.setCellPulseHeightName( "cell.ph" )
+            self.assertEqual( self.properties.getCellPulseHeightName(), "cell.ph" )
+
+        def testSetCellTrackLengthFluxName(self):
+            "*Test Geometry.ModelProperties setCellTrackLengthFluxName"
+            self.assertEqual( self.properties.getCellTrackLengthFluxName(), "cell.tl.flux" )
+            self.properties.setCellTrackLengthFluxName( "cell.tl" )
+            self.assertEqual( self.properties.getCellTrackLengthFluxName(), "cell.tl" )
+
+        def testSetCellCollisionFluxName(self):
+            "*Test Geometry.ModelProperties setCellCollisionFluxName"
+            self.assertEqual( self.properties.getCellCollisionFluxName(), "cell.c.flux" )
+            self.properties.setCellCollisionFluxName( "cell.c" )
+            self.assertEqual( self.properties.getCellCollisionFluxName(), "cell.c" )
+
+        def testIsCellEstimatorNameValid(self):
+            "*Test Geometry.ModelProperties setCellCollisionFluxName"
+            self.assertTrue( self.properties.isCellEstimatorNameValid(
+                self.properties.getCellPulseHeightName() ) )
+            self.assertTrue( self.properties.isCellEstimatorNameValid(
+                self.properties.getCellTrackLengthFluxName() ) )
+            self.assertTrue( self.properties.isCellEstimatorNameValid(
+                self.properties.getCellCollisionFluxName() ) )
+            self.assertTrue( not self.properties.isCellEstimatorNameValid(
+                self.properties.getSurfaceCurrentName() ) )
+            self.assertTrue( not self.properties.isCellEstimatorNameValid(
+                self.properties.getSurfaceFluxName() ) )
+
+        def testIsSurfaceEstimatorNameValid(self):
+            "*Test Geometry.ModelProperties setCellCollisionFluxName"
+            self.assertTrue( not self.properties.isSurfaceEstimatorNameValid(
+                self.properties.getCellPulseHeightName() ) )
+            self.assertTrue( not self.properties.isSurfaceEstimatorNameValid(
+                self.properties.getCellTrackLengthFluxName() ) )
+            self.assertTrue( not self.properties.isSurfaceEstimatorNameValid(
+                self.properties.getCellCollisionFluxName() ) )
+            self.assertTrue( self.properties.isSurfaceEstimatorNameValid(
+                self.properties.getSurfaceCurrentName() ) )
+            self.assertTrue( self.properties.isSurfaceEstimatorNameValid(
+                self.properties.getSurfaceFluxName() ) )
+
+        def testIsEstimatorNameValid(self):
+            "*Test Geometry.ModelProperties setCellCollisionFluxName"
+            self.assertTrue( self.properties.isEstimatorNameValid(
+                self.properties.getCellPulseHeightName() ) )
+            self.assertTrue( self.properties.isEstimatorNameValid(
+                self.properties.getCellTrackLengthFluxName() ) )
+            self.assertTrue( self.properties.isEstimatorNameValid(
+                self.properties.getCellCollisionFluxName() ) )
+            self.assertTrue( self.properties.isEstimatorNameValid(
+                self.properties.getSurfaceCurrentName() ) )
+            self.assertTrue( self.properties.isEstimatorNameValid(
+                self.properties.getSurfaceFluxName() ) )
+            self.assertTrue( not self.properties.isEstimatorNameValid(
+                "dummy" ) )
+
+        def testGetEstimatorType(self):
+            "*Test Geometry.ModelProperties getEstimatorType"
+            estimator_type = self.properties.getEstimatorType(
+                self.properties.getCellPulseHeightName() )
+            self.assertEqual( estimator_type, Geometry.CELL_PULSE_HEIGHT_ESTIMATOR )
+
+            estimator_type = self.properties.getEstimatorType(
+                self.properties.getCellTrackLengthFluxName() )
+            self.assertEqual( estimator_type, Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR )
+
+            estimator_type = self.properties.getEstimatorType(
+                self.properties.getCellCollisionFluxName() )
+            self.assertEqual( estimator_type, Geometry.CELL_COLLISION_FLUX_ESTIMATOR )
+
+            estimator_type = self.properties.getEstimatorType(
+                self.properties.getSurfaceCurrentName() )
+            self.assertEqual( estimator_type, Geometry.SURFACE_CURRENT_ESTIMATOR )
+
+            estimator_type = self.properties.getEstimatorType(
+                           self.properties.getSurfaceFluxName() )
+            self.assertEqual( estimator_type, Geometry.SURFACE_FLUX_ESTIMATOR )
+
+
+        def testSetPhotonName(self):
+            "*Test Geometry.ModelProperties setPhotonName"
+            self.assertEqual( self.properties.getPhotonName(), "p" )
+            self.properties.setPhotonName( "photon" )
+            self.assertEqual( self.properties.getPhotonName(), "photon" )
+
+        def testSetNeutronName(self):
+            "*Test Geometry.ModelProperties setNeutronName"
+            self.assertEqual( self.properties.getNeutronName(), "n" )
+            self.properties.setNeutronName( "neutron" )
+            self.assertEqual( self.properties.getNeutronName(), "neutron" )
+
+        def testSetElectronName(self):
+            "*Test Geometry.ModelProperties setElectronName"
+            self.assertEqual( self.properties.getElectronName(), "e" )
+            self.properties.setElectronName( "electron" )
+            self.assertEqual( self.properties.getElectronName(), "electron" )
+
+        def testSetAdjointPhotonName(self):
+            "*Test Geometry.ModelProperties setAdjointPhotonName"
+            self.assertEqual( self.properties.getAdjointPhotonName(), "p*" )
+            self.properties.setAdjointPhotonName( "adjoint-photon" )
+            self.assertEqual( self.properties.getAdjointPhotonName(), "adjoint-photon" )
+
+        def testSetAdjointNeutronName(self):
+            "*Test Geometry.ModelProperties setAdjointNeutronName"
+            self.assertEqual( self.properties.getAdjointNeutronName(), "n*"  )
+            self.properties.setAdjointNeutronName( "adjoint-neutron" )
+            self.assertEqual( self.properties.getAdjointNeutronName(), "adjoint-neutron" )
+
+        def testSetAdjointElectronName(self):
+            "*Test Geometry.ModelProperties setAdjointElectronName"
+            self.assertEqual( self.properties.getAdjointElectronName(), "e*" )
+            self.properties.setAdjointElectronName( "adjoint-electron" )
+            self.assertEqual( self.properties.getAdjointElectronName(), "adjoint-electron" )
+
+        def testIsParticleNameValid(self):
+            "*Test Geometry.ModelProperties isParticleNameValid"
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getPhotonName() ) )
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getNeutronName() ) )
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getElectronName() ) )
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getAdjointPhotonName() ) )
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getAdjointNeutronName() ) )
+            self.assertTrue( self.properties.isParticleNameValid( self.properties.getAdjointElectronName() ) )
+            self.assertTrue( not self.properties.isParticleNameValid( "dummy" ) )
+
+        def testGetParticleType(self):
+            "*Test Geometry.ModelProperties getParticleType"
+            particle_type = self.properties.getParticleType(
+                self.properties.getPhotonName() )
+            self.assertEqual( particle_type, Geometry.PHOTON )
+
+            particle_type = self.properties.getParticleType(
+                self.properties.getNeutronName() )
+            self.assertEqual( particle_type, Geometry.NEUTRON )
+
+            particle_type = self.properties.getParticleType(
+                self.properties.getElectronName() )
+            self.assertEqual( particle_type, Geometry.ELECTRON )
+
+            particle_type = self.properties.getParticleType(
+                self.properties.getAdjointPhotonName() )
+            self.assertEqual( particle_type, Geometry.ADJOINT_PHOTON )
+
+            particle_type = self.properties.getParticleType(
+                self.properties.getAdjointNeutronName() )
+            self.assertEqual( particle_type, Geometry.ADJOINT_NEUTRON )
+
+            particle_type = self.properties.getParticleType(
+                self.properties.getAdjointElectronName() )
+            self.assertEqual( particle_type, Geometry.ADJOINT_ELECTRON )
+
+
+#-----------------------------------------------------------------------------#
+# Test the ModelProperties class with a ROOT geometry
+if inspect.ismodule( ROOT ):
+    class RootModelPropertiesTestCase(unittest.TestCase):
+        "TestCase class for Geometry.ModelProperties class using a ROOT geometry"
+
+        @classmethod
+        def setUpClass(cls):
+            cls.properties = ROOT.RootModelProperties( "test_dir/dummy.c" )
+
+        def testGetModelFileName(self):
+            "*Test Geometry.ModelProperties getModelFileName"
+            self.assertEqual( self.properties.getModelFileName(), "dummy.c")
+
+        def testGetModelFilePath(self):
+            "*Test Geometry.ModelProperties getModelFilePath"
+            self.assertEqual( self.properties.getModelFilePath(), "test_dir" )
+
+        def testGetModelFileNameWithPath(self):
+            "*Test Geometry.ModelProperties getModelFileNameWithPath"
+            self.assertEqual( self.properties.getModelFileNameWithPath(), "test_dir/dummy.c" )
+
+        def testSetMaterialPropertyName(self):
+            "*Test Geometry.ModelProperties setMaterialPropertyName"
+            self.assertEqual( self.properties.getMaterialPropertyName(), "material" )
+            self.properties.setMaterialPropertyName( "mat" )
+            self.assertEqual( self.properties.getMaterialPropertyName(), "mat" )
+
+        def testSetVoidMaterialName(self):
+            "*Test Geometry.ModelProperties setVoidMaterialName"
+            self.assertEqual( self.properties.getVoidMaterialName(), "void" )
+            self.properties.setVoidMaterialName( "empty" )
+            self.assertEqual( self.properties.getVoidMaterialName(), "empty" )
+
+        def testSetTerminalMaterialName(self):
+            "*Test Geometry.ModelProperties setTerminalMaterialName"
+            self.assertEqual( self.properties.getTerminalMaterialName(), "graveyard" )
+            self.properties.setTerminalMaterialName( "blackhole" )
+            self.assertEqual( self.properties.getTerminalMaterialName(), "blackhole" )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    if len(options.dagmc_h5m_file) > 0 and inspect.ismodule(DagMC):
+        suite.addTest(unittest.makeSuite(DagMCModelPropertiesTestCase))
+
+    if len(options.root_file) > 0 and inspect.ismodule(ROOT):
+        suite.addTest(unittest.makeSuite(RootModelPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Geometry.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstGeometry.ModelProperties.py
+#-----------------------------------------------------------------------------#

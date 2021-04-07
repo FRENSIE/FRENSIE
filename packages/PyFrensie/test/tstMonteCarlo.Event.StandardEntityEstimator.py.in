@@ -1,0 +1,658 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.StandardEntityEstimator class unit tests
+#  \file   tstMonteCarlo.Event.StandardEntityEstimator.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.StandardEntityEstimator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#-----------------------------------------------------------------------------#
+# Testing Functions
+#-----------------------------------------------------------------------------#
+
+# Test if two arrays are almost equal
+def assertSequenceAlmostEqual( lhs_array, rhs_array, tol ):
+  # Test that the array sizes are equal
+  if len(lhs_array) != len(rhs_array):
+    return False
+
+  # Test that the array entries are almost equal
+  for i in range(len(lhs_array)):
+    if numpy.abs(lhs_array[i]) != 0.0:
+      if numpy.abs(lhs_array[i] - rhs_array[i])/numpy.abs(lhs_array[i]) > tol:
+        return False
+    else:
+      if numpy.abs(lhs_array[i] - rhs_array[i]) > tol:
+        return False
+
+  # If everything passes return True
+  return True
+
+# Initialize the surface estimator (int)
+def initializeSurfaceEstimator():
+
+  # Set the entity ids
+  entity_ids = [None]*2
+  entity_ids[0] = 0
+  entity_ids[1] = 1
+
+  # Set the entity normalization constants
+  entity_norm_constants = [None]*2
+  entity_norm_constants[0] = 1.0
+  entity_norm_constants[1] = 2.0
+
+  # Set the estimator multiplier
+  estimator_multiplier = 10.0
+  
+  estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, estimator_multiplier, entity_ids, entity_norm_constants )
+
+  particle_types = [None]*1
+  particle_types[0] = MonteCarlo.PHOTON
+
+  estimator.setParticleTypes( particle_types )
+
+  # Set the energy bins
+  energy_bin_boundaries = [None]*3
+  energy_bin_boundaries[0] = 0.0
+  energy_bin_boundaries[1] = 0.1
+  energy_bin_boundaries[2] = 1.0
+
+  estimator.setEnergyDiscretization(energy_bin_boundaries)
+
+  # Set the cosine bins
+  cosine_bin_boundaries = [None]*3
+  cosine_bin_boundaries[0] = -1.0
+  cosine_bin_boundaries[1] = 0.0
+  cosine_bin_boundaries[2] = 1.0
+
+  estimator.setCosineDiscretization(cosine_bin_boundaries)
+
+  # Set the collision number bins
+  collision_number_bins = [None]*2
+  collision_number_bins[0] = 0
+  collision_number_bins[1] = 1
+
+  estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+  # Set the response functions
+  response_functions = [None]*2
+  response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+  response_functions[1] = response_functions[0]
+
+  estimator.setResponseFunctions( response_functions )
+
+  # Set the time bins
+  time_bin_boundaries = [None]*3
+  time_bin_boundaries[0] = 1e-6
+  time_bin_boundaries[1] = 1e-5
+  time_bin_boundaries[2] = 1e-4
+
+  time_discretization = Event.ObserverTimeDimensionDiscretization( time_bin_boundaries )
+
+  estimator.setDiscretization( time_discretization )
+
+  return estimator
+
+# Initialize the cell estimator (int)
+def initializeCellEstimator( ranged_time_bins = False ):
+
+  # Set the entity ids
+  entity_ids = [None]*2
+  entity_ids[0] = 0
+  entity_ids[1] = 1
+
+  # Set the entity normalization constants
+  entity_norm_constants = [None]*2
+  entity_norm_constants[0] = 1.0
+  entity_norm_constants[1] = 2.0
+
+  # Set the estimator multiplier
+  estimator_multiplier = 10.0
+
+  estimator = Event.WeightMultipliedCellTrackLengthFluxEstimator( 0, estimator_multiplier, entity_ids, entity_norm_constants )
+
+  particle_types = [None]*1
+  particle_types[0] = MonteCarlo.PHOTON
+
+  estimator.setParticleTypes( particle_types )
+
+  # Set the energy bins
+  energy_bin_boundaries = [None]*3
+  energy_bin_boundaries[0] = 0.0
+  energy_bin_boundaries[1] = 0.1
+  energy_bin_boundaries[2] = 1.0
+
+  estimator.setEnergyDiscretization(energy_bin_boundaries)
+
+  # Set the collision number bins
+  collision_number_bins = [None]*2
+  collision_number_bins[0] = 0
+  collision_number_bins[1] = 1
+
+  estimator.setCollisionNumberDiscretization( collision_number_bins )
+
+  # Set the response functions
+  response_functions = [None]*2
+  response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+  response_functions[1] = response_functions[0]
+
+  estimator.setResponseFunctions( response_functions )
+
+  # Set the time bins
+  time_bin_boundaries = [None]*3
+  time_bin_boundaries[0] = 1e-6
+  time_bin_boundaries[1] = 1e-5
+  time_bin_boundaries[2] = 1.9e-5
+
+  time_discretization = Event.ObserverTimeDimensionDiscretization( time_bin_boundaries )
+
+  estimator.setDiscretization( time_discretization )
+
+  return estimator
+
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardEntityEstimator class
+class StandardEntityEstimatorTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.StandardEntityEstimator class"
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of bins can be returned
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator getNumberOfBins"
+
+        estimator = initializeSurfaceEstimator()
+
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_ENERGY_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COSINE_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_COLLISION_NUMBER_DIMENSION ), 2 )
+        self.assertEqual( estimator.getNumberOfBins( Event.OBSERVER_TIME_DIMENSION ), 2 )
+        
+
+#-----------------------------------------------------------------------------#
+    # Check that the dimensions with discretizations can be returned
+    def testGetDiscretizedDimensions(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator getDiscretizedDimensions"
+        estimator = initializeSurfaceEstimator()
+
+        discretized_dimensions = estimator.getDiscretizedDimensions()
+
+        self.assertEqual( len(discretized_dimensions), 4 )
+        self.assertEqual( discretized_dimensions[0], Event.OBSERVER_ENERGY_DIMENSION )
+        self.assertEqual( discretized_dimensions[1], Event.OBSERVER_COSINE_DIMENSION )
+        self.assertEqual( discretized_dimensions[2], Event.OBSERVER_COLLISION_NUMBER_DIMENSION )
+        self.assertEqual( discretized_dimensions[3], Event.OBSERVER_TIME_DIMENSION )
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of response functions can be returned
+    def testGetDimensionDiscretization(self):
+      "*Test MonteCarlo.Event.StandardEntityEstimator getDimensionDiscretization"
+      estimator = initializeSurfaceEstimator()
+
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_ENERGY_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_COSINE_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_COLLISION_NUMBER_DIMENSION ) )
+      self.assertTrue( estimator.doesDimensionHaveDiscretization( Event.OBSERVER_TIME_DIMENSION ) )
+
+      energy_bins = estimator.getEnergyDiscretization()
+
+      self.assertSequenceEqual( list(energy_bins), [0.0, 0.1, 1.0] )
+      
+      cosine_bins = estimator.getCosineDiscretization()
+
+      self.assertSequenceEqual( list(cosine_bins), [-1.0, 0.0, 1.0] )
+      
+      collision_number_bins = estimator.getCollisionNumberDiscretization()
+
+      self.assertSequenceEqual( list(collision_number_bins), [0, 1] )
+      
+      time_bins = estimator.getTimeDiscretization()
+
+      self.assertSequenceEqual( list(time_bins), [1e-6, 1e-5, 1e-4] )
+
+      estimator.setSourceIdDiscretization( [[0,1], [1], [0,2]] )
+
+      source_id_bins = estimator.getSourceIdDiscretization()
+
+      self.assertSequenceEqual( source_id_bins,
+                                [set([0,1]), set([1]), set([0,2])] )
+
+#-----------------------------------------------------------------------------#
+    # Check that the number of response functions can be returned
+    def testGetNumberOfResponseFunctions(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator getNumberOfResponseFunctions"
+        
+        estimator = initializeSurfaceEstimator()
+        
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+        estimator.addResponseFunction( ActiveRegion.ParticleResponse.getDefault() )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 3 )
+
+
+#-----------------------------------------------------------------------------#
+    # Check that snapshots can be enabled on entity bins
+    def testEnableSnapshotsOnEntityBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator enableSnapshotsOnEntityBins"
+
+        estimator = initializeSurfaceEstimator()
+                
+        self.assertFalse( estimator.areSnapshotsOnEntityBinsEnabled() );
+
+        estimator.enableSnapshotsOnEntityBins()
+
+        self.assertTrue( estimator.areSnapshotsOnEntityBinsEnabled() );
+
+#-----------------------------------------------------------------------------#
+    # Check that histograms can be enabled on entity bins
+    def testEnableHistogramsOnEntityBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator enableHistogramsOnEntityBins"
+
+        estimator = initializeSurfaceEstimator()
+                
+        self.assertFalse( estimator.areSampleMomentHistogramsOnEntityBinsEnabled() );
+
+        estimator.enableSampleMomentHistogramsOnEntityBins()
+
+        self.assertTrue( estimator.areSampleMomentHistogramsOnEntityBinsEnabled() );
+
+#-----------------------------------------------------------------------------#
+    # Check that the sample moment histogram bins can be set
+    def testSetSampleMomentHistogramBins(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator setSampleMomentHistogramBins"
+
+        estimator = initializeSurfaceEstimator()
+        estimator.enableSampleMomentHistogramsOnEntityBins();
+
+        num_response_functions = estimator.getNumberOfResponseFunctions()
+        num_estimator_bins = estimator.getNumberOfBins()*num_response_functions
+        entity_ids = estimator.getEntityIds()
+
+        expected_histogram_bins = list(Utility.doubleArrayFromString( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" ))
+
+        # Check the entity bin histograms
+        for entity_id in entity_ids:
+          for i in range(0,num_estimator_bins):
+            histogram = estimator.getEntityBinSampleMomentHistogram( entity_id, i )
+            
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+        # Check the total bin histograms
+        for entity_id in entity_ids:
+          histogram = estimator.getTotalBinSampleMomentHistogram( entity_id )
+
+          self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                    expected_histogram_bins );
+
+        # Check the entity total historams
+        for entity_id in entity_ids:
+          for i in range(0,num_response_functions):
+            histogram = estimator.getEntityTotalSampleMomentHistogram( entity_id, i )
+
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+        # Check the total histograms
+        for i in range(0,num_response_functions):
+          histogram = estimator.getTotalSampleMomentHistogram( i )
+
+          self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                    expected_histogram_bins )
+
+#-----------------------------------------------------------------------------#
+    # Check that a partial history contribution can be added to the estimator
+    def testAddPartialHistoryPointContribution(self):
+        "*Test MonteCarlo.Event.StandardEntityEstimator addPartialHistoryPointContribution"
+        
+        estimator = initializeSurfaceEstimator()
+        estimator.enableSampleMomentHistogramsOnEntityBins()
+        estimator.enableSnapshotsOnEntityBins()
+        
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 0 (E=0, Mu=0, T=0, Col=0)
+        particle = MonteCarlo.PhotonState( 0 )
+        particle_wrapper = Event.ObserverParticleStateWrapper( particle )
+
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        self.assertTrue( estimator.hasUncommittedHistoryContribution() )
+
+        # bin 1 (E=1, Mu=0, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 2 (E=0, Mu=1, T=0, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 3 (E=1, Mu=1, T=0, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 4 (E=0, Mu=0, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 5 (E=1, Mu=0, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 6 (E=0, Mu=1, T=1, Col=0)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 7 (E=1, Mu=1, T=1, Col=0)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 8 (E=0, Mu=0, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-6 )
+        particle.incrementCollisionNumber()
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 9 (E=1, Mu=0, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 10 (E=0, Mu=1, T=0, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 11 (E=1, Mu=1, T=0, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 12 (E=0, Mu=0, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( -0.5 )
+        particle.setTime( 5e-5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 13 (E=1, Mu=0, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 14 (E=0, Mu=1, T=1, Col=1)
+        particle.setEnergy( 1e-2 )
+        particle_wrapper.setAngleCosine( 0.5 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # bin 15 (E=1, Mu=1, T=1, Col=1)
+        particle.setEnergy( 0.11 )
+
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 0, 1.0 )
+        estimator.updateFromParticleCrossingSurfaceEvent( particle, 1, 1.0 )
+
+        # Commit the contributions
+        estimator.commitHistoryContribution()
+
+        # Take a snapshot
+        estimator.takeSnapshot( 1, 1.0 )
+
+        self.assertFalse( estimator.hasUncommittedHistoryContribution() )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # Check the entity total data moments
+        self.assertTrue( estimator.isTotalDataAvailable() )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0, 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0, 256.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0, 4096.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0, 65536.0 ] )
+
+        entity_total_first_moments = estimator.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 16.0, 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 256.0, 256.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 4096.0, 4096.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 65536.0, 65536.0 ] )
+
+        # Check the entity processed total data
+        # estimator.getEntityTotalProcessedData( 0, entity_total_mean, entity_total_re, entity_total_vov, entity_total_fom )
+        processed_data = estimator.getEntityTotalProcessedData( 0 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 160.0, 160.0 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 160.0, 160.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0, 0.0 ] )
+
+        # estimator.getEntityTotalProcessedData( 1, entity_total_mean, entity_total_re, entity_total_vov, entity_total_fom )
+        processed_data = estimator.getEntityTotalProcessedData( 1 )
+        entity_total_mean = processed_data["mean"]
+        entity_total_re = processed_data["re"]
+        entity_total_vov = processed_data["vov"]
+        entity_total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(entity_total_mean), [ 80.0, 80.0 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 80.0, 80.0 ] )
+        self.assertSequenceEqual( list(entity_total_re), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_vov), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(entity_total_fom), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0, 0.0 ] )
+
+        # Check the total data moments
+        total_first_moments = estimator.getTotalDataFirstMoments()
+
+        total_second_moments = estimator.getTotalDataSecondMoments()
+
+        total_third_moments = estimator.getTotalDataThirdMoments()
+
+        total_fourth_moments = estimator.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments), [ 32.0, 32.0 ] )
+        self.assertSequenceEqual( list(total_second_moments), [ 1024.0, 1024.0 ] )
+        self.assertSequenceEqual( list(total_third_moments), [ 32768.0, 32768.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 1048576.0, 1048576.0 ] )
+
+        # Check the processed total data
+        processed_data = estimator.getTotalProcessedData()
+        total_mean = processed_data["mean"]
+        total_re = processed_data["re"]
+        total_vov = processed_data["vov"]
+        total_fom = processed_data["fom"]
+
+        self.assertSequenceEqual( list(total_mean), [ 320.0/3, 320.0/3 ] )
+        self.assertSequenceEqual( list(processed_data["mean"]), [ 320.0/3, 320.0/3 ] )
+        self.assertSequenceEqual( list(total_re), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["re"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(total_vov), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["vov"]), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(total_fom), [ 0.0, 0.0 ] )
+        self.assertSequenceEqual( list(processed_data["fom"]), [ 0.0, 0.0 ] )
+
+        # Check the total snapshots
+        snapshot_history_values = estimator.getTotalMomentSnapshotHistoryValues()
+        self.assertSequenceEqual( list(snapshot_history_values), [1] )
+
+        snapshot_time_values = estimator.getTotalMomentSnapshotSamplingTimes()
+
+        self.assertSequenceEqual( list(snapshot_time_values), [1.0] )
+        
+        for i in range(0,estimator.getNumberOfResponseFunctions()):
+          first_moment_snapshots = estimator.getTotalFirstMomentSnapshots( i )
+          second_moment_snapshots = estimator.getTotalSecondMomentSnapshots( i )
+          third_moment_snapshots = estimator.getTotalThirdMomentSnapshots( i )
+          fourth_moment_snapshots = estimator.getTotalFourthMomentSnapshots( i )
+
+          self.assertSequenceEqual( list(first_moment_snapshots), [32.0] )
+          self.assertSequenceEqual( list(second_moment_snapshots), [1024.0] )
+          self.assertSequenceEqual( list(third_moment_snapshots), [32768.0] )
+          self.assertSequenceEqual( list(fourth_moment_snapshots), [1048576.0] )
+
+        # Check the processed total snapshots
+        for i in range(0,estimator.getNumberOfResponseFunctions()):
+          processed_data = estimator.getTotalProcessedSnapshots( i )
+          mean_snapshots = processed_data["mean"]
+          re_snapshots = processed_data["re"]
+          vov_snapshots = processed_data["vov"]
+          fom_snapshots = processed_data["fom"]
+          
+          self.assertSequenceEqual( list(mean_snapshots), [320.0/3] )
+          self.assertSequenceEqual( list(re_snapshots), [0.0] )
+          self.assertSequenceEqual( list(vov_snapshots), [0.0] )
+          self.assertSequenceEqual( list(fom_snapshots), [0.0] )
+          
+        # Check the entity bin histograms
+        num_estimator_bins = estimator.getNumberOfBins()*estimator.getNumberOfResponseFunctions()
+        entity_ids = estimator.getEntityIds()
+                
+        expected_histogram_bins = list(Utility.doubleArrayFromString( "{-1.7976931348623157e+308, 0.0, 1e-30, 599l, 1e30, 1.7976931348623157e+308}" ))
+        expected_histogram_values = list(Utility.doubleArrayFromString( "{0.0r298, 1.0, 0.0r304}" ))
+        expected_empty_histogram_values = list(Utility.doubleArrayFromString( "{0.0r603}" ))
+
+        for entity_id in entity_ids:
+          for i in range(0,num_estimator_bins):
+            histogram = estimator.getEntityBinSampleMomentHistogram( entity_id, i )
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+            
+            if( i == 2 or i == 3 or i == 6 or i == 7 or  i == 10 or i == 11 or
+                i == 14 or i == 15 or i == 18 or i == 19 or i == 22 or
+                i == 23 or i == 26 or i == 27 or i == 30 or i == 31 ):
+              self.assertEqual( histogram.getNumberOfScores(), 1 )
+            else:
+              self.assertEqual( histogram.getNumberOfScores(), 0 )
+
+            self.assertEqual( len(histogram.getHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getNormalizedHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getDensityValues()),
+                              len(histogram.getBinBoundaries())-1 )
+
+        # Check the entity total histograms
+        num_response_functions = estimator.getNumberOfResponseFunctions()
+
+        for entity_id in entity_ids:
+          for i in range(0,num_response_functions):
+            histogram = estimator.getEntityTotalSampleMomentHistogram( entity_id, i )
+
+            self.assertSequenceEqual( list(histogram.getBinBoundaries()),
+                                      expected_histogram_bins )
+
+            self.assertEqual( histogram.getNumberOfScores(), 1 )
+            self.assertEqual( len(histogram.getHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getNormalizedHistogramValues()),
+                              len(histogram.getBinBoundaries())-1 )
+            self.assertEqual( len(histogram.getDensityValues()),
+                              len(histogram.getBinBoundaries())-1 )
+                              
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(StandardEntityEstimatorTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.StandardEntityEstimator.py
+#-----------------------------------------------------------------------------#

@@ -1,0 +1,282 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ScatteringCenterPropertiesDatabaseImpl class unit tests
+#  \file   tstData.ScatteringCenterPropertiesDatabaseImpl.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ScatteringCenterPropertiesDatabaseImpl class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ScatteringCenterPropertiesDatabaseImpl class
+class ScatteringCenterPropertiesDatabaseImplTestCase(unittest.TestCase):
+    "TestCase class for Data.ScatteringCenterPropertiesDatabaseImpl class"
+
+    def testInitializeAtomProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl initializeAtomProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1001) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1002) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1003) ) )
+
+        database.initializeAtomProperties( Data.H_ATOM, 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1001) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1002) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1003) ) )
+
+        # Check the other initialization signatures
+        atom_properties = database.initializeAtomProperties( Data.He_ATOM, 4.0 )
+        self.assertEqual( atom_properties.atom(), Data.He_ATOM )
+        self.assertEqual( atom_properties.atomicWeightRatio(), 4.0 )
+
+        atom_properties = database.initializeAtomPropertiesFromAtomicWeight( Data.Li_ATOM, 6.0 )
+        self.assertEqual( atom_properties.atom(), Data.Li_ATOM )
+        self.assertEqual( atom_properties.atomicWeight(), 6.0 )
+
+        atom_properties = database.initializeAtomProperties( Data.ZAID(5010), 10.0 )
+        self.assertEqual( atom_properties.atom(), Data.B_ATOM )
+        self.assertEqual( atom_properties.atomicWeightRatio(), 10.0 )
+
+        atom_properties = database.initializeAtomPropertiesFromAtomicWeight( Data.ZAID(6012), 12.0 )
+        self.assertEqual( atom_properties.atom(), Data.C_ATOM )
+        self.assertEqual( atom_properties.atomicWeight(), 12.0 )
+
+    def testGetAtomProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl getAtomProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1001) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1002) ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1003) ) )
+
+        database.initializeAtomPropertiesFromAtomicWeight( Data.H_ATOM, 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1001) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1002) ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1003) ) )
+
+        atom_properties = database.getAtomProperties( Data.H_ATOM )
+        self.assertEqual( atom_properties.atom(), Data.H_ATOM )
+        self.assertEqual( atom_properties.atomicWeight(), 1.0 )
+        # self.assertTrue( atom_properties.photoatomicDataAvailable(Data.PhotoatomicDataProperties.ACE_EPR_FILE) )
+
+    def testInitializeNuclideProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl initializeNuclideProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        # Check the other initialization signatures
+        nuclide_properties = database.initializeNuclideProperties( Data.ZAID(1002), 2.0 )
+        self.assertEqual( nuclide_properties.zaid(), Data.ZAID(1002))
+        self.assertEqual( nuclide_properties.atomicWeightRatio(), 2.0 )
+
+        nuclide_properties = database.initializeNuclideProperties( Data.ZAID(1003), 3.0 )
+        self.assertEqual( nuclide_properties.zaid(), Data.ZAID(1003))
+        self.assertEqual( nuclide_properties.atomicWeightRatio(), 3.0 )
+
+    def testGetNuclideProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl getNuclideProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        nuclide_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        self.assertEqual( nuclide_properties.zaid(), Data.ZAID(1001) )
+        self.assertEqual( nuclide_properties.atomicWeightRatio(), 1.0 )
+
+    def testRemoveAtomProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl removeAtomProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        database.initializeAtomProperties( Data.H_ATOM, 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        database.removeAtomProperties( Data.H_ATOM )
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        database.initializeAtomProperties( Data.ZAID(1000), 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        database.removeAtomProperties( Data.ZAID(1000) )
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+    def testRemoveNuclideProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl removeNuclideProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        database.removeNuclideProperties( Data.ZAID(1001) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+    def testRemoveEmptyProperties(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl removeEmptyProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        database.initializeAtomProperties( Data.H_ATOM, 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1002) ) )
+
+        h2_properties = database.initializeNuclideProperties( Data.ZAID(1002), 2.0 )
+
+        test_data = ACE.ACENuclearDataProperties(
+                                    1.0,
+                                    2.5301e-8,
+                                    "neutron_data/h_data.txt",
+                                    10,
+                                    "1002.70c" )
+
+        h2_properties.setNuclearDataProperties( test_data )
+
+        database.removeEmptyProperties()
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertTrue( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1002) ) )
+
+        database.removeEmptyProperties( True )
+
+        self.assertFalse( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertFalse( database.doAtomPropertiesExist( Data.ZAID(1000) ) )
+        self.assertFalse( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1002) ) )
+
+    def testListAtoms(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl getNuclideProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        database.initializeAtomProperties( Data.H_ATOM, 1.0 )
+        database.initializeAtomProperties( Data.He_ATOM, 4.0 )
+
+        oss = database.listAtomsAsString()
+        self.assertTrue( oss.find( "H" ) < len(oss) )
+        self.assertTrue( oss.find( "He" ) < len(oss) )
+
+    def testListZaids(self):
+        "*Test Data.ScatteringCenterPropertiesDatabaseImpl getNuclideProperties"
+        database = Data.ScatteringCenterPropertiesDatabaseImpl()
+
+        database.initializeNuclideProperties( Data.ZAID(1000), 1.0 )
+        database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+        database.initializeNuclideProperties( Data.ZAID(2000), 4.0 )
+        database.initializeNuclideProperties( Data.ZAID(2004), 4.0 )
+
+
+        oss = database.listZaidsAsString()
+
+        self.assertTrue( oss.find( "1000" ) < len(oss) )
+        self.assertTrue( oss.find( "1001" ) < len(oss) )
+        self.assertTrue( oss.find( "2000" ) < len(oss) )
+        self.assertTrue( oss.find( "2004" ) < len(oss) )
+
+        oss = database.listZaidsAsString( Data.H_ATOM )
+
+        self.assertTrue( oss.find( "1000" ) < len(oss) )
+        self.assertTrue( oss.find( "1001" ) < len(oss) )
+        self.assertTrue( oss.find( "2000" ) == -1 )
+        self.assertTrue( oss.find( "2004" ) == -1 )
+
+        oss = database.listZaidsAsString( Data.He_ATOM )
+
+        self.assertTrue( oss.find( "1000" ) == -1 )
+        self.assertTrue( oss.find( "1001" ) == -1 )
+        self.assertTrue( oss.find( "2000" ) < len(oss) )
+        self.assertTrue( oss.find( "2004" ) < len(oss) )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ScatteringCenterPropertiesDatabaseImplTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ScatteringCenterPropertiesDatabaseImpl.py
+#-----------------------------------------------------------------------------#

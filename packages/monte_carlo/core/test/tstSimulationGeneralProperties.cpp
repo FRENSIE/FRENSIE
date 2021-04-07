@@ -9,201 +9,272 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test the simulation properties defaults
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, defaults )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
 {
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
-                      0 );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
-		      0.001 );
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::displayWarnings() );
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
-
+  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(),
+                       Utility::QuantityTraits<double>::inf() );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxRendezvousBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfBatchesPerRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 1 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfSnapshotsPerBatch(), 1 );
+  FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the particle mode can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
 {
-  MonteCarlo::ParticleModeType default_mode = 
-    MonteCarlo::SimulationGeneralProperties::getParticleMode();
-
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_MODE);
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_MODE );
-
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::PHOTON_MODE );
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::PHOTON_MODE );
-
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( 
-						   MonteCarlo::ELECTRON_MODE );
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::ELECTRON_MODE );
-
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( 
-					     MonteCarlo::NEUTRON_PHOTON_MODE );
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
-
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( 
-					    MonteCarlo::PHOTON_ELECTRON_MODE );
-
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::PHOTON_ELECTRON_MODE );
+  MonteCarlo::SimulationGeneralProperties properties;
   
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( 
-				    MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+  properties.setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_MODE );
 
-  MonteCarlo::SimulationGeneralProperties::setParticleMode( default_mode );
+  properties.setParticleMode( MonteCarlo::PHOTON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(), MonteCarlo::PHOTON_MODE );
+
+  properties.setParticleMode( MonteCarlo::ELECTRON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::ELECTRON_MODE );
+
+  properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
+
+  properties.setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::PHOTON_ELECTRON_MODE );
+
+  properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+
+  properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  properties.setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
+
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
+                       MonteCarlo::ADJOINT_ELECTRON_MODE );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the wall time can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setSimulationWallTime )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
+  
+  properties.setSimulationWallTime( 300.0 );
+
+  FRENSIE_CHECK_EQUAL( properties.getSimulationWallTime(), 300.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of histories to run can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 {
-  unsigned long long default_value = 
-    MonteCarlo::SimulationGeneralProperties::getNumberOfHistories();
-
-  MonteCarlo::SimulationGeneralProperties::setNumberOfHistories( 1000000000 );
+  MonteCarlo::SimulationGeneralProperties properties;
   
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::getNumberOfHistories() !=
-	       default_value );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
-		      1000000000 );
+  properties.setNumberOfHistories( 1000000000 );
+
+  FRENSIE_CHECK_EQUAL(properties.getNumberOfHistories(), 1000000000 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the surface flux angle cosine cutoff can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, 
-		   setSurfaceFluxEstimatorAngleCosineCutoff )
+// Test that the min number of rendezvous can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMinNumberOfRendezvous )
 {
-  double default_value = 
-    MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
+  properties.setMinNumberOfRendezvous( 10 );
 
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.1 );
-
-  // Reset to the default
-  MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfRendezvous(), 10 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the min particle energy can be returned
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, getMinParticleEnergy )
+// Test that the max rendezvous batch size can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMaxRendezvousBatchSize )
 {
-  double default_value_neutron = 
-    MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy();
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( 1e-8 );
-  
-  double default_value_photon = 
-    MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy();
+  properties.setMaxRendezvousBatchSize( 1000000 );
 
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( 1e-2 );
-  
-  double default_value_electron = 
-    MonteCarlo::SimulationElectronProperties::getMinElectronEnergy();
-
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( 1e-2 );
-
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::NeutronState>(),
-		 1e-8 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::PhotonState>(),
-		 1e-2 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMinParticleEnergy<MonteCarlo::ElectronState>(),
-		 1e-2 );
-
-  // Reset the default values
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( default_value_neutron );
-  MonteCarlo::SimulationPhotonProperties::setMinPhotonEnergy( default_value_photon );
-  MonteCarlo::SimulationElectronProperties::setMinElectronEnergy( default_value_electron );
+  FRENSIE_CHECK_EQUAL( properties.getMaxRendezvousBatchSize(), 1000000 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the max particle energy can be returned
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, getMaxParticleEnergy )
+// Test that the min number of batches per rendezvous can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties,
+                   setMinNumberOfBatchesPerRendezvous )
 {
-  double default_value_neutron = 
-    MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy();
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( 15.0 );
-  
-  double default_value_photon = 
-    MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy();
+  properties.setMinNumberOfBatchesPerRendezvous( 20 );
 
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( 15.0 );
-  
-  double default_value_electron = 
-    MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy();
-
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( 15.0 );
-
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::NeutronState>(),
-		 15.0 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::PhotonState>(),
-		 15.0 );
-  TEST_EQUALITY( MonteCarlo::SimulationGeneralProperties::getMaxParticleEnergy<MonteCarlo::ElectronState>(),
-		 15.0 );
-
-  // Reset the default values
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( default_value_neutron );
-  MonteCarlo::SimulationPhotonProperties::setMaxPhotonEnergy( default_value_photon );
-  MonteCarlo::SimulationElectronProperties::setMaxElectronEnergy( default_value_electron );
+  FRENSIE_CHECK_EQUAL( properties.getMinNumberOfBatchesPerRendezvous(), 20 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that warnings can be disabled
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setWarningsOff )
+// Test that the max batch size can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setMaxBatchSize )
 {
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::displayWarnings() );
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationGeneralProperties::setWarningsOff();
+  properties.setMaxBatchSize( 100000 );
 
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::displayWarnings() );
+  FRENSIE_CHECK_EQUAL( properties.getMaxBatchSize(), 100000 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that implicit capture mode can be turned on
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOn )
+// Test that the number of batches per MPI process can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
 {
-  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
+  MonteCarlo::SimulationGeneralProperties properties;
 
-  MonteCarlo::SimulationGeneralProperties::setImplicitCaptureModeOn();
+  properties.setNumberOfBatchesPerProcessor( 2 );
 
-  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 2 );
 }
 
 //---------------------------------------------------------------------------//
-// Test that the number of batches per processor can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
+// Test that the number of snapshots per batch can be set
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfSnapshotsPerBatch )
 {
-  MonteCarlo::SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 25 );
+  MonteCarlo::SimulationGeneralProperties properties;
+
+  properties.setNumberOfSnapshotsPerBatch( 2 );
+
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfSnapshotsPerBatch(), 2 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that implicit capture mode can be turned on/off
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
+{
+  MonteCarlo::SimulationGeneralProperties properties;
   
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor(),
-    25 );
+  properties.setImplicitCaptureModeOn();
+
+  FRENSIE_CHECK( properties.isImplicitCaptureModeOn() );
+
+  properties.setAnalogueCaptureModeOn();
+
+  FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_simulation_general_props" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::SimulationGeneralProperties default_properties;
+
+    MonteCarlo::SimulationGeneralProperties custom_properties;
+    custom_properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    custom_properties.setSimulationWallTime( 300.0 );
+    custom_properties.setNumberOfHistories( 1000000000 );
+    custom_properties.setMinNumberOfRendezvous( 2 );
+    custom_properties.setMaxRendezvousBatchSize( 500000000 );
+    custom_properties.setMinNumberOfBatchesPerRendezvous( 5 );
+    custom_properties.setMaxBatchSize( 100000000 );
+    custom_properties.setNumberOfBatchesPerProcessor( 25 );
+    custom_properties.setNumberOfSnapshotsPerBatch( 3 );
+    custom_properties.setImplicitCaptureModeOn();
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::SimulationGeneralProperties default_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
+
+  FRENSIE_CHECK_EQUAL( default_properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_MODE );
+  FRENSIE_CHECK_EQUAL( default_properties.getSimulationWallTime(),
+                       Utility::QuantityTraits<double>::inf() );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinNumberOfRendezvous(), 1 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxRendezvousBatchSize(),
+                       1000000000 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinNumberOfBatchesPerRendezvous(),
+                       1 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxBatchSize(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfBatchesPerProcessor(), 1 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfSnapshotsPerBatch(), 1 );
+  FRENSIE_CHECK( !default_properties.isImplicitCaptureModeOn() );
+
+  MonteCarlo::SimulationGeneralProperties custom_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
+
+  FRENSIE_CHECK_EQUAL( custom_properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
+  FRENSIE_CHECK_EQUAL( custom_properties.getSimulationWallTime(), 300.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfHistories(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinNumberOfRendezvous(), 2 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxRendezvousBatchSize(),
+                       500000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinNumberOfBatchesPerRendezvous(),
+                       5 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxBatchSize(), 100000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfBatchesPerProcessor(), 25 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfSnapshotsPerBatch(), 3 );
+  FRENSIE_CHECK( custom_properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//

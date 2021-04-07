@@ -9,19 +9,23 @@
 #ifndef MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
 #define MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The massive particle state class
-class MassiveParticleState : public ParticleState
+class MassiveParticleState : public MonteCarlo::ParticleState
 {
 
 private:
-  
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -30,11 +34,13 @@ public:
 
   //! Constructor
   MassiveParticleState( const historyNumberType history_number,
-			const ParticleType type );
+			const ParticleType type,
+			const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   MassiveParticleState( const ParticleState& existing_base_state,
 			const ParticleType new_type,
+			const chargeType new_charge,
 			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
@@ -42,6 +48,7 @@ public:
   //! Copy constructor (with possible creation of new generation)
   MassiveParticleState( const MassiveParticleState& existing_state,
 			const ParticleType new_type,
+			const chargeType new_charge,
 			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
@@ -84,8 +91,9 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MassiveParticleState );
-BOOST_CLASS_VERSION( MonteCarlo::MassiveParticleState, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( MassiveParticleState, MonteCarlo );
+BOOST_SERIALIZATION_CLASS_VERSION( MassiveParticleState, MonteCarlo, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, MassiveParticleState );
 
 #endif // end MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
 

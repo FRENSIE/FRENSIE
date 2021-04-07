@@ -25,14 +25,14 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
+
   double energy = 2.5e-8; // MeV
   double atomic_weight_ratio = 0.999167;
   double temperature = 2.5301e-8; // MeV
   double convergence_tol = 0.0001;
-  
+
   // Set up the command line options
   Teuchos::CommandLineProcessor sab_clp;
 
@@ -82,15 +82,15 @@ int main( int argc, char** argv )
 
   distribution[0].first = 0.0;
   distribution[0].second = isotropic_distribution;
-  
+
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> 
-    scattering_distribution( 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+    scattering_distribution(
 			 new MonteCarlo::NuclearScatteringAngularDistribution(
 							      distribution ) );
-  
+
   // Create the S(alpha,beta,E) function object
   DataGen::FreeGasElasticSAlphaBetaFunction sab_function(
 						       cross_section,
@@ -99,17 +99,17 @@ int main( int argc, char** argv )
 						       temperature );
 
   // Create the function wrappers
-  boost::function<double (double beta, double alpha)> sab_function_wrapper = 
+  boost::function<double (double beta, double alpha)> sab_function_wrapper =
     boost::bind<double>( boost::ref(sab_function), _2, _1, energy );
-					   
-  boost::function<double (double beta)> alpha_min_wrapper = 
+
+  boost::function<double (double beta)> alpha_min_wrapper =
     boost::bind<double>( Utility::calculateAlphaMin,
 			 energy,
 			 _1,
 			 atomic_weight_ratio,
 			 temperature );
 
-  boost::function<double (double beta)> alpha_max_wrapper = 
+  boost::function<double (double beta)> alpha_max_wrapper =
     boost::bind<double>( Utility::calculateAlphaMax,
 			 energy,
 			 _1,
@@ -126,14 +126,14 @@ int main( int argc, char** argv )
   Teuchos::Array<double> initial_beta_grid( 2 );
   initial_beta_grid[0] = beta_min;
   initial_beta_grid[1] = -beta_min;
-  
+
   Teuchos::Array<double> linear_beta_grid;
   Teuchos::Array<Teuchos::Array<double> > linear_alpha_grids;
 
   // Generate the alpha and beta grids
   *out << "Generating alpha and beta grids...";
   out->flush();
-    
+
   sab_grid_generator.generate( linear_beta_grid,
 			       linear_alpha_grids,
 			       initial_beta_grid,
@@ -147,7 +147,7 @@ int main( int argc, char** argv )
 
   // Print out the beta grid
   *out << "Beta Grid: ";
-  
+
   for( unsigned i = 0; i < linear_beta_grid.size(); ++i )
     *out << linear_beta_grid[i] << " ";
   *out << std::endl;
@@ -159,10 +159,10 @@ int main( int argc, char** argv )
     for( unsigned j = 0; j < linear_alpha_grids[i].size(); ++j )
       *out << linear_alpha_grids[i][j] << " ";
     *out << std::endl;
-    
+
     for( unsigned j = 0; j < linear_alpha_grids[i].size(); ++j )
     {
-      *out << sab_function( linear_alpha_grids[i][j], 
+      *out << sab_function( linear_alpha_grids[i][j],
 			    linear_beta_grid[i],
 			    energy )
 	   << " ";

@@ -14,7 +14,7 @@
 #include <Teuchos_LAPACK.hpp>
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -68,7 +68,7 @@ Matrix<ScalarType> computeMatrixInverse( const Matrix<ScalarType> &matrix )
 		rows,
 		ipiv,
 		&success );
-  
+
   // Work array
   ScalarType work[3];
 
@@ -94,7 +94,7 @@ Vector<ScalarType> solveSystem( const Matrix<ScalarType> &A,
 {
   // The matrix must be nonsingular
   testPrecondition( A.isNonsingular() );
-  
+
   Matrix<ScalarType> A_inverse = computeMatrixInverse( A );
   Vector<ScalarType> b_copy( b );
 
@@ -109,7 +109,7 @@ Vector<ScalarType> solveSystem( const Matrix<ScalarType> &A,
 }
 
 /* Compute the eigenvalues and eigenvectors of a symmetric 3x3 matrix
- * 
+ *
  * A symmetric matrix must be given so that the eigenvalues will be real.
  */
 template<typename ScalarType>
@@ -217,7 +217,7 @@ void realignEigenvectors( Vector<ScalarType> &eigenvalues,
   ScalarType eigenvalue_2 = eigenvalues[2];
   ScalarType repeated_eigenvalue, distinct_eigenvalue;
   Utility::Axis current_alignment_axis;
-  
+
   if( ST::magnitude( eigenvalue_0 - eigenvalue_1 ) < ST::prec() )
   {
     repeated_eigenvalue = eigenvalue_0;
@@ -236,47 +236,47 @@ void realignEigenvectors( Vector<ScalarType> &eigenvalues,
     distinct_eigenvalue = eigenvalue_0;
     current_alignment_axis = Utility::X_AXIS;
   }
-  else 
+  else
     current_alignment_axis = Utility::UNDEFINED_AXIS;
 
   if( current_alignment_axis != alignment_axis )
   {
-    if( current_alignment_axis == Utility::X_AXIS && 
+    if( current_alignment_axis == Utility::X_AXIS &&
 	alignment_axis == Utility::Y_AXIS )
     {
       eigenvalues[0] = repeated_eigenvalue;
       eigenvalues[1] = distinct_eigenvalue;
       eigenvectors.swapColumns( 0, 1 );
     }
-    else if( current_alignment_axis == Utility::X_AXIS && 
+    else if( current_alignment_axis == Utility::X_AXIS &&
 	     alignment_axis == Utility::Z_AXIS )
     {
       eigenvalues[0] = repeated_eigenvalue;
       eigenvalues[2] = distinct_eigenvalue;
       eigenvectors.swapColumns( 0, 2 );
     }
-    else if( current_alignment_axis == Utility::Y_AXIS && 
+    else if( current_alignment_axis == Utility::Y_AXIS &&
 	     alignment_axis == Utility::X_AXIS )
     {
       eigenvalues[1] = repeated_eigenvalue;
       eigenvalues[0] = distinct_eigenvalue;
       eigenvectors.swapColumns( 1, 0 );
     }
-    else if( current_alignment_axis == Utility::Y_AXIS && 
+    else if( current_alignment_axis == Utility::Y_AXIS &&
 	     alignment_axis == Utility::Z_AXIS )
     {
       eigenvalues[1] = repeated_eigenvalue;
       eigenvalues[2] = distinct_eigenvalue;
       eigenvectors.swapColumns( 1, 2 );
     }
-    else if( current_alignment_axis == Utility::Z_AXIS && 
+    else if( current_alignment_axis == Utility::Z_AXIS &&
 	     alignment_axis == Utility::X_AXIS )
     {
       eigenvalues[2] = repeated_eigenvalue;
       eigenvalues[0] = distinct_eigenvalue;
       eigenvectors.swapColumns( 2, 0 );
     }
-    else if( current_alignment_axis == Utility::Z_AXIS && 
+    else if( current_alignment_axis == Utility::Z_AXIS &&
 	     alignment_axis == Utility::Y_AXIS )
     {
       eigenvalues[2] = repeated_eigenvalue;

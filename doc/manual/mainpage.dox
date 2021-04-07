@@ -11,9 +11,6 @@
  *  <li> \subpage developer_manual "Developer's Manual" </li>
  * </ul>
  *
- * All feedback and questions regarding the manual should be directed to
- * <a href=https://github.com/aprobinson>Alex Robinson</a>.
- * 
  * Further Reading:
  * <ul>
  *  <li> \ref installation "Installation"
@@ -24,29 +21,29 @@
  * </ul>
  */
 
-/* \mainpage Overview, Theory and Usage 
+/* \mainpage Overview, Theory and Usage
  * One of the
  * key features of any research code is extensibility and accommodating the
  * development of extensible software is one of the priorities of FRENSIE.
- * The Forward Adjoint Continuous Energy Monte Carlo (FACEMC) code is a 
+ * The Forward Adjoint Continuous Energy Monte Carlo (FACEMC) code is a
  * shielding code that can be used to model experiments and devices with a
  * virtually limitless level of detail. A unique feature of this code is its
  * ability to model photons and neutrons (and charged particles in the future)
  * in the adjoint on a continuous energy scale. This ability can add an extra
  * degree of freedom when conducting analyses of experiments and devices. The
  * adjoint information that is generated can also be independently useful
- * depending on the calculation that is being done. 
+ * depending on the calculation that is being done.
  *
  * This manual is divided into the following sections:
  * <ol>
- *  <li> \subpage intro 
- *  <li> \subpage mc_theory 
- *  <li> \subpage photon_transport 
- *  <li> \subpage neutron_transport 
- *  <li> \subpage charged_particle_transport 
- *  <li> \subpage code_design 
+ *  <li> \subpage intro
+ *  <li> \subpage mc_theory
+ *  <li> \subpage photon_transport
+ *  <li> \subpage neutron_transport
+ *  <li> \subpage charged_particle_transport
+ *  <li> \subpage code_design
  *  <li> \subpage beginner u
- *  <li> \subpage advanced 
- *  <li> \subpage examples 
+ *  <li> \subpage advanced
+ *  <li> \subpage examples
  * </ol>
  */

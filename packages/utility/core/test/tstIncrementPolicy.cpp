@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( IgnoreIncrementPolicy, increment, T )
   T counter;
 
   initializeCounter( counter );
-  
+
   Utility::IgnoreIncrementPolicy::increment( counter );
 
   unsigned long long raw_counter = counter;
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( IncrementPolicy, increment, T )
   T counter;
 
   initializeCounter( counter );
-  
+
   Utility::IncrementPolicy::increment( counter );
 
   unsigned long long raw_counter = counter;

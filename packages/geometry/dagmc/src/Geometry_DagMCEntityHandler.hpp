@@ -3,7 +3,7 @@
 //! \file   Geometry_DagMCEntityHandler.hpp
 //! \author Alex Robinson
 //! \brief  The DagMC entity handler class declaration
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef GEOMETRY_DAGMC_ENTITY_HANDLER_HPP
@@ -17,7 +17,7 @@ namespace Geometry{
 //! The DagMCEntityHandler class
 class DagMCEntityHandler
 {
-  
+
 public:
 
   //! Constructor
@@ -48,7 +48,7 @@ protected:
   bool doesEntityHandleExist( const moab::EntityHandle entity_handle ) const;
 
 private:
-  
+
   // The entities
   moab::Range d_entities;
 };

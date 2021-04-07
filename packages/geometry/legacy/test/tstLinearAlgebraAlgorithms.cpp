@@ -38,7 +38,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
   Geometry::Vector<ScalarType> vector_a( 1.0, 0.0, 0.0 );
   Geometry::Vector<ScalarType> vector_b( 1.0, 1.0, 1.0 );
 
-  Geometry::Vector<ScalarType> cross_product = 
+  Geometry::Vector<ScalarType> cross_product =
     Geometry::LinearAlgebra::computeCrossProduct( vector_a, vector_b );
 
   Geometry::Vector<ScalarType> ref_cross_product( 0.0, -1.0, 1.0 );
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // cross product of x-axis and y-axis
-  cross_product = Geometry::LinearAlgebra::computeCrossProduct( 
+  cross_product = Geometry::LinearAlgebra::computeCrossProduct(
 				     Geometry::createXAxisVector<ScalarType>(),
 				     Geometry::createYAxisVector<ScalarType>() );
 
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // cross product of y-axis and z-axis
-  cross_product = Geometry::LinearAlgebra::computeCrossProduct( 
+  cross_product = Geometry::LinearAlgebra::computeCrossProduct(
 				     Geometry::createYAxisVector<ScalarType>(),
 				     Geometry::createZAxisVector<ScalarType>() );
   ref_cross_product = Geometry::createXAxisVector<ScalarType>();
@@ -69,10 +69,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // cross product of x-axis and z-axis
-  cross_product = Geometry::LinearAlgebra::computeCrossProduct( 
+  cross_product = Geometry::LinearAlgebra::computeCrossProduct(
 				     Geometry::createXAxisVector<ScalarType>(),
 				     Geometry::createZAxisVector<ScalarType>() );
-  ref_cross_product = 
+  ref_cross_product =
     Geometry::createYAxisVector<ScalarType>( Utility::NEGATIVE_DIRECTION );
 
   TEST_COMPARE_FLOATING_ARRAYS( cross_product,
@@ -84,7 +84,7 @@ UNIT_TEST_INSTANTIATION( LinearAlgebra, computeCrossProduct );
 
 //---------------------------------------------------------------------------//
 // Check that the inverse of a matrix can be computed
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   computeMatrixInverse,
 				   ScalarType )
 {
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
   Geometry::Matrix<ScalarType> ref_identity_matrix;
   ref_identity_matrix.identity();
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( 
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS(
 				   identity_matrix(),
 				   ref_identity_matrix(),
 				   Teuchos::ScalarTraits<ScalarType>::prec() );
@@ -110,7 +110,7 @@ UNIT_TEST_INSTANTIATION( LinearAlgebra, computeMatrixInverse );
 
 //---------------------------------------------------------------------------//
 // Check that a 3x3 system of equations can be solved
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   solveSystem,
 				   ScalarType )
 {
@@ -123,8 +123,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 
   Geometry::Vector<ScalarType> ref_x( 1.0, 1.0, 1.0 );
 
-  TEST_COMPARE_FLOATING_ARRAYS( x(), 
-				ref_x(), 
+  TEST_COMPARE_FLOATING_ARRAYS( x(),
+				ref_x(),
 				2*Teuchos::ScalarTraits<ScalarType>::prec() );
 }
 
@@ -137,11 +137,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   ScalarType )
 {
   // Positive-definite matrix
-  Geometry::Matrix<ScalarType> coefficient_matrix( 3.0, 
+  Geometry::Matrix<ScalarType> coefficient_matrix( 3.0,
 						 0.0, 2.0,
 						 0.0, 0.0, 1.0 );
 
-  Geometry::Vector<ScalarType> eigenvalues = 
+  Geometry::Vector<ScalarType> eigenvalues =
     Geometry::LinearAlgebra::computeEigenvalues( coefficient_matrix );
 
   Geometry::Vector<ScalarType> ref_eigenvalues( 1.0, 2.0, 3.0 );
@@ -151,11 +151,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Negative-definite matrix
-  coefficient_matrix = Geometry::createMatrix<ScalarType>( -3.0, 
-							  0.0, -2.0, 
+  coefficient_matrix = Geometry::createMatrix<ScalarType>( -3.0,
+							  0.0, -2.0,
 							  0.0, 0.0, -1.0 );
   eigenvalues = Geometry::LinearAlgebra::computeEigenvalues( coefficient_matrix);
-  
+
   ref_eigenvalues = Geometry::createVector<ScalarType>( -3.0, -2.0, -1.0 );
 
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues(),
@@ -167,17 +167,17 @@ UNIT_TEST_INSTANTIATION( LinearAlgebra, computeEigenvalues );
 
 //---------------------------------------------------------------------------//
 // Check that the eigenvectors of a 3x3 symmetric matrix can be computed
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   computeEigenvaluesAndEigenvectors,
 				   ScalarType )
 {
   // Positive-definite matrix
-  Geometry::Matrix<ScalarType> coef_matrix( 3.0, 
+  Geometry::Matrix<ScalarType> coef_matrix( 3.0,
 					  0.0, 2.0,
 					  0.0, 0.0, 1.0 );
   Geometry::Matrix<ScalarType> eigenvectors;
 
-  Geometry::Vector<ScalarType> eigenvalues = 
+  Geometry::Vector<ScalarType> eigenvalues =
     Geometry::LinearAlgebra::computeEigenvaluesAndEigenvectors( coef_matrix,
 							      eigenvectors );
 
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 					       0.0, 1.0, 0.0,
 					       1.0, 0.0, 0.0 );
   Geometry::Vector<ScalarType> ref_eigenvalues( 1.0, 2.0, 3.0 );
-  
+
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues(),
 				ref_eigenvalues(),
 				Teuchos::ScalarTraits<ScalarType>::prec() );
@@ -194,10 +194,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Negative-definite matrix
-  coef_matrix = Geometry::createMatrix<ScalarType>( -3.0, 
+  coef_matrix = Geometry::createMatrix<ScalarType>( -3.0,
 						   0.0, -2.0,
 						   0.0, 0.0, -1.0 );
-  eigenvalues = 
+  eigenvalues =
     Geometry::LinearAlgebra::computeEigenvaluesAndEigenvectors( coef_matrix,
 							     eigenvectors );
 
@@ -209,14 +209,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_COMPARE_FLOATING_ARRAYS( eigenvectors(),
 				ref_eigenvectors(),
-				Teuchos::ScalarTraits<ScalarType>::prec() );  
+				Teuchos::ScalarTraits<ScalarType>::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( LinearAlgebra, computeEigenvaluesAndEigenvectors );
 
 //---------------------------------------------------------------------------//
 // Check that eigenvectors can be aligned with the desired axis
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   realignEigenvectors,
 				   ScalarType )
 {
@@ -238,7 +238,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
   // z-axis alignment to y-axis alignment
   eigenvalues = Geometry::createVector<ScalarType>( 1.0, 1.0, 2.0 );
   eigenvectors.identity();
-  
+
   Geometry::LinearAlgebra::realignEigenvectors( eigenvalues,
 					      eigenvectors,
 					      Utility::Y_AXIS );
@@ -286,7 +286,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
   ref_eigenvectors.swapColumns( 0, 1 );
 
   TEST_EQUALITY( eigenvectors, ref_eigenvectors );
-  
+
   // x-axis alignment to z-axis alignment
   eigenvalues = Geometry::createVector<ScalarType>( 2.0, 1.0, 1.0 );
   eigenvectors.identity();

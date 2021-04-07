@@ -12,23 +12,22 @@
 // Boost Includes
 #include <boost/bind.hpp>
 
-// Trilinos Includes
-#include <Teuchos_Tuple.hpp>
-
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ComparePolicy.hpp"
-#include "Utility_ContractException.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
+#include "Utility_ComparisonPolicy.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const std::shared_ptr<Utility::UnivariateDistribution>&
 	  zero_temp_elastic_cross_section,
-          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT,
@@ -50,17 +49,17 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  
+
   updateCachedValues();
 }
 
 // Set the beta and energy values
-void FreeGasElasticMarginalBetaFunction::setIndependentVariables( 
+void FreeGasElasticMarginalBetaFunction::setIndependentVariables(
 							       const double E )
 {
   // Make sure the energy is valid
   testPrecondition( E > 0.0 );
-  
+
   d_E = E;
 
   updateCachedValues();
@@ -149,7 +148,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
   testPrecondition( beta >= d_beta_min );
 
   // Find the nearest cached evaluation of cdf
-  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point = 
+  std::list<std::pair<double,double> >::iterator lower_cdf_point =
     d_cached_cdf_values.begin();
 
   lower_cdf_point = Utility::Search::binaryLowerBound<Utility::FIRST>(
@@ -169,7 +168,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
   cdf_value += lower_cdf_point->second;
 
   // Cache the new cdf value
-  Utility::Pair<double,double> new_cdf_point( beta, cdf_value );
+  std::pair<double,double> new_cdf_point( beta, cdf_value );
 
   d_cached_cdf_values.insert( ++lower_cdf_point, new_cdf_point );
 
@@ -180,13 +179,13 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 // Update the cached values
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
-  d_beta_min = Utility::calculateBetaMin( d_E, d_kT );
-  double beta_max = Utility::calculateBetaMax( d_A );
+  d_beta_min = MonteCarlo::calculateBetaMin( d_E, d_kT );
+  double beta_max = MonteCarlo::calculateBetaMax( d_A );
   
   // Calculate the norm constant
   double norm_constant_error;
 
-  boost::function<double (double beta)> d_integrated_sab_function = 
+  boost::function<double (double beta)> d_integrated_sab_function =
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
 
   std::vector<double> energy_setpoints{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6, 2e-6, 4.625e-6, 5e-6};
@@ -231,12 +230,11 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   // Reset the cached cdf values
   d_cached_cdf_values.clear();
 
-  Utility::Pair<double,double> cdf_point( d_beta_min, 0.0 );
-  d_cached_cdf_values.push_back( cdf_point );
+  // Add cdf point at beta min
+  d_cached_cdf_values.push_back( std::make_pair(d_beta_min, 0.0) );
 
-  cdf_point( std::numeric_limits<double>::infinity(), 1.0 );
-
-  d_cached_cdf_values.push_back( cdf_point );
+  // Add cdf point at beta max
+  d_cached_cdf_values.push_back( std::make_pair(std::numeric_limits<double>::infinity(), 1.0) );
 }
 
 // Function that represents the integral of S(alpha,beta) over all alpha
@@ -245,23 +243,44 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
 {
   // Make sure beta is valid
   testPrecondition( beta >= d_beta_min );
-  
-  double alpha_min = Utility::calculateAlphaMin( d_E, beta, d_A, d_kT );
-  double alpha_max = Utility::calculateAlphaMax( d_E, beta, d_A, d_kT );
+
+  double alpha_min = MonteCarlo::calculateAlphaMin( d_E, beta, d_A, d_kT );
+  double alpha_max = MonteCarlo::calculateAlphaMax( d_E, beta, d_A, d_kT );
 
   double function_value, function_value_error;
-  
-  boost::function<double (double alpha)> sab_function_wrapper = 
+
+  boost::function<double (double alpha)> sab_function_wrapper =
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
-  
-  d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-  					  alpha_min,
-  					  alpha_max,
-  					  function_value,
-  					  function_value_error );
+
+  // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
+  // 					  alpha_min,
+  // 					  alpha_max,
+  // 					  function_value,
+  // 					  function_value_error );
+
+  if( beta < 0.0 && beta > d_beta_min )
+  {
+    std::array<double,3> array({alpha_min, -beta, alpha_max});
+    Utility::ArrayView<double> points_of_interest( array );
+
+    d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
+						  points_of_interest,
+						  function_value,
+						  function_value_error );
+  }
+  else
+  {
+    d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
+					    alpha_min,
+					    alpha_max,
+					    function_value,
+					    function_value_error );
+  }
+
+  std::cout << beta << " " << function_value << std::endl;
 
   // Make sure the return value is valid
-  testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(function_value));
+  testPostcondition(!Utility::QuantityTraits<double>::isnaninf(function_value));
 
   return function_value;
 }

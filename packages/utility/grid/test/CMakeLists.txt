@@ -1,0 +1,15 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_grid)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(GridGenerator DEPENDS tstGridGenerator.cpp)
+FRENSIE_ADD_TEST(GridGenerator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDGridGenerator DEPENDS tstTwoDGridGenerator.cpp)
+FRENSIE_ADD_TEST(TwoDGridGenerator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardHashBasedGridSearcher DEPENDS tstStandardHashBasedGridSearcher.cpp)
+FRENSIE_ADD_TEST(StandardHashBasedGridSearcher)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_grid)
+

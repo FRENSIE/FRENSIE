@@ -1,0 +1,166 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationPhotonProperties class unit tests
+#  \file   tstMonteCarlo.SimulationPhotonProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationPhotonProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationPhotonProperties class
+class SimulationPhotonPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationPhotonProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationPhotonProperties defaults"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        self.assertEqual( properties.getAbsoluteMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getKahnSamplingCutoffEnergy(), 3.0 )
+        self.assertEqual( properties.getNumberOfPhotonHashGridBins(), 1000 )
+        self.assertEqual( properties.getIncoherentModelType(),
+		       MonteCarlo.COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL )
+        self.assertTrue(properties.isAtomicRelaxationModeOn() )
+        self.assertFalse(properties.isDetailedPairProductionModeOn() )
+        self.assertFalse(properties.isPhotonuclearInteractionModeOn() )
+        self.assertEqual( properties.getPhotonRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getPhotonRouletteSurvivalWeight(), 0.0 )
+
+    def testSetMinPhotonEnergy(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setMinPhotonEnergy"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setMinPhotonEnergy( 1e-2 )
+        self.assertEqual( properties.getMinPhotonEnergy(), 1e-2 )
+
+    def testSetMaxPhotonEnergy(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setMaxPhotonEnergy"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setMaxPhotonEnergy( 15.0 )
+        self.assertEqual( properties.getMaxPhotonEnergy(), 15.0 )
+
+    def testSetKahnSamplingCutoffEnergy(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setKahnSamplingCutoffEnergy"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setKahnSamplingCutoffEnergy( 2.5 )
+        self.assertEqual( properties.getKahnSamplingCutoffEnergy(), 2.5 )
+
+    def testSetNumberOfPhotonHashGridBins(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setNumberOfPhotonHashGridBins"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setNumberOfPhotonHashGridBins( 500 )
+        self.assertEqual( properties.getNumberOfPhotonHashGridBins(), 500 )
+
+    def testSetIncoherentModelType(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setIncoherentModelType"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setIncoherentModelType( MonteCarlo.KN_INCOHERENT_MODEL )
+        self.assertEqual( properties.getIncoherentModelType(),
+                          MonteCarlo.KN_INCOHERENT_MODEL )
+
+    def testSetAtomicRelaxationModeOffOn(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setAtomicRelaxationModeOffOn"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setAtomicRelaxationModeOff()
+        self.assertFalse(properties.isAtomicRelaxationModeOn() )
+
+        properties.setAtomicRelaxationModeOn()
+        self.assertTrue(properties.isAtomicRelaxationModeOn() )
+
+    def testSetDetailedPairProductionModeOnOff(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setDetailedPairProductionModeOnOff"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setDetailedPairProductionModeOn()
+        self.assertTrue(properties.isDetailedPairProductionModeOn() )
+
+        properties.setDetailedPairProductionModeOff()
+        self.assertFalse(properties.isDetailedPairProductionModeOn() )
+
+    def testSetPhotonuclearInteractionModeOnOff(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setPhotonuclearInteractionModeOnOff"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        properties.setPhotonuclearInteractionModeOn()
+        self.assertTrue(properties.isPhotonuclearInteractionModeOn() )
+
+        properties.setPhotonuclearInteractionModeOff()
+        self.assertFalse(properties.isPhotonuclearInteractionModeOn() )
+
+    def testGetPhotonRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setPhotonRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        weight = 1e-14
+        properties.setPhotonRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getPhotonRouletteThresholdWeight(),
+                          weight )
+
+    def testGetPhotonRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationPhotonProperties setPhotonRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationPhotonProperties()
+
+        weight = 1e-12
+        properties.setPhotonRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getPhotonRouletteSurvivalWeight(),
+                          weight )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationPhotonPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationPhotonProperties.py
+#-----------------------------------------------------------------------------#

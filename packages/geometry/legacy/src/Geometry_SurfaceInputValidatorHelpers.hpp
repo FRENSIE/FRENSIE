@@ -27,7 +27,7 @@ void validateSurfaceType( const std::string& surface_type,
 			  const std::string& surface_name );
 
 //! Validate the surface definition
-void validateSurfaceDefinition( 
+void validateSurfaceDefinition(
 			      const Teuchos::Array<double>& surface_definition,
 			      const std::string& surface_type,
 			      const std::string& surface_name );

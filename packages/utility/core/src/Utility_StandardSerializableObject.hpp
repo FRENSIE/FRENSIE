@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Utility_StandardSerializationObject.hpp
 //! \author Alex Robinson
 //! \brief  Standard serializable object base class declaration
@@ -14,7 +14,7 @@
 
 namespace Utility{
 
-//! The base class for standard serializale objects
+//! The base class for standard serializable objects
 template<typename DerivedType, bool packing_allowed=true>
 class StandardSerializableObject : public virtual SerializableObject
 {
@@ -24,7 +24,7 @@ public:
   // Add the packDataInString member function to the public interface
 };
 
-//! The base class for standard serializale objects
+//! The base class for standard serializable objects
 template<typename DerivedType>
 class StandardSerializableObject<DerivedType,false> : public virtual SerializableObject
 {

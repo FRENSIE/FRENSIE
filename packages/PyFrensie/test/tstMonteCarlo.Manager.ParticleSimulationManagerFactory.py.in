@@ -1,0 +1,664 @@
+#! /usr/bin/python2.7
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Manager electroatomic reaction unit tests
+#  \file   tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Manager.ParticleSimulationManagerFactory helpers
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy
+import os
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--database_path", type="string", dest="database_path", default="",
+                  help="set the path to the scattering center database that will be used to create the model")
+parser.add_option("-t", "--threads", type="int", dest="threads",
+                  help="Set the number of threads.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+Manager = importPyFrensieModuleFromBuildDir('MonteCarlo.Manager')
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the coupled electroatomic reaction
+class ParticleSimulationManagerFactoryTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Manager ParticleSimulationManagerFactory"
+
+    @classmethod
+    def setUpClass(cls):
+        # Set the number of requested threads
+        cls.threads = options.threads
+
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
+        h_properties = database.getAtomProperties( Data.ZAID(1001) )
+        h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+        h_definition = cls.scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+        h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        cls.material_definition_database = Collision.MaterialDefinitionDatabase()
+
+        cls.material_definition_database.addDefinition( "H1 @ 293.6K", 1,
+                                                      ("H1 @ 293.6K",), (1.0,) )
+
+        cls.unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        cls.particle_distribution = tmp_particle_distribution
+
+    def setUp(self):
+        # Initialize the FRENSIE global MPI Session
+        self.session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_neutron_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_neutron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertEqual( self.threads, 1 )
+          self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_photon_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_photon_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardPhotonSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_electron_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardElectronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_neutron_photon_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_neutron_photon_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_photon_electron_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_photon_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardPhotonSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardPhotonElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_neutron_photon_electron_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_neutron_photon_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardNeutronPhotonElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardNeutronPhotonElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_adjoint_photon_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_adjoint_photon_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointPhotonSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointPhotonSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testConstructor_adjoint_electron_mode(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_adjoint_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardAdjointElectronSourceComponent( 0, 1.0, model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "simulation" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "h5fa", self.threads )
+
+        manager = factory.getManager()
+
+        if MPI.GlobalMPISession.size() == 1:
+          self.assertTrue( Manager.isStandardAdjointElectronSimulationManager( manager ) )
+        else:
+          self.assertTrue( Manager.isBatchedDistributedStandardAdjointElectronSimulationManager( manager ) )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "h5fa" )
+        self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), self.threads )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager factory can be constructed
+    def testSetCollisionForcer(self):
+        "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_neutron_photon_electron_mode"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+
+        collision_forcer = Event.StandardCollisionForcer()
+        collision_forcer.setForcedCollisionCells( model, MonteCarlo.PHOTON, [1] )
+
+        factory.setCollisionForcer( collision_forcer )
+
+        Utility.OpenMPProperties.setNumberOfThreads( 1 )     
+
+# #-----------------------------------------------------------------------------#
+#     # Check that a particle simulation manager factory can be constructed and
+#     # weight windows can be set
+#     def testConstructor_set_weight_windows(self):
+#         "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_set_weight_windows"
+#         properties = MonteCarlo.SimulationProperties()
+#         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+#         properties.setNumberOfHistories( 5 )
+
+#         model = Collision.FilledGeometryModel(
+#                                 self.database_path,
+#                                 self.scattering_center_definition_database,
+#                                 self.material_definition_database,
+#                                 properties,
+#                                 self.unfilled_model,
+#                                 False )
+
+#         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+#         source = ActiveRegion.StandardParticleSource( source_component )
+#         event_handler = Event.EventHandler( properties )
+
+#         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+#         factory.setWeightWindows( weight_windows )
+
+#         self.assertEqual( weight_windows.use_count(), 2 )
+
+#         manager = factory.getManager()
+
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
+
+#         self.assertEqual( manager.getSimulationName(), "simulation" )
+#         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( weight_windows.use_count(), 3 )
+
+# #-----------------------------------------------------------------------------#
+#     # Check that a particle simulation manager factory can be constructed and
+#     # a collision forcer can be set
+#     def testConstructor_set_collision_forcer(self):
+#         "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_set_collision_forcer"
+#         properties = MonteCarlo.SimulationProperties()
+#         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+#         properties.setNumberOfHistories( 5 )
+
+#         model = Collision.FilledGeometryModel(
+#                                 self.database_path,
+#                                 self.scattering_center_definition_database,
+#                                 self.material_definition_database,
+#                                 properties,
+#                                 self.unfilled_model,
+#                                 False )
+
+#         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+#         source = ActiveRegion.StandardParticleSource( source_component )
+#         event_handler = Event.EventHandler( properties )
+
+#         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+#         factory.setCollisionForcer( collision_forcer )
+
+#         self.assertEqual( collision_forcer.use_count(), 2 )
+
+#         manager = factory.getManager()
+
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
+
+#         self.assertEqual( manager.getSimulationName(), "simulation" )
+#         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( collision_forcer.use_count(), 3 )
+
+# #-----------------------------------------------------------------------------#
+#     # Check that a particle simulation manager factory can be constructed and
+#     # both weight windows and a collision forcer can be set
+#     def testConstructor_set_weight_windows_collision_forcer(self):
+#         "*Test MonteCarlo.Manager.ParticleSimulationManagerFactory constructor_set_weight_windows_collision_forcer"
+#         properties = MonteCarlo.SimulationProperties()
+#         properties.setParticleMode( MonteCarlo.NEUTRON_MODE )
+#         properties.setNumberOfHistories( 5 )
+
+#         model = Collision.FilledGeometryModel(
+#                                 self.database_path,
+#                                 self.scattering_center_definition_database,
+#                                 self.material_definition_database,
+#                                 properties,
+#                                 self.unfilled_model,
+#                                 False )
+
+#         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+#         source = ActiveRegion.StandardParticleSource( source_component )
+#         event_handler = Event.EventHandler( properties )
+
+#         factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties )
+#         factory.setWeightWindows( weight_windows )
+#         factory.setCollisionForcer( collision_forcer )
+
+#         self.assertEqual( weight_windows.use_count(), 2 )
+#         self.assertEqual( collision_forcer.use_count(), 2 )
+
+#         manager = factory.getManager()
+
+#         if MPI.GlobalMPISession.size() == 1:
+#           self.assertTrue( Manager.isStandardNeutronSimulationManager( manager ) )
+#         else:
+#           self.assertTrue( Manager.isBatchedDistributedStandardNeutronSimulationManager( manager ) )
+
+#         self.assertEqual( manager.getSimulationName(), "simulation" )
+#         self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+#         self.assertEqual( Utility.OpenMPProperties.getRequestedNumberOfThreads(), 1 )
+#         self.assertEqual( weight_windows.use_count(), 3 )
+#         self.assertEqual( collision_forcer.use_count(), 3 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(ParticleSimulationManagerFactoryTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************\n" + \
+        "Testing MonteCarlo.Manager.ParticleSimulationManagerFactory \n" + \
+        "**************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Manager.ParticleSimulationManagerFactory.py
+#-----------------------------------------------------------------------------#

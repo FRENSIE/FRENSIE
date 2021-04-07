@@ -17,7 +17,7 @@ namespace Geometry{
 
 //! Create a 3x3 matrix
 template<typename ScalarType>
-Matrix<ScalarType> createMatrix( 
+Matrix<ScalarType> createMatrix(
 	    const ScalarType a00, const ScalarType a01, const ScalarType a02,
 	    const ScalarType a10, const ScalarType a11, const ScalarType a12,
 	    const ScalarType a20, const ScalarType a21, const ScalarType a22 );
@@ -25,7 +25,7 @@ Matrix<ScalarType> createMatrix(
 //! Create a 3x3 symmetric matrix
 template<typename ScalarType>
 Matrix<ScalarType> createMatrix(
-	    const ScalarType a00, 
+	    const ScalarType a00,
 	    const ScalarType a10, const ScalarType a11,
 	    const ScalarType a20, const ScalarType a21, const ScalarType a22 );
 
@@ -58,7 +58,7 @@ Matrix<ScalarType> createZAxisRotationMatrix(const ScalarType rotation_angle );
  * and final_direction = surface_normal.
  */
 template<typename ScalarType>
-Matrix<ScalarType> createRotationMatrixFromUnitVectors( 
+Matrix<ScalarType> createRotationMatrixFromUnitVectors(
 			           const Vector<ScalarType> &initial_direction,
 			           const Vector<ScalarType> &final_direction );
 

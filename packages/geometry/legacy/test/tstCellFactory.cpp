@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstCellFactory.cpp
 //! \author Alex Robinson
 //! \brief  Cell factory class unit tests
@@ -34,7 +34,7 @@
   typedef space::map<int,Teuchos::RCP<Geometry::Surface<int,double> > > map##_i_d; \
   typedef space::map<long,Teuchos::RCP<Geometry::Surface<long,float> > > map##_l_f; \
   typedef space::map<long,Teuchos::RCP<Geometry::Surface<long,double> > > map##_l_d; \
-  
+
 #define UNIT_TEST_INSTANTIATION_STD_MAP( type, name )		\
   MAP_TYPEDEFS( std, map )						\
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, map_s_d ) \
@@ -54,15 +54,15 @@
 template<typename SurfaceMap>
 void createSurfaces( SurfaceMap &cell_surfaces )
 {
-  typedef typename SurfaceMap::mapped_type::element_type::ordinalType 
+  typedef typename SurfaceMap::mapped_type::element_type::ordinalType
     OrdinalType;
-  typedef typename SurfaceMap::mapped_type::element_type::scalarType 
+  typedef typename SurfaceMap::mapped_type::element_type::scalarType
     ScalarType;
   typedef Geometry::Surface<OrdinalType,ScalarType> Surface;
 
   // Clear the map
   cell_surfaces.clear();
-  
+
   // Surface 1: x = 2
   Teuchos::RCP<Surface> surface_ptr( new Surface( 1,
 						  1, 0, 0,
@@ -102,7 +102,7 @@ void createSurfaces( SurfaceMap &cell_surfaces )
 
   // Surface 7: x^2+y^2+z^2 = 1
   surface_ptr.reset( new Surface( 1,
-				  1, 1, 1, 
+				  1, 1, 1,
 				  0, 0, 0,
 				  -1 ) );
   cell_surfaces[7] = surface_ptr;
@@ -112,7 +112,7 @@ void createSurfaces( SurfaceMap &cell_surfaces )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the cell factory can create the desired cell
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( CellFactory, 
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( CellFactory,
 				   create,
 				   CellOrdinalType,
 				   SurfaceOrdinalType,
@@ -133,11 +133,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( CellFactory,
   CellFactory factory( surface_map );
 
   // Create the cells
-  typename CellFactory::CellPtr cube = factory.create( 0, 
-						       cube_cell_definition, 
+  typename CellFactory::CellPtr cube = factory.create( 0,
+						       cube_cell_definition,
 						       true );
-  
-  typename CellFactory::CellPtr sphere = factory.create(1, 
+
+  typename CellFactory::CellPtr sphere = factory.create(1,
 							sphere_cell_definition,
 							true );
 

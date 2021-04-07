@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="15">
+<model class_id="0" tracking_level="0" version="1">
+	<px class_id="1" tracking_level="1" version="0" object_id="_0">
+		<AdvancedModel class_id="2" tracking_level="0" version="0">
+			<Model class_id="3" tracking_level="0" version="0"></Model>
+		</AdvancedModel>
+		<d_model_properties class_id="4" tracking_level="0" version="0">
+			<tx class_id="5" tracking_level="1" version="0" object_id="_1">
+				<d_file_name>test_geom.h5m</d_file_name>
+                                <raw_file_path>${CMAKE_CURRENT_SOURCE_DIR}</raw_file_path>
+                                <d_fast_id_lookup>0</d_fast_id_lookup>
+				<d_termination_cell_property>graveyard</d_termination_cell_property>
+				<d_reflecting_surface_property>reflecting.surface</d_reflecting_surface_property>
+				<d_material_property>mat</d_material_property>
+				<d_density_property>rho</d_density_property>
+				<d_estimator_property>tally</d_estimator_property>
+				<d_surface_current_name>surface.current</d_surface_current_name>
+				<d_surface_flux_name>surface.flux</d_surface_flux_name>
+				<d_cell_pulse_height_name>cell.pulse.height</d_cell_pulse_height_name>
+				<d_cell_track_length_flux_name>cell.tl.flux</d_cell_track_length_flux_name>
+				<d_cell_collision_flux_name>cell.c.flux</d_cell_collision_flux_name>
+				<d_photon_name>p</d_photon_name>
+				<d_neutron_name>n</d_neutron_name>
+				<d_electron_name>e</d_electron_name>
+				<d_adjoint_photon_name>p*</d_adjoint_photon_name>
+				<d_adjoint_neutron_name>n*</d_adjoint_neutron_name>
+				<d_adjoint_electron_name>e*</d_adjoint_electron_name>
+			</tx>
+		</d_model_properties>
+	</px>
+</model>
+</boost_serialization>

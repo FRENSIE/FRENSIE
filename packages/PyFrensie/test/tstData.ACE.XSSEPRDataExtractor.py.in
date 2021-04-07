@@ -18,6 +18,8 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-a", "--acefile", type="string", dest="acefile",
                   help="set the ACE file to test.")
+parser.add_option("-l", "--startline", type="int", dest="startline",
+                  help="set the ACE file start line.")
 parser.add_option("-n", "--tablename", type="string", dest="tablename",
                   help="set the ACE table name (must be in the file).")
 options,args = parser.parse_args()
@@ -33,7 +35,7 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with H ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
@@ -50,6 +52,10 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
     def testHasFluorescenceData(self):
         "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
         self.assertFalse(self.xss_extractor.hasFluorescenceData())
+
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertFalse(self.xss_extractor.isEPRVersion14())
 
     def testExtractESZGBlock(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"
@@ -204,7 +210,7 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
         self.assertEqual(sphel_block[len(sphel_block)-1], -3.682568500852e1)
 
     def testExtractRELOBlock(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method" 
+        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method"
         relo_block = self.xss_extractor.extractRELOBlock()
         self.assertEqual(len(relo_block), 0)
 
@@ -220,6 +226,11 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
         self.assertEqual(esze_block[0], 1.0e-5)
         self.assertEqual(esze_block[len(esze_block)-1], 1.15538e5)
 
+    def testExtractESZE2Block(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractESZE2Block method"
+        esze2_block = self.xss_extractor.extractESZE2Block()
+        self.assertEqual(len(esze2_block), 0)
+
     def testExtractElectronEnergyGrid(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractElectronEnergyGrid method"
         energy_grid = self.xss_extractor.extractElectronEnergyGrid()
@@ -234,9 +245,19 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
         self.assertEqual(cross_sec[0], 3.605412858153e9)
         self.assertEqual(cross_sec[len(cross_sec)-1], 5.246259578280e5)
 
-    def testExtractElasticCrossSection(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractElasticCrossSection method"
-        cross_sec = self.xss_extractor.extractElasticCrossSection()
+    def testExtractElasticTransportCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTransportCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTransportCrossSection()
+        self.assertEqual(len(cross_sec), 0)
+
+    def testExtractElasticTotalCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTotalCrossSection()
+        self.assertEqual(len(cross_sec), 0)
+
+    def testExtractElasticCutoffCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticCutoffCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticCutoffCrossSection()
         self.assertEqual(len(cross_sec), 349)
         self.assertEqual(cross_sec[0], 3.50471e9)
         self.assertEqual(cross_sec[len(cross_sec)-1], 3.27982e-4)
@@ -324,7 +345,7 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with Pb ACE table"
     @classmethod
     def setUpClass(cls):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
         cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
@@ -341,6 +362,10 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
     def testHasFluorescenceData(self):
         "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
         self.assertTrue(self.xss_extractor.hasFluorescenceData())
+
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertFalse(self.xss_extractor.isEPRVersion14())
 
     def testExtractESZGBlock(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"
@@ -497,7 +522,7 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         self.assertEqual(sphel_block[len(sphel_block)-1], -2.364731020721e1)
 
     def testExtractRELOBlock(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method" 
+        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method"
         relo_block = self.xss_extractor.extractRELOBlock()
         self.assertEqual(len(relo_block), 24)
         self.assertEqual(relo_block[0], 0.0)
@@ -517,6 +542,11 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         self.assertEqual(esze_block[0], 1.0e-5)
         self.assertEqual(esze_block[len(esze_block)-1], 1.82234e5)
 
+    def testExtractESZE2Block(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractESZE2Block method"
+        esze2_block = self.xss_extractor.extractESZE2Block()
+        self.assertEqual(len(esze2_block), 0)
+
     def testExtractElectronEnergyGrid(self):
         "*Test Data.ACE.XSSEPRDataExtractor extractElectronEnergyGrid method"
         energy_grid = self.xss_extractor.extractElectronEnergyGrid()
@@ -531,9 +561,19 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         self.assertEqual(cross_sec[0], 2.629060119800e9)
         self.assertEqual(cross_sec[len(cross_sec)-1], 2.845403136205e6)
 
-    def testExtractElasticCrossSection(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractElasticCrossSection method"
-        cross_sec = self.xss_extractor.extractElasticCrossSection()
+    def testExtractElasticTransportCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTransportCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTransportCrossSection()
+        self.assertEqual(len(cross_sec), 0)
+
+    def testExtractElasticTotalCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTotalCrossSection()
+        self.assertEqual(len(cross_sec), 0)
+
+    def testExtractElasticCutoffCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticCutoffCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticCutoffCrossSection()
         self.assertEqual(len(cross_sec), 477)
         self.assertEqual(cross_sec[0], 2.48924e9)
         self.assertEqual(cross_sec[len(cross_sec)-1], 8.83051e-2)
@@ -616,6 +656,328 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         self.assertEqual(breml_block[len(breml_block)-1], 9.72675e4)
 
 #-----------------------------------------------------------------------------#
+# Test the XSSEPRDataExtractor
+class XSSEPRDataExtractorEPR14PbTestCase(unittest.TestCase):
+    "TestCase for Data.ACE.XSSEPRDataExtractor class with Pb ACE14 table"
+    @classmethod
+    def setUpClass(cls):
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
+        cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testConstructor(self):
+        "*Test Data.ACE.XSSEPRDataExtractor constructor"
+        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSEPRDataExtractor))
+    def testExtractAtomicNumber(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractAtomicNumber method"
+        self.assertEqual(self.xss_extractor.extractAtomicNumber(), 82)
+
+    def testHasOldFluorescenceData(self):
+        "*Test Data.ACE.XSSEPRDataExtractor hasOldFluorescenceData method"
+        self.assertTrue(self.xss_extractor.hasOldFluorescenceData())
+
+    def testHasFluorescenceData(self):
+        "*Test Data.ACE.XSSEPRDataExtractor hasFluorescenceData method"
+        self.assertTrue(self.xss_extractor.hasFluorescenceData())
+
+    def testisEPRVersion14(self):
+        "*Test Data.ACE.XSSEPRDataExtractor isEPRVersion14 method"
+        self.assertTrue(self.xss_extractor.isEPRVersion14())
+
+    def testExtractESZGBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractESZGBlock method"
+        eszg_block = self.xss_extractor.extractESZGBlock()
+        self.assertEqual(len(eszg_block), 3176*5)
+        self.assertEqual(eszg_block[0], -1.381551055796e1)
+        self.assertEqual(eszg_block[len(eszg_block)-1], 3.718032834377)
+
+    def testExtractPhotonEnergyGrid(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractPhotonEnergyGrid method"
+        energy_grid = self.xss_extractor.extractPhotonEnergyGrid()
+        self.assertEqual(len(energy_grid), 3176)
+        self.assertEqual(energy_grid[0], -1.381551055796e1)
+        self.assertEqual(energy_grid[len(energy_grid)-1], 1.151292546497e1)
+
+    def testExtractIncoherentCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractIncoherentCrossSection method"
+        cross_sec = self.xss_extractor.extractIncoherentCrossSection()
+        self.assertEqual(len(cross_sec), 3176)
+        self.assertEqual(cross_sec[0], -1.338724079720e1)
+        self.assertEqual(cross_sec[len(cross_sec)-1], -6.573285045032)
+
+    def testExtractCoherentCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractCoherentCrossSection method"
+        cross_sec = self.xss_extractor.extractCoherentCrossSection()
+        self.assertEqual(len(cross_sec), 3176)
+        self.assertEqual(cross_sec[0], -5.071403810640)
+        self.assertEqual(cross_sec[len(cross_sec)-1], -2.309498238246e1)
+
+    def testExtractPhotoelectricCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractPhotoelectricCrossSection method"
+        cross_sec = self.xss_extractor.extractPhotoelectricCrossSection()
+        self.assertEqual(len(cross_sec), 3176)
+        self.assertEqual(cross_sec[0], 0.0)
+        self.assertEqual(cross_sec[len(cross_sec)-1], -1.115947249407e1)
+
+    def testExtractPairProductionCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractPairProductionCrossSection method"
+        cross_sec = self.xss_extractor.extractPairProductionCrossSection()
+        self.assertEqual(len(cross_sec), 3176)
+        self.assertEqual(cross_sec[0], 0.0)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 3.718032834377)
+
+    def testExtractJINCEBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractJINCEBlock method"
+        jince_block = self.xss_extractor.extractJINCEBlock()
+        self.assertEqual(len(jince_block), 282)
+        self.assertEqual(jince_block[0], 0.0)
+        self.assertEqual(jince_block[len(jince_block)-1], 82.0)
+
+    def testExtractJCOHEBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractJCOHEBlock method"
+        jcohe_block = self.xss_extractor.extractJCOHEBlock()
+        self.assertEqual(len(jcohe_block), 411)
+        self.assertEqual(jcohe_block[0], 0.0)
+        self.assertEqual(jcohe_block[len(jcohe_block)-1], 1.1586e-20)
+
+    def testExtractJFLOBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractJFLOBlock method"
+        jflo_block = self.xss_extractor.extractJFLOBlock()
+        self.assertEqual(len(jflo_block), 24)
+        self.assertEqual(jflo_block[0], 1.471266666670e-2)
+        self.assertEqual(jflo_block[len(jflo_block)-1], 8.762024531250e-2)
+
+    def testExtractLHNMBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractLHNMBlock method"
+        lhnm_block = self.xss_extractor.extractLHNMBlock()
+        self.assertEqual(len(lhnm_block), 3176)
+        self.assertEqual(lhnm_block[0], 9.916958825662e-7)
+        self.assertEqual(lhnm_block[len(lhnm_block)-1], 9.999864243970e4)
+
+    def testExtractLNEPSBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractLNEPSBlock method"
+        lneps_block = self.xss_extractor.extractLNEPSBlock()
+        self.assertEqual(len(lneps_block), 23)
+        self.assertEqual(lneps_block[0], 2.0)
+        self.assertEqual(lneps_block[len(lneps_block)-1], 2.0)
+
+    def testExtractLBEPSBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractLBEPSBlock method"
+        lbeps_block = self.xss_extractor.extractLBEPSBlock()
+        self.assertEqual(len(lbeps_block), 23)
+        self.assertEqual(lbeps_block[0], 8.8005e-2)
+        self.assertEqual(lbeps_block[len(lbeps_block)-1], 0.0)
+
+    def testExtractLPIPSBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractLPIPSBlock method"
+        lpips_block = self.xss_extractor.extractLPIPSBlock()
+        self.assertEqual(len(lpips_block), 23)
+        self.assertEqual(lpips_block[0], 2.439024390244e-2)
+        self.assertEqual(lpips_block[len(lpips_block)-1], 1.0)
+
+    def testExtractLSWDBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractLSWDBlock method"
+        lswd_block = self.xss_extractor.extractLSWDBlock()
+        self.assertEqual(len(lswd_block), 23)
+        self.assertEqual(lswd_block[0], 1.0)
+        self.assertEqual(lswd_block[len(lswd_block)-1], 2091.0)
+
+    def testExtractSWDBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSWDBlock method"
+        swd_block = self.xss_extractor.extractSWDBlock()
+        self.assertEqual(len(swd_block), 2185)
+        self.assertEqual(swd_block[0], 2.0)
+        self.assertEqual(swd_block[len(swd_block)-1], 1.0)
+
+    def testExtractSUBSHBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSUBSHBlock method"
+        subsh_block = self.xss_extractor.extractSUBSHBlock()
+        self.assertEqual(len(subsh_block), 120)
+        self.assertEqual(subsh_block[0], 1.0)
+        self.assertEqual(subsh_block[len(subsh_block)-1], 0.0)
+
+    def testExtractSubshellENDFDesignators(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSubshellENDFDesignators method"
+        subshell_endf_des = self.xss_extractor.extractSubshellENDFDesignators()
+        self.assertEqual(len(subshell_endf_des), 24)
+        self.assertEqual(subshell_endf_des[0], 1.0)
+        self.assertEqual(subshell_endf_des[len(subshell_endf_des)-1], 28.0)
+
+    def testExtractSubshellOccupancies(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSubshellOccupancies method"
+        subshell_occ = self.xss_extractor.extractSubshellOccupancies()
+        self.assertEqual(len(subshell_occ), 24)
+        self.assertEqual(subshell_occ[0], 2.0)
+        self.assertEqual(subshell_occ[len(subshell_occ)-1], 1.33)
+
+    def testExtractSubshellBindingEnergies(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSubshellBindingEnergies method"
+        subshell_be = self.xss_extractor.extractSubshellBindingEnergies()
+        self.assertEqual(len(subshell_be), 24)
+        self.assertEqual(subshell_be[0], 8.829e-2)
+        self.assertEqual(subshell_be[len(subshell_be)-1], 5.29e-6)
+
+    def testExtractSubshellComptonInteractionCDF(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSubshellComptonInteractionCDF method"
+        compton_int_cdf = self.xss_extractor.extractSubshellComptonInteractionCDF()
+        self.assertEqual(len(compton_int_cdf), 24)
+        self.assertEqual(compton_int_cdf[0], 2.439024390244e-2)
+        self.assertEqual(compton_int_cdf[len(compton_int_cdf)-1], 1.0)
+
+    def testExtractSubshellVacancyTransitionPaths(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSubshellVacancyTransitionPaths method"
+        subshell_transitions = self.xss_extractor.extractSubshellVacancyTransitionPaths()
+        self.assertEqual(len(subshell_transitions), 24)
+        self.assertEqual(subshell_transitions[0], 189.0)
+        self.assertEqual(subshell_transitions[len(subshell_transitions)-1], 0.0)
+
+    def testExtractSPHELBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractSPHELBlock method"
+        sphel_block = self.xss_extractor.extractSPHELBlock()
+        self.assertEqual(len(sphel_block), 76224)
+        self.assertEqual(sphel_block[0], 0.0)
+        self.assertEqual(sphel_block[len(sphel_block)-1], -2.364731020721e1)
+
+    def testExtractRELOBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method"
+        relo_block = self.xss_extractor.extractRELOBlock()
+        self.assertEqual(len(relo_block), 24)
+        self.assertEqual(relo_block[0], 0.0)
+        self.assertEqual(relo_block[len(relo_block)-1], 7.764e3)
+
+    def testExtractXPROBBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractXPROBBlock method"
+        xprob_block = self.xss_extractor.extractXPROBBlock()
+        self.assertEqual(len(xprob_block), 7764)
+        self.assertEqual(xprob_block[0], 3.0)
+        self.assertEqual(xprob_block[len(xprob_block)-1], 1.0)
+
+    def testExtractESZEBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractESZEBlock method"
+        esze_block = self.xss_extractor.extractESZEBlock()
+        self.assertEqual(len(esze_block), 14310)
+        self.assertEqual(esze_block[0], 1.0e-5)
+        self.assertEqual(esze_block[len(esze_block)-1], 1.82234e5)
+
+    def testExtractESZE2Block(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractESZE2Block method"
+        esze2_block = self.xss_extractor.extractESZE2Block()
+        self.assertEqual(len(esze2_block), 954)
+        self.assertEqual(esze2_block[0], 2.48924e+09)
+        self.assertEqual(esze2_block[len(esze2_block)-1], 2.11161e+06)
+
+    def testExtractElectronEnergyGrid(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElectronEnergyGrid method"
+        energy_grid = self.xss_extractor.extractElectronEnergyGrid()
+        self.assertEqual(len(energy_grid), 477)
+        self.assertEqual(energy_grid[0], 1.0e-5)
+        self.assertEqual(energy_grid[len(energy_grid)-1], 1.0e5)
+
+    def testExtractElectronTotalCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElectronTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractElectronTotalCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 2.629060119800e9)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 2.845403136205e6)
+
+    def testExtractElasticTransportCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTransportCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTransportCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 2.48924e9)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 2.87092e-06)
+
+    def testExtractElasticTotalCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticTotalCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 2.48924e9)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 2.11161e+06)
+
+    def testExtractElasticCutoffCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElasticCutoffCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticCutoffCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 2.48924e9)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 8.83051e-2)
+
+    def testExtractBremsstrahlungCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractBremsstrahlungCrossSection method"
+        cross_sec = self.xss_extractor.extractBremsstrahlungCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 4.8698e3)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 1.95417e3)
+
+    def testExtractExcitationCrossSection(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractExcitationCrossSection method"
+        cross_sec = self.xss_extractor.extractExcitationCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 8.75755e6)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 1.57861e6)
+
+    def testExtractElectroionizationCrossSecion(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElectroionizationCrossSection method"
+        cross_sec = self.xss_extractor.extractElectroionizationCrossSection()
+        self.assertEqual(len(cross_sec), 477)
+        self.assertEqual(cross_sec[0], 1.310577e8)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 1.2648388779e6)
+
+    def testExtractElectroionizationSubshellCrossSections(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractElectroionizationSubshellCrossSections method"
+        cross_secs = self.xss_extractor.extractElectroionizationSubshellCrossSections()
+        self.assertEqual(len(cross_secs), 11448)
+        self.assertEqual(cross_secs[0], 0.0)
+        self.assertEqual(cross_secs[len(cross_secs)-1], 1.82234e5)
+
+    def testExtractEXCITBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractEXCITBlock method"
+        excit_block = self.xss_extractor.extractEXCITBlock()
+        self.assertEqual(len(excit_block), 572)
+        self.assertEqual(excit_block[0], 1.0e-5)
+        self.assertEqual(excit_block[len(excit_block)-1], 1.09533e-5)
+
+    def testExtractELASIBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractELASIBlock method"
+        elasi_block = self.xss_extractor.extractELASIBlock()
+        self.assertEqual(len(elasi_block), 42)
+        self.assertEqual(elasi_block[0], 1.0e-5)
+        self.assertEqual(elasi_block[len(elasi_block)-1], 1.384e3)
+
+    def testExtractELASBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractELASBlock method"
+        elas_block = self.xss_extractor.extractELASBlock()
+        self.assertEqual(len(elas_block), 1564)
+        self.assertEqual(elas_block[0], -1.0)
+        self.assertEqual(elas_block[len(elas_block)-1], 1.0)
+
+    def testExtractEIONBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractEIONBlock method"
+        eion_block = self.xss_extractor.extractEIONBlock()
+        self.assertEqual(len(eion_block), 14169)
+        self.assertEqual(eion_block[0], 5.0)
+        self.assertEqual(eion_block[len(eion_block)-1], 1.0)
+
+    def testExtractBREMIBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractBREMIBlock method"
+        bremi_block = self.xss_extractor.extractBREMIBlock()
+        self.assertEqual(len(bremi_block), 27)
+        self.assertEqual(bremi_block[0], 1.0e-5)
+        self.assertEqual(bremi_block[len(bremi_block)-1], 6.5e2)
+
+    def testExtractBREMEBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractBREMEBlock method"
+        breme_block = self.xss_extractor.extractBREMEBlock()
+        self.assertEqual(len(breme_block), 852)
+        self.assertEqual(breme_block[0], 1.0e-7)
+        self.assertEqual(breme_block[len(breme_block)-1], 1.0)
+
+    def testExtractBREMLBlock(self):
+        "*Test Data.ACE.XSSEPRDataExtractor extractBREMLBlock method"
+        breml_block = self.xss_extractor.extractBREMLBlock()
+        self.assertEqual(len(breml_block), 150)
+        self.assertEqual(breml_block[0], 1.0e-5)
+        self.assertEqual(breml_block[len(breml_block)-1], 2.7325e3)
+
+#-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
@@ -628,10 +990,12 @@ if __name__ == "__main__":
         suite.addTest(unittest.makeSuite(XSSEPRDataExtractorBTestCase))
     elif options.tablename == "82000.12p":
         suite.addTest(unittest.makeSuite(XSSEPRDataExtractorPbTestCase))
+    elif options.tablename == "82000.14p":
+        suite.addTest(unittest.makeSuite(XSSEPRDataExtractorEPR14PbTestCase))
     else:
         print >>sys.stderr, "Error: This test can only be used with the " + \
-            "5000.12p table or the 82000.12p table (" + options.tablename + \
-            ") provided!"
+            "5000.12p table, the 82000.12p table or the 82000.14p table \
+            (" + options.tablename + ") provided!"
         sys.exit(1)
 
     print >>sys.stderr, \
@@ -650,7 +1014,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-        
+
 #-----------------------------------------------------------------------------#
 # end Data.ACE.XSSEPRDataExtractor.py
 #-----------------------------------------------------------------------------#

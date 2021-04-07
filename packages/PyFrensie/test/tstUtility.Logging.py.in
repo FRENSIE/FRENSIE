@@ -1,0 +1,201 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.Prng module unit tests
+#  \file   tstUtility.Logging.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Utility module
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the logging methods
+class Logging(unittest.TestCase):
+    "TestCase class for Utility logging methods"
+
+    def testLogError(self):
+        "*Test Utility.logError method"
+        Utility.removeAllLogs()
+
+        # Set up the error logs
+        filename1 = "test_log_1.txt";
+        filename2 = "test_log_2.txt";
+
+        Utility.initializeSynchronousErrorLog( filename1 )
+        Utility.initializeAsynchronousErrorLog( filename2 )
+
+        # Log an error
+        message = "test error"
+
+        Utility.logError( message )
+        Utility.flushAllLogs()
+
+        f1 = open(filename1, "r")
+        self.assertTrue( message in f1.read() )
+
+        f2 = open(filename2, "r")
+        self.assertTrue( message in f2.read() )
+
+        # Append an error to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousErrorLog( filename1, True )
+
+        message2 = "test error 2"
+
+        Utility.logError( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
+    def testLogWarning(self):
+        "*Test Utility.logWarning method"
+        Utility.removeAllLogs()
+
+        # Set up the warning logs
+        filename1 = "test_log_1.txt"
+        filename2 = "test_log_2.txt"
+
+        Utility.initializeSynchronousWarningLog( filename1 )
+        Utility.initializeAsynchronousWarningLog( filename2 )
+
+        # Log a warning
+        message = "test warning"
+
+        Utility.logWarning( message )
+        Utility.flushAllLogs()
+
+        f1 = open(filename1, "r")
+        self.assertTrue( message in f1.read() )
+
+        f2 = open(filename2, "r")
+        self.assertTrue( message in f2.read() )
+
+        # Append an warning to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousWarningLog( filename1, True )
+
+        message2 = "test warning 2"
+
+        Utility.logWarning( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
+    def testLogNotification(self):
+        "*Test Utility.logNotification method"
+        Utility.removeAllLogs()
+
+        # Set up the notification logs
+        filename1 = "test_log_1.txt"
+        filename2 = "test_log_2.txt"
+
+        Utility.initializeSynchronousNotificationLog( filename1 )
+        Utility.initializeAsynchronousNotificationLog( filename2 )
+
+        # Log a warning
+        message = "test notification"
+
+        Utility.logNotification( message )
+        Utility.flushAllLogs()
+
+        f1 = open(filename1, "r")
+        self.assertTrue( message in f1.read() )
+
+        f2 = open(filename2, "r")
+        self.assertTrue( message in f2.read() )
+
+        # Append an notification to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousNotificationLog( filename1, True )
+
+        message2 = "test notification 2"
+
+        Utility.logNotification( message2 )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
+    def testLogPartialNotification(self):
+        "*Test Utility.logPartialNotification method"
+        Utility.removeAllLogs()
+
+        # Set up the notification logs
+        filename1 = "test_log_1.txt"
+        filename2 = "test_log_2.txt"
+
+        Utility.initializeSynchronousNotificationLog( filename1 )
+        Utility.initializeAsynchronousNotificationLog( filename2 )
+
+        # Log a warning
+        message = "test notification"
+
+        Utility.logPartialNotification( "test " )
+        Utility.flushAllLogs()
+        Utility.logNotification( "notification" )
+        Utility.flushAllLogs()
+
+        f1 = open(filename1, "r")
+        self.assertTrue( message in f1.read() )
+
+        f2 = open(filename2, "r")
+        self.assertTrue( message in f2.read() )
+
+        # Append an notification to a previous log
+        Utility.removeAllLogs()
+        Utility.initializeSynchronousNotificationLog( filename1, True )
+
+        message2 = "test notification 2"
+
+        Utility.logPartialNotification( "test " )
+        Utility.flushAllLogs()
+        Utility.logNotification( "notification 2" )
+        Utility.flushAllLogs()
+
+        self.assertTrue( message2 in f1.read() )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(Logging))
+
+    print >>sys.stderr, \
+        "\n********************\n" + \
+        "Testing Utility.Logging \n" + \
+        "********************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.Logging.py
+#-----------------------------------------------------------------------------#

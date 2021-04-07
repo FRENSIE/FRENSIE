@@ -9,7 +9,7 @@
 
 // FRENSIE Includes
 #include "Utility_FakeGenerator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Utility{
 
@@ -27,7 +27,7 @@ FakeGenerator::FakeGenerator( const std::vector<double>& fake_stream )
 double FakeGenerator::getRandomNumber()
 {
   double random_number = d_fake_stream[d_fake_stream_index];
-  
+
   if( d_fake_stream_index == d_fake_stream.size() - 1 )
     d_fake_stream_index = 0u;
   else
@@ -40,7 +40,7 @@ double FakeGenerator::getRandomNumber()
 bool FakeGenerator::validStream( const std::vector<double>& stream )
 {
   bool valid_stream = true;
-  
+
   for( unsigned i = 0; i < stream.size(); ++i )
   {
     if( stream[i] < 0.0 || stream[i] >= 1.0 )

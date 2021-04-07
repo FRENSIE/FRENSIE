@@ -1,23 +1,19 @@
 // This file is used for miscellaneous code documentation.
 
-/*! \namespace Facemc
- * \brief The primary namespace
- * \details All classes, structs and enums used by Facemc will be found inside
- * of this namespace. 
- *
+/*!
  * \defgroup policies Policies
  * \brief This group contains all policies that are used in FRENSIE.
  * \details A policy represents configurable behavior for generic functions and
- * types. 
+ * types.
  *
  * \defgroup traits Traits
  * \brief This group contains all traits that are used in FRENSIE
  * \details A trait represents natural additional properties of a template
- * parameter. In FRENSIE, traits classes are used to provide templated 
- * functions with additional information about a type (either value traits or 
+ * parameter. In FRENSIE, traits classes are used to provide templated
+ * functions with additional information about a type (either value traits or
  * type triats).
  *
  * \defgroup testing Unit Testing
  * \brief This group contains all classes and structs that are used to unit
- * test FRENSIE. 
+ * test FRENSIE.
  */

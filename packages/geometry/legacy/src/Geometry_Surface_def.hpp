@@ -20,7 +20,7 @@
 #include "Geometry_VectorHelpers.hpp"
 #include "Geometry_MatrixHelpers.hpp"
 #include "Geometry_LinearAlgebraAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -45,11 +45,11 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
     d_tolerance( ST::zero() ),
     d_symmetric( false ),
     d_planar( false )
-{ 
+{
   // Make sure the id is valid
   testPrecondition( id <= OT::max() && id >= OT::zero() )
   // Make sure the correct constructor has been used
-  testPrecondition( (a != ST::zero() || b != ST::zero() || c != ST::zero()) && 
+  testPrecondition( (a != ST::zero() || b != ST::zero() || c != ST::zero()) &&
 		    (d != ST::zero() || e != ST::zero() || f != ST::zero()) );
 
   // Determine floating point tolerance
@@ -120,7 +120,7 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
 
 // Construct surface by translating another surface
 template<typename OrdinalType, typename ScalarType>
-Surface<OrdinalType,ScalarType>::Surface( 
+Surface<OrdinalType,ScalarType>::Surface(
         OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
 	const Vector<ScalarType> &translation_vector )
@@ -143,7 +143,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   //  b' = (A + A^t)x0 = 2Ax0 => x0 is translation vector
   //  k' = x0^tAx0 + b^tx0 + k
   Vector<ScalarType> b = getLinearTermVector();
-  
+
   if( d_planar )
   {
     // k' = b^tx0 + k
@@ -155,7 +155,7 @@ Surface<OrdinalType,ScalarType>::Surface(
     Vector<ScalarType> Ax0;
 
     Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
-    
+
     // g'
     d_definition[6] = 2*Ax0[0];
     // h'
@@ -163,12 +163,12 @@ Surface<OrdinalType,ScalarType>::Surface(
     // j'
     d_definition[8] = 2*Ax0[2];
     // k'
-    d_definition[9] += translation_vector.dot( Ax0 ) + 
+    d_definition[9] += translation_vector.dot( Ax0 ) +
       translation_vector.dot( b );
   }
 
   // The new surface must be distinct from the original
-  testPostcondition( (getQuadraticFormMatrix() != 
+  testPostcondition( (getQuadraticFormMatrix() !=
 		      original_surface.getQuadraticFormMatrix()) ||
 		     (getLinearTermVector() !=
 		      original_surface.getLinearTermVector()) ||
@@ -178,7 +178,7 @@ Surface<OrdinalType,ScalarType>::Surface(
 
 // Construct surface by rotating another surface
 template<typename OrdinalType, typename ScalarType>
-Surface<OrdinalType,ScalarType>::Surface( 
+Surface<OrdinalType,ScalarType>::Surface(
 	   OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
 	   const Matrix<ScalarType> &rotation_matrix )
@@ -203,7 +203,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   //  b' = R^tb
   //  k' = k
   Vector<ScalarType> b = getLinearTermVector(), b_prime;
-  
+
   b_prime.multiply( 1.0, rotation_matrix, true, b, 0.0 );
 
   // g'
@@ -216,10 +216,10 @@ Surface<OrdinalType,ScalarType>::Surface(
   if( !d_planar ) // second order surface
   {
     Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime, AR;
-    
+
     AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );
     A_prime.multiply( 1.0, rotation_matrix, true, AR, false, 0.0 );
-  
+
     // a'
     d_definition[0] = A_prime( 0, 0 );
     // b'
@@ -241,7 +241,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   }
 
   // The new surface must be distinct from the original
-  testPostcondition( (getQuadraticFormMatrix() != 
+  testPostcondition( (getQuadraticFormMatrix() !=
 		      original_surface.getQuadraticFormMatrix()) ||
 		     (getLinearTermVector() !=
 		      original_surface.getLinearTermVector()) ||
@@ -251,7 +251,7 @@ Surface<OrdinalType,ScalarType>::Surface(
 
 // Construct surface by conducting a general transform on anothe surface
 template<typename OrdinalType, typename ScalarType>
-Surface<OrdinalType,ScalarType>::Surface( 
+Surface<OrdinalType,ScalarType>::Surface(
 	OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
 	const Matrix<ScalarType> &rotation_matrix,
@@ -295,16 +295,16 @@ Surface<OrdinalType,ScalarType>::Surface(
   {
     Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime, AR;
     Vector<ScalarType> Ax0;
-    
+
     Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
-    
+
     // Add extra terms to b'
     b_prime.multiply( 2.0, rotation_matrix, true, Ax0, 1.0 );
-    
+
     // Compute new quadratic form matrix
     AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );
     A_prime.multiply( 1.0, rotation_matrix, true, AR, false, 0.0 );
-  
+
     // a'
     d_definition[0] = A_prime( 0, 0 );
     // b'
@@ -324,7 +324,7 @@ Surface<OrdinalType,ScalarType>::Surface(
     // j'
     d_definition[8] = b_prime[2];
     // k'
-    d_definition[9] += translation_vector.dot( Ax0 ) + 
+    d_definition[9] += translation_vector.dot( Ax0 ) +
       translation_vector.dot( b );
 
     // Eliminate small values (~0.0)
@@ -333,9 +333,9 @@ Surface<OrdinalType,ScalarType>::Surface(
     // check if the surface symmetry has changed
     checkSymmetry();
   }
-  
+
   // The new surface must be distinct from the original
-  testPostcondition( (getQuadraticFormMatrix() != 
+  testPostcondition( (getQuadraticFormMatrix() !=
 		      original_surface.getQuadraticFormMatrix()) ||
 		     (getLinearTermVector() !=
 		      original_surface.getLinearTermVector()) ||
@@ -345,8 +345,8 @@ Surface<OrdinalType,ScalarType>::Surface(
 
 // Return if the point is on the surface
 template<typename OrdinalType, typename ScalarType>
-bool Surface<OrdinalType,ScalarType>::isOn( const ScalarType x, 
-					    const ScalarType y, 
+bool Surface<OrdinalType,ScalarType>::isOn( const ScalarType x,
+					    const ScalarType y,
 					    const ScalarType z ) const
 {
   ScalarType surface_evaluation = evaluateSurface( x, y, z );
@@ -356,7 +356,7 @@ bool Surface<OrdinalType,ScalarType>::isOn( const ScalarType x,
 
 // Return if the point is on the surface
 template<typename OrdinalType, typename ScalarType>
-bool Surface<OrdinalType,ScalarType>::isOn( 
+bool Surface<OrdinalType,ScalarType>::isOn(
 					const Vector<ScalarType> &point ) const
 {
   return isOn( point[0], point[1], point[2] );
@@ -385,35 +385,35 @@ OrdinalType Surface<OrdinalType,ScalarType>::getId() const
 
 // Return the sense of a point with respect to the surface
 template<typename OrdinalType, typename ScalarType>
-SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint( 
-						     const ScalarType x, 
-						     const ScalarType y, 
+SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint(
+						     const ScalarType x,
+						     const ScalarType y,
 						     const ScalarType z ) const
 {
   ScalarType surface_evaluation = evaluateSurface( x, y, z );
-  
+
   if( surface_evaluation > d_tolerance )
     return POS_SURFACE_SENSE;
   else if( surface_evaluation < -d_tolerance )
     return NEG_SURFACE_SENSE;
-  else 
+  else
     return ON_SURFACE;
 }
 
 // Return the sense of a point with respect to the surface
 template<typename OrdinalType, typename ScalarType>
-SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint( 
+SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint(
 				        const Vector<ScalarType> &point ) const
 {
   return getSenseOfPoint( point[0], point[1], point[2] );
 }
-    
+
 // Return the unit normal from the surface at a point on the surface,
 // pointing in the direction of the desired sense
 template<typename OrdinalType, typename ScalarType>
-Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
-					       const ScalarType x, 
-					       const ScalarType y, 
+Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
+					       const ScalarType x,
+					       const ScalarType y,
 					       const ScalarType z,
 					       const SurfaceSense sense ) const
 {
@@ -423,7 +423,7 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
   testPrecondition( sense != ON_SURFACE );
 
   Vector<ScalarType> unit_normal;
-  
+
   if( d_planar )
   {
     // dS/dx: g
@@ -437,21 +437,21 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
   else
   {
     // dS/dx: 2ax+dy+fz+g
-    unit_normal[0] = 2*d_definition[0]*x + d_definition[3]*y + 
+    unit_normal[0] = 2*d_definition[0]*x + d_definition[3]*y +
       d_definition[5]*z + d_definition[6];
-    
+
     // dS/dy: 2by+dx+ez+h
-    unit_normal[1] = 2*d_definition[1]*y + d_definition[3]*x + 
+    unit_normal[1] = 2*d_definition[1]*y + d_definition[3]*x +
       d_definition[4]*z + d_definition[7];
-    
+
     // dS/dz: 2cz+ey+fx+j
-    unit_normal[2] = 2*d_definition[2]*z + d_definition[4]*y + 
+    unit_normal[2] = 2*d_definition[2]*z + d_definition[4]*y +
       d_definition[5]*x + d_definition[8];
-    
+
     // Normalize the vector
     unit_normal.normalize();
   }
-  
+
   // Point the vector in the direction of the desired half-space
   SurfaceSense sense_of_norm_tip = getSenseOfPoint( x + unit_normal[0],
 						    y + unit_normal[1],
@@ -464,7 +464,7 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
   // The sense of the normal vector tip must not be ON_SURFACE
   testPostcondition( sense_of_norm_tip != ON_SURFACE );
   // The unit normal calculated must be valid
-  testPostcondition( ST::magnitude( unit_normal.normTwo() - 1.0 ) < 
+  testPostcondition( ST::magnitude( unit_normal.normTwo() - 1.0 ) <
 		     ST::prec() );
 
   return unit_normal;
@@ -473,17 +473,17 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 // Return the unit normal from the surface at a point on the surface,
 // pointing in the direction of the desired sense
 template<typename OrdinalType, typename ScalarType>
-Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
+Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 					       const Vector<ScalarType> &point,
 					       const SurfaceSense sense ) const
 {
   return getUnitNormalAtPoint( point[0], point[1], point[2], sense );
 }
 
-// Return the distance to the surface from the given point along the given 
+// Return the distance to the surface from the given point along the given
 // direction
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::getDistance( 
+ScalarType Surface<OrdinalType,ScalarType>::getDistance(
 					   const ScalarType x,
 					   const ScalarType y,
 					   const ScalarType z,
@@ -491,8 +491,8 @@ ScalarType Surface<OrdinalType,ScalarType>::getDistance(
 					   const ScalarType y_direction,
 					   const ScalarType z_direction ) const
 {
-  remember( Vector<ScalarType> direction( x_direction, 
-					  y_direction, 
+  remember( Vector<ScalarType> direction( x_direction,
+					  y_direction,
 					  z_direction ) );
   testPrecondition( ST::magnitude( direction.normTwo() - 1.0 ) < ST::eps() );
 
@@ -501,14 +501,14 @@ ScalarType Surface<OrdinalType,ScalarType>::getDistance(
   // Calculate the distance s from the point to the surface along the direction
   // equation: alpha*s^2 + beta*s + gamma = 0
   ScalarType gamma = calculateGammaParameter( x, y, z );
-  ScalarType beta = calculateBetaParameter( x, y, z, 
-					    x_direction, 
-					    y_direction, 
+  ScalarType beta = calculateBetaParameter( x, y, z,
+					    x_direction,
+					    y_direction,
 					    z_direction );
-  
+
   if( d_planar )
     distance = calculateRoot( beta, gamma );
-  
+
   else
   {
     ScalarType alpha = calculateAlphaParameter( x_direction,
@@ -520,15 +520,15 @@ ScalarType Surface<OrdinalType,ScalarType>::getDistance(
   return distance;
 }
 
-// Return the distance to the surface from the given point along the given 
+// Return the distance to the surface from the given point along the given
 // direction
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::getDistance( 
+ScalarType Surface<OrdinalType,ScalarType>::getDistance(
 				    const Vector<ScalarType> &point,
 			            const Vector<ScalarType> &direction ) const
 {
   testPrecondition( ST::magnitude( direction.normTwo() - 1.0 ) < ST::eps() );
-  
+
   return getDistance( point[0], point[1], point[2],
 		      direction[0], direction[1], direction[2] );
 }
@@ -538,8 +538,8 @@ template<typename OrdinalType, typename ScalarType>
 Matrix<ScalarType>
 Surface<OrdinalType,ScalarType>::getQuadraticFormMatrix() const
 {
-  return Matrix<ScalarType>( 
-		       d_definition[0], 
+  return Matrix<ScalarType>(
+		       d_definition[0],
 		       d_definition[3]/2, d_definition[1],
 		       d_definition[5]/2, d_definition[4]/2, d_definition[2] );
 }
@@ -548,8 +548,8 @@ Surface<OrdinalType,ScalarType>::getQuadraticFormMatrix() const
 template<typename OrdinalType, typename ScalarType>
 Vector<ScalarType> Surface<OrdinalType,ScalarType>::getLinearTermVector() const
 {
-  return Vector<ScalarType>( d_definition[6], 
-			     d_definition[7], 
+  return Vector<ScalarType>( d_definition[6],
+			     d_definition[7],
 			     d_definition[8] );
 }
 
@@ -585,26 +585,26 @@ void Surface<OrdinalType,ScalarType>::print( std::ostream &os ) const
     ss << d_definition[8] << "z ";
   if( ST::magnitude( d_definition[9] ) > ST::prec() )
     ss << d_definition[9];
-  
+
   std::string output = ss.str();
-  
+
   // remove trailing spaces
   if( output[output.size()-1] == ' ' )
     output.erase( output.size()-1, 1 );
-  
+
   // replace all remaining spaces with '+'
   unsigned white_space_loc = output.find( " " );
-  
+
   while( white_space_loc < output.size() )
   {
     output[white_space_loc] = '+';
-    
+
     white_space_loc = output.find( " ", white_space_loc );
   }
 
   // print the string
   os << "Id: " << d_id << std::endl;
-  os << "Definition: " << output << " = 0 " << std::endl;  
+  os << "Definition: " << output << " = 0 " << std::endl;
 }
 
 // Calculate tolerance based on tolerance ratio
@@ -612,12 +612,12 @@ template<typename OrdinalType, typename ScalarType>
 void Surface<OrdinalType,ScalarType>::setTolerance( ScalarType tolerance_ratio)
 {
   typename ST::magnitudeType max = ST::zero();
-  
+
   for( tupleIndex i = Tuple_OT::zero(); i < 10; ++i )
   {
     if( max < ST::magnitude( d_definition[i] ) )
       max = ST::magnitude( d_definition[i] );
-  
+
     d_tolerance = tolerance_ratio*max;
   }
 }
@@ -641,21 +641,21 @@ void Surface<OrdinalType,ScalarType>::checkSymmetry()
   {
     if( (d_definition[3] != ST::zero()) || (d_definition[4] != ST::zero()) ||
 	(d_definition[5] != ST::zero()) )
-      d_symmetric = false; 
+      d_symmetric = false;
   }
   else
   {
     if( (d_definition[3] == ST::zero()) && (d_definition[4] == ST::zero()) &&
 	(d_definition[5] == ST::zero()) )
-      d_symmetric = true; 
+      d_symmetric = true;
   }
 }
 
 // Evaluate the surface definition at a point
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::evaluateSurface( 
-						     const ScalarType x, 
-						     const ScalarType y, 
+ScalarType Surface<OrdinalType,ScalarType>::evaluateSurface(
+						     const ScalarType x,
+						     const ScalarType y,
 						     const ScalarType z ) const
 {
   if( d_planar )
@@ -668,38 +668,38 @@ ScalarType Surface<OrdinalType,ScalarType>::evaluateSurface(
 
 // Evaluate planar surface
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::evaluatePlanarSurface( 
-						     const ScalarType x, 
-						     const ScalarType y, 
+ScalarType Surface<OrdinalType,ScalarType>::evaluatePlanarSurface(
+						     const ScalarType x,
+						     const ScalarType y,
 						     const ScalarType z ) const
 {
-  return d_definition[6]*x + d_definition[7]*y + d_definition[8]*z + 
+  return d_definition[6]*x + d_definition[7]*y + d_definition[8]*z +
     d_definition[9];
 }
 
 // Evaluate general 2nd order surface
 template<typename OrdinalType, typename ScalarType>
-ScalarType 
-Surface<OrdinalType,ScalarType>::evaluateSymmetricSecondOrderSurface( 
+ScalarType
+Surface<OrdinalType,ScalarType>::evaluateSymmetricSecondOrderSurface(
 						     const ScalarType x,
 						     const ScalarType y,
 						     const ScalarType z ) const
 {
   return d_definition[0]*x*x + d_definition[1]*y*y + d_definition[2]*z*z +
-    d_definition[6]*x + d_definition[7]*y + d_definition[8]*z + 
+    d_definition[6]*x + d_definition[7]*y + d_definition[8]*z +
     d_definition[9];
 }
 
 template<typename OrdinalType, typename ScalarType>
-ScalarType 
-Surface<OrdinalType,ScalarType>::evaluateGeneralSecondOrderSurface( 
-						     const ScalarType x, 
-						     const ScalarType y, 
+ScalarType
+Surface<OrdinalType,ScalarType>::evaluateGeneralSecondOrderSurface(
+						     const ScalarType x,
+						     const ScalarType y,
 						     const ScalarType z ) const
 {
   return d_definition[0]*x*x + d_definition[1]*y*y + d_definition[2]*z*z +
     d_definition[3]*x*y + d_definition[4]*y*z + d_definition[5]*x*z +
-    d_definition[6]*x + d_definition[7]*y + d_definition[8]*z + 
+    d_definition[6]*x + d_definition[7]*y + d_definition[8]*z +
     d_definition[9];
 }
 
@@ -742,7 +742,7 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateBetaParameter(
   ScalarType beta = d_definition[6]*x_direction;
   beta += d_definition[7]*y_direction;
   beta += d_definition[8]*z_direction;
-  
+
   if( !d_planar )
   {
     beta += 2*d_definition[0]*x*x_direction;
@@ -764,7 +764,7 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateBetaParameter(
 /*! \details ax_0^2+by_0^2+cz_0^2+dx_0y_0+ey_0z_0+fx_0z_0+gx_0+hy_0+jz_0+k
  */
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::calculateGammaParameter( 
+ScalarType Surface<OrdinalType,ScalarType>::calculateGammaParameter(
 						     const ScalarType x,
 						     const ScalarType y,
 				                     const ScalarType z ) const
@@ -796,13 +796,13 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateGammaParameter(
  * infinity is returned.
  */
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::calculateMinimumRealPositiveRoot( 
+ScalarType Surface<OrdinalType,ScalarType>::calculateMinimumRealPositiveRoot(
 						 const ScalarType alpha,
 						 const ScalarType beta,
 				                 const ScalarType gamma ) const
 {
   ScalarType min_pos_root;
-  
+
   // Check if the discriminant is positive
   ScalarType discriminant = beta*beta - 4*alpha*gamma;
 
@@ -823,7 +823,7 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateMinimumRealPositiveRoot(
 	min_pos_root = root2;
       else if( root1 > d_tolerance )
 	min_pos_root = root1;
-      else 
+      else
 	min_pos_root = std::numeric_limits<ScalarType>::infinity();
     }
     else
@@ -845,7 +845,7 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateMinimumRealPositiveRoot(
  * returned.
  */
 template<typename OrdinalType, typename ScalarType>
-ScalarType Surface<OrdinalType,ScalarType>::calculateRoot( 
+ScalarType Surface<OrdinalType,ScalarType>::calculateRoot(
 						 const ScalarType beta,
 						 const ScalarType gamma ) const
 {
@@ -859,7 +859,7 @@ ScalarType Surface<OrdinalType,ScalarType>::calculateRoot(
 
   if( root < d_tolerance )
     root = std::numeric_limits<ScalarType>::infinity();
-  
+
   return root;
 }
 

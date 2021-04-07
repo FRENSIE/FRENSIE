@@ -1,0 +1,772 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Geometry.Model class unit tests
+#  \file   tstGeometry.Model.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Geometry.Model class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import inspect
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--dagmc_h5m_file", type="string", dest="dagmc_h5m_file", default="",
+                  help="set the dagmc xml file that will be used to create the model")
+parser.add_option("-r", "--root_file", type="string", dest="root_file", default="",
+                  help="set the root xml file that will be used to create the model")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+
+try:
+    DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+except ImportError:
+    DagMC = False
+
+try:
+    ROOT = importPyFrensieModuleFromBuildDir('Geometry.ROOT')
+except ImportError:
+    ROOT = False
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+
+# Test the Model class with a DagMC geometry
+if inspect.ismodule( DagMC ):
+    class DagMCModelTestCase(unittest.TestCase):
+        "TestCase class for Geometry.Model class using a DagMC geometry"
+
+        @classmethod
+        def setUpClass(cls):
+            properties = DagMC.DagMCModelProperties( options.dagmc_h5m_file )
+            properties.setTerminationCellPropertyName( "graveyard" )
+            properties.setMaterialPropertyName( "mat" )
+            properties.setDensityPropertyName( "rho" )
+            properties.setEstimatorPropertyName( "tally" )
+            cls.model = DagMC.DagMCModel( properties )
+
+
+        def testGetModelProperties(self):
+            "*Test Geometry.Model getModelProperties"
+            cached_properties = self.model.getModelProperties()
+            self.assertEqual( cached_properties.getModelFileNameWithPath(),
+                              options.dagmc_h5m_file )
+            self.assertTrue( cached_properties.getModelFileName() in options.dagmc_h5m_file )
+
+        def testHasCellEstimatorData(self):
+            "*Test Geometry.Model hasCellEstimatorData"
+            self.assertTrue(self.model.hasCellEstimatorData() )
+
+        def testHasSurfaceEstimatorData(self):
+            "*Test Geometry.Model hasSurfaceEstimatorData"
+            self.assertTrue(self.model.hasSurfaceEstimatorData() )
+
+        def testGetMaterialIds(self):
+            "*Test Geometry.Model getMaterialIds"
+            material_ids = self.model.getMaterialIds()
+            self.assertEqual( len(material_ids), 8 )
+            self.assertTrue( 1 in material_ids )
+            self.assertTrue( 2 in material_ids )
+            self.assertTrue( 3 in material_ids )
+            self.assertTrue( 4 in material_ids )
+            self.assertTrue( 5 not in material_ids )
+            self.assertTrue( 6 not in material_ids )
+            self.assertTrue( 7 in material_ids )
+            self.assertTrue( 8 in material_ids )
+            self.assertTrue( 9 in material_ids )
+            self.assertTrue( 10 in material_ids )
+
+        def testGetCells(self):
+            "*Test Geometry.Model getCells"
+            cells = self.model.getCells( True, True )
+
+            # 55 + implicit compliment cell
+            self.assertEqual( len(cells), 56 )
+
+            self.assertTrue( 1 in cells )
+            self.assertTrue( 3 in cells )
+            self.assertTrue( 5 in cells )
+            self.assertTrue( 7 in cells )
+            self.assertTrue( 9 in cells )
+            self.assertTrue( 13 in cells )
+            self.assertTrue( 19 in cells )
+            self.assertTrue( 26 in cells )
+            self.assertTrue( 27 in cells )
+            self.assertTrue( 28 in cells )
+            self.assertTrue( 29 in cells )
+            self.assertTrue( 30 in cells )
+            self.assertTrue( 31 in cells )
+            self.assertTrue( 32 in cells )
+            self.assertTrue( 33 in cells )
+            self.assertTrue( 34 in cells )
+            self.assertTrue( 35 in cells )
+            self.assertTrue( 36 in cells )
+            self.assertTrue( 37 in cells )
+            self.assertTrue( 41 in cells )
+            self.assertTrue( 48 in cells )
+            self.assertTrue( 49 in cells )
+            self.assertTrue( 50 in cells )
+            self.assertTrue( 51 in cells )
+            self.assertTrue( 52 in cells )
+            self.assertTrue( 53 in cells )
+            self.assertTrue( 54 in cells )
+            self.assertTrue( 55 in cells )
+            self.assertTrue( 56 in cells )
+            self.assertTrue( 57 in cells )
+            self.assertTrue( 58 in cells )
+            self.assertTrue( 59 in cells )
+            self.assertTrue( 63 in cells )
+            self.assertTrue( 70 in cells )
+            self.assertTrue( 71 in cells )
+            self.assertTrue( 72 in cells )
+            self.assertTrue( 73 in cells )
+            self.assertTrue( 74 in cells )
+            self.assertTrue( 75 in cells )
+            self.assertTrue( 76 in cells )
+            self.assertTrue( 77 in cells )
+            self.assertTrue( 78 in cells )
+            self.assertTrue( 79 in cells )
+            self.assertTrue( 80 in cells )
+            self.assertTrue( 81 in cells )
+            self.assertTrue( 82 in cells )
+            self.assertTrue( 83 in cells )
+            self.assertTrue( 88 in cells )
+            self.assertTrue( 136 in cells )
+            self.assertTrue( 152 in cells )
+            self.assertTrue( 154 in cells )
+            self.assertTrue( 166 in cells )
+            self.assertTrue( 168 in cells )
+            self.assertTrue( 184 in cells )
+            self.assertTrue( 188 in cells )
+            self.assertTrue( 189 in cells )
+
+            cells = self.model.getCells( True, False )
+            self.assertEqual( len(cells), 55 )
+            self.assertTrue( 188 not in cells )
+
+            cells = self.model.getCells( False, True )
+            self.assertEqual( len(cells), 55 )
+            self.assertTrue( 189 not in cells )
+
+            cells = self.model.getCells( False, False )
+            self.assertEqual( len(cells), 54 )
+            self.assertTrue( 188 not in cells )
+            self.assertTrue( 189 not in cells )
+
+        def testGetCellMaterialIds(self):
+            "*Test Geometry.Model getCellMaterialIds"
+            cell_id_mat_id_map = self.model.getCellMaterialIds()
+
+            self.assertEqual( len(cell_id_mat_id_map), 54 )
+
+            self.assertEqual( cell_id_mat_id_map.get( 9 ), 1 )
+            self.assertEqual( cell_id_mat_id_map.get( 88 ), 1 )
+            self.assertEqual( cell_id_mat_id_map.get( 136 ), 2 )
+            self.assertEqual( cell_id_mat_id_map.get( 19 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 41 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 63 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 82 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 152 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 166 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 184 ), 3 )
+            self.assertEqual( cell_id_mat_id_map.get( 3 ), 4 )
+            self.assertEqual( cell_id_mat_id_map.get( 7 ), 4 )
+            self.assertEqual( cell_id_mat_id_map.get( 13 ), 7 )
+            self.assertEqual( cell_id_mat_id_map.get( 83 ), 7 )
+            self.assertEqual( cell_id_mat_id_map.get( 154 ), 7 )
+            self.assertEqual( cell_id_mat_id_map.get( 168 ), 7 )
+            self.assertEqual( cell_id_mat_id_map.get( 1 ), 8 )
+            self.assertEqual( cell_id_mat_id_map.get( 26 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 27 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 28 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 29 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 30 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 31 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 32 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 33 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 34 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 35 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 36 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 37 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 48 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 49 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 50 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 51 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 52 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 53 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 54 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 55 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 56 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 57 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 58 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 59 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 70 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 71 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 72 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 73 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 74 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 75 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 76 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 77 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 78 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 79 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 80 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 81 ), 9 )
+            self.assertEqual( cell_id_mat_id_map.get( 5 ), 10 )
+
+        def testGetCellDensities(self):
+            "*Test Geometry.Model getCellDensities"
+            cell_id_density_map = self.model.getCellDensities()
+
+            self.assertEqual( len(cell_id_density_map), 54 )
+
+            self.assertEqual( cell_id_density_map.get( 9 ), -8.027 )
+            self.assertEqual( cell_id_density_map.get( 88 ), -8.027 )
+            self.assertEqual( cell_id_density_map.get( 136 ), -7.75 )
+            self.assertEqual( cell_id_density_map.get( 19 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 41 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 63 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 82 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 152 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 166 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 184 ), -0.001633 )
+            self.assertEqual( cell_id_density_map.get( 3 ), -0.99823 )
+            self.assertEqual( cell_id_density_map.get( 7 ), -0.99823 )
+            self.assertEqual( cell_id_density_map.get( 13 ), -5.65 )
+            self.assertEqual( cell_id_density_map.get( 83 ), -5.65 )
+            self.assertEqual( cell_id_density_map.get( 154 ), -5.65 )
+            self.assertEqual( cell_id_density_map.get( 168 ), -5.65 )
+            self.assertEqual( cell_id_density_map.get( 1 ), -1.8583 )
+            self.assertEqual( cell_id_density_map.get( 26 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 27 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 28 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 29 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 30 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 31 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 32 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 33 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 34 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 35 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 36 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 37 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 48 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 49 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 50 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 51 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 52 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 53 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 54 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 55 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 56 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 57 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 58 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 59 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 70 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 71 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 72 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 73 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 74 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 75 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 76 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 77 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 78 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 79 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 80 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 81 ), -7.83 )
+            self.assertEqual( cell_id_density_map.get( 5 ), -13.31 )
+
+        def testGetCellDensities(self):
+            "*Test Geometry.Model getCellDensities"
+            cell_estimator_id_data_map = self.model.getCellEstimatorData()
+
+            self.assertEqual( len(cell_estimator_id_data_map), 5 )
+            self.assertTrue( 0 in cell_estimator_id_data_map )
+            self.assertTrue( 1 in cell_estimator_id_data_map )
+            self.assertTrue( 2 in cell_estimator_id_data_map )
+            self.assertTrue( 3 in cell_estimator_id_data_map )
+            self.assertTrue( 4 in cell_estimator_id_data_map )
+
+            self.assertEqual( cell_estimator_id_data_map.get(0)[0],
+                              Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR )
+            self.assertEqual( cell_estimator_id_data_map.get(0)[1],
+                              Geometry.NEUTRON )
+            self.assertEqual( len(cell_estimator_id_data_map.get(0)[2]),
+                              55 )
+
+            self.assertEqual( cell_estimator_id_data_map.get(1)[0],
+                              Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR )
+            self.assertEqual( cell_estimator_id_data_map.get(1)[1],
+                              Geometry.PHOTON )
+            self.assertEqual( len(cell_estimator_id_data_map.get(1)[2]),
+                              55 )
+
+            self.assertEqual( cell_estimator_id_data_map.get(2)[0],
+                              Geometry.CELL_COLLISION_FLUX_ESTIMATOR )
+            self.assertEqual( cell_estimator_id_data_map.get(2)[1],
+                              Geometry.NEUTRON )
+            self.assertEqual( len(cell_estimator_id_data_map.get(2)[2]),
+                              36 )
+
+            self.assertEqual( cell_estimator_id_data_map.get(3)[0],
+                              Geometry.CELL_COLLISION_FLUX_ESTIMATOR )
+            self.assertEqual( cell_estimator_id_data_map.get(3)[1],
+                              Geometry.PHOTON )
+            self.assertEqual( len(cell_estimator_id_data_map.get(3)[2]),
+                              36 )
+
+            self.assertEqual( cell_estimator_id_data_map.get(4)[0],
+                              Geometry.CELL_PULSE_HEIGHT_ESTIMATOR )
+            self.assertEqual( cell_estimator_id_data_map.get(4)[1],
+                              Geometry.PHOTON )
+            self.assertEqual( len(cell_estimator_id_data_map.get(4)[2]),
+                              2 )
+
+        def testDoesCellExist(self):
+            "*Test Geometry.Model doesCellExist"
+
+            self.assertTrue( not self.model.doesCellExist( 0 ) )
+            self.assertTrue(self.model.doesCellExist( 1 ) )
+            self.assertTrue( not self.model.doesCellExist( 2 ) )
+            self.assertTrue(self.model.doesCellExist( 3 ) )
+            self.assertTrue( not self.model.doesCellExist( 4 ) )
+            self.assertTrue(self.model.doesCellExist( 5 ) )
+            self.assertTrue( not self.model.doesCellExist( 6 ) )
+            self.assertTrue(self.model.doesCellExist( 7 ) )
+            self.assertTrue( not self.model.doesCellExist( 8 ) )
+            self.assertTrue(self.model.doesCellExist( 9 ) )
+            self.assertTrue(self.model.doesCellExist( 13 ) )
+            self.assertTrue(self.model.doesCellExist( 19 ) )
+            self.assertTrue(self.model.doesCellExist( 26 ) )
+            self.assertTrue(self.model.doesCellExist( 27 ) )
+            self.assertTrue(self.model.doesCellExist( 28 ) )
+            self.assertTrue(self.model.doesCellExist( 29 ) )
+            self.assertTrue(self.model.doesCellExist( 30 ) )
+            self.assertTrue(self.model.doesCellExist( 31 ) )
+            self.assertTrue(self.model.doesCellExist( 32 ) )
+            self.assertTrue(self.model.doesCellExist( 33 ) )
+            self.assertTrue(self.model.doesCellExist( 34 ) )
+            self.assertTrue(self.model.doesCellExist( 35 ) )
+            self.assertTrue(self.model.doesCellExist( 36 ) )
+            self.assertTrue(self.model.doesCellExist( 37 ) )
+            self.assertTrue(self.model.doesCellExist( 41 ) )
+            self.assertTrue(self.model.doesCellExist( 48 ) )
+            self.assertTrue(self.model.doesCellExist( 49 ) )
+            self.assertTrue(self.model.doesCellExist( 50 ) )
+            self.assertTrue(self.model.doesCellExist( 51 ) )
+            self.assertTrue(self.model.doesCellExist( 52 ) )
+            self.assertTrue(self.model.doesCellExist( 53 ) )
+            self.assertTrue(self.model.doesCellExist( 54 ) )
+            self.assertTrue(self.model.doesCellExist( 55 ) )
+            self.assertTrue(self.model.doesCellExist( 56 ) )
+            self.assertTrue(self.model.doesCellExist( 57 ) )
+            self.assertTrue(self.model.doesCellExist( 58 ) )
+            self.assertTrue(self.model.doesCellExist( 59 ) )
+            self.assertTrue(self.model.doesCellExist( 63 ) )
+            self.assertTrue(self.model.doesCellExist( 70 ) )
+            self.assertTrue(self.model.doesCellExist( 71 ) )
+            self.assertTrue(self.model.doesCellExist( 72 ) )
+            self.assertTrue(self.model.doesCellExist( 73 ) )
+            self.assertTrue(self.model.doesCellExist( 74 ) )
+            self.assertTrue(self.model.doesCellExist( 75 ) )
+            self.assertTrue(self.model.doesCellExist( 76 ) )
+            self.assertTrue(self.model.doesCellExist( 77 ) )
+            self.assertTrue(self.model.doesCellExist( 78 ) )
+            self.assertTrue(self.model.doesCellExist( 79 ) )
+            self.assertTrue(self.model.doesCellExist( 80 ) )
+            self.assertTrue(self.model.doesCellExist( 81 ) )
+            self.assertTrue(self.model.doesCellExist( 82 ) )
+            self.assertTrue(self.model.doesCellExist( 83 ) )
+            self.assertTrue(self.model.doesCellExist( 88 ) )
+            self.assertTrue(self.model.doesCellExist( 136 ) )
+            self.assertTrue(self.model.doesCellExist( 152 ) )
+            self.assertTrue(self.model.doesCellExist( 154 ) )
+            self.assertTrue(self.model.doesCellExist( 166 ) )
+            self.assertTrue(self.model.doesCellExist( 168 ) )
+            self.assertTrue(self.model.doesCellExist( 184 ) )
+            self.assertTrue(self.model.doesCellExist( 188 ) )
+
+            # Implicit compliment cell
+            self.assertTrue(self.model.doesCellExist( 189 ) )
+
+        def testIsTerminationCell(self):
+            "*Test Geometry.Model isTerminationCell"
+
+            self.assertTrue( not self.model.isTerminationCell( 1 ) )
+            self.assertTrue( not self.model.isTerminationCell( 3 ) )
+            self.assertTrue( not self.model.isTerminationCell( 5 ) )
+            self.assertTrue( not self.model.isTerminationCell( 7 ) )
+            self.assertTrue( not self.model.isTerminationCell( 9 ) )
+            self.assertTrue( not self.model.isTerminationCell( 13 ) )
+            self.assertTrue( not self.model.isTerminationCell( 19 ) )
+            self.assertTrue( not self.model.isTerminationCell( 26 ) )
+            self.assertTrue( not self.model.isTerminationCell( 27 ) )
+            self.assertTrue( not self.model.isTerminationCell( 28 ) )
+            self.assertTrue( not self.model.isTerminationCell( 29 ) )
+            self.assertTrue( not self.model.isTerminationCell( 30 ) )
+            self.assertTrue( not self.model.isTerminationCell( 31 ) )
+            self.assertTrue( not self.model.isTerminationCell( 32 ) )
+            self.assertTrue( not self.model.isTerminationCell( 33 ) )
+            self.assertTrue( not self.model.isTerminationCell( 34 ) )
+            self.assertTrue( not self.model.isTerminationCell( 35 ) )
+            self.assertTrue( not self.model.isTerminationCell( 36 ) )
+            self.assertTrue( not self.model.isTerminationCell( 37 ) )
+            self.assertTrue( not self.model.isTerminationCell( 41 ) )
+            self.assertTrue( not self.model.isTerminationCell( 48 ) )
+            self.assertTrue( not self.model.isTerminationCell( 49 ) )
+            self.assertTrue( not self.model.isTerminationCell( 50 ) )
+            self.assertTrue( not self.model.isTerminationCell( 51 ) )
+            self.assertTrue( not self.model.isTerminationCell( 52 ) )
+            self.assertTrue( not self.model.isTerminationCell( 53 ) )
+            self.assertTrue( not self.model.isTerminationCell( 54 ) )
+            self.assertTrue( not self.model.isTerminationCell( 55 ) )
+            self.assertTrue( not self.model.isTerminationCell( 56 ) )
+            self.assertTrue( not self.model.isTerminationCell( 57 ) )
+            self.assertTrue( not self.model.isTerminationCell( 58 ) )
+            self.assertTrue( not self.model.isTerminationCell( 59 ) )
+            self.assertTrue( not self.model.isTerminationCell( 63 ) )
+            self.assertTrue( not self.model.isTerminationCell( 70 ) )
+            self.assertTrue( not self.model.isTerminationCell( 71 ) )
+            self.assertTrue( not self.model.isTerminationCell( 72 ) )
+            self.assertTrue( not self.model.isTerminationCell( 73 ) )
+            self.assertTrue( not self.model.isTerminationCell( 74 ) )
+            self.assertTrue( not self.model.isTerminationCell( 75 ) )
+            self.assertTrue( not self.model.isTerminationCell( 76 ) )
+            self.assertTrue( not self.model.isTerminationCell( 77 ) )
+            self.assertTrue( not self.model.isTerminationCell( 78 ) )
+            self.assertTrue( not self.model.isTerminationCell( 79 ) )
+            self.assertTrue( not self.model.isTerminationCell( 80 ) )
+            self.assertTrue( not self.model.isTerminationCell( 81 ) )
+            self.assertTrue( not self.model.isTerminationCell( 82 ) )
+            self.assertTrue( not self.model.isTerminationCell( 83 ) )
+            self.assertTrue( not self.model.isTerminationCell( 88 ) )
+            self.assertTrue( not self.model.isTerminationCell( 136 ) )
+            self.assertTrue( not self.model.isTerminationCell( 152 ) )
+            self.assertTrue( not self.model.isTerminationCell( 154 ) )
+            self.assertTrue( not self.model.isTerminationCell( 166 ) )
+            self.assertTrue( not self.model.isTerminationCell( 168 ) )
+            self.assertTrue( not self.model.isTerminationCell( 184 ) )
+            self.assertTrue(self.model.isTerminationCell( 188 ) )
+            self.assertTrue( not self.model.isTerminationCell( 189 ) )
+
+        def testIsVoidCell(self):
+            "*Test Geometry.Model isVoidCell"
+
+            self.assertTrue( not self.model.isVoidCell( 1 ) )
+            self.assertTrue( not self.model.isVoidCell( 3 ) )
+            self.assertTrue( not self.model.isVoidCell( 5 ) )
+            self.assertTrue( not self.model.isVoidCell( 7 ) )
+            self.assertTrue( not self.model.isVoidCell( 9 ) )
+            self.assertTrue( not self.model.isVoidCell( 13 ) )
+            self.assertTrue( not self.model.isVoidCell( 19 ) )
+            self.assertTrue( not self.model.isVoidCell( 26 ) )
+            self.assertTrue( not self.model.isVoidCell( 27 ) )
+            self.assertTrue( not self.model.isVoidCell( 28 ) )
+            self.assertTrue( not self.model.isVoidCell( 29 ) )
+            self.assertTrue( not self.model.isVoidCell( 30 ) )
+            self.assertTrue( not self.model.isVoidCell( 31 ) )
+            self.assertTrue( not self.model.isVoidCell( 32 ) )
+            self.assertTrue( not self.model.isVoidCell( 33 ) )
+            self.assertTrue( not self.model.isVoidCell( 34 ) )
+            self.assertTrue( not self.model.isVoidCell( 35 ) )
+            self.assertTrue( not self.model.isVoidCell( 36 ) )
+            self.assertTrue( not self.model.isVoidCell( 37 ) )
+            self.assertTrue( not self.model.isVoidCell( 41 ) )
+            self.assertTrue( not self.model.isVoidCell( 48 ) )
+            self.assertTrue( not self.model.isVoidCell( 49 ) )
+            self.assertTrue( not self.model.isVoidCell( 50 ) )
+            self.assertTrue( not self.model.isVoidCell( 51 ) )
+            self.assertTrue( not self.model.isVoidCell( 52 ) )
+            self.assertTrue( not self.model.isVoidCell( 53 ) )
+            self.assertTrue( not self.model.isVoidCell( 54 ) )
+            self.assertTrue( not self.model.isVoidCell( 55 ) )
+            self.assertTrue( not self.model.isVoidCell( 56 ) )
+            self.assertTrue( not self.model.isVoidCell( 57 ) )
+            self.assertTrue( not self.model.isVoidCell( 58 ) )
+            self.assertTrue( not self.model.isVoidCell( 59 ) )
+            self.assertTrue( not self.model.isVoidCell( 63 ) )
+            self.assertTrue( not self.model.isVoidCell( 70 ) )
+            self.assertTrue( not self.model.isVoidCell( 71 ) )
+            self.assertTrue( not self.model.isVoidCell( 72 ) )
+            self.assertTrue( not self.model.isVoidCell( 73 ) )
+            self.assertTrue( not self.model.isVoidCell( 74 ) )
+            self.assertTrue( not self.model.isVoidCell( 75 ) )
+            self.assertTrue( not self.model.isVoidCell( 76 ) )
+            self.assertTrue( not self.model.isVoidCell( 77 ) )
+            self.assertTrue( not self.model.isVoidCell( 78 ) )
+            self.assertTrue( not self.model.isVoidCell( 79 ) )
+            self.assertTrue( not self.model.isVoidCell( 80 ) )
+            self.assertTrue( not self.model.isVoidCell( 81 ) )
+            self.assertTrue( not self.model.isVoidCell( 82 ) )
+            self.assertTrue( not self.model.isVoidCell( 83 ) )
+            self.assertTrue( not self.model.isVoidCell( 88 ) )
+            self.assertTrue( not self.model.isVoidCell( 136 ) )
+            self.assertTrue( not self.model.isVoidCell( 152 ) )
+            self.assertTrue( not self.model.isVoidCell( 154 ) )
+            self.assertTrue( not self.model.isVoidCell( 166 ) )
+            self.assertTrue( not self.model.isVoidCell( 168 ) )
+            self.assertTrue( not self.model.isVoidCell( 184 ) )
+            self.assertTrue(self.model.isVoidCell( 188 ) )
+            self.assertTrue(self.model.isVoidCell( 189 ) )
+
+        def testGetCellVolume(self):
+            "*Test Geometry.Model getCellVolume"
+
+            # Get the volume of cell 53
+            cell_volume = self.model.getCellVolume( 53 )
+            self.assertAlmostEqual( cell_volume, 98.322384, delta=1e-6*98.322384 )
+
+        def testGetSurfaces(self):
+            "*Test Geometry.Model getSurfaces"
+
+            surfaces = self.model.getSurfaces()
+            self.assertEqual( len(surfaces), 293 )
+
+        def testGetSurfaceEstimatorData(self):
+            "*Test Geometry.Model getSurfaceEstimatorData"
+            surface_estimator_id_data_map = self.model.getSurfaceEstimatorData()
+            self.assertEqual( len(surface_estimator_id_data_map), 4 )
+            self.assertTrue( 5 in surface_estimator_id_data_map )
+            self.assertTrue( 6 in surface_estimator_id_data_map )
+            self.assertTrue( 7 in surface_estimator_id_data_map )
+            self.assertTrue( 8 in surface_estimator_id_data_map )
+
+            self.assertEqual( surface_estimator_id_data_map.get(5)[0],
+                              Geometry.SURFACE_FLUX_ESTIMATOR )
+            self.assertEqual( surface_estimator_id_data_map.get(5)[1],
+                              Geometry.NEUTRON )
+            self.assertEqual( len(surface_estimator_id_data_map.get(5)[2]),
+                              7 )
+
+            self.assertEqual( surface_estimator_id_data_map.get(6)[0],
+                              Geometry.SURFACE_FLUX_ESTIMATOR )
+            self.assertEqual( surface_estimator_id_data_map.get(6)[1],
+                              Geometry.PHOTON )
+            self.assertEqual( len(surface_estimator_id_data_map.get(6)[2]),
+                              7 )
+
+            self.assertEqual( surface_estimator_id_data_map.get(7)[0],
+                              Geometry.SURFACE_CURRENT_ESTIMATOR )
+            self.assertEqual( surface_estimator_id_data_map.get(7)[1],
+                              Geometry.NEUTRON )
+            self.assertEqual( len(surface_estimator_id_data_map.get(7)[2]),
+                              7 )
+
+            self.assertEqual( surface_estimator_id_data_map.get(8)[0],
+                              Geometry.SURFACE_CURRENT_ESTIMATOR )
+            self.assertEqual( surface_estimator_id_data_map.get(8)[1],
+                              Geometry.PHOTON )
+            self.assertEqual( len(surface_estimator_id_data_map.get(8)[2]),
+                              7 )
+
+        def testDoesSurfaceExist(self):
+            "*Test Geometry.Model doesSurfaceExist"
+            self.assertTrue( not self.model.doesSurfaceExist( 0 ) )
+            self.assertTrue(self.model.doesSurfaceExist( 1 ) )
+            self.assertTrue( not self.model.doesSurfaceExist( 2 ) )
+            self.assertTrue( not self.model.doesSurfaceExist( 3 ) )
+            self.assertTrue( not self.model.doesSurfaceExist( 4 ) )
+            self.assertTrue( not self.model.doesSurfaceExist( 5 ) )
+            self.assertTrue( not self.model.doesSurfaceExist( 6 ) )
+            self.assertTrue(self.model.doesSurfaceExist( 7 ) )
+            self.assertTrue(self.model.doesSurfaceExist( 8 ) )
+            self.assertTrue(self.model.doesSurfaceExist( 9 ) )
+
+        def testGetSurfaceArea(self):
+            "*Test Geometry.Model getSurfaceArea"
+
+            # Get the surface area of surface 242
+            surface_area = self.model.getSurfaceArea( 242 )
+            self.assertAlmostEqual( surface_area, 38.7096, delta=1e-6*38.7096 )
+
+        def testIsReflectingSurface(self):
+            "*Test Geometry.Model isReflectingSurface"
+            self.assertTrue(self.model.isReflectingSurface( 408 ) )
+            self.assertTrue( not self.model.isReflectingSurface( 1 ) )
+
+        def testCreateNavigator(self):
+            "*Test Geometry.Model createNavigator"
+            navigator = self.model.createNavigator()
+            self.assertTrue(navigator)
+
+#-----------------------------------------------------------------------------#
+# Test the Model class with a Root geometry
+if inspect.ismodule( ROOT ):
+    class RootModelTestCase(unittest.TestCase):
+        "TestCase class for Geometry.Model class using a Root geometry"
+
+        @classmethod
+        def setUpClass(cls):
+            cls.model = ROOT.RootModel.getInstance() 
+            properties = ROOT.RootModelProperties( options.root_file )
+            properties.setMaterialPropertyName( "mat" )
+            cls.model.initialize( properties )
+
+        def testGetModelPropertie(self):
+            "*Test Geometry.Model getModelPropertie"
+            properties = self.model.getModelProperties()
+            self.assertEqual( properties.getModelFileNameWithPath(),
+                              options.root_file )
+            self.assertTrue( properties.getModelFileName() in options.root_file )
+            self.assertEqual( properties.getMaterialPropertyName(), "mat" )
+            self.assertEqual( properties.getVoidMaterialName(), "void" )
+            self.assertEqual( properties.getTerminalMaterialName(), "graveyard" )
+
+        def testHasCellEstimatorData(self):
+            "*Test Geometry.Model hasCellEstimatorData"
+            self.assertFalse( self.model.hasCellEstimatorData() )
+
+        def testGetMaterialIds(self):
+            "*Test Geometry.Model getMaterialIds"
+            material_ids = self.model.getMaterialIds()
+
+            self.assertEqual( len(material_ids), 1 )
+            self.assertTrue( 1 in material_ids )
+
+        def testGetCells(self):
+            "*Test Geometry.Model getCells"
+            # Get all cells
+            cells = self.model.getCells( True, True )
+
+            self.assertEqual( len(cells), 3 )
+            self.assertTrue( 1 in cells )
+            self.assertTrue( 2 in cells )
+            self.assertTrue( 3 in cells )
+
+            # Get all cells except for termination cells
+            cells = self.model.getCells( True, False )
+
+            self.assertEqual( len(cells), 2 )
+            self.assertTrue( 1 in cells )
+            self.assertTrue( 2 in cells )
+            self.assertTrue( 3 not in cells )
+
+            # Get all cells except for void cells
+            cells = self.model.getCells( False, True )
+
+            self.assertEqual( len(cells), 2 )
+            self.assertTrue( 1 not in cells )
+            self.assertTrue( 2 in cells )
+            self.assertTrue( 3 in cells )
+
+            # Get all cells except for void and termination cells
+            cells = self.model.getCells( False, False )
+
+            self.assertEqual( len(cells), 1 )
+            self.assertTrue( 1 not in cells )
+            self.assertTrue( 2 in cells )
+            self.assertTrue( 3 not in cells )
+
+        def testGetCellMaterialNames(self):
+            "*Test Geometry.Model getCellMaterialNames"
+            cell_id_material_name_map = self.model.getCellMaterialNames()
+
+            self.assertEqual( len(cell_id_material_name_map), 3 )
+            self.assertTrue( 1 in cell_id_material_name_map )
+            self.assertTrue( 2 in cell_id_material_name_map )
+            self.assertTrue( 3 in cell_id_material_name_map )
+            self.assertEqual( cell_id_material_name_map[1], "void" )
+            self.assertEqual( cell_id_material_name_map[2], "mat_1" )
+            self.assertEqual( cell_id_material_name_map[3], "graveyard" )
+
+        def testGetCellMaterialIds(self):
+            "*Test Geometry.Model getCellMaterialIds"
+            cell_id_mat_id_map = self.model.getCellMaterialIds()
+
+            self.assertEqual( len(cell_id_mat_id_map), 1 )
+            self.assertTrue( 2 in cell_id_mat_id_map )
+            self.assertEqual( cell_id_mat_id_map[2], 1 )
+
+        def testGetCellDensities(self):
+            "*Test Geometry.Model getCellDensities"
+            cell_id_density_map = self.model.getCellDensities()
+
+            self.assertEqual( len(cell_id_density_map), 1 )
+            self.assertTrue( 2 in cell_id_density_map )
+            self.assertEqual( cell_id_density_map[2], 1e24 )
+
+        def testGetCellEstimatorData(self):
+            "*Test Geometry.Model getCellEstimatorData"
+            cell_estimator_id_data_map = self.model.getCellEstimatorData()
+
+            self.assertEqual( len(cell_estimator_id_data_map), 0 )
+
+        def testDoesCellExist(self):
+            "*Test Geometry.Model doesCellExist"
+
+            self.assertTrue( self.model.doesCellExist( 1 ) )
+            self.assertTrue( self.model.doesCellExist( 2 ) )
+            self.assertTrue( self.model.doesCellExist( 3 ) )
+            self.assertFalse( self.model.doesCellExist( 4 ) )
+
+        def testIsTerminationCell(self):
+            "*Test Geometry.Model isTerminationCell"
+
+            self.assertFalse( self.model.isTerminationCell( 1 ) )
+            self.assertFalse( self.model.isTerminationCell( 2 ) )
+            self.assertTrue( self.model.isTerminationCell( 3 ) )
+
+        def testIsVoidCell(self):
+            "*Test Geometry.Model isVoidCell"
+
+            self.assertTrue( self.model.isVoidCell( 1 ) )
+            self.assertFalse( self.model.isVoidCell( 2 ) )
+            self.assertFalse( self.model.isVoidCell( 3 ) )
+
+        def testGetCellVolume(self):
+            "*Test Geometry.Model getCellVolume"
+
+            self.assertAlmostEqual( self.model.getCellVolume( 1 ), 934.550153050213, delta=1e-6 )
+            self.assertAlmostEqual( self.model.getCellVolume( 2 ), 65.4498469497874, delta=1e-6 )
+            self.assertAlmostEqual( self.model.getCellVolume( 3 ), 1744.0, delta=1e-6 )
+
+        def testCreateNavigator(self):
+            "*Test Geometry.Model createNavigator"
+
+            # If this fails an error will be thrown
+            navigator = self.model.createNavigator()
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite 
+    if len(options.dagmc_h5m_file) > 0 and inspect.ismodule(DagMC):
+        suite.addTest(unittest.makeSuite(DagMCModelTestCase))
+
+    if len(options.root_file) > 0 and inspect.ismodule(ROOT):
+        suite.addTest(unittest.makeSuite(RootModelTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Geometry.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstGeometry.Model.py
+#-----------------------------------------------------------------------------#

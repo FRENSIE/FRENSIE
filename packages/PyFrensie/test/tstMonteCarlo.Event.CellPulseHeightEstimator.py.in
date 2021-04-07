@@ -1,0 +1,507 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.CellPulseHeightEstimator class unit tests
+#  \file   tstMonteCarlo.Event.CellPulseHeightEstimator.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.CellPulseHeightEstimator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+
+def assertSequenceAlmostEqual( lhs_array, rhs_array, tol ):
+  # Test that the array sizes are equal
+  if len(lhs_array) != len(rhs_array):
+    return False
+
+  # Test that the array entries are almost equal
+  for i in range(len(lhs_array)):
+    if numpy.abs(lhs_array[i]) != 0.0:
+      if numpy.abs(lhs_array[i] - rhs_array[i])/numpy.abs(lhs_array[i]) > tol:
+        return False
+    else:
+      if numpy.abs(lhs_array[i] - rhs_array[i]) > tol:
+        return False
+
+  # If everything passes return True
+  return True
+
+#---------------------------------------------------------------------------#
+# Tests.
+#---------------------------------------------------------------------------#
+# Test the CellPulseHeightEstimator class
+class CellPulseHeightEstimatorTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.CellPulseHeightEstimator class"
+
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.HexCellPulseHeightEstimator check_type"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndChargeMultipliedCellPulseHeightEstimator( 2, 1.0, [ 0, 1 ] )
+
+        self.assertTrue( estimator.isCellEstimator() )
+        self.assertFalse( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+    def testSetDiscretization(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator setDiscretization"
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        double_bins = [0.0, 0.5, 1.0]
+        estimator.setEnergyDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setCosineDiscretization( double_bins)
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setTimeDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        unsigned_bins = [ 0, 1 ]
+
+        # Only energy bins are allowed
+        estimator.setCollisionNumberDiscretization( unsigned_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        double_bins = [0.0, 0.5, 1.0]
+        estimator.setEnergyDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setCosineDiscretization( double_bins)
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setTimeDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        unsigned_bins = [ 0, 1 ]
+
+        # Only energy bins are allowed
+        estimator.setCollisionNumberDiscretization( unsigned_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        estimator = Event.WeightAndChargeMultipliedCellPulseHeightEstimator( 2, 1.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        double_bins = [0.0, 0.5, 1.0]
+        estimator.setEnergyDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setCosineDiscretization( double_bins)
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Only energy bins are allowed
+        estimator.setTimeDiscretization( double_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        unsigned_bins = [ 0, 1 ]
+
+        # Only energy bins are allowed
+        estimator.setCollisionNumberDiscretization( unsigned_bins )
+
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+#---------------------------------------------------------------------------#
+# Check that a response functions can be set
+    def testSetResponseFunctions(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator setResponseFunctions"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndChargeMultipliedCellPulseHeightEstimator( 2, 1.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+#---------------------------------------------------------------------------#
+# Check that a response function can be added
+    def testAddResponseFunction(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator addResponseFunction"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_function = ActiveRegion.ParticleResponse.getDefault()
+        print response_function
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.addResponseFunction( response_function )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_function = ActiveRegion.ParticleResponse.getDefault()
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.addResponseFunction( response_function )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        estimator = Event.WeightAndChargeMultipliedCellPulseHeightEstimator( 2, 1.0, [ 0, 1 ] )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_function = ActiveRegion.ParticleResponse.getDefault()
+
+        # Response functions are not allowed with pulse height estimators
+        estimator.addResponseFunction( response_function )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+#---------------------------------------------------------------------------#
+# Check that the particle types can be set
+    def testSetParticleTypes(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator setParticleTypes"
+
+        estimator = Event.WeightMultipliedCellPulseHeightEstimator( 0, 10.0, [ 0, 1 ] )
+
+        particle_types = [None] * ( 4 )
+        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[1] = MonteCarlo.NEUTRON
+        particle_types[2] = MonteCarlo.ADJOINT_PHOTON
+        particle_types[3] = MonteCarlo.ADJOINT_NEUTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.NEUTRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
+
+        particle_types = [None] * ( 3 )
+        particle_types[0] = MonteCarlo.ELECTRON
+        particle_types[1] = MonteCarlo.POSITRON
+        particle_types[2] = MonteCarlo.ADJOINT_ELECTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.ELECTRON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.POSITRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_ELECTRON ) )
+
+        estimator = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator( 1, 10.0, [ 0, 1 ] )
+
+        particle_types = [None] * ( 4 )
+        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[1] = MonteCarlo.NEUTRON
+        particle_types[2] = MonteCarlo.ADJOINT_PHOTON
+        particle_types[3] = MonteCarlo.ADJOINT_NEUTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.NEUTRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
+
+        particle_types = [None] * ( 3 )
+        particle_types[0] = MonteCarlo.ELECTRON
+        particle_types[1] = MonteCarlo.POSITRON
+        particle_types[2] = MonteCarlo.ADJOINT_ELECTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.ELECTRON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.POSITRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_ELECTRON ) )
+
+        estimator = Event.WeightAndChargeMultipliedCellPulseHeightEstimator( 2, 1.0, [ 0, 1 ] )
+
+        particle_types = [None] * ( 4 )
+        particle_types[0] = MonteCarlo.PHOTON
+        particle_types[1] = MonteCarlo.NEUTRON
+        particle_types[2] = MonteCarlo.ADJOINT_PHOTON
+        particle_types[3] = MonteCarlo.ADJOINT_NEUTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.NEUTRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_PHOTON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_NEUTRON ) )
+
+        particle_types = [None] * ( 3 )
+        particle_types[0] = MonteCarlo.ELECTRON
+        particle_types[1] = MonteCarlo.POSITRON
+        particle_types[2] = MonteCarlo.ADJOINT_ELECTRON
+
+        estimator.setParticleTypes( particle_types )
+
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.PHOTON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.ELECTRON ) )
+        self.assertTrue( estimator.isParticleTypeAssigned( MonteCarlo.POSITRON ) )
+        self.assertFalse( estimator.isParticleTypeAssigned( MonteCarlo.ADJOINT_ELECTRON ) )
+
+#---------------------------------------------------------------------------#
+# Check that a partial history contribution can be added to the estimator
+    def testUpdateFromParticleEvent(self):
+        "*Test MonteCarlo.Event.CellPulseHeightEstimator updateFromParticleEvent"
+
+        # Set the entity ids
+        entity_ids = [None] * ( 2 )
+        entity_ids[0] = 0
+        entity_ids[1] = 1
+
+        estimator_1 = Event.WeightMultipliedCellPulseHeightEstimator(
+                0,
+                10.0,
+                entity_ids )
+
+        estimator_1_base = estimator_1
+
+        estimator_2 = Event.WeightAndEnergyMultipliedCellPulseHeightEstimator(
+                1,
+                10.0,
+                entity_ids )
+        estimator_2_base = estimator_2
+
+        estimator_3 = Event.WeightAndChargeMultipliedCellPulseHeightEstimator(
+                2,
+                1.0,
+                entity_ids )
+        estimator_3_base = estimator_3
+
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 1e-1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
+
+        particle_types = [None] * ( 1 )
+        particle_types[0] = MonteCarlo.ELECTRON
+
+        estimator_1.setParticleTypes( particle_types )
+        estimator_2.setParticleTypes( particle_types )
+        estimator_3.setParticleTypes( particle_types )
+
+        particle = MonteCarlo.ElectronState( 0 )
+        particle.setWeight( 1.0 )
+        particle.setEnergy( 1.0 )
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        estimator_1.updateFromParticleEnteringCellEvent( particle, 0 )
+        estimator_2.updateFromParticleEnteringCellEvent( particle, 0 )
+        estimator_3.updateFromParticleEnteringCellEvent( particle, 0 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        particle.setEnergy( 0.5 )
+
+        estimator_1.updateFromParticleLeavingCellEvent( particle, 0 )
+        estimator_2.updateFromParticleLeavingCellEvent( particle, 0 )
+        estimator_3.updateFromParticleLeavingCellEvent( particle, 0 )
+
+        estimator_1.updateFromParticleEnteringCellEvent( particle, 1 )
+        estimator_2.updateFromParticleEnteringCellEvent( particle, 1 )
+        estimator_3.updateFromParticleEnteringCellEvent( particle, 1 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        particle.setEnergy( 0.45 )
+
+        estimator_1.updateFromParticleLeavingCellEvent( particle, 1 )
+        estimator_2.updateFromParticleLeavingCellEvent( particle, 1 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        estimator_1_base.commitHistoryContribution()
+        estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        Event.ParticleHistoryObserver.setNumberOfHistories( 1.0 )
+        Event.ParticleHistoryObserver.setElapsedTime( 1.0 )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator_1_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_1_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[0.0, 1.0] )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[0.0, 1.0] )
+
+        entity_bin_first_moments = estimator_1_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_1_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[1.0, 0.0] )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[1.0, 0.0] )
+
+        entity_bin_first_moments = estimator_2_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_2_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[0.0, 0.5] )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[0.0, 0.25] )
+
+        entity_bin_first_moments = estimator_2_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_2_base.getEntityBinDataSecondMoments( 1 )
+
+        assertSequenceAlmostEqual( entity_bin_first_moments,[0.05, 0.0], 1e-15 )
+        assertSequenceAlmostEqual( entity_bin_second_moments,[0.0025, 0.0], 1e-15 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[0.0, 0.0] )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[0.0, 0.0] )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 1 )
+
+        assertSequenceAlmostEqual( entity_bin_first_moments,[0.0, -1.0], 1e-15 )
+        assertSequenceAlmostEqual( entity_bin_second_moments,[0.0, 1.0], 1e-15 )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[0.0, 1.0] )
+        self.assertSequenceEqual( list(total_bin_second_moments),[0.0, 1.0] )
+
+        total_bin_first_moments = estimator_2_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[0.0, 0.55] )
+        assertSequenceAlmostEqual( total_bin_second_moments,[0.0, 0.3025], 1e-15 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[0.0, -1.0] )
+        assertSequenceAlmostEqual( total_bin_second_moments,[0.0, 1.0], 1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(CellPulseHeightEstimatorTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.CellPulseHeightEstimator.py
+#-----------------------------------------------------------------------------#

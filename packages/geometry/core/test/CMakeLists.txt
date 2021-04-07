@@ -1,5 +1,17 @@
- ADD_EXECUTABLE(tstRay 
-  tstRay.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstRay geometry_core utility_core)
-ADD_TEST(Ray_test tstRay)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(geometry_core)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(EstimatorType DEPENDS tstEstimatorType.cpp)
+FRENSIE_ADD_TEST(EstimatorType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Ray DEPENDS tstRay.cpp)
+FRENSIE_ADD_TEST(Ray)
+
+FRENSIE_ADD_TEST_EXECUTABLE(InfiniteMediumModel DEPENDS tstInfiniteMediumModel.cpp)
+FRENSIE_ADD_TEST(InfiniteMediumModel)
+
+FRENSIE_ADD_TEST_EXECUTABLE(InfiniteMediumNavigator DEPENDS tstInfiniteMediumNavigator.cpp)
+FRENSIE_ADD_TEST(InfiniteMediumNavigator)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(geometry_core)

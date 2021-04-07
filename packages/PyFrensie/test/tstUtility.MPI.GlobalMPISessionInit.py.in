@@ -1,0 +1,194 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.MPI.GlobalMPISessionInit module unit tests
+#  \file   tstUtility.MPI.GlobalMPISessionInit.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Utility.MPI.GlobalMPISessionInit module
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-t", "--constructor_type", type="string", dest="constructor_type",
+                  help="Set the Global MPI Session constructor type.")
+options,args = parser.parse_args()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the GlobalMPISessionInit
+class GlobalMPISessionInitTestCase(unittest.TestCase):
+    "TestCase class for Utility.MPI.GlobalMPISession class"
+
+    # Check that the mpi session can be initialized and finalized correctly
+    def testInitialize_finalize(self):
+        "*Test Utility.MPI.GlobalMPISessionInit initialize_finalize"
+        self.assertFalse( MPI.GlobalMPISession.initialized() )
+        self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+        constructor_type = str(options.constructor_type)
+
+        if constructor_type == "default":
+          session = MPI.GlobalMPISession()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+          session = None
+        elif constructor_type == "advanced":
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+          session = None
+        elif constructor_type == "basic_single":
+
+          session = MPI.GlobalMPISession( MPI.cvar.GlobalMPISession_SingleThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.SingleThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.SingleThreading() )
+          session = None
+        elif constructor_type == "advanced_single":
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_SingleThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.SingleThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.SingleThreading() )
+          session = None
+        elif constructor_type == "basic_funneled":
+          session = MPI.GlobalMPISession( MPI.cvar.GlobalMPISession_FunneledThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.FunneledThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.FunneledThreading() )
+          session = None
+        elif constructor_type == "advanced_funneled":
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_FunneledThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.FunneledThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.FunneledThreading() )
+          session = None
+        elif constructor_type == "basic_serialized":
+          session = MPI.GlobalMPISession( MPI.cvar.GlobalMPISession_SerializedThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.SerializedThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.SerializedThreading() )
+          session = None
+        elif constructor_type == "advanced_serialized":
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_SerializedThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertEqual( MPI.GlobalMPISession.threadLevel(),
+                            MPI.SerializedThreading() )
+          self.assertEqual( MPI.GlobalMPISession.thread_level(),
+                            MPI.SerializedThreading() )
+          session = None
+        elif constructor_type == "basic_multiple":
+          session = MPI.GlobalMPISession( MPI.cvar.GlobalMPISession_MultipleThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertTrue( MPI.GlobalMPISession.threadLevel() ==
+                           MPI.MultipleThreading() or
+                           MPI.GlobalMPISession.threadLevel() ==
+                           MPI.SerializedThreading() )
+          self.assertTrue( MPI.GlobalMPISession.thread_level() ==
+                           MPI.MultipleThreading() or
+                           MPI.GlobalMPISession.threadLevel() ==
+                           MPI.SerializedThreading() )
+          session = None
+        elif constructor_type == "advanced_multiple":
+          session = MPI.GlobalMPISession( len(sys.argv), sys.argv, MPI.cvar.GlobalMPISession_MultipleThreading )
+          session.barrier()
+
+          self.assertTrue( MPI.GlobalMPISession.initialized() )
+          self.assertFalse( MPI.GlobalMPISession.finalized() )
+
+          self.assertTrue( MPI.GlobalMPISession.threadLevel() ==
+                           MPI.MultipleThreading() or
+                           MPI.GlobalMPISession.threadLevel() ==
+                           MPI.SerializedThreading() )
+          self.assertTrue( MPI.GlobalMPISession.thread_level() ==
+                           MPI.MultipleThreading() or
+                           MPI.GlobalMPISession.threadLevel() ==
+                           MPI.SerializedThreading() )
+          session = None
+        else:
+          self.fail( "Unknown constructor requested: " + constructor_type )
+
+        self.assertTrue( MPI.GlobalMPISession.initialized() )
+        self.assertTrue( MPI.GlobalMPISession.finalized() )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(GlobalMPISessionInitTestCase))
+
+    print >>sys.stderr, \
+        "\n********************\n" + \
+        "Testing Utility.MPI.GlobalMPISession \n" + \
+        "********************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.MPI.GlobalMPISessionInit.py
+#-----------------------------------------------------------------------------#

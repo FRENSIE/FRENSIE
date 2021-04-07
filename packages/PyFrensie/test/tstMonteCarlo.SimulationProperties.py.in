@@ -1,0 +1,149 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationProperties class unit tests
+#  \file   tstMonteCarlo.SimulationProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationProperties class
+class SimulationPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationProperties defaults"
+        properties = MonteCarlo.SimulationProperties()
+
+        # General properties
+        self.assertEqual( properties.getParticleMode(),
+                          MonteCarlo.NEUTRON_MODE )
+        self.assertEqual( properties.getSimulationWallTime(), float('inf') )
+        self.assertEqual( properties.getNumberOfHistories(), 0 )
+        self.assertEqual( properties.getMinNumberOfRendezvous(), 1 )
+        self.assertEqual( properties.getMaxRendezvousBatchSize(), 1000000000 )
+        self.assertEqual( properties.getMinNumberOfBatchesPerRendezvous(), 1 )
+        self.assertEqual( properties.getMaxBatchSize(), 1000000000 )
+        self.assertEqual( properties.getNumberOfSnapshotsPerBatch(), 1 )
+        self.assertFalse(properties.isImplicitCaptureModeOn() )
+
+        # Neutron properties
+        self.assertEqual( properties.getFreeGasThreshold(), 400.0 )
+        self.assertEqual( properties.getAbsoluteMinNeutronEnergy(), 1e-11 )
+        self.assertEqual( properties.getMinNeutronEnergy(), 1e-11 )
+        self.assertEqual( properties.getMaxNeutronEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxNeutronEnergy(), 20.0 )
+        self.assertTrue( properties.isUnresolvedResonanceProbabilityTableModeOn() )
+
+        # Photon properties
+        self.assertEqual( properties.getAbsoluteMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMinPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getKahnSamplingCutoffEnergy(), 3.0 )
+        self.assertEqual( properties.getNumberOfPhotonHashGridBins(), 1000 )
+        self.assertEqual( properties.getIncoherentModelType(),
+                          MonteCarlo.COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL )
+        self.assertTrue( properties.isAtomicRelaxationModeOn( MonteCarlo.PHOTON ) )
+        self.assertFalse(properties.isDetailedPairProductionModeOn() )
+        self.assertFalse(properties.isPhotonuclearInteractionModeOn() )
+
+        # Adjoint Photon properties
+        self.assertEqual( properties.getAbsoluteMinAdjointPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMinAdjointPhotonEnergy(), 1e-3 )
+        self.assertEqual( properties.getMaxAdjointPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxAdjointPhotonEnergy(), 20.0 )
+        self.assertEqual( properties.getNumberOfAdjointPhotonHashGridBins(), 500 )
+        self.assertEqual( properties.getIncoherentAdjointModelType(),
+                          MonteCarlo.DB_IMPULSE_INCOHERENT_ADJOINT_MODEL )
+        self.assertEqual( properties.getAdjointKleinNishinaSamplingType(),
+                          MonteCarlo.TWO_BRANCH_REJECTION_ADJOINT_KN_SAMPLING )
+        self.assertEqual( len(properties.getCriticalAdjointPhotonLineEnergies()), 0 )
+
+        # Electron properties
+        self.assertEqual( properties.getAbsoluteMinElectronEnergy(), 1.5e-5 )
+        self.assertEqual( properties.getMinElectronEnergy(), 1e-4 )
+        self.assertEqual( properties.getMaxElectronEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 )
+        self.assertTrue( properties.isAtomicRelaxationModeOn( MonteCarlo.ELECTRON ) )
+        self.assertTrue( properties.isElasticModeOn() )
+        self.assertTrue( properties.isElectroionizationModeOn() )
+        self.assertTrue( properties.isBremsstrahlungModeOn() )
+        self.assertTrue( properties.isAtomicExcitationModeOn() )
+        self.assertEqual( properties.getElectronEvaluationTolerance(), 1e-7 )
+        self.assertEqual( properties.getElectronTwoDInterpPolicy(),
+                          MonteCarlo.LOGLOGLOG_INTERPOLATION )
+        self.assertEqual( properties.getElectronTwoDGridPolicy(),
+                          MonteCarlo.UNIT_BASE_CORRELATED_GRID )
+        self.assertEqual( properties.getBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.TWOBS_DISTRIBUTION )
+        self.assertEqual( properties.getElasticElectronDistributionMode(),
+                          MonteCarlo.COUPLED_DISTRIBUTION )
+        self.assertEqual( properties.getCoupledElasticSamplingMode(),
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
+
+    def testSetAtomicRelaxationMode(self):
+        "*Test MonteCarlo.SimulationProperties setAtomicRelaxationMode"
+        properties = MonteCarlo.SimulationProperties()
+
+        properties.setAtomicRelaxationModeOff( MonteCarlo.PHOTON )
+        self.assertFalse( properties.isAtomicRelaxationModeOn( MonteCarlo.PHOTON ) )
+
+        properties.setAtomicRelaxationModeOn( MonteCarlo.PHOTON )
+        self.assertTrue( properties.isAtomicRelaxationModeOn( MonteCarlo.PHOTON ) )
+
+        properties.setAtomicRelaxationModeOff( MonteCarlo.ELECTRON )
+        self.assertFalse( properties.isAtomicRelaxationModeOn( MonteCarlo.ELECTRON ) )
+
+        properties.setAtomicRelaxationModeOn( MonteCarlo.ELECTRON )
+        self.assertTrue( properties.isAtomicRelaxationModeOn( MonteCarlo.ELECTRON ) )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationProperties.py
+#-----------------------------------------------------------------------------#

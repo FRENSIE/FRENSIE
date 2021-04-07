@@ -33,13 +33,13 @@ enum NumericalCellIntegrationType{
   CELL_VOLUME,
   CELL_SURFACE_AREAS,
   CELL_VOLUME_AND_SURFACE_AREAS
-};  
+};
 
 /*! A factory class for creating smart pointers to cell objects and possibly
  * calculating the volume and surface areas.
  */
 template<typename Cell, typename SurfaceMap>
-class CellFactory 
+class CellFactory
 {
 public:
 
@@ -57,7 +57,7 @@ public:
   //@}
 
 private:
-  
+
   //! Typedef for cell ordinal type
   typedef typename Cell::ordinalType cellOrdinalType;
   //! Typedef for surface ordinal type
@@ -95,29 +95,29 @@ protected:
   void calculatePolyhedralCellVolumeAndArea( CellPtr &cell ) const;
 
   //! Create the polygons bounding the cell
-  static void createBoundingPolygons( 
+  static void createBoundingPolygons(
 				    Teuchos::Array<CellPolygon> &cell_polygons,
 				    CellPtr &cell );
 
   //! Calculate the volume of a polyhedral cell using bounding polygons
-  static scalarType calculatePolyhedralCellVolumeFromPolygons( 
-				const Teuchos::Array<CellPolygon> 
+  static scalarType calculatePolyhedralCellVolumeFromPolygons(
+				const Teuchos::Array<CellPolygon>
 				&cell_polygons );
 
   //! Create a bounding box for a polyhedral cell from bounding polygons
-  // static void createBoundingBoxFromPolygons( 
+  // static void createBoundingBoxFromPolygons(
   // 				BoundingBox &cell_bounding_box,
   // 				const Teuchos::Array<CellPolygon> &cell_polygons );
 
   //! Calculate the intersection points of planes with a plane of interest
   static void calculateIntersectionPointsOnPlane(
 			    std::list<Point> &intersection_points,
-			    const typename Cell::SurfaceSensePairsIterator 
+			    const typename Cell::SurfaceSensePairsIterator
 			    &plane_of_polygon,
 			    const CellPtr &cell );
 
   //! Calculate the volume and area of a rotationally symmetric cell
-  // void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell ); 
+  // void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell );
 
 private:
 

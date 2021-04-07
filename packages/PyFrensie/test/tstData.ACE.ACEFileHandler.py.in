@@ -18,8 +18,8 @@ parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-a", "--acefile", type="string", dest="acefile",
                   help="set the ACE file to test.")
-parser.add_option("-n", "--tablename", type="string", dest="tablename",
-                  help="set the ACE table name (must be in the file).")
+parser.add_option("-l", "--startline", type="int", dest="startline",
+                  help="set the ACE file start line.")
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
@@ -33,7 +33,7 @@ class ACEFileHandlerTestCase(unittest.TestCase):
     "TestCase for Data.ACE.ACEFileHandler class"
     @classmethod
     def setUpClass(cls):
-        cls.ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        cls.ace_file = ACE.ACEFileHandler( options.acefile, "1001.70c", options.startline )
 
     def testConstructor(self):
         "*Test Data.ACE.ACEFileHandler constructor"
@@ -62,22 +62,22 @@ class ACEFileHandlerTestCase(unittest.TestCase):
     def testGetTableComment(self):
         "*Test Data.ACE.ACEFileHandler getTableComment method"
         self.assertEqual(self.ace_file.getTableComment(), \
-                         " 1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248                      ")
+                         "1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248")
 
     def testGetTableMatId(self):
         "*Test Data.ACE.ACEFileHandler getTableMatId method"
-        self.assertEqual(self.ace_file.getTableMatId(), "   mat 125")
+        self.assertEqual(self.ace_file.getTableMatId(), "mat 125")
 
     def testGetTableZAIDs(self):
         "*Test Data.ACE.ACEFileHandler getTableZAIDs method"
         zaids = self.ace_file.getTableZAIDs()
-        self.assertEqual(len(zaids), 16)
+        self.assertEqual(len(zaids), 0)
         self.assertEqual(sum(zaids), 0)
 
     def testGetTableAtomicWeightRatios(self):
         "*Test Data.ACE.ACEFileHandler getTableAtomicWeightRatios method"
         awrs = self.ace_file.getTableAtomicWeightRatios()
-        self.assertEqual(len(awrs), 16)
+        self.assertEqual(len(awrs), 0)
         self.assertEqual(sum(awrs), 0)
 
     def testGetTableNXSArray(self):
@@ -112,13 +112,8 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    if options.tablename == "1001.70c":
-        suite.addTest(unittest.makeSuite(ACEFileHandlerTestCase))
-    else:
-        print >>sys.stderr, "Error: This test can only be used with the " + \
-            "1001.70c table (" + options.tablename + ") provided!"
-        sys.exit(1)
-
+    suite.addTest(unittest.makeSuite(ACEFileHandlerTestCase))
+    
     print >>sys.stderr, \
         "\n****************\n" +\
         "Testing Data.ACE \n" + \

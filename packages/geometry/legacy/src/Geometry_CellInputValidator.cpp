@@ -23,7 +23,7 @@ std::set<std::string> CellInputValidator::cell_names;
 const std::string CellInputValidator::definition_parameter = "definition";
 const std::string CellInputValidator::material_parameter = "material";
 const std::string CellInputValidator::density_parameter = "density";
-const std::string CellInputValidator::special_attribute_parameter = 
+const std::string CellInputValidator::special_attribute_parameter =
   "special attribute";
 
 // Validate individual cell
@@ -31,7 +31,7 @@ const std::string CellInputValidator::special_attribute_parameter =
  * errors are detected, they will be recorded and a std::invalid_argument
  * exception will be thrown.
  */
-void CellInputValidator::validateCell( 
+void CellInputValidator::validateCell(
 				   const Teuchos::ParameterList& cell,
 				   const std::string& name,
 				   const std::set<std::string>& surface_names )
@@ -62,7 +62,7 @@ void CellInputValidator::validateCell(
 
   // Validate the cell definition
   try{
-    validateCellDefinition( 
+    validateCellDefinition(
 	     cell.get<std::string>( CellInputValidator::definition_parameter ),
 	     name,
 	     surface_names );
@@ -82,9 +82,9 @@ void CellInputValidator::validateCell(
 
   // Validate the cell material
   bool material_defined = true;
-  
+
   try{
-    validateCellMaterial( 
+    validateCellMaterial(
 	     cell.get<std::string>( CellInputValidator::material_parameter ),
 	     name );
   }
@@ -103,15 +103,15 @@ void CellInputValidator::validateCell(
   // Record the material
   if( material_defined )
   {
-    CellInputValidator::material_names.insert( 
+    CellInputValidator::material_names.insert(
 	     cell.get<std::string>( CellInputValidator::material_parameter ) );
   }
-  
+
   // Validate the cell density (if the material is defined)
   if( material_defined )
   {
     try{
-      validateCellDensity( 
+      validateCellDensity(
 		     cell.get<double>( CellInputValidator::density_parameter ),
 		     name );
     }
@@ -121,7 +121,7 @@ void CellInputValidator::validateCell(
       error_message += "Error in cell \"";
       error_message += name;
       error_message += "\": no density has been specified for material \"";
-      error_message += 
+      error_message +=
 	cell.get<std::string>( CellInputValidator::material_parameter );
       error_message += "\".\n";
     }
@@ -135,7 +135,7 @@ void CellInputValidator::validateCell(
 
   // Validate the cell special attribute
   try{
-    validateCellSpecialAttribute( 
+    validateCellSpecialAttribute(
       cell.get<std::string>( CellInputValidator::special_attribute_parameter ),
       name );
   }
@@ -148,7 +148,7 @@ void CellInputValidator::validateCell(
     error_message +=  cell_exception.what();
   }
 
-  // If any errors have occured, throw
+  // If any errors have occurred, throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );
@@ -156,16 +156,16 @@ void CellInputValidator::validateCell(
 }
 
 // Validate all cells
-void CellInputValidator::validateAllCells( 
+void CellInputValidator::validateAllCells(
 				   const Teuchos::ParameterList& cells,
 				   const std::set<std::string>& surface_names )
 {
   std::string error_message;
 
   // Iterate over all cells in the cells parameter list
-  Teuchos::ParameterList::ConstIterator parameter = 
+  Teuchos::ParameterList::ConstIterator parameter =
     cells.begin();
-  Teuchos::ParameterList::ConstIterator end_parameter = 
+  Teuchos::ParameterList::ConstIterator end_parameter =
     cells.end();
 
   while( parameter != end_parameter )
@@ -182,12 +182,12 @@ void CellInputValidator::validateAllCells(
     }
     else
     {
-      const Teuchos::ParameterList& cell = 
+      const Teuchos::ParameterList& cell =
 	Teuchos::getValue<Teuchos::ParameterList>( parameter_entry );
 
       // Validate the surface
       try{
-	CellInputValidator::validateCell( cell, 
+	CellInputValidator::validateCell( cell,
 					  cells.name( parameter ),
 					  surface_names );
       }

@@ -1,0 +1,145 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.SurfaceFluxEstimatorDagMC class unit tests
+#  \file   tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.SurfaceFluxEstimatorDagMC class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_cad_file", type="string", dest="test_cad_file",
+                  help="Test CAD file name with path.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+
+#---------------------------------------------------------------------------#
+# Tests.
+#---------------------------------------------------------------------------#
+#
+# Test the SurfaceFluxEstimatorDagMC class
+class SurfaceFluxEstimatorDagMCTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.SurfaceFluxEstimatorDagMC class"
+
+    def setUp(self):
+      # Setup the DagMC Geometry
+      local_properties = DagMC.DagMCModelProperties( options.test_cad_file )
+
+      local_properties.setTerminationCellPropertyName( "graveyard" )
+      local_properties.setMaterialPropertyName( "mat" )
+      local_properties.setDensityPropertyName( "rho" )
+      local_properties.setEstimatorPropertyName( "tally" )
+
+      self.model = DagMC.DagMCModel( local_properties )
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.SurfaceFluxEstimatorDagMC constructor"
+
+        surface_ids = [46, 53, 55, 57, 58, 83, 86, 89, 92, 425, 434]
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator(
+                   0,
+                   10.0,
+                   surface_ids,
+                   self.model )
+
+        self.assertTrue( estimator.isEntityAssigned( 46 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 46 ),
+                                   2.848516339523823717e+02,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 53 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 53 ),
+                                   9.773235727898624248e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 55 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 55 ),
+                                   1.666730003051475251e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 57 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 57 ),
+                                   2.594277176251208061e+02,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 58 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 58 ),
+                                   3.715085987553494107e+01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 83 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 83 ),
+                                   6.714270351030512529e+01,
+                                   delta=1e-13 )
+
+        self.assertTrue( estimator.isEntityAssigned( 86 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 86 ),
+                                   3.165650076907713384e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 89 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 89 ),
+                                   3.165650076907712274e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 92 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 92 ),
+                                   3.165650076907711163e-01,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 425 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 425 ),
+                                   8.970071513450820433,
+                                   delta=1e-15 )
+
+        self.assertTrue( estimator.isEntityAssigned( 434 ) )
+        self.assertAlmostEqual( estimator.getEntityNormConstant( 434 ),
+                                   4.002587201643236448,
+                                   delta=1e-15 )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SurfaceFluxEstimatorDagMCTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.SurfaceFluxEstimatorDagMC.py
+#-----------------------------------------------------------------------------#

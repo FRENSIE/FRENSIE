@@ -11,22 +11,19 @@
 
 // Std Lib Includes
 #include <memory>
+#include <functional>
 
 // Boost Includes
-#include <boost/shared_ptr.hpp>
-#include <boost/function.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/singleton.hpp>
-#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
+#include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
+#include "Utility_List.hpp"
 
 namespace MonteCarlo{
 
@@ -37,7 +34,7 @@ class ParticleBank
 public:
 
   //! The compare function type
-  typedef boost::function<bool (const ParticleState&, const ParticleState&)> CompareFunctionType;
+  typedef std::function<bool (const ParticleState&, const ParticleState&)> CompareFunctionType;
 
   //! Default Constructor
   ParticleBank();
@@ -48,7 +45,7 @@ public:
 
   //! Check if the bank is empty
   bool isEmpty() const;
-  
+
   //! The size of the bank
   unsigned long long size() const;
 
@@ -56,24 +53,32 @@ public:
   ParticleState& top();
 
   //! Access the top element
-  const ParticleState& top() const; 
+  const ParticleState& top() const;
 
-  //! Push a particle to the bank
+  //! Insert a particle into the bank
   template<template<typename> class SmartPointer, typename State>
   void push( SmartPointer<State>& particle );
 
-  //! Insert a particle to the bank
-  virtual void push( const ParticleState& particle );
+  //! Insert a particle into the bank (Most Efficient/Recommended)
+  template<typename State>
+  void push( std::shared_ptr<State>& particle );
 
-  //! Push a neutron into the bank after an interaction
+  //! Insert a particle into the bank
+  void push( const ParticleState& particle );
+
+  //! Insert a neutron into the bank after an interaction
   template<template<typename> class SmartPointer>
   void push( SmartPointer<NeutronState>& neutron,
-	     const NuclearReactionType reaction );
+	     const int reaction );
+
+  //! Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
+  virtual void push( std::shared_ptr<NeutronState>& neutron,
+                     const int reaction );
 
   //! Insert a neutron into the bank after an interaction
   virtual void push( const NeutronState& neutron,
-		     const NuclearReactionType reaction );
-  
+		     const int reaction );
+
   //! Pop the top particle from bank
   void pop();
 
@@ -94,28 +99,31 @@ public:
   //! Splice the bank with another bank
   virtual void splice( ParticleBank& other_bank );
 
+protected:
+
+  //! The bank container type
+  typedef std::list<std::shared_ptr<ParticleState> > BankContainerType;
+
 private:
 
   // Dereference a smart ptr
-  static const ParticleState& dereference( 
+  static const ParticleState& dereference(
                                const std::shared_ptr<ParticleState>& pointer );
 
   // Save the bank to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_NVP(d_particle_states);
-  }
+  { ar & BOOST_SERIALIZATION_NVP(d_particle_states); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // A list of particle states 
-  std::list<std::shared_ptr<ParticleState> > d_particle_states;
-};  
+  // A list of particle states
+  BankContainerType d_particle_states;
+};
 
 // Dereference a smart pointer
-inline const ParticleState& ParticleBank::dereference( 
+inline const ParticleState& ParticleBank::dereference(
                              const std::shared_ptr<ParticleState>& pointer )
 {
   return *pointer;
@@ -123,7 +131,8 @@ inline const ParticleState& ParticleBank::dereference(
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( ParticleBank, MonteCarlo, 0 );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, ParticleBank );
 
 //---------------------------------------------------------------------------//
 // Template Includes

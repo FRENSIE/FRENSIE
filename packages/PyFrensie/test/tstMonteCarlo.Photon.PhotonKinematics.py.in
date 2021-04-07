@@ -1,0 +1,236 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon photon kinematics helpers unit tests
+#  \file   tstMonteCarlo.Photon.PhotonKinematics.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.PhotonKinematics helpers
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the forward photon kinematics helper functions
+class ForwardPhotonKinematicsTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Photon forward photon kinematics helpers"
+    
+    def testCalculateComptonLineEnergy(self):
+        "*Test MonteCarlo.Photon calculateComptonLineEnergy method"
+        compton_line = Photon.calculateComptonLineEnergy( 0.1, -1.0 )
+        self.assertAlmostEqual(compton_line, 0.0718705616632476, delta=1e-9)
+        compton_line = Photon.calculateComptonLineEnergy( 0.1, 0.0 )
+        self.assertAlmostEqual( compton_line, 0.0836333586947441, delta=1e-9 )
+        compton_line = Photon.calculateComptonLineEnergy( 0.1, 1.0 )
+        self.assertAlmostEqual( compton_line, 0.1, delta=1e-9 )
+        compton_line = Photon.calculateComptonLineEnergy( 1.0, -1.0 )
+        self.assertAlmostEqual( compton_line, 0.20350423413905203, delta=1e-9)
+        compton_line = Photon.calculateComptonLineEnergy( 1.0, 0.0 )
+        self.assertAlmostEqual( compton_line, 0.3381861540098899, delta=1e-9 )
+        compton_line = Photon.calculateComptonLineEnergy( 1.0, 1.0 )
+        self.assertAlmostEqual( compton_line, 1.0, delta=1e-9 )
+
+    def testCalculateElectronMomentumProjection(self):
+        "*Test MonteCarlo.Photon calculateElectronMomentumProjection method"
+        pz = Photon.calculateElectronMomentumProjection( 1.0, 0.5, -1.0 )
+        self.assertAlmostEqual( pz, 0.9713008908317715, delta=1e-9 )
+        pz = Photon.calculateElectronMomentumProjection( 1.0, 0.5, 0.0 )
+        self.assertAlmostEqual( pz, 0.42796164780180407, delta=1e-9 )
+        pz = Photon.calculateElectronMomentumProjection( 1.0, 0.5, 1.0 )
+        self.assertAlmostEqual( pz, -1.0, delta=1e-9 )
+
+    def testCalculateMaxElectronMomentumProjection(self):
+        "*Test MonteCarlo.Photon calculateMexElectronMomentumProjection method"
+        pz_max = Photon.calculateMaxElectronMomentumProjection( 1.0, 0.03, -1.0 )
+        self.assertAlmostEqual( pz_max, 1.9119216204672362, delta=1e-9 )
+        pz_max = Photon.calculateMaxElectronMomentumProjection( 1.0, 0.03, 0.0 )
+        self.assertAlmostEqual( pz_max, 1.3410091350301137, delta=1e-9 )
+        pz_max = Photon.calculateMaxElectronMomentumProjection( 1.0, 0.03, 1.0 )
+        self.assertAlmostEqual( pz_max, -1.0, 1e-15 )
+
+    def testCalculateDopplerBroadenedEnergy(self):
+        "*Test MonteCarlo.Photon calculateDopplerBroadenedEnergy method"
+        energy,possible = Photon.calculateDopplerBroadenedEnergy( 1.0, 1.0, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.5109989101300001, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergy( 1.0, 1.0, 0.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.7637187226885975, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergy( -1.0, 1.0, 1.0 )
+        self.assertTrue( not possible )
+        energy,possible = Photon.calculateDopplerBroadenedEnergy( -0.016, 0.1, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.06991664095581886, delta=1e-9 )
+        
+#-----------------------------------------------------------------------------#
+# Test the forward photon kinematics helper functions
+class AdjointPhotonKinematicsTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Photon adjoint photon kinematics helpers"
+
+    def testCalculateAdjointComptonLineEnergy(self):
+        "*Test MonteCarlo.Photon calculateAdjointComptonLineEnergy method"
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 0.1, -1.0 )
+        self.assertAlmostEqual( adjoint_compton_line, 0.16430890703649043, delta=1e-9 )
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 0.1, 0.0 )
+        self.assertAlmostEqual( adjoint_compton_line, 0.12433096476298923, delta=1e-9 )
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 0.1, 1.0 )
+        self.assertAlmostEqual( adjoint_compton_line, 0.1, delta=1e-9 )
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 1.0, 0.48901 )
+        self.assertAlmostEqual( adjoint_compton_line, 57350.33160410301, delta=1e-9 )
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 1.0, 0.9 )
+        self.assertAlmostEqual( adjoint_compton_line, 1.243309647629892, delta=1e-9 )
+        adjoint_compton_line = Photon.calculateAdjointComptonLineEnergy( 1.0, 1.0 )
+        self.assertAlmostEqual( adjoint_compton_line, 1.0, delta=1e-9 )
+
+    def testCalculateScatteringAngleCosineAdjoint(self):
+        "*Test MonteCarlo.Photon calculateScatteringAngleCosineAdjoint method"
+        mu = Photon.calculateScatteringAngleCosineAdjoint( 0.01, 0.01 )
+        self.assertAlmostEqual( mu, 1.0, delta=1e-9 )
+        mu = Photon.calculateScatteringAngleCosineAdjoint( 0.01, 0.010199601232613565 )
+        self.assertAlmostEqual( mu, 0.0, delta=1e-9 )
+        mu = Photon.calculateScatteringAngleCosineAdjoint( 0.01, 0.010407332879714635 )
+        self.assertAlmostEqual( mu, -1.0, delta=1e-9 )
+
+    def testCalculateAbsoluteMinScatteringAngleCosine(self):
+        "*Test MonteCarlo.Photon calculateAbsoluteMinScatteringAngleCosine method"
+        mu_min = Photon.calculateAbsoluteMinScatteringAngleCosine( 0.1 )
+        self.assertAlmostEqual( mu_min, -1.0, delta=1e-9 )
+        mu_min = Photon.calculateAbsoluteMinScatteringAngleCosine( 0.510998910/2 )
+        self.assertAlmostEqual( mu_min, -1.0, delta=1e-9 )
+        mu_min = Photon.calculateAbsoluteMinScatteringAngleCosine( 1.0 )
+        self.assertAlmostEqual( mu_min, 0.48900108987, delta=1e-9 )
+
+    def testCalculateMinScatteringAngleCosine(self):
+        "*Test MonteCarlo.Photon calculateMinScatteringAngleCosine method"
+        mu_min = Photon.calculateMinScatteringAngleCosine( 0.01, 0.1 )
+        self.assertAlmostEqual( mu_min, -1.0, delta=1e-9 )
+        mu_min = Photon.calculateMinScatteringAngleCosine( 0.0718705616632476, 0.1 )
+        self.assertAlmostEqual( mu_min, -1.0, delta=1e-9 )
+        mu_min = Photon.calculateMinScatteringAngleCosine( 0.09, 0.1 )
+        self.assertAlmostEqual( mu_min, 0.4322234331888879, delta=1e-9 )
+        mu_min = Photon.calculateMinScatteringAngleCosine( 0.1, 0.1 )
+        self.assertAlmostEqual( mu_min, 1.0, delta=1e-9 )
+
+    def testCalculateAbsoluteMinInverseEnergyGainRatio(self):
+        "*Test MonteCarlo.Photon calculateAbsoluteMinInverseEnergyGainRatio method"
+        x_min = Photon.calculateAbsoluteMinInverseEnergyGainRatio( 0.1 )
+        self.assertAlmostEqual( x_min, 0.6086097327504685, delta=1e-9 )
+        x_min = Photon.calculateAbsoluteMinInverseEnergyGainRatio( 0.510998910/2 )
+        self.assertAlmostEqual( x_min, 0.0, delta=1e-9 )
+        x_min = Photon.calculateAbsoluteMinInverseEnergyGainRatio( 1.0 )
+        self.assertAlmostEqual( x_min, 0.0, delta=1e-9 )
+
+    def testCalculateMinInverseEnergyGainRatio(self):
+        "*Test MonteCarlo.Photon calculateMinInverseEnergyGainRatio method"
+        x_min = Photon.calculateMinInverseEnergyGainRatio( 0.01, 0.1 )
+        self.assertAlmostEqual( x_min, 0.9608609732750468, delta=1e-9 )
+        x_min = Photon.calculateMinInverseEnergyGainRatio( 0.0718705616632476, 0.1 )
+        self.assertAlmostEqual( x_min, 0.7187056166324759, delta=1e-9 )
+        x_min = Photon.calculateMinInverseEnergyGainRatio( 0.09, 0.1 )
+        self.assertAlmostEqual( x_min, 0.9, delta=1e-9 )
+        x_min = Photon.calculateMinInverseEnergyGainRatio( 0.1, 0.1 )
+        self.assertAlmostEqual( x_min, 1.0, delta=1e-9 )
+
+    def testCalculateElectronMomentumProjectionAdjoint(self):
+        "*Test MonteCarlo.Photon calculateElectronMomentumProjectionAdjoint method"
+        pz = Photon.calculateElectronMomentumProjectionAdjoint( 0.01, 0.01001, -1.0 )
+        self.assertAlmostEqual( pz, 0.019079543104286924, delta=1e-9 )
+        pz = Photon.calculateElectronMomentumProjectionAdjoint( 0.01, 0.05, -1.0 )
+        self.assertAlmostEqual( pz, -0.6340508110625389, delta=1e-9 )
+        pz = Photon.calculateElectronMomentumProjectionAdjoint( 0.01, 0.1, -1.0 )
+        self.assertAlmostEqual( pz, -0.7826008847954972, delta=1e-9 )
+        pz = Photon.calculateElectronMomentumProjectionAdjoint( 0.01, 1.0, -1.0 )
+        self.assertAlmostEqual( pz, -0.9414465081931157, delta=1e-9 )
+
+    def testCalculateMaxElectronMomentumProjectionAdjoint(self):
+        "*Test MonteCarlo.Photon calculateMaxElectronMomentumProjectionAdjoint method"
+        pz_max = Photon.calculateMaxElectronMomentumProjectionAdjoint( 0.01, 1e-5, -1.0 )
+        self.assertAlmostEqual( pz_max, 0.019079543104286924, delta=1e-9 )
+        pz_max = Photon.calculateMaxElectronMomentumProjectionAdjoint( 0.01, 1e-5, 0.0 )
+        self.assertAlmostEqual( pz_max, 0.013137895968144289, delta=1e-9 )
+        pz_max = Photon.calculateMaxElectronMomentumProjectionAdjoint( 0.01, 1e-5,  0.9489511578291708 )
+        self.assertAlmostEqual( pz_max, 0.0, delta=1e-9 )
+        pz_max = Photon.calculateMaxElectronMomentumProjectionAdjoint( 0.01, 1e-5,  1.0 )
+        self.assertAlmostEqual( pz_max, -1.0, delta=1e-9 )
+
+    def testCalculateAbsoluteMinElectronMomentumProjectionAdjoint(self):
+        "*Test MonteCarlo.Photon calculateAbsoluteMinElectronMomentumProjectionAdjoint method"
+        pz_min = Photon.calculateAbsoluteMinElectronMomentumProjectionAdjoint( 0.01, -1.0 )
+        self.assertAlmostEqual( pz_min, -0.9608609732750468, delta=1e-9 )
+        pz_min = Photon.calculateAbsoluteMinElectronMomentumProjectionAdjoint( 0.01, 0.0 )
+        self.assertAlmostEqual( pz_min, -0.9804304866375234, delta=1e-9 )
+        pz_min = Photon.calculateAbsoluteMinElectronMomentumProjectionAdjoint( 0.01, 1.0 )
+        self.assertAlmostEqual( pz_min, -1.0, delta=1e-9 )
+
+    def testCalculateMinElectronMomentumProjectionAdjoint(self):
+        "*Test MonteCarlo.Photon calculateMinElectronMomentumProjectionAdjoint method"
+        pz_min = Photon.calculateMinElectronMomentumProjectionAdjoint( 0.01, 0.1, -1.0 )
+        self.assertAlmostEqual( pz_min, -0.7826008847954972, delta=1e-9 )
+        pz_min = Photon.calculateMinElectronMomentumProjectionAdjoint( 0.01, 0.1, 0.0 )
+        self.assertAlmostEqual( pz_min, -0.8760610775990149, delta=1e-9 )
+        pz_min = Photon.calculateMinElectronMomentumProjectionAdjoint( 0.01, 0.1, 1.0 )
+        self.assertAlmostEqual( pz_min, -1.0, delta=1e-9 )
+
+    def testCalculateDopplerBroadenedEnergyAdjoint(self):
+        "*Test MonteCarlo.Photon calculateDopplerBroadenedEnergyAdjoint method"
+        energy,possible = Photon.calculateDopplerBroadenedEnergyAdjoint( 0.019, 0.01, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.010011624370762988, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergyAdjoint( 0.0, 0.01, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.010407332879714635, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergyAdjoint( -0.5, 0.01, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 0.032547776596062165, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergyAdjoint( -0.96, 0.01, -1.0 )
+        self.assertTrue( possible )
+        self.assertAlmostEqual( energy, 22.7649342529632719, delta=1e-9 )
+        energy,possible = Photon.calculateDopplerBroadenedEnergyAdjoint( -0.9608609732750468, 0.01, -1.0 )
+        self.assertTrue( not possible )
+        
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(ForwardPhotonKinematicsTestCase))
+    suite.addTest(unittest.makeSuite(AdjointPhotonKinematicsTestCase))
+    
+    print >>sys.stderr, \
+        "\n**************************\n" + \
+        "Testing MonteCarlo.Photon.PhotonKinematics \n" + \
+        "**************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+    
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.PhotonKinematics.py
+#-----------------------------------------------------------------------------#

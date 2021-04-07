@@ -1,0 +1,287 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.AtomProperties class unit tests
+#  \file   tstData.AtomProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.AtomProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the AtomProperties class
+class AtomPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.AtomProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = Data.AtomProperties( Data.H_ATOM, 1.0 )
+
+    def testConstructor(self):
+        "*Test Data.AtomProperties constructor"
+        with self.assertRaises(RuntimeError):
+            Data.AtomProperties( Data.H_ATOM, 0.0 )
+        with self.assertRaises(RuntimeError):
+            Data.AtomProperties( Data.H_ATOM, -1.0 )
+
+    def testAtom(self):
+        "*Test Data.AtomProperties atom"
+        self.assertEqual( self.properties.atom(), Data.H_ATOM)
+
+    def testAtomicWeight(self):
+        "*Test Data.AtomProperties atomicWeight"
+        neutron_rest_amu = 1.0086649160043
+        self.assertEqual( self.properties.atomicWeight(), neutron_rest_amu )
+
+    def testAtomicWeightRatio(self):
+        "*Test Data.AtomProperties atomicWeightRatio"
+        self.assertEqual( self.properties.atomicWeightRatio(), 1.0 )
+
+    def testSetPhotoatomicDataProperties(self):
+        "*Test Data.AtomProperties setPhotoatomicDataProperties"
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_FILE ) )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.PhotoatomicDataProperties.Native_EPR_FILE ) )
+
+    def testGetPhotoatomicDataFileTypes(self):
+        "*Test Data.AtomProperties getPhotoatomicDataFileTypes"
+        self.assertFalse(self.properties.getPhotoatomicDataFileTypes() )
+
+    def testGetDataFileVersions_photoatomic(self):
+        "*Test Data.AtomProperties getPhotoatomicDataFileVersions"
+        self.assertFalse( self.properties.getPhotoatomicDataFileVersions( Data.PhotoatomicDataProperties.ACE_FILE) )
+        self.assertFalse( self.properties.getPhotoatomicDataFileVersions( Data.PhotoatomicDataProperties.ACE_EPR_FILE) )
+        self.assertFalse( self.properties.getPhotoatomicDataFileVersions( Data.PhotoatomicDataProperties.Native_EPR_FILE) )
+
+    def testGetRecommendedDataFileVersion_photoatomic(self):
+        "*Test Data.AtomProperties getRecommendedPhotoatomicDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedPhotoatomicDataFileVersion( Data.PhotoatomicDataProperties.ACE_FILE )
+        self.assertEqual( 'Error: Photoatomic data properties with file type ACE does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedPhotoatomicDataFileVersion( Data.PhotoatomicDataProperties.ACE_EPR_FILE )
+        self.assertEqual( 'Error: Photoatomic data properties with file type ACE EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedPhotoatomicDataFileVersion( Data.PhotoatomicDataProperties.Native_EPR_FILE )
+        self.assertEqual( 'Error: Photoatomic data properties with file type Native EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetPhotoatomicDataProperties(self):
+        "*Test Data.AtomProperties getPhotoatomicDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getPhotoatomicDataProperties(
+                        Data.PhotoatomicDataProperties.ACE_FILE, 0 )
+        self.assertEqual( 'Error: Photoatomic data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getPhotoatomicDataProperties(
+                        Data.PhotoatomicDataProperties.ACE_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Photoatomic data properties with file type ACE EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getPhotoatomicDataProperties(
+                        Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Photoatomic data properties with file type Native EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testSetAdjointPhotoatomicDataProperties(self):
+        "*Test Data.AtomProperties setAdjointPhotoatomicDataProperties"
+        with self.assertRaises(AttributeError):
+            self.properties.photoatomicDataAvailable( Data.AdjointPhotoatomicDataProperties.ACE_FILE )
+        with self.assertRaises(AttributeError):
+            self.properties.photoatomicDataAvailable( Data.AdjointPhotoatomicDataProperties.ACE_EPR_FILE )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE ) )
+
+    def testGetPhotoatomicDataFileTypes(self):
+        "*Test Data.AtomProperties getPhotoatomicDataFileTypes"
+        self.assertFalse(self.properties.getPhotoatomicDataFileTypes() )
+
+    def testGetDataFileVersions_adjoint_photoatomic(self):
+        "*Test Data.AtomProperties getAdjointPhotoatomicDataFileVersions"
+        with self.assertRaises(AttributeError):
+            self.properties.getAdjointPhotoatomicDataFileVersions( Data.AdjointPhotoatomicDataProperties.ACE_FILE)
+        with self.assertRaises(AttributeError):
+            self.properties.getAdjointPhotoatomicDataFileVersions( Data.AdjointPhotoatomicDataProperties.ACE_EPR_FILE)
+        self.assertFalse( self.properties.getAdjointPhotoatomicDataFileVersions( Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE) )
+
+    def testGetRecommendedDataFileVersion_adjoint_photoatomic(self):
+        "*Test Data.AtomProperties getRecommendedAdjointPhotoatomicDataFileVersion"
+        with self.assertRaises(AttributeError):
+            self.properties.getRecommendedAdjointPhotoatomicDataFileVersion( Data.AdjointPhotoatomicDataProperties.ACE_FILE )
+        with self.assertRaises(AttributeError):
+            self.properties.getRecommendedAdjointPhotoatomicDataFileVersion( Data.AdjointPhotoatomicDataProperties.ACE_EPR_FILE )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedAdjointPhotoatomicDataFileVersion( Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE )
+        self.assertEqual( 'Error: Adjoint photoatomic data properties with file type Native EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetAdjointPhotoatomicDataProperties(self):
+        "*Test Data.AtomProperties getAdjointPhotoatomicDataProperties"
+        with self.assertRaises(AttributeError):
+          self.properties.getAdjointPhotoatomicDataProperties(
+                        Data.AdjointPhotoatomicDataProperties.ACE_FILE, 0 )
+        with self.assertRaises(AttributeError):
+          self.properties.getAdjointPhotoatomicDataProperties(
+                        Data.AdjointPhotoatomicDataProperties.ACE_EPR_FILE, 0 )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getAdjointPhotoatomicDataProperties(
+                        Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Adjoint photoatomic data properties with file type Native EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testSetElectroatomicDataProperties(self):
+        "*Test Data.AtomProperties setElectroatomicDataProperties"
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_FILE ) )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.ElectroatomicDataProperties.ACE_EPR_FILE ) )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.ElectroatomicDataProperties.Native_EPR_FILE ) )
+
+    def testGetElectroatomicDataFileTypes(self):
+        "*Test Data.AtomProperties getElectroatomicDataFileTypes"
+        self.assertFalse(self.properties.getElectroatomicDataFileTypes() )
+
+    def testGetDataFileVersions_electroatomic(self):
+        "*Test Data.AtomProperties getElectroatomicDataFileVersions"
+        self.assertFalse( self.properties.getElectroatomicDataFileVersions( Data.ElectroatomicDataProperties.ACE_FILE) )
+        self.assertFalse( self.properties.getElectroatomicDataFileVersions( Data.ElectroatomicDataProperties.ACE_EPR_FILE) )
+        self.assertFalse( self.properties.getElectroatomicDataFileVersions( Data.ElectroatomicDataProperties.Native_EPR_FILE) )
+
+    def testGetRecommendedDataFileVersion_electroatomic(self):
+        "*Test Data.AtomProperties getRecommendedElectroatomicDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedElectroatomicDataFileVersion( Data.ElectroatomicDataProperties.ACE_FILE )
+        self.assertEqual( 'Error: Electroatomic data properties with file type ACE does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedElectroatomicDataFileVersion( Data.ElectroatomicDataProperties.ACE_EPR_FILE )
+        self.assertEqual( 'Error: Electroatomic data properties with file type ACE EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedElectroatomicDataFileVersion( Data.ElectroatomicDataProperties.Native_EPR_FILE )
+        self.assertEqual( 'Error: Electroatomic data properties with file type Native EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetElectroatomicDataProperties(self):
+        "*Test Data.AtomProperties getElectroatomicDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getElectroatomicDataProperties(
+                        Data.ElectroatomicDataProperties.ACE_FILE, 0 )
+        self.assertEqual( 'Error: Electroatomic data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getElectroatomicDataProperties(
+                        Data.ElectroatomicDataProperties.ACE_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Electroatomic data properties with file type ACE EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getElectroatomicDataProperties(
+                        Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Electroatomic data properties with file type Native EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testSetAdjointElectroatomicDataProperties(self):
+        "*Test Data.AtomProperties setAdjointElectroatomicDataProperties"
+        with self.assertRaises(AttributeError):
+            self.properties.photoatomicDataAvailable( Data.AdjointElectroatomicDataProperties.ACE_FILE )
+        with self.assertRaises(AttributeError):
+            self.properties.photoatomicDataAvailable( Data.AdjointElectroatomicDataProperties.ACE_EPR_FILE )
+        self.assertFalse(self.properties.photoatomicDataAvailable( Data.AdjointElectroatomicDataProperties.Native_EPR_FILE ) )
+
+    def testGetElectroatomicDataFileTypes(self):
+        "*Test Data.AtomProperties getElectroatomicDataFileTypes"
+        self.assertFalse(self.properties.getElectroatomicDataFileTypes() )
+
+    def testGetDataFileVersions_adjoint_electroatomic(self):
+        "*Test Data.AtomProperties getAdjointElectroatomicDataFileVersions"
+        with self.assertRaises(AttributeError):
+            self.properties.getAdjointElectroatomicDataFileVersions( Data.AdjointElectroatomicDataProperties.ACE_FILE)
+        with self.assertRaises(AttributeError):
+            self.properties.getAdjointElectroatomicDataFileVersions( Data.AdjointElectroatomicDataProperties.ACE_EPR_FILE)
+        self.assertFalse( self.properties.getAdjointElectroatomicDataFileVersions( Data.AdjointElectroatomicDataProperties.Native_EPR_FILE) )
+
+    def testGetRecommendedDataFileVersion_adjoint_electroatomic(self):
+        "*Test Data.AtomProperties getRecommendedAdjointElectroatomicDataFileVersion"
+        with self.assertRaises(AttributeError) as err:
+            self.properties.getRecommendedAdjointElectroatomicDataFileVersion( Data.AdjointElectroatomicDataProperties.ACE_FILE )
+        with self.assertRaises(AttributeError) as err:
+            self.properties.getRecommendedAdjointElectroatomicDataFileVersion( Data.AdjointElectroatomicDataProperties.ACE_EPR_FILE )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedAdjointElectroatomicDataFileVersion( Data.AdjointElectroatomicDataProperties.Native_EPR_FILE )
+        self.assertEqual( 'Error: Adjoint electroatomic data properties with file type Native EPR does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetAdjointElectroatomicDataProperties(self):
+        "*Test Data.AtomProperties getAdjointElectroatomicDataProperties"
+        with self.assertRaises(AttributeError) as err:
+          self.properties.getAdjointElectroatomicDataProperties(
+                        Data.AdjointElectroatomicDataProperties.ACE_FILE, 0 )
+
+        with self.assertRaises(AttributeError) as err:
+          self.properties.getAdjointElectroatomicDataProperties(
+                        Data.AdjointElectroatomicDataProperties.ACE_EPR_FILE, 0 )
+
+        with self.assertRaises(RuntimeError) as err:
+          self.properties.getAdjointElectroatomicDataProperties(
+                        Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 )
+        self.assertEqual( 'Error: Adjoint electroatomic data properties with file type Native EPR do not exist',
+                          err.exception.message.split('!')[0] )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(AtomPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.AtomProperties.py
+#-----------------------------------------------------------------------------#

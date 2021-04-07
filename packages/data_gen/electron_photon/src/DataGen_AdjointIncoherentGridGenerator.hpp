@@ -9,68 +9,89 @@
 #ifndef DATA_GEN_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 #define DATA_GEN_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <functional>
+#include <memory>
+
+// FRENSIE Includes
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "Utility_TwoDGridGenerator.hpp"
 
 namespace DataGen{
 
 //! The adjoint incoherent cross section grid generator
-class AdjointIncoherentGridGenerator
+template<typename TwoDInterpPolicy>
+class AdjointIncoherentGridGenerator : public Utility::TwoDGridGenerator<TwoDInterpPolicy>
 {
 
 public:
-  
-  //! Set the min table energy (default is 0.0001 MeV)
-  static void setMinTableEnergy( const double min_energy );
 
-  //! Get the min table energy
-  static double getMinTableEnergy();
+  //! Constructor
+  AdjointIncoherentGridGenerator(
+                          const double max_energy = 20.0,
+                          const double max_energy_nudge_value = 0.2,
+                          const double energy_to_max_energy_nudge_value = 1e-6,
+                          const double convergence_tol = 0.001,
+                          const double absolute_diff_tol = 1e-12,
+                          const double distance_tol = 1e-14 );
 
-  //! Set the max table energy (default is 20.0 MeV)
-  static void setMaxTableEnergy( const double max_energy );
+  //! Destructor
+  virtual ~AdjointIncoherentGridGenerator()
+  { /* ... */ }
 
-  //! Get the max table energy
-  static double getMaxTableEnergy();
+  //! Get the max energy
+  double getMaxEnergy() const;
 
-  //! Get the max table energy nudge factor
-  static double getNudgedMaxTableEnergy();
+  //! Set the max energy nudge value
+  void setMaxEnergyNudgeValue( const double max_energy_nudge_value );
 
-  //! Set the energy to max energy nudge factor
-  static void setEnergyToMaxEnergyNudgeFactor( const double factor );
+  //! Get the nudged max energy
+  double getNudgedMaxEnergy() const;
 
-  //! Get the energy to max energy nudge factor
-  static double getEnergyToMaxEnergyNudgeFactor();
+  //! Set the energy to max energy nudge value
+  void setEnergyToMaxEnergyNudgeValue(
+                               const double energy_to_max_energy_nudge_value );
 
-  //! Generate the bilinear grid
-  virtual void generate( 
-	     Teuchos::Array<double>& energy_grid,
-	     Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
-	     Teuchos::Array<Teuchos::Array<double> >& cross_section) const = 0;
+  //! Get the nudged energy
+  double getNudgedEnergy( const double energy ) const;
 
-  //! Generate a max energy grid at the desired energy
-  virtual void generate( Teuchos::Array<double>& max_energy_grid,
-			 Teuchos::Array<double>& cross_section,
-			 const double energy ) const = 0;
+  //! Create a cross section evaluator
+  static std::function<double (double,double)>
+  createCrossSectionEvaluator(
+     const std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>& adjoint_incoherent_cross_section,
+     const double cross_section_evaluation_tol );
+
+
+protected:
+
+  //! Add critical energies to energy grid
+  void addCriticalValuesToPrimaryGrid(std::deque<double>& energy_grid ) const;
+
+  //! Initialize the max energy grid at an energy grid point
+  void initializeSecondaryGrid( std::vector<double>& max_energy_grid,
+                                const double energy ) const;
 
 private:
-  
-  // The min table energy
-  static double s_min_table_energy;
 
   // The max table energy (highest energy grid point)
-  static double s_max_table_energy;
+  double d_max_energy;
 
-  // The max table energy increase factor
-  static const double s_max_table_energy_nudge_factor;
+  // The max table energy nudge value
+  double d_nudged_max_energy;
 
-  // The max table energy (highest max energy grid point)
-  static double s_nudged_max_table_energy;
-
-  // The energy to max energy nudge factor
-  static double s_energy_to_max_energy_nudge_factor;
+  // The energy to max energy nudge value
+  double d_energy_to_max_energy_nudge_value;
 };
 
 } // end DataGen namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "DataGen_AdjointIncoherentGridGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 

@@ -3,7 +3,7 @@
 /*! \page monte_carlo Monte Carlo Package
  *
  * \tableofcontents
- * 
+ *
  * \section mc_overview_sec Overview
  * The Monte Carlo package provides all of the functionality need to perform
  * monte carlo particle simulations. This functionality is divided into the

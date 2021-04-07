@@ -11,22 +11,18 @@
 #include <vector>
 #include <map>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
+std::shared_ptr<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
 double A = 0.999167;
 
 // Initialize the zero temperature cross section
@@ -53,39 +49,36 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, getBetaMin )
 {
   beta_function->setIndependentVariables( 1e-7 );
 
-  TEST_FLOATING_EQUALITY( beta_function->getBetaMin(),
-  			 -3.95241294810482,
-     		  1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( beta_function->getBetaMin(),
+  //                           -39.524129481048,
+  //                           1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
+FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
 {
-  
-  beta_function->setIndependentVariables( 1e-7 );
+  //beta_function->setIndependentVariables( 1e-6 );
+  std::cout << "norm: " << beta_function->getNormalizationConstant()
+            << std::endl;
   double pdf_value = (*beta_function)( beta_function->getBetaMin() );
-  
-  TEST_EQUALITY_CONST( pdf_value, 0.0 );
-  
+
+  FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
+
   pdf_value = (*beta_function)( 0.0 );
   TEST_ASSERT( pdf_value > 0.0 );
 
   pdf_value = (*beta_function)( -1*(beta_function->getBetaMin()) );
   TEST_ASSERT( pdf_value > 0.0 );
+  FRENSIE_CHECK( pdf_value > 0.0 );
 
-  beta_function->setIndependentVariables( 1e-5 );
-
-  pdf_value = (*beta_function)( beta_function->getBetaMin() );
-  TEST_EQUALITY_CONST( pdf_value, 0.0 );
-  
-  pdf_value = (*beta_function)( 0.0 );
-  TEST_ASSERT( pdf_value > 0.0 );
+  pdf_value = (*beta_function)( -beta_function->getBetaMin() );
+  //std::cout << pdf_value << std::endl;
+  FRENSIE_CHECK( pdf_value > 0.0 );
 
   pdf_value = (*beta_function)( -1*(beta_function->getBetaMin()) );
   TEST_ASSERT( pdf_value > 0.0 );
 }
-*/ 
 
 /*
 
@@ -216,22 +209,23 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  // Initialize the zero temperature cross section
+  std::shared_ptr<Utility::UnivariateDistribution> cross_section(
+                          new Utility::UniformDistribution( 0.0, 20.0, 1.0 ) );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  // Initialize the scattering probability distribution
+  std::shared_ptr<Utility::UnivariateDistribution> isotropic_distribution(
+                          new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  // Initialize the scattering distribution
+  MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
+    distribution( 2 );
 
   distribution[0].first = 0.0;
   distribution[0].second = isotropic_distribution;
@@ -265,6 +259,8 @@ int main( int argc, char** argv )
 
   return (success ? 0 : 1);  
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstFreeGasElasticMarginalBetaFunction.cpp

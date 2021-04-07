@@ -9,11 +9,13 @@
 #ifndef DATA_XSS_PHOTOATOMIC_DATA_EXTRACTOR_HPP
 #define DATA_XSS_PHOTOATOMIC_DATA_EXTRACTOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
+// Std Lib Includes
+#include <memory>
 
-namespace Data{
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_Array.hpp"
+#include "Utility_ArrayView.hpp"
 
 /*! \defgroup continuous_energy_photoatomic_table Continuous Energy Photoatomic
  * Table
@@ -22,32 +24,13 @@ namespace Data{
  * "EPR Table" is recommended instead.
  * \todo Add reference for table layout.
  *
- * After a continuous energy photoatomic table has been read by the 
+ * After a continuous energy photoatomic table has been read by the
  * Data::ACEFileHandler the individual data blocks must be extracted from the
  * XSS array using the Data::XSSPhotoatomicDataExtractor. Both the NXS array
- * and the JXS array are required to successfully extract the blocks. The NXS
- * array elements have the following meanings:
- * <ul>
- *  <li> NXS[0] = length of XSS array</li>
- *  <li> NXS[1] = Z</li>
- *  <li> NXS[2] = number of energies (NES)</li>
- *  <li> NXS[3] = length of fluorescence data divided by 4 (NFLO)</li>
- *  <li> NXS[4] = number of electron shells (NSH)</li>
- * </ul>
- * The JXS array elements have the following meanings:
- * <ul>
- *  <li> JXS[0] = location of energy table (ESZG)</li>
- *  <li> JXS[1] = location of incoherent form factors (JINC)</li>
- *  <li> JXS[2] = location of coherent form factors (JCOH)</li>
- *  <li> JXS[3] = location of fluorescense data (JFLO)</li>
- *  <li> JXS[4] = location of heating numbers (LHNM)</li>
- *  <li> JXS[5] = location of the number of electrons per shell (LNEPS)</li>
- *  <li> JXS[6] = location of binding energy per shell (LBEPS)</li>
- *  <li> JXS[7] = location of prob of interacting per shell (LPIPS)</li>
- *  <li> JXS[8] = location of array of offsets to shellwise data (LSWD)</li>
- *  <li> JXS[9] = location of shellwise data in PDF and CDF form (SWD)</li>
- * </ul>
+ * and the JXS array are required to successfully extract the blocks.
  */
+
+namespace Data{
 
 /*! The XSS photoatomic data extractor class
  * \ingroup continuous_energy_photoatomic_table
@@ -58,9 +41,9 @@ class XSSPhotoatomicDataExtractor
 public:
 
   //! Constructor
-  XSSPhotoatomicDataExtractor( const Teuchos::ArrayView<const int>& nxs,
-			       const Teuchos::ArrayView<const int>& jxs,
-			       const Teuchos::ArrayRCP<const double>& xss );
+  XSSPhotoatomicDataExtractor( const Utility::ArrayView<const int>& nxs,
+			       const Utility::ArrayView<const int>& jxs,
+			       const std::shared_ptr<const std::vector<double> >& xss );
 
   //! Destructor
   ~XSSPhotoatomicDataExtractor()
@@ -76,63 +59,66 @@ public:
   bool hasComptonProfileData() const;
 
   //! Extract the ESZG block
-  Teuchos::ArrayView<const double> extractESZGBlock() const;
+  Utility::ArrayView<const double> extractESZGBlock() const;
 
   //! Extract the incoming energy grid
-  Teuchos::ArrayView<const double> extractEnergyGrid() const;
+  Utility::ArrayView<const double> extractEnergyGrid() const;
 
   //! Extract the incoherent cross section
-  Teuchos::ArrayView<const double> extractIncoherentCrossSection() const;
+  Utility::ArrayView<const double> extractIncoherentCrossSection() const;
 
   //! Extract the coherent cross section
-  Teuchos::ArrayView<const double> extractCoherentCrossSection() const;
+  Utility::ArrayView<const double> extractCoherentCrossSection() const;
 
   //! Extract the photoelectric cross section
-  Teuchos::ArrayView<const double> extractPhotoelectricCrossSection() const;
+  Utility::ArrayView<const double> extractPhotoelectricCrossSection() const;
 
   //! Extract the pair production cross section
-  Teuchos::ArrayView<const double> extractPairProductionCrossSection() const;
+  Utility::ArrayView<const double> extractPairProductionCrossSection() const;
 
   //! Extract the JINC block
-  Teuchos::ArrayView<const double> extractJINCBlock() const;
+  Utility::ArrayView<const double> extractJINCBlock() const;
 
   //! Extract the JCOH block
-  Teuchos::ArrayView<const double> extractJCOHBlock() const;
+  Utility::ArrayView<const double> extractJCOHBlock() const;
 
   //! Extract the JFLO block
-  Teuchos::ArrayView<const double> extractJFLOBlock() const;
+  Utility::ArrayView<const double> extractJFLOBlock() const;
 
   //! Extract the LHNM block
-  Teuchos::ArrayView<const double> extractLHNMBlock() const;
+  Utility::ArrayView<const double> extractLHNMBlock() const;
 
   //! Extract the LNEPS block
-  Teuchos::ArrayView<const double> extractLNEPSBlock() const;
+  Utility::ArrayView<const double> extractLNEPSBlock() const;
 
   //! Extract the LBEPS block
-  Teuchos::ArrayView<const double> extractLBEPSBlock() const;
+  Utility::ArrayView<const double> extractLBEPSBlock() const;
 
   //! Extract the LPIPS block
-  Teuchos::ArrayView<const double> extractLPIPSBlock() const;
+  Utility::ArrayView<const double> extractLPIPSBlock() const;
 
   //! Extract the LSWD block
-  Teuchos::ArrayView<const double> extractLSWDBlock() const;
+  Utility::ArrayView<const double> extractLSWDBlock() const;
 
   //! Extract the SWD block
-  Teuchos::ArrayView<const double> extractSWDBlock() const;
+  Utility::ArrayView<const double> extractSWDBlock() const;
 
 private:
 
   // The nxs array (a copy will be stored)
-  Teuchos::Array<int> d_nxs;
+  std::vector<int> d_nxs;
 
   // The jxs array (a copy will be stored so that modifications can be made)
-  Teuchos::Array<int> d_jxs;
+  std::vector<int> d_jxs;
 
   // The xss array (data in this array should never be directly modified)
-  Teuchos::ArrayRCP<const double> d_xss;
+  std::shared_ptr<const std::vector<double> > d_xss;
+
+  // The xss array view (stored for quicker slicing)
+  Utility::ArrayView<const double> d_xss_view;
 
   // The ESZG block (cached for quick access to cross sections in this block)
-  Teuchos::ArrayView<const double> d_eszg_block;
+  Utility::ArrayView<const double> d_eszg_block;
 };
 
 } // end Data namespace

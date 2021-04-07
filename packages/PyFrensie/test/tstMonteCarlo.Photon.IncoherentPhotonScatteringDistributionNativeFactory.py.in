@@ -1,0 +1,284 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory class unit tests
+#  \file   tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_native_file", type="string", dest="test_native_file",
+                  help="the native file used for testing")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Data = importPyFrensieModuleFromBuildDir('Data')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+MonteCarlo = importPyFrensieModuleFromBuildDir( 'MonteCarlo' )
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+Prng.RandomNumberGenerator.createStreams()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Check that a Klein-Nishina distribution can be created
+class IncoherentPhotonScatteringDistributionNativeFactoryTestCase(unittest.TestCase):
+    "TestCase for MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory class"
+    @classmethod
+    def setUpClass(cls):
+        cls.native_data = Native.ElectronPhotonRelaxationDataContainer( options.test_native_file )
+
+    def testCreateKleinNishinaDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution (Klein-Nishina)"
+        dist = Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution( self.native_data, MonteCarlo.KN_INCOHERENT_MODEL, 3.0 );
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 4.9893440508834e-1, delta=1e-12 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 9.2395260201544e-2, delta=1e-12 )
+
+        # Evaluate the pdf
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, 1.0 ), 1.7412387289976, delta=1e-12 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, -1.0 ), 0.32245161648103, delta=1e-12 )
+
+        # Evaluate the cross section
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.51099891013, 1e-6 ), 2.8653991941448027e-1, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 1.0, 1e-6 ), 2.1120787526380407e-1, delta=1e-15 )
+
+        # Sample from the distribution (left branch of Kahn's)
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999] )
+
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        # Sample from the distribution (right branch of Kahn's)
+        Prng.RandomNumberGenerator.setFakeStream( [0.273,
+                                                   0.5,
+                                                   0.459, # reject
+                                                   0.80,
+                                                   0.25,
+                                                   0.25] )
+
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Sample from the distribution (Koblinger's 1st term)
+        Prng.RandomNumberGenerator.setFakeStream( [0.12, 0.20] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.9046816718380433, delta=1e-12 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        # Sample from the distribution (Koblinger's 2nd term)
+        Prng.RandomNumberGenerator.setFakeStream( [0.698, 0.4] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 1.1066615373683126, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.7030902148167004, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 0.51099891013 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999,
+                                                   0.0] )
+        
+        bank = MonteCarlo.ParticleBank()
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+        self.assertAlmostEqual( photon.getEnergy(), 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateWHIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution (WH Incoherent)"
+        dist =  Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution( self.native_data, MonteCarlo.WH_INCOHERENT_MODEL, 3.0 );
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.57217551794289268, delta=1e-15 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scat func
+                                                   0.2, # select M3 subshell
+                                                   0.5] ) # theta = pi
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( interaction_subshell, Data.M3_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateCFPDopplerBroadenedHybridIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution (CFP Doppler Broadened Hybrid Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution( self.native_data, MonteCarlo.COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.57217551794289268, delta=1e-12 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scatt func
+                                                   0.005, # select shell 0
+                                                   0.5, # select pz = 0.0
+                                                   0.5] ) # theta = pi
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( interaction_subshell, Data.K_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateSubshellIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution (Subshell 1 Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution( self.native_data, MonteCarlo.IMPULSE_INCOHERENT_MODEL, 3.0, 1 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 0.182031495370433727, delta=1e-6 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   1.0-1e-15, # accept occ num
+                                                   0.5] ) # theta = pi
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( interaction_subshell, Data.K_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateDopplerBroadenedSubshellIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution (Doppler Broadened Subshell 1 Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionNativeFactory.createDistribution( self.native_data, MonteCarlo.FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL, 3.0, 1 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 0.182031495370433727, delta=1e-6 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   1.0-1e-15, # accept occ num
+                                                   0.5, # pz = 0.0
+                                                   0.0] ) # theta = 0.0
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), 1.0, delta=1e-15 )
+        self.assertEqual( interaction_subshell, Data.K_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(IncoherentPhotonScatteringDistributionNativeFactoryTestCase))
+
+    print >>sys.stderr, \
+        "\n*****************************************************************************\n" +\
+        "Testing MonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory \n" + \
+        "*****************************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+        
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionNativeFactory.py
+#-----------------------------------------------------------------------------#

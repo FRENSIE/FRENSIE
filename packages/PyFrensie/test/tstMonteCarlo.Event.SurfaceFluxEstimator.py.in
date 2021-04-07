@@ -1,0 +1,960 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Event.SurfaceFluxEstimator class unit tests
+#  \file   tstMonteCarlo.Event.SurfaceFluxEstimator.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Event.SurfaceFluxEstimator class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+
+#---------------------------------------------------------------------------#
+# Tests.
+#---------------------------------------------------------------------------#
+# Test the SurfaceFluxEstimator class
+class SurfaceFluxEstimatorTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Event.SurfaceFluxEstimator class"
+
+    def testCheck_type(self):
+        "*Test MonteCarlo.Event.HexSurfaceFluxEstimator check_type"
+
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+
+        self.assertFalse( estimator.isCellEstimator() )
+        self.assertTrue( estimator.isSurfaceEstimator() )
+        self.assertFalse( estimator.isMeshEstimator() )
+
+    def testGetNumberOfBins(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator getNumberOfBins"
+
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 0.5
+        time_bins[2] = 1.0
+
+        estimator.setTimeDiscretization( time_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Set the collision number bins
+        coll_bins = [None] * ( 2 )
+        coll_bins[0] = 0
+        coll_bins[1] = 2147483647
+
+        estimator.setCollisionNumberDiscretization( coll_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 0.5
+        time_bins[2] = 1.0
+
+        estimator.setTimeDiscretization( time_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Set the collision number bins
+        coll_bins = [None] * ( 2 )
+        coll_bins[0] = 0
+        coll_bins[1] = 2147483647
+
+        estimator.setCollisionNumberDiscretization( coll_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        self.assertEqual( estimator.getNumberOfBins(), 1 )
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+
+        estimator.setEnergyDiscretization( energy_bin_boundaries )
+        self.assertEqual( estimator.getNumberOfBins(), 2 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+
+        estimator.setCosineDiscretization( cosine_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 4 )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 0.5
+        time_bins[2] = 1.0
+
+        estimator.setTimeDiscretization( time_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 8 )
+
+        # Set the collision number bins
+        coll_bins = [None] * ( 2 )
+        coll_bins[0] = 0
+        coll_bins[1] = 2147483647
+
+        estimator.setCollisionNumberDiscretization( coll_bins )
+        self.assertEqual( estimator.getNumberOfBins(), 16 )
+
+#---------------------------------------------------------------------------#
+# Check that the surface ids associated with the estimator can be returned
+    def testGetEntityIds(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator getEntityIds"
+
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+
+        entity_ids = estimator_1.getEntityIds()
+
+        self.assertEqual( len(entity_ids), 2 )
+        self.assertTrue( 0 in entity_ids )
+        self.assertTrue( 1 in entity_ids )
+
+        entity_ids = estimator_2.getEntityIds()
+
+        self.assertEqual( len(entity_ids), 2 )
+        self.assertTrue( 0 in entity_ids )
+        self.assertTrue( 1 in entity_ids )
+
+        entity_ids = estimator_3.getEntityIds()
+
+        self.assertEqual( len(entity_ids), 2 )
+        self.assertTrue( 0 in entity_ids )
+        self.assertTrue( 1 in entity_ids )
+
+#---------------------------------------------------------------------------#
+# Check that a response functions can be set
+    def testSetResponseFunctions(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator setResponseFunctions"
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+        estimator = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+        estimator = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 1 )
+
+        response_functions = [None] * ( 2 )
+        response_functions[0] = ActiveRegion.ParticleResponse.getDefault()
+        response_functions[1] = response_functions[0]
+
+        estimator.setResponseFunctions( response_functions )
+
+        self.assertEqual( estimator.getNumberOfResponseFunctions(), 2 )
+
+#---------------------------------------------------------------------------#
+# Check that the cosine cutoff value can be set
+    def testSetCosineCutoffValue(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator setCosineCutoffValue"
+
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+
+        self.assertEqual( estimator.getCosineCutoffValue(), 0.001 )
+
+        estimator.setCosineCutoffValue( 0.1 )
+
+        self.assertEqual( estimator.getCosineCutoffValue(), 0.1 )
+
+#---------------------------------------------------------------------------#
+# Check that a partial history contribution can be added to the estimator
+    def testUpdateFromParticleCrossingSurfaceEvent(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator updateFromParticleCrossingSurfaceEvent"
+        # Set the surface ids
+        surface_ids = [None] * ( 2 )
+        surface_ids[0] = 0
+        surface_ids[1] = 1
+
+        # Set the surface areas
+        surface_areas = [None] * ( 2 )
+        surface_areas[0] = 1.0
+        surface_areas[1] = 2.0
+        estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+        estimator_1_base = estimator_1
+        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+        estimator_2_base = estimator_2
+        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        estimator_3_base = estimator_3
+
+        # Set the energy bins
+        energy_bin_boundaries = [None] * ( 3 )
+        energy_bin_boundaries[0] = 0.0
+        energy_bin_boundaries[1] = 0.1
+        energy_bin_boundaries[2] = 1.0
+        estimator_1_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_2_base.setEnergyDiscretization( energy_bin_boundaries )
+        estimator_3_base.setEnergyDiscretization( energy_bin_boundaries )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+        estimator_1_base.setCosineDiscretization( cosine_bins )
+        estimator_2_base.setCosineDiscretization( cosine_bins )
+        estimator_3_base.setCosineDiscretization( cosine_bins )
+
+        # Set the time bins
+        time_bins = [None] * ( 3 )
+        time_bins[0] = 0.0
+        time_bins[1] = 1.0
+        time_bins[2] = 2.0
+        estimator_1_base.setTimeDiscretization(time_bins )
+        estimator_2_base.setTimeDiscretization(time_bins )
+        estimator_3_base.setTimeDiscretization(time_bins )
+
+        # Set the collision number bins
+        collision_number_bins = [None] * ( 2 )
+        collision_number_bins[0] = 0
+        collision_number_bins[1] = 1
+        estimator_1_base.setCollisionNumberDiscretization( collision_number_bins )
+        estimator_2_base.setCollisionNumberDiscretization( collision_number_bins )
+        estimator_3_base.setCollisionNumberDiscretization( collision_number_bins )
+
+        # Set the particle types
+        particle_types = [None] * ( 1 )
+        particle_types[0] = MonteCarlo.ELECTRON
+        estimator_1_base.setParticleTypes( particle_types )
+        estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        # bin 0
+        particle = MonteCarlo.ElectronState( 0 )
+        particle.setEnergy( 1.0 )
+        particle.setTime( 2.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        # bin 1
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 2
+        particle.setEnergy( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 3
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 4
+        particle.setEnergy( 1.0 )
+        particle.setTime( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 5
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 6
+        particle.setEnergy( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 7
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 8
+        particle.setEnergy( 1.0 )
+        particle.setTime( 2.0 )
+        particle.incrementCollisionNumber()
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 9
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 10
+        particle.setEnergy( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 11
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 12
+        particle.setEnergy( 1.0 )
+        particle.setTime( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 13
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, 0.5 )
+
+        # bin 14
+        particle.setEnergy( 1.0 )
+        particle.setWeight( 1.0 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # bin 15
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 10.0 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        particle.setWeight( 1.0 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.5 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 1, -0.5 )
+
+        # Commit the contributions
+        estimator_1_base.commitHistoryContribution()
+        estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        Event.Estimator.setNumberOfHistories( 1.0 )
+        Event.Estimator.setElapsedTime( 1.0 )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator_1_base.getEntityBinDataFirstMoments( 0 )
+
+        entity_bin_second_moments = estimator_1_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ 2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_1_base.getEntityBinDataFirstMoments( 1 )
+
+        entity_bin_second_moments = estimator_1_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ 2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_2_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_2_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ 2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_2_base.getEntityBinDataFirstMoments( 1 )
+        entity_bin_second_moments = estimator_2_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ 2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 1 )
+
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments), [ -2.0 ]*16 )
+        self.assertSequenceEqual( list(entity_bin_second_moments), [ 4.0 ]*16 )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ 4.0 ]*16 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
+
+        total_bin_first_moments = estimator_2_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ 4.0 ]*16 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments), [ -4.0 ]*16 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 16.0 ]*16 )
+
+        # Check the entity total data moments
+        entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_1_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_1_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_1_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_1_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_1_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_1_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_2_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_2_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_2_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_2_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_2_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_2_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_2_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_2_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ 32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ 32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 1 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 1 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 1 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 1 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments), [ -32.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 1024.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments), [ -32768.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 1048576.0 ] )
+
+        # Check the total data moments
+        total_first_moments = estimator_1_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_1_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_1_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_1_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ 64.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 4096.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ 262144.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
+
+        total_first_moments = estimator_2_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_2_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_2_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_2_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ 64.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 4096.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ 262144.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -64.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 4096.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -262144.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 16777216.0 ] )
+
+#---------------------------------------------------------------------------#
+# Check that a partial history contribution can be added to the estimator -
+# special case (|mu| < mu_cut)
+    def testUpdateFromParticleCrossingSurfaceEvent_special_case(self):
+        "*Test MonteCarlo.Event.SurfaceFluxEstimator updateFromParticleCrossingSurfaceEvent_special_case"
+
+        # Set the surface ids
+        surface_ids = [None] * ( 1 )
+        surface_ids[0] = 0
+
+        # Set the surface areas
+        surface_areas = [None] * ( 1 )
+        surface_areas[0] = 1.0
+        estimator_1 = Event.WeightMultipliedSurfaceFluxEstimator( 0, 10.0, surface_ids, surface_areas )
+        estimator_1.setCosineCutoffValue( 0.1 )
+        estimator_1_base = estimator_1
+        
+        estimator_2 = Event.WeightAndEnergyMultipliedSurfaceFluxEstimator( 1, 10.0, surface_ids, surface_areas )
+        estimator_2_base = estimator_2
+        estimator_2.setCosineCutoffValue( 0.1 )
+        
+        estimator_3 = Event.WeightAndChargeMultipliedSurfaceFluxEstimator( 2, 10.0, surface_ids, surface_areas )
+        estimator_3_base = estimator_3
+        estimator_3.setCosineCutoffValue( 0.1 )
+
+        # Set the cosine bins
+        cosine_bins = [None] * ( 3 )
+        cosine_bins[0] = -1.0
+        cosine_bins[1] = 0.0
+        cosine_bins[2] = 1.0
+        estimator_1_base.setCosineDiscretization( cosine_bins )
+        estimator_2_base.setCosineDiscretization( cosine_bins )
+        estimator_3_base.setCosineDiscretization( cosine_bins )
+
+        # Set the particle types
+        particle_types = [None] * ( 1 )
+        particle_types[0] = MonteCarlo.ELECTRON
+        estimator_1_base.setParticleTypes( particle_types )
+        estimator_2_base.setParticleTypes( particle_types )
+        estimator_3_base.setParticleTypes( particle_types )
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        # bin 0
+        particle = MonteCarlo.ElectronState( 0 )
+        particle.setEnergy( 0.1 )
+
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.05 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.01 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, -0.05 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        # bin 1
+        estimator_1.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.01 )
+        estimator_2.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.05 )
+        estimator_3.updateFromParticleCrossingSurfaceEvent( particle, 0, 0.01 )
+
+        self.assertTrue( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertTrue( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        # Commit the contributions
+        estimator_1_base.commitHistoryContribution()
+        estimator_2_base.commitHistoryContribution()
+        estimator_3_base.commitHistoryContribution()
+
+        self.assertFalse( estimator_1_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_2_base.hasUncommittedHistoryContribution() )
+        self.assertFalse( estimator_3_base.hasUncommittedHistoryContribution() )
+
+        Event.Estimator.setNumberOfHistories( 1.0 )
+        Event.Estimator.setElapsedTime( 1.0 )
+
+        # Check the entity bin data moments
+        entity_bin_first_moments = estimator_1_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_1_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[ 20.0 ]*2 )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[ 400.0 ]*2 )
+
+        entity_bin_first_moments = estimator_2_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_2_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[ 2.0 ]*2 )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[ 4.0 ]*2 )
+
+        entity_bin_first_moments = estimator_3_base.getEntityBinDataFirstMoments( 0 )
+        entity_bin_second_moments = estimator_3_base.getEntityBinDataSecondMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_bin_first_moments),[ -20.0 ]*2 )
+        self.assertSequenceEqual( list(entity_bin_second_moments),[ 400.0 ]*2 )
+
+        # Check the total bin data moments
+        total_bin_first_moments = estimator_1_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_1_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[ 20.0 ]*2 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 400.0 ]*2 )
+
+        total_bin_first_moments = estimator_2_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_2_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[ 2.0 ]*2 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 4.0 ]*2 )
+
+        total_bin_first_moments = estimator_3_base.getTotalBinDataFirstMoments()
+        total_bin_second_moments = estimator_3_base.getTotalBinDataSecondMoments()
+
+        self.assertSequenceEqual( list(total_bin_first_moments),[ -20.0 ]*2 )
+        self.assertSequenceEqual( list(total_bin_second_moments),[ 400.0 ]*2 )
+
+        # Check the entity total data moments
+        entity_total_first_moments = estimator_1_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_1_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_1_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_1_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 40.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 64000.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 2560000.0 ] )
+
+        entity_total_first_moments = estimator_2_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_2_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_2_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_2_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ 4.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ 64.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments), [ 256.0 ] )
+
+        entity_total_first_moments = estimator_3_base.getEntityTotalDataFirstMoments( 0 )
+        entity_total_second_moments = estimator_3_base.getEntityTotalDataSecondMoments( 0 )
+        entity_total_third_moments = estimator_3_base.getEntityTotalDataThirdMoments( 0 )
+        entity_total_fourth_moments = estimator_3_base.getEntityTotalDataFourthMoments( 0 )
+
+        self.assertSequenceEqual( list(entity_total_first_moments),[ -40.0 ] )
+        self.assertSequenceEqual( list(entity_total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(entity_total_third_moments),[ -64000.0 ] )
+        self.assertSequenceEqual( list(entity_total_fourth_moments),[ 2560000.0 ] )
+
+        # Check the total data moments
+        total_first_moments = estimator_1_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_1_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_1_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_1_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ 40.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ 64000.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 2560000.0 ] )
+
+        total_first_moments = estimator_2_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_2_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_2_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_2_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ 4.0 ] )
+        self.assertSequenceEqual( list(total_second_moments), [ 16.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ 64.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments), [ 256.0 ] )
+
+        total_first_moments = estimator_3_base.getTotalDataFirstMoments()
+        total_second_moments = estimator_3_base.getTotalDataSecondMoments()
+        total_third_moments = estimator_3_base.getTotalDataThirdMoments()
+        total_fourth_moments = estimator_3_base.getTotalDataFourthMoments()
+
+        self.assertSequenceEqual( list(total_first_moments),[ -40.0 ] )
+        self.assertSequenceEqual( list(total_second_moments),[ 1600.0 ] )
+        self.assertSequenceEqual( list(total_third_moments),[ -64000.0 ] )
+        self.assertSequenceEqual( list(total_fourth_moments),[ 2560000.0 ] )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SurfaceFluxEstimatorTestCase))
+
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+        # Delete the suite
+    del suite
+
+        # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Event.SurfaceFluxEstimator.py
+#-----------------------------------------------------------------------------#

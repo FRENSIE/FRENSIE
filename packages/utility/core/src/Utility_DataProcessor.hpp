@@ -12,20 +12,15 @@
 // Std Lib Includes
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_DataProcessingPolicy.hpp"
-#include "Utility_TupleMemberTraits.hpp"
-#include "Utility_ArrayTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup data_proc Data Processing
- * 
- * A data processing interface is defined which allows the necessary data to 
- * be processed in very simple way. Each type of particle has its own data 
+ *
+ * A data processing interface is defined which allows the necessary data to
+ * be processed in very simple way. Each type of particle has its own data
  * processor defined, which implements the abstract data processing interface.
  */
 
@@ -38,12 +33,12 @@ namespace Utility{
  * These protected member functions comprise the low level data processing
  * functionality that is needed to process any data file.
  * \ingroup data_proc
- */ 
+ */
 class DataProcessor
 {
-  
+
 public:
-  
+
   //! Constructor
   DataProcessor()
   { /* ... */ }
@@ -61,74 +56,86 @@ public:
 
   //! Process the data points in a table of continuous data.
   template<typename DataProcessingPolicy,
-	   TupleMember indepMember,
-	   TupleMember depMember,
+	   size_t indepMember,
+	   size_t depMember,
+           template<typename,typename...> class STLCompliantContainer,
 	   typename Tuple>
-  static void processContinuousData( Teuchos::Array<Tuple> &data );
+  static void processContinuousData( STLCompliantContainer<Tuple>& data );
 
   //! Remove elements with a tuple member less than the specified value
-  template<TupleMember member,
+  template<size_t member,
+           template<typename,typename...> class STLCompliantContainer,
 	   typename Tuple>
-  static void removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
+  static void removeElementsLessThanValue( STLCompliantContainer<Tuple> &data,
 					   const double value );
 
   //! Remove elements with a tuple member greater than the specified value
-  template<TupleMember member,
+  template<size_t member,
+           template<typename,typename...> class STLCompliantContainer,
 	   typename Tuple>
-  static void removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
-					      const double value );
+  static void removeElementsGreaterThanValue(
+                                            STLCompliantContainer<Tuple>& data,
+                                            const double value );
 
   //! Eliminate adjacent data points with the same values.
-  template<TupleMember member,
+  template<size_t member,
+           template<typename,typename...> class STLCompliantContainer,
 	   typename Tuple>
-  static void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
+  static void coarsenConstantRegions( STLCompliantContainer<Tuple>& data );
 
   //! Calculate the slope between each pair of data points.
-  template<TupleMember indepMember, 
-	   TupleMember depMember,
-	   TupleMember slopeMember,
-	   typename Array>
-  static void calculateSlopes( Array &data );
+  template<size_t indepMember,
+	   size_t depMember,
+	   size_t slopeMember,
+           template<typename,typename...> class STLCompliantContainer,
+	   typename Tuple>
+  static void calculateSlopes( STLCompliantContainer<Tuple>& data );
 
   //! Create a cdf from an array of data using a taylor series expansion to O(2)
-  template<TupleMember indepMember,
-	   TupleMember pdfMember,
-	   TupleMember cdfMember,
-	   typename Array>
-  static typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
-  calculateContinuousCDF( Array &data, 
+  template<size_t indepMember,
+	   size_t pdfMember,
+	   size_t cdfMember,
+           template<typename,typename...> class STLCompliantContainer,
+	   typename Tuple>
+  static typename QuantityTraits<typename TupleElement<cdfMember,Tuple>::type>::template GetQuantityToPowerType<-1>::type
+  calculateContinuousCDF( STLCompliantContainer<Tuple>& data,
 			  const bool normalize = true );
 
   //! Create a pdf from an array of data using a first order, lin. approx.
-  template<TupleMember indepMember,
-	   TupleMember pdfMember,
-	   TupleMember cdfMember,
-	   typename Array>
-  static void calculateContinuousPDF( Array &data );
+  template<size_t indepMember,
+	   size_t pdfMember,
+	   size_t cdfMember,
+	   template<typename,typename...> class STLCompliantContainer,
+           typename Tuple>
+  static void calculateContinuousPDF( STLCompliantContainer<Tuple>& data );
 
   //! Create a discrete CDF from an array of data.
-  template<TupleMember pdfMember,
-	   TupleMember cdfMember,
+  template<size_t pdfMember,
+	   size_t cdfMember,
+           template<typename,typename...> class STLCompliantContainer,
 	   typename Tuple>
-  static void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
+  static void calculateDiscreteCDF( STLCompliantContainer<Tuple>& data );
 
   //! Copy the data in the desired tuple member of the original tuple to the desired tuple member of the copy tuple.
-  template<TupleMember origMember, 
-	   TupleMember copyMember,
-	   typename OrigArray,
-	   typename CopyArray>
-  static void copyTupleMemberData( const OrigArray &orig_data,
-			    CopyArray &copy_data );
+  template<size_t origMember,
+	   size_t copyMember,
+           template<typename,typename...> class STLCompliantContainerA,
+           template<typename,typename...> class STLCompliantContainerB,
+           typename TupleA,
+	   typename TupleB>
+  static void copyTupleMemberData(
+                               const STLCompliantContainerA<TupleA>& orig_data,
+                               STLCompliantContainerB<TupleB>& copy_data );
 
   //! Swap the data in a desired tuple member with the data in another tuple member
-  template<TupleMember member1,
-	   TupleMember member2,
-	   typename Array>
-  static void swapTupleMemberData( Array &data );
+  template<size_t member1,
+	   size_t member2,
+           template<typename,typename...> class STLCompliantContainer,
+	   typename Tuple>
+  static void swapTupleMemberData( STLCompliantContainer<Tuple>& data );
 
   //! Convert an unsigned int to an electron shell string
   static std::string uintToShellStr( const unsigned int shell );
-
 };
 
 } // end Utility namespace
@@ -146,4 +153,4 @@ public:
 //---------------------------------------------------------------------------//
 // end Utility_DataProcessor.hpp
 //---------------------------------------------------------------------------//
- 
+

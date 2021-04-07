@@ -1,0 +1,1139 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ActiveRegion.ParticleResponse class unit tests
+#  \file   tstMonteCarlo.ActiveRegion.ParticleResponse.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ActiveRegion.ParticleResponse class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--database", type="string", dest="database",
+                  help="Test scattering center database name with path.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ParticleResponse class
+class ParticleResponseFunctionArithmeticOperatorsTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.ParticleResponse class"
+
+    def testAddition_operator(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse addition_operator"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+
+        total_response_function = ActiveRegion.add(energy_response_function, time_response_function)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        print total_response_function.description()
+        self.assertTrue( total_response_function.description().find( '+' ) )
+
+        total_response_function = energy_response_function + time_response_function
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        print total_response_function.description()
+        self.assertTrue( total_response_function.description().find( '+' ) )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
+
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.503214724408055,
+                                delta=1e-15 )
+
+    def testSubtraction_operator(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse subtraction_operator"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.SourceEnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.SourceTimeParticleResponseFunction( response_distribution )
+
+        total_response_function = ActiveRegion.subtract(energy_response_function,time_response_function)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '-' ) )
+
+        total_response_function = energy_response_function - time_response_function
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '-' ) )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setSourceEnergy( 1.0 )
+        photon.setSourceTime( 2.0 )
+
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.23254415793482963,
+                                delta=1e-15 )
+
+    def testMultiplication_operator(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse multiplication_operator"
+
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+
+        total_response_function = ActiveRegion.multiply(energy_response_function, time_response_function)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '*' ) )
+
+        total_response_function = energy_response_function * time_response_function
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '*' ) )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
+
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.04978706836786395,
+                                delta=1e-15 )
+
+        # Check scalar multiplication
+        # total_response_function = 2.0 * energy_response_function
+
+        # self.assertTrue( total_response_function.isSpatiallyUniform() )
+        # self.assertTrue( total_response_function.description().find( '*' ) )
+
+
+        total_response_function = ActiveRegion.multiply(2.0, energy_response_function)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '*' ) )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.7357588823428847,
+                                delta=1e-15 )
+
+        total_response_function = ActiveRegion.multiply(energy_response_function, 0.5)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '*' ) )
+
+        total_response_function = energy_response_function * 0.5
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '*' ) )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.18393972058572117,
+                                delta=1e-15 )
+
+    def testDivision_operator(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse division_operator"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+
+        total_response_function = ActiveRegion.divide(energy_response_function, time_response_function)
+
+        total_response_function = energy_response_function / time_response_function
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '/' ) )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
+
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                2.718281828459045,
+                                delta=1e-15 )
+
+        # Check scalar division
+        total_response_function = ActiveRegion.divide(2.0, energy_response_function)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '/' ) )
+
+        # total_response_function = ActiveRegion.divide(2.0 , energy_response_function)
+
+        # self.assertTrue( total_response_function.isSpatiallyUniform() )
+        # self.assertTrue( total_response_function.description().find( '/' ) )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                5.43656365691809,
+                                delta=1e-15 )
+
+        total_response_function = ActiveRegion.divide(energy_response_function, 2.0)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '/' ) )
+
+        total_response_function = energy_response_function / 2.0
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+        self.assertTrue( total_response_function.description().find( '/' ) )
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.18393972058572117,
+                                delta=1e-15 )
+
+    def testMultiple_operators(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse multiple_operators"
+
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+
+        total_response_function = ActiveRegion.divide( ActiveRegion.divide( ActiveRegion.add( ActiveRegion.multiply( ActiveRegion.multiply(2.0,ActiveRegion.subtract(energy_response_function, time_response_function) ),time_response_function ), ActiveRegion.add(energy_response_function,time_response_function) ), energy_response_function ), 2.0)
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+
+        total_response_function = (energy_response_function-time_response_function)*2*time_response_function + (energy_response_function+time_response_function)/energy_response_function/2
+
+        self.assertTrue( total_response_function.isSpatiallyUniform() )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+        photon.setTime( 2.0 )
+
+        self.assertAlmostEqual( total_response_function.evaluate( photon ),
+                                0.7468825795439807,
+                                delta=1e-15 )
+
+
+#-----------------------------------------------------------------------------#
+# Test the FullPhaseSpaceParticleResponseFunction class
+class FullPhaseSpaceParticleResponseFunctionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.FullPhaseSpaceParticleResponseFunction class"
+
+    def setUp(self):
+      uniform_response_dist = Distribution.UniformDistribution( -10.0, 10.0, 2.0 )
+
+      exponential_response_dist = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+      x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( uniform_response_dist )
+
+      y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( uniform_response_dist )
+
+      z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( uniform_response_dist )
+
+      u_dimension_dist = ActiveRegion.IndependentPrimaryDirectionalDimensionDistribution( uniform_response_dist )
+
+      v_dimension_dist = ActiveRegion.IndependentSecondaryDirectionalDimensionDistribution( uniform_response_dist )
+
+      w_dimension_dist = ActiveRegion.IndependentTertiaryDirectionalDimensionDistribution( uniform_response_dist )
+
+      energy_dimension_dist = ActiveRegion.IndependentEnergyDimensionDistribution( exponential_response_dist )
+
+      time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( exponential_response_dist )
+
+      local_particle_distribution = ActiveRegion.StandardParticleDistribution( "phase space dist" )
+
+      local_particle_distribution.setDimensionDistribution( x_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( y_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( z_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( u_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( v_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( w_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+      local_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+      local_particle_distribution.constructDimensionDistributionDependencyTree()
+
+      self.particle_distribution = local_particle_distribution
+
+    def testIsSpatiallyUniform(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse isSpatiallyUniform"
+
+        response_function = ActiveRegion.FullPhaseSpaceParticleResponseFunction( self.particle_distribution )
+
+        self.assertTrue( response_function.isSpatiallyUniform(),
+                         self.particle_distribution.isSpatiallyUniform() )
+
+    def testDescription(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse description"
+
+        response_function = ActiveRegion.FullPhaseSpaceParticleResponseFunction( self.particle_distribution )
+
+        self.assertTrue( response_function.description().find( self.particle_distribution.getName() ) )
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.ParticleResponse evaluate"
+
+        response_function = ActiveRegion.FullPhaseSpaceParticleResponseFunction( self.particle_distribution )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setPosition( 1.0, 2.0, 3.0 )
+        photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
+        photon.setEnergy( 4.0 )
+        photon.setTime( 5.0 )
+        photon.setWeight( 0.5 )
+
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                7.898227461547490183e-03,
+                                delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Test the SinglePhaseSpaceDimensionParticleResponseFunction class
+class SinglePhaseSpaceDimensionParticleResponseFunctionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.SinglePhaseSpaceDimensionParticleResponseFunction class"
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.SinglePhaseSpaceDimensionParticleResponseFunction evaluate"
+
+    def testIsSpatiallyUniform(self):
+        "*Test MonteCarlo.ActiveRegion.SinglePhaseSpaceDimensionParticleResponseFunction isSpatiallyUniform"
+        # Non-uniform spatial response function
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+        response_function = ActiveRegion.XPositionParticleResponseFunction( response_distribution )
+        self.assertFalse( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.YPositionParticleResponseFunction( response_distribution )
+        self.assertFalse( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.ZPositionParticleResponseFunction( response_distribution )
+        self.assertFalse( response_function.isSpatiallyUniform() )
+
+        # Uniform spatial response function
+        response_distribution = Distribution.UniformDistribution( 1e-3, 20.0, 0.5 )
+        response_function = ActiveRegion.XPositionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.YPositionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.ZPositionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        # Uniform directional response function
+        response_function = ActiveRegion.XDirectionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.YDirectionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.ZDirectionParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        # Uniform energy response function
+        response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        # Uniform time response function
+        response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        # Uniform weight response function
+        response_function = ActiveRegion.WeightParticleResponseFunction( response_distribution )
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+    def testDescription(self):
+        "*Test MonteCarlo.ActiveRegion.SinglePhaseSpaceDimensionParticleResponseFunction description"
+        response_distribution = Distribution.UniformDistribution( 1e-3, 20.0, 0.5 )
+
+        response_function = ActiveRegion.XPositionParticleResponseFunction( response_distribution )
+
+        expected_description = "f_custom(Primary Spatial Dimension)"
+
+        self.assertEqual( response_function.description(),
+                          expected_description )
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.SinglePhaseSpaceDimensionParticleResponseFunction evaluate"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        x_response_function = ActiveRegion.XPositionParticleResponseFunction( response_distribution )
+
+        y_response_function = ActiveRegion.YPositionParticleResponseFunction( response_distribution )
+
+        z_response_function = ActiveRegion.ZPositionParticleResponseFunction( response_distribution )
+
+        u_response_function = ActiveRegion.XDirectionParticleResponseFunction( response_distribution )
+
+        v_response_function = ActiveRegion.YDirectionParticleResponseFunction( response_distribution )
+
+        w_response_function = ActiveRegion.ZDirectionParticleResponseFunction( response_distribution )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        time_response_function = ActiveRegion.TimeParticleResponseFunction( response_distribution )
+
+        weight_response_function = ActiveRegion.WeightParticleResponseFunction( response_distribution )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setPosition( 1.0, 2.0, 3.0 )
+        photon.setDirection( 0.2672612419124244, 0.5345224838248488, 0.8017837257372732 )
+        photon.setEnergy( 10.0 )
+        photon.setTime( 5.0 )
+        photon.setWeight( 0.5 )
+
+        self.assertAlmostEqual( x_response_function.evaluate( photon ),
+                                0.36787944117144233,
+                                delta=1e-15 )
+        self.assertAlmostEqual( y_response_function.evaluate( photon ),
+                                0.1353352832366127,
+                                delta=1e-15 )
+        self.assertAlmostEqual( z_response_function.evaluate( photon ),
+                                0.049787068367863944,
+                                delta=1e-15 )
+        self.assertAlmostEqual( u_response_function.evaluate( photon ),
+                                0.7654730716931915,
+                                delta=1e-15 )
+        self.assertAlmostEqual( v_response_function.evaluate( photon ),
+                                0.5859490234874097,
+                                delta=1e-15 )
+        self.assertAlmostEqual( w_response_function.evaluate( photon ),
+                                0.4485281988645335,
+                                delta=1e-15 )
+        self.assertAlmostEqual( energy_response_function.evaluate( photon ),
+                                4.5399929762484854e-05,
+                                delta=1e-15 )
+        self.assertAlmostEqual( time_response_function.evaluate( photon ),
+                                0.006737946999085467,
+                                delta=1e-15 )
+        self.assertAlmostEqual( weight_response_function.evaluate( photon ),
+                                0.6065306597126334,
+                                delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Test the MaterialParticleResponseFunction class
+class MaterialParticleResponseFunctionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.MaterialParticleResponseFunction class"
+
+    def setUp(self):
+      # Determine the database directory
+      database_path = options.database
+
+      # Load the database
+      database = Data.ScatteringCenterPropertiesDatabase( database_path )
+
+      h_properties = database.getAtomProperties( Data.ZAID(1001) )
+      h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+      o_properties = database.getAtomProperties( Data.ZAID(8016) )
+      o16_properties = database.getNuclideProperties( Data.ZAID(8016) )
+
+      # Set the scattering center definitions
+      scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+
+      h_definition = scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+      h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+      o_definition = scattering_center_definition_database.createDefinition( "O16 @ 293.6K", Data.ZAID(8016) )
+
+      o_definition.setPhotoatomicDataProperties(
+          o_properties.getSharedPhotoatomicDataProperties(
+                         Data.PhotoatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+      o_definition.setElectroatomicDataProperties(
+          o_properties.getSharedElectroatomicDataProperties(
+                       Data.ElectroatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+      o_definition.setNuclearDataProperties(
+          o16_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+      # Set the material definitions
+      material_definition_database = Collision.MaterialDefinitionDatabase()
+
+      material_definition_database.addDefinition(
+                                               "Water @ 293.6K", 1,
+                                               ("H1 @ 293.6K", "O16 @ 293.6K"),
+                                               (2.0,           1.0))
+
+      material_definition_database.addDefinition( "H1 @ 293.6K", 2,
+                                                 ("H1 @ 293.6K",), (1.0,) )
+
+      # Create the neutron material, photon material, electron material and
+      # positron material filled model
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+      filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+      self.neutron_material_filled_model = filled_model
+      self.photon_material_filled_model = filled_model
+      self.electron_material_filled_model = filled_model
+      self.positron_material_filled_model = filled_model
+
+      # Create the adjoint photon material filled model
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
+
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+      self.adjoint_photon_material_filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+      # Create the adjoint electron material filled model
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+      self.adjoint_electron_material_filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+    def testIsSpatiallyUniform(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialParticleResponseFunction isSpatiallyUniform"
+        response_function = ActiveRegion.NeutronMaterialParticleResponseFunction(
+                                             self.neutron_material_filled_model,
+                                             1,
+                                             Collision.N__GAMMA_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.ElectronMaterialParticleResponseFunction(
+                         self.electron_material_filled_model,
+                         1,
+                         Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.PositronMaterialParticleResponseFunction(
+                        self.positron_material_filled_model,
+                        1,
+                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialParticleResponseFunction(
+                         self.adjoint_photon_material_filled_model,
+                         1,
+                         Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.AdjointElectronMaterialParticleResponseFunction(
+                 self.adjoint_electron_material_filled_model,
+                 1,
+                 Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+    def testDescription(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialParticleResponseFunction description"
+
+        response_function = ActiveRegion.NeutronMaterialParticleResponseFunction(
+                                             self.neutron_material_filled_model,
+                                             1,
+                                             Collision.N__GAMMA_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.N__GAMMA_REACTION ) ) )
+
+        response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.ElectronMaterialParticleResponseFunction(
+                         self.electron_material_filled_model,
+                         1,
+                         Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.PositronMaterialParticleResponseFunction(
+                        self.positron_material_filled_model,
+                        1,
+                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialParticleResponseFunction(
+                         self.adjoint_photon_material_filled_model,
+                         1,
+                         Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.AdjointElectronMaterialParticleResponseFunction(
+                 self.adjoint_electron_material_filled_model,
+                 1,
+                 Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) ) )
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialParticleResponseFunction evaluate"
+        response_function = ActiveRegion.NeutronMaterialParticleResponseFunction(
+                                             self.neutron_material_filled_model,
+                                             1,
+                                             Collision.N__GAMMA_REACTION )
+
+        neutron = MonteCarlo.NeutronState( 1 )
+        neutron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( neutron ),
+                                2.254581767386568063e-06,
+                                delta=1e-15 )
+
+
+        response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 4.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                1.855849991744731604e-03,
+                                delta=1e-15 )
+
+        with self.assertRaises(RuntimeError) as cm:
+            response_function = ActiveRegion.PhotonMaterialParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          Collision.GAMMA__N_REACTION )
+
+
+            self.assertEqual( 'Error: evaluation of the hybrid distribution is currently not supported!',
+                              str(cm.exception) )
+
+        response_function = ActiveRegion.ElectronMaterialParticleResponseFunction(
+                         self.electron_material_filled_model,
+                         1,
+                         Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        electron = MonteCarlo.ElectronState( 1 )
+        electron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( electron ),
+                                5.673817218470100787e-01,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.PositronMaterialParticleResponseFunction(
+                        self.positron_material_filled_model,
+                        1,
+                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        positron = MonteCarlo.PositronState( 1 )
+        positron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( positron ),
+                                5.673817218470100787e-01,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialParticleResponseFunction(
+                         self.adjoint_photon_material_filled_model,
+                         1,
+                         Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 1 )
+        adjoint_photon.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
+                                4.629028371467505184e-06,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.AdjointElectronMaterialParticleResponseFunction(
+                 self.adjoint_electron_material_filled_model,
+                 1,
+                 Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+
+        adjoint_electron = MonteCarlo.AdjointElectronState( 1 )
+        adjoint_electron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
+                                5.357349256383157066e-01,
+                                delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Test the MaterialComponentParticleResponseFunction class
+class MaterialComponentParticleResponseFunctionTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.MaterialComponentParticleResponseFunction class"
+
+    def setUp(self):
+      # Determine the database directory
+      database_path = options.database
+
+      # Load the database
+      database = Data.ScatteringCenterPropertiesDatabase( database_path )
+
+      h_properties = database.getAtomProperties( Data.ZAID(1001) )
+      h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+      o_properties = database.getAtomProperties( Data.ZAID(8016) )
+      o16_properties = database.getNuclideProperties( Data.ZAID(8016) )
+
+      # Set the scattering center definitions
+      scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+
+      h_definition = scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+      h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+      o_definition = scattering_center_definition_database.createDefinition( "O16 @ 293.6K", Data.ZAID(8016) )
+
+      o_definition.setPhotoatomicDataProperties(
+          o_properties.getSharedPhotoatomicDataProperties(
+                         Data.PhotoatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+      o_definition.setElectroatomicDataProperties(
+          o_properties.getSharedElectroatomicDataProperties(
+                       Data.ElectroatomicDataProperties.ACE_EPR_FILE, 12 ) )
+
+      o_definition.setNuclearDataProperties(
+          o16_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+      # Set the material definitions
+      material_definition_database = Collision.MaterialDefinitionDatabase()
+
+      material_definition_database.addDefinition(
+                                               "Water @ 293.6K", 1,
+                                               ("H1 @ 293.6K", "O16 @ 293.6K"),
+                                               (2.0,           1.0))
+
+      material_definition_database.addDefinition( "H1 @ 293.6K", 2,
+                                                 ("H1 @ 293.6K",), (1.0,) )
+
+      # Create the neutron material, photon material, electron material and
+      # positron material filled model
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_ELECTRON_MODE )
+
+      filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+      self.neutron_material_filled_model = filled_model
+      self.photon_material_filled_model = filled_model
+      self.electron_material_filled_model = filled_model
+      self.positron_material_filled_model = filled_model
+
+      # Create the adjoint photon material filled model
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1e24 )
+
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+
+      self.adjoint_photon_material_filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+      # Create the adjoint electron material filled model
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+
+      self.adjoint_electron_material_filled_model = Collision.FilledGeometryModel(
+                                        database_path,
+                                        scattering_center_definition_database,
+                                        material_definition_database,
+                                        properties,
+                                        unfilled_model,
+                                        True )
+
+    def testIsSpatiallyUniform(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialComponentParticleResponseFunction isSpatiallyUniform"
+        response_function = ActiveRegion.NeutronMaterialComponentParticleResponseFunction(
+                                             self.neutron_material_filled_model,
+                                             1,
+                                             "H1 @ 293.6K",
+                                             Collision.N__GAMMA_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
+                        self.photon_material_filled_model,
+                        1,
+                        "H1 @ 293.6K",
+                        Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.ElectronMaterialComponentParticleResponseFunction(
+                        self.electron_material_filled_model,
+                        1,
+                        "H1 @ 293.6K",
+                        Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.PositronMaterialComponentParticleResponseFunction(
+                        self.positron_material_filled_model,
+                        1,
+                        "H1 @ 293.6K",
+                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialComponentParticleResponseFunction(
+                         self.adjoint_photon_material_filled_model,
+                         1,
+                        "H1 @ 293.6K",
+                         Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+        response_function = ActiveRegion.AdjointElectronMaterialComponentParticleResponseFunction(
+                self.adjoint_electron_material_filled_model,
+                1,
+                "H1 @ 293.6K",
+                Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.isSpatiallyUniform() )
+
+    def testDescription(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialComponentParticleResponseFunction description"
+
+        response_function = ActiveRegion.NeutronMaterialComponentParticleResponseFunction(
+                                            self.neutron_material_filled_model,
+                                            1,
+                                            "H1 @ 293.6K",
+                                            Collision.N__GAMMA_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.N__GAMMA_REACTION ) ) )
+
+        response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          "H1 @ 293.6K",
+                          Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.ElectronMaterialComponentParticleResponseFunction(
+                          self.electron_material_filled_model,
+                          1,
+                          "H1 @ 293.6K",
+                          Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.PositronMaterialComponentParticleResponseFunction(
+                        self.positron_material_filled_model,
+                        1,
+                        "H1 @ 293.6K",
+                        Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialComponentParticleResponseFunction(
+                        self.adjoint_photon_material_filled_model,
+                        1,
+                        "H1 @ 293.6K",
+                        Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) ) )
+
+        response_function = ActiveRegion.AdjointElectronMaterialComponentParticleResponseFunction(
+                self.adjoint_electron_material_filled_model,
+                1,
+                "H1 @ 293.6K",
+                Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+        self.assertTrue( response_function.description().find( "cell_1_mat_component" ) )
+        self.assertTrue( response_function.description().find( "\"H1 @ 293.6K\"" ) )
+        self.assertTrue( response_function.description().find( str( Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) ) )
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.MaterialComponentParticleResponseFunction evaluate"
+        response_function = ActiveRegion.NeutronMaterialComponentParticleResponseFunction(
+                                             self.neutron_material_filled_model,
+                                             1,
+                                             "H1 @ 293.6K",
+                                             Collision.N__GAMMA_REACTION )
+
+        neutron = MonteCarlo.NeutronState( 1 )
+        neutron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( neutron ),
+                                2.253571264294286624e-06,
+                                delta=1e-15 )
+
+
+        response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          "H1 @ 293.6K",
+                          Collision.PAIR_PRODUCTION_PHOTOATOMIC_REACTION )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 4.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( photon ),
+                                5.481451375530086199e-05,
+                                delta=1e-15 )
+
+        with self.assertRaises(RuntimeError):
+            response_function = ActiveRegion.PhotonMaterialComponentParticleResponseFunction(
+                          self.photon_material_filled_model,
+                          1,
+                          "H1 @ 293.6K",
+                          Collision.GAMMA__N_REACTION )
+
+
+            self.assertEqual( 'Error: evaluation of the hybrid distribution is currently not supported!',
+                              str(cm.exception) )
+
+        response_function = ActiveRegion.ElectronMaterialComponentParticleResponseFunction(
+                      self.electron_material_filled_model,
+                      1,
+                      "H1 @ 293.6K",
+                      Collision.BREMSSTRAHLUNG_ELECTROATOMIC_REACTION )
+
+        electron = MonteCarlo.ElectronState( 1 )
+        electron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( electron ),
+                                3.693456508334262700e-02,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.PositronMaterialComponentParticleResponseFunction(
+                    self.positron_material_filled_model,
+                    1,
+                    "H1 @ 293.6K",
+                    Collision.BREMSSTRAHLUNG_POSITRONATOMIC_REACTION )
+
+        positron = MonteCarlo.PositronState( 1 )
+        positron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( positron ),
+                                3.693456508334262700e-02,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.AdjointPhotonMaterialComponentParticleResponseFunction(
+                      self.adjoint_photon_material_filled_model,
+                      1,
+                      "H1 @ 293.6K",
+                      Collision.COHERENT_ADJOINT_PHOTOATOMIC_REACTION )
+
+        adjoint_photon = MonteCarlo.AdjointPhotonState( 1 )
+        adjoint_photon.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( adjoint_photon ),
+                                4.629028371467505184e-06,
+                                delta=1e-15 )
+
+        response_function = ActiveRegion.AdjointElectronMaterialComponentParticleResponseFunction(
+              self.adjoint_electron_material_filled_model,
+              1,
+              "H1 @ 293.6K",
+              Collision.BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION )
+
+        adjoint_electron = MonteCarlo.AdjointElectronState( 1 )
+        adjoint_electron.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( response_function.evaluate( adjoint_electron ),
+                                5.357349256383157066e-01,
+                                delta=1e-15 )
+
+#-----------------------------------------------------------------------------#
+# Test the StandardParticleResponse class
+class StandardParticleResponseTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.StandardParticleResponse class"
+
+    def testGetName(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleResponse getName"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        particle_response = ActiveRegion.StandardParticleResponse( energy_response_function )
+
+        self.assertEqual( particle_response.getName(),
+                        energy_response_function.description() )
+
+        particle_response = ActiveRegion.StandardParticleResponse( "test response", energy_response_function )
+
+        self.assertEqual( particle_response.getName(), "test response" )
+
+    def testIsSpatiallyUniform(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleResponse isSpatiallyUniform"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        particle_response = ActiveRegion.StandardParticleResponse( energy_response_function )
+
+        self.assertEqual( particle_response.isSpatiallyUniform(),
+                          energy_response_function.isSpatiallyUniform() )
+
+    def testEvaluate(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleResponse evaluate"
+        response_distribution = Distribution.ExponentialDistribution( 1.0, 1.0 )
+
+        energy_response_function = ActiveRegion.EnergyParticleResponseFunction( response_distribution )
+
+        particle_response = ActiveRegion.StandardParticleResponse( energy_response_function )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+
+        self.assertAlmostEqual( particle_response.evaluate( photon ),
+                                0.36787944117144233,
+                                delta=1e-15 )
+
+    def testDefault_response(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleResponse default_response"
+        particle_response = ActiveRegion.ParticleResponse.getDefault()
+
+        self.assertEqual( particle_response.getName(), "f(particle) = 1" )
+
+        photon = MonteCarlo.PhotonState( 1 )
+        photon.setEnergy( 1.0 )
+
+        self.assertEqual( particle_response.evaluate( photon ), 1.0 )
+
+        photon.setEnergy( 10.0 )
+
+        self.assertEqual( particle_response.evaluate( photon ), 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ParticleResponseFunctionArithmeticOperatorsTestCase))
+    suite.addTest(unittest.makeSuite(FullPhaseSpaceParticleResponseFunctionTestCase))
+    suite.addTest(unittest.makeSuite(SinglePhaseSpaceDimensionParticleResponseFunctionTestCase))
+    suite.addTest(unittest.makeSuite(MaterialParticleResponseFunctionTestCase))
+    suite.addTest(unittest.makeSuite(MaterialComponentParticleResponseFunctionTestCase))
+    suite.addTest(unittest.makeSuite(StandardParticleResponseTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ActiveRegion.ParticleResponse.py
+#-----------------------------------------------------------------------------#

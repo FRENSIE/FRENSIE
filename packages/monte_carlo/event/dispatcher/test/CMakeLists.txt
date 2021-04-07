@@ -1,0 +1,85 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_dispatcher)
+
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_event_dispatcher_test_root_geometry)
+
+ADD_SUBDIRECTORY(test_files)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleCollidingInCellEventLocalDispatcher DEPENDS
+  tstParticleCollidingInCellEventLocalDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleCollidingInCellEventLocalDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleCollidingInCellEventDispatcher DEPENDS tstParticleCollidingInCellEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleCollidingInCellEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleCrossingSurfaceEventLocalDispatcher DEPENDS tstParticleCrossingSurfaceEventLocalDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleCrossingSurfaceEventLocalDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleCrossingSurfaceEventDispatcher DEPENDS tstParticleCrossingSurfaceEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleCrossingSurfaceEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleEnteringCellEventLocalDispatcher DEPENDS tstParticleEnteringCellEventLocalDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleEnteringCellEventLocalDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleEnteringCellEventDispatcher DEPENDS tstParticleEnteringCellEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleEnteringCellEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleLeavingCellEventLocalDispatcher DEPENDS tstParticleLeavingCellEventLocalDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleLeavingCellEventLocalDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleLeavingCellEventDispatcher DEPENDS tstParticleLeavingCellEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleLeavingCellEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleSubtrackEndingInCellEventLocalDispatcher DEPENDS tstParticleSubtrackEndingInCellEventLocalDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleSubtrackEndingInCellEventLocalDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleSubtrackEndingInCellEventDispatcher DEPENDS tstParticleSubtrackEndingInCellEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleSubtrackEndingInCellEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleSubtrackEndingGlobalEventDispatcher DEPENDS tstParticleSubtrackEndingGlobalEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleSubtrackEndingGlobalEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleGoneGlobalEventDispatcher DEPENDS tstParticleGoneGlobalEventDispatcher.cpp)
+FRENSIE_ADD_TEST(ParticleGoneGlobalEventDispatcher)
+
+FRENSIE_ADD_TEST_EXECUTABLE(EventHandler DEPENDS tstEventHandler.cpp)
+FRENSIE_ADD_TEST(EventHandler)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  FRENSIE_ADD_TEST(SharedParallelEventHandler_2
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel --threads=2
+    OPENMP_TEST)
+  FRENSIE_ADD_TEST(SharedParallelEventHandler_4
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel --threads=4
+    OPENMP_TEST)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel
+    MPI_PROCS 2)
+  FRENSIE_ADD_TEST(DistributedParallelEventHandler
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel
+    MPI_PROCS 4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+  FRENSIE_ADD_TEST(HybridParallelEventHandler_2
+    TEST_EXEC_NAME_ROOT EventHandler
+    EXTRA_ARGS --test_filter=update_parallel --threads=2
+    MPI_PROCS 2)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_DAGMC})
+  FRENSIE_ADD_TEST_EXECUTABLE(EventHandlerDagMC
+    DEPENDS tstEventHandlerDagMC.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(EventHandlerDagMC
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.h5m)
+ENDIF()
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_dispatcher)

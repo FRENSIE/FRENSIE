@@ -9,85 +9,197 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef TestArchiveHelper::TestArchives TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test the simulation properties defaults
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, defaults )
+FRENSIE_UNIT_TEST( SimulationNeutronProperties, defaults )
 {
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
-                       400.0 );
-  TEST_EQUALITY_CONST( 
-               MonteCarlo::SimulationNeutronProperties::getAbsoluteMinNeutronEnergy(),
-               1e-11 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
-                       1e-11 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
-                       20.0 );
-  TEST_EQUALITY_CONST( 
-               MonteCarlo::SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy(),
-               20.0 );
-}
+  MonteCarlo::SimulationNeutronProperties properties;
 
-
-//---------------------------------------------------------------------------//
-// Test that the free gas thermal treatment temp threshold can be set
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
-{
-  double default_value = 
-    MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold();
-
-  MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( 1000.0 );
-
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
-		       1000.0 );
-
-  // Reset to the default
-  MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( properties.getMinNeutronEnergy(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( properties.getMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfNeutronHashGridBins(), 1000u );
+  FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 400.0 );
+  FRENSIE_CHECK( properties.isUnresolvedResonanceProbabilityTableModeOn() );
+  FRENSIE_CHECK_SMALL( properties.getNeutronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( properties.getNeutronRouletteSurvivalWeight(), 1e-30 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the min neutron energy can be set
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMinNeutronEnergy )
+FRENSIE_UNIT_TEST( SimulationNeutronProperties, setMinNeutronEnergy )
 {
-  double default_value = 
-    MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy();
+  MonteCarlo::SimulationNeutronProperties properties;
 
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( 1e-8 );
-  
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
-		       1e-8 );
+  properties.setMinNeutronEnergy( 1e-8 );
 
-  // Reset the default
-  MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getMinNeutronEnergy(), 1e-8 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the max neutron energy can be set
-TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
+FRENSIE_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
 {
-  double default_value = 
-    MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy();
+  MonteCarlo::SimulationNeutronProperties properties;
 
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( 15.0 );
-  
-  TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy() !=
-	       default_value );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
-		       15.0 );
+  properties.setMaxNeutronEnergy( 15.0 );
 
-  // Reset the default
-  MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( default_value );
+  FRENSIE_CHECK_EQUAL( properties.getMaxNeutronEnergy(), 15.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of hash grid bins can be set
+FRENSIE_UNIT_TEST( SimulationNeutronProperties,
+                   getNumberOfNeutronHashGridBins )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setNumberOfNeutronHashGridBins( 150u );
+
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfNeutronHashGridBins(), 150u );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the free gas thermal treatment temp threshold can be set
+FRENSIE_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setFreeGasThreshold( 1000.0 );
+
+  FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 1000.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the unresolved resonance probability table mode can be toggled
+FRENSIE_UNIT_TEST( SimulationNeutronProperties,
+                   setUnresolvedResonanceProbabilityTableModeOn_Off )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setUnresolvedResonanceProbabilityTableModeOff();
+
+  FRENSIE_CHECK( !properties.isUnresolvedResonanceProbabilityTableModeOn() );
+
+  properties.setUnresolvedResonanceProbabilityTableModeOn();
+
+  FRENSIE_CHECK( properties.isUnresolvedResonanceProbabilityTableModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationNeutronProperties,
+                   getNeutronRouletteThresholdWeight )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  double weight = 1e-14;
+
+  properties.setNeutronRouletteThresholdWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getNeutronRouletteThresholdWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the critical line energies can be set
+FRENSIE_UNIT_TEST( SimulationNeutronProperties,
+                   getNeutronRouletteSurvivalWeight )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  double weight = 1e-12;
+
+  properties.setNeutronRouletteSurvivalWeight( weight );
+
+  FRENSIE_CHECK_EQUAL( properties.getNeutronRouletteSurvivalWeight(),
+                       weight );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationNeutronProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_simulation_neutron_props" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::SimulationNeutronProperties default_properties;
+
+    MonteCarlo::SimulationNeutronProperties custom_properties;
+    custom_properties.setMinNeutronEnergy( 1e-8 );
+    custom_properties.setMaxNeutronEnergy( 15.0 );
+    custom_properties.setNumberOfNeutronHashGridBins( 150u );
+    custom_properties.setFreeGasThreshold( 1000.0 );
+    custom_properties.setUnresolvedResonanceProbabilityTableModeOff();
+    custom_properties.setNeutronRouletteThresholdWeight( 1e-15 );
+    custom_properties.setNeutronRouletteSurvivalWeight( 1e-13 );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::SimulationNeutronProperties default_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
+
+  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMinNeutronEnergy(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfNeutronHashGridBins(), 1000u );
+  FRENSIE_CHECK_EQUAL( default_properties.getFreeGasThreshold(), 400.0 );
+  FRENSIE_CHECK( default_properties.isUnresolvedResonanceProbabilityTableModeOn() );
+  FRENSIE_CHECK_SMALL( default_properties.getNeutronRouletteThresholdWeight(), 1e-30 );
+  FRENSIE_CHECK_SMALL( default_properties.getNeutronRouletteSurvivalWeight(), 1e-30  );
+
+  MonteCarlo::SimulationNeutronProperties custom_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
+
+  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMinNeutronEnergy(), 1e-8 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getMaxNeutronEnergy(), 15.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfNeutronHashGridBins(), 150u );
+  FRENSIE_CHECK_EQUAL( custom_properties.getFreeGasThreshold(), 1000.0 );
+  FRENSIE_CHECK( !custom_properties.isUnresolvedResonanceProbabilityTableModeOn() );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNeutronRouletteThresholdWeight(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNeutronRouletteSurvivalWeight(), 1e-13 );
 }
 
 //---------------------------------------------------------------------------//

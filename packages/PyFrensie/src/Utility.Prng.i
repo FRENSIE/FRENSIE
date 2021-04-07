@@ -12,11 +12,11 @@ PyFrensie.Utility.Prng is the python inteface to the FRENSIE utility/prng
 subpackage.
 
 The purpose of Prng is to provide a variety of pseudo-random number generators
-that can be used in FRENSIE and PyFrensie. All FRENSIE packages interact with 
+that can be used in FRENSIE and PyFrensie. All FRENSIE packages interact with
 the random number generators through the Utility::RandomNumberGenerator class.
 In PyFrensie the Prng.RandomNumberGenerator proxy class is used. Before using
-classes in other PyFrensie modules (e.g. the distribution classes in 
-PyFrensie.Utility.Distribution), make sure to initialize the 
+classes in other PyFrensie modules (e.g. the distribution classes in
+PyFrensie.Utility.Distribution), make sure to initialize the
 Prng.RandomNumberGenerator proxy class.
 "
 %enddef
@@ -29,13 +29,19 @@ Prng.RandomNumberGenerator proxy class.
 // Std Lib Includes
 #include <sstream>
 
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // Frensie Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 %}
 
-// Include the Teuchos::ArrayRCP support
+// Include the vector support
 %include "PyFrensie_Array.i"
+
+// Include macros to find initialized numpy
+%include "numpy.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -81,7 +87,7 @@ this class is shown below:
   generator = PyFrensie.Utility.Prng.LinearCongruentialGenerator()
   generator.getRandomNumber()
   generator.getGeneratorState()
-  
+
   generator.nextHistory()
   generator.getRandomNumber()
   generator.getGeneratorState()
@@ -107,7 +113,7 @@ this class is shown below:
   PyObject* __repr__() const
   {
     std::ostringstream oss;
-    oss << "LinearCongruentialGenerator(stream state: " 
+    oss << "LinearCongruentialGenerator(stream state: "
         << $self->getGeneratorState() << ")";
 
     return PyString_FromString( oss.str().c_str() );
@@ -124,24 +130,24 @@ this class is shown below:
 %feature("docstring")
 Utility::RandomNumberGenerator
 "
-All FRENSIE packages interact with the random number generators through the 
-Utility::RandomNumberGenerator class. In PyFrensie the this proxy class is 
-used. Before using classes in other PyFrensie modules (e.g. the distribution 
-classes in PyFrensie.Utility.Distribution), make sure to initialize the 
+All FRENSIE packages interact with the random number generators through the
+Utility::RandomNumberGenerator class. In PyFrensie the this proxy class is
+used. Before using classes in other PyFrensie modules (e.g. the distribution
+classes in PyFrensie.Utility.Distribution), make sure to initialize the
 Prng.RandomNumberGenerator proxy class (by calling 'createStreams'). It is
 usually not necessary to interact with this class directly. However, it can
 be useful to interact with it when debugging or exploring sampling methods by
-using the setFakeStream method. The setFakeStream method allows one to specify 
-a fake random number stream that will be used instead of the stream from the 
+using the setFakeStream method. The setFakeStream method allows one to specify
+a fake random number stream that will be used instead of the stream from the
 underlying random number generator. Make sure to call the 'unsetFakeStream'
-method after completing the task that needed the fake stream. Note that a 
+method after completing the task that needed the fake stream. Note that a
 numpy array should be used to specify the fake stream.
 "
 
 %feature("docstring")
 Utility::RandomNumberGenerator::hasStreams
 "
-This method can be used to check if the random number streams have been 
+This method can be used to check if the random number streams have been
 created (from a call to 'createStreams()').
 "
 
@@ -149,7 +155,7 @@ created (from a call to 'createStreams()').
 Utility::RandomNumberGenerator::createStreams
 "
 This method must be called before using classes in other PyFrensie modules that
-use the RandomNumberGenerator internally (e.g. the distribution classes in 
+use the RandomNumberGenerator internally (e.g. the distribution classes in
 PyFrensie.Utility.Distribution).
 "
 
@@ -170,8 +176,8 @@ number.
 %feature("docstring")
 Utility::RandomNumberGenerator::setFakeStream
 "
-Allows one to specify a fake random number stream that will be used instead of 
-the stream from the underlying random number generator. Make sure to call the 
+Allows one to specify a fake random number stream that will be used instead of
+the stream from the underlying random number generator. Make sure to call the
 'unsetFakeStream' method after completing the task that needed the fake stream.
 Only numpy arrays should be used to specify the fake stream.
 "
@@ -187,7 +193,7 @@ that the original random number stream state will be reset as well.
 // the fake stream
 %typemap(in) const std::vector<double>& fake_stream (std::vector<double> temp)
 {
-  PyFrensie::copyNumPyToVectorWithCheck( $input, temp );
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
 
   $1 = &temp;
 }
@@ -197,7 +203,7 @@ that the original random number stream state will be reset as well.
 // SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
 // get a Python error when calling the overloaded method in Python without this
 // typecheck
-%typemap(typecheck, precedence=1050) (const std::vector<double>&) {
+%typemap(typecheck, precedence=1090) (const std::vector<double>&) {
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
 
@@ -207,7 +213,9 @@ that the original random number stream state will be reset as well.
 // Instantiate the getRandomNumber template method
 %template(getRandomNumber) Utility::RandomNumberGenerator::getRandomNumber<double>;
 
+//---------------------------------------------------------------------------//
 // Turn off the exception handling
+//---------------------------------------------------------------------------//
 %exception;
 
 //---------------------------------------------------------------------------//

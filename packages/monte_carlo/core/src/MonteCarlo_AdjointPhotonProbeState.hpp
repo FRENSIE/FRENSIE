@@ -9,8 +9,12 @@
 #ifndef MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 #define MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -33,7 +37,7 @@ public:
   AdjointPhotonProbeState();
 
   //! Constructor
-  AdjointPhotonProbeState( 
+  AdjointPhotonProbeState(
 		       const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
@@ -66,7 +70,7 @@ public:
   AdjointPhotonProbeState* clone() const;
 
   //! Print the adjoint photon state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -88,8 +92,9 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonProbeState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState, 
-			 "AdjointPhotonProbeState" );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState, "AdjointPhotonProbeState" );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointPhotonProbeState );
+TYPE_NAME_TRAITS_QUICK_DECL2( AdjointPhotonProbeState, MonteCarlo );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 

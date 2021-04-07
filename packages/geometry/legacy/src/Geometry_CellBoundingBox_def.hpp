@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -33,7 +33,7 @@ CellBoundingBox<Cell>::CellBoundingBox( const Teuchos::RCP<Cell> &cell,
     d_z_min( z_min ),
     d_z_max( z_max ),
     d_convergence_ratio( convergence_ratio )
-{ 
+{
   // Make sure that the values are valid
   testPrecondition( !ST::isnaninf( x_min ) );
   testPrecondition( !ST::isnaninf( x_max ) );
@@ -60,7 +60,7 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
 
   int number_of_samples = 0;
   int number_of_scores = 0;
-  
+
   bool cell_volume_converged = false;
 
   // The number of samples taken before checking for convergence
@@ -75,36 +75,36 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
   scalarType bounding_box_volume = x_length*y_length*z_length;
 
   // The sampled point
-  scalarType x_sample, y_sample, z_sample; 
+  scalarType x_sample, y_sample, z_sample;
 
   // Run batches until the volume converges or the max number of samples is hit
   while( number_of_samples < max_samples && !cell_volume_converged )
   {
-    
+
     for( int i = 0; i < batch_size; ++i )
     {
-      x_sample = d_x_min + 
+      x_sample = d_x_min +
 	x_length*Utility::RandomNumberGenerator::getRandomNumber<scalarType>();
-      y_sample = d_y_min + 
+      y_sample = d_y_min +
 	y_length*Utility::RandomNumberGenerator::getRandomNumber<scalarType>();
-      z_sample = d_z_min + 
+      z_sample = d_z_min +
 	z_length*Utility::RandomNumberGenerator::getRandomNumber<scalarType>();
 
       if( d_cell->isIn( x_sample, y_sample, z_sample ) )
 	++number_of_scores;
-      
+
       ++number_of_samples;
     }
 
     // Compute the average and variance of the samples
     cell_volume_estimate = number_of_scores*bounding_box_volume/
       number_of_samples;
-    
+
     // Test if the relative error has converged
-    cell_volume_converged = 
-      ST::magnitude( cell_volume_estimate/cell_volume - 1.0 ) < 
+    cell_volume_converged =
+      ST::magnitude( cell_volume_estimate/cell_volume - 1.0 ) <
       d_convergence_ratio;
-    
+
     // Compute the cell volume estimate
     cell_volume = cell_volume_estimate;
   }
@@ -112,19 +112,19 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
   // Make sure that a valid cell volume was calculated
   testPostcondition( cell_volume > ST::zero() );
 
-  d_cell->setVolume( cell_volume );  
+  d_cell->setVolume( cell_volume );
 }
 
 // Calculate and set the cell surface areas
 template<typename Cell>
 void CellBoundingBox<Cell>::calculateCellSurfaceAreas( int max_samples )
 {
-  
+
 }
 
 // Calculate and set the cell volume and surface areas
 template<typename Cell>
-void CellBoundingBox<Cell>::calculateCellVolumeAndSurfaceAreas( 
+void CellBoundingBox<Cell>::calculateCellVolumeAndSurfaceAreas(
 							      int max_samples )
 {
 

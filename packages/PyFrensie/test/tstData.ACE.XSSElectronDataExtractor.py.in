@@ -1,0 +1,234 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACE.XSSElectronDataExtractor class unit tests
+#  \file   tstData.ACE.XSSElectronDataExtractor.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.ACE.XSSElectronDataExtractor class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--acefile", type="string", dest="acefile",
+                  help="set the ACE file to test.")
+parser.add_option("-l", "--startline", type="int", dest="startline",
+                  help="set the ACE file start line.")
+parser.add_option("-n", "--tablename", type="string", dest="tablename",
+                  help="set the ACE table name (must be in the file).")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the XSSElectronDataExtractor
+class XSSElectronDataExtractorBTestCase(unittest.TestCase):
+    "TestCase for Data.ACE.XSSElectronDataExtractor class with B ACE table"
+    @classmethod
+    def setUpClass(cls):
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
+        cls.xss_extractor = ACE.XSSElectronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testConstructor(self):
+        "*Test Data.ACE.XSSElectronDataExtractor constructor"
+        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSElectronDataExtractor))
+    def testExtractAtomicNumber(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractAtomicNumber method"
+        self.assertEqual(self.xss_extractor.extractAtomicNumber(), 5)
+
+    def testExtractKEdge(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractKEdge method"
+        k_edge = self.xss_extractor.extractKEdge()
+        self.assertEqual(k_edge, 1.880000000000E-01)
+
+    def testAugerEmissionEnergy(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractAugerEmissionEnergy method"
+        emission_energy = self.xss_extractor.extractAugerEmissionEnergy()
+        self.assertEqual(emission_energy, 1.880000000000E-01)
+
+    def testExtractStoppingPowersBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractStoppingPowersBlock method"
+        block = self.xss_extractor.extractStoppingPowersBlock()
+        self.assertEqual( len(block), 171 )
+        self.assertEqual( block[0], 1.000000000000E+04 )
+        self.assertEqual( block[len(block)-1], 1.030000000000E-03 )
+
+    def testExtractMottScatteringCorrectionBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractMottScatteringCorrectionBlock method"
+        block = self.xss_extractor.extractMottScatteringCorrectionBlock()
+        self.assertEqual( len(block), 108 )
+        self.assertEqual( block[0], 1e3 )
+        self.assertEqual( block[len(block)-1], 1.00343 )
+
+    def testExtractRileyBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractRileyBlock method"
+        block = self.xss_extractor.extractRileyBlock()
+        self.assertEqual( len(block), 126 )
+        self.assertEqual( block[0], 2.56e2 )
+        self.assertEqual( block[len(block)-1], 6.05682729e-3 )
+
+    def testExtractBremsstrahlungInterpolationBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractBremsstrahlungInterpolationBlock method"
+        block = self.xss_extractor.extractBremsstrahlungInterpolationBlock()
+        self.assertEqual( len(block), 1797 )
+        self.assertEqual( block[0], 1e-3 )
+        self.assertEqual( block[len(block)-1], 2.3145e-4 )
+
+    def testExtractEnergySpectrumRatios(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractEnergySpectrumRatios method"
+        block = self.xss_extractor.extractEnergySpectrumRatios()
+        self.assertEqual( len(block), 89 )
+        self.assertEqual( block[0], 1e-6 )
+        self.assertEqual( block[len(block)-1], 1.0 )
+
+    def testExtractEnergyAngularRatios(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractEnergyAngularRatios method"
+        block = self.xss_extractor.extractEnergyAngularRatios()
+        self.assertEqual( len(block), 34 )
+        self.assertEqual( block[0], 9.999e-1 )
+        self.assertEqual( block[len(block)-1], 1e-6 )
+
+    def testExtractOccupationNumbers(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractOccupationNumbers method"
+        block = self.xss_extractor.extractOccupationNumbers()
+        self.assertEqual( len(block), 2 )
+        self.assertEqual( block[0], 2.0 )
+        self.assertEqual( block[len(block)-1], -3.0 )
+
+    def testExtractBindingEnergy(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractBindingEnergy method"
+        block = self.xss_extractor.extractBindingEnergy()
+        self.assertEqual( len(block), 2 )
+        self.assertEqual( block[0], 1.92e2 )
+        self.assertEqual( block[len(block)-1], 1.1386e1 )
+
+#-----------------------------------------------------------------------------#
+# Test the XSSElectronDataExtractor
+class XSSElectronDataExtractorPbTestCase(unittest.TestCase):
+    "TestCase for Data.ACE.XSSElectronDataExtractor class with Pb ACE table"
+    @classmethod
+    def setUpClass(cls):
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, options.startline )
+        cls.xss_extractor = ACE.XSSElectronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testConstructor(self):
+        "*Test Data.ACE.XSSElectronDataExtractor constructor"
+        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSElectronDataExtractor))
+    def testExtractAtomicNumber(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractAtomicNumber method"
+        self.assertEqual(self.xss_extractor.extractAtomicNumber(), 82)
+
+    def testExtractKEdge(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractKEdge method"
+        k_edge = self.xss_extractor.extractKEdge()
+        self.assertEqual(k_edge, 8.8004001e1)
+
+    def testAugerEmissionEnergy(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractAugerEmissionEnergy method"
+        emission_energy = self.xss_extractor.extractAugerEmissionEnergy()
+        self.assertEqual(emission_energy, 5.8606e1)
+
+    def testExtractStoppingPowersBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractStoppingPowersBlock method"
+        block = self.xss_extractor.extractStoppingPowersBlock()
+        self.assertEqual( len(block), 171 )
+        self.assertEqual( block[0], 1e4 )
+        self.assertEqual( block[len(block)-1], 2.25e-03 )
+
+    def testExtractMottScatteringCorrectionBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractMottScatteringCorrectionBlock method"
+        block = self.xss_extractor.extractMottScatteringCorrectionBlock()
+        self.assertEqual( len(block), 108 )
+        self.assertEqual( block[0], 1e3 )
+        self.assertEqual( block[len(block)-1], 1.48032 )
+
+    def testExtractRileyBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractRileyBlock method"
+        block = self.xss_extractor.extractRileyBlock()
+        self.assertEqual( len(block), 126 )
+        self.assertEqual( block[0], 2.56e2 )
+        self.assertEqual( block[len(block)-1], 1.69866237e-2 )
+
+    def testExtractBremsstrahlungInterpolationBlock(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractBremsstrahlungInterpolationBlock method"
+        block = self.xss_extractor.extractBremsstrahlungInterpolationBlock()
+        self.assertEqual( len(block), 1797 )
+        self.assertEqual( block[0], 1e-3 )
+        self.assertEqual( block[len(block)-1], 1.32342e-3 )
+
+    def testExtractEnergySpectrumRatios(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractEnergySpectrumRatios method"
+        block = self.xss_extractor.extractEnergySpectrumRatios()
+        self.assertEqual( len(block), 89 )
+        self.assertEqual( block[0], 1e-6 )
+        self.assertEqual( block[len(block)-1], 1.0 )
+
+    def testExtractEnergyAngularRatios(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractEnergyAngularRatios method"
+        block = self.xss_extractor.extractEnergyAngularRatios()
+        self.assertEqual( len(block), 34 )
+        self.assertEqual( block[0], 9.999e-1 )
+        self.assertEqual( block[len(block)-1], 1e-6 )
+
+    def testExtractOccupationNumbers(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractOccupationNumbers method"
+        block = self.xss_extractor.extractOccupationNumbers()
+        self.assertEqual( len(block), 23 )
+        self.assertEqual( block[0], 2.0 )
+        self.assertEqual( block[len(block)-1], -2.0 )
+
+    def testExtractBindingEnergy(self):
+        "*Test Data.ACE.XSSElectronDataExtractor extractBindingEnergy method"
+        block = self.xss_extractor.extractBindingEnergy()
+        self.assertEqual( len(block), 23 )
+        self.assertEqual( block[0], 8.8011e4 )
+        self.assertEqual( block[len(block)-1], 7.42 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    if options.tablename == "5000.03e":
+        suite.addTest(unittest.makeSuite(XSSElectronDataExtractorBTestCase))
+    elif options.tablename == "82000.03e":
+        suite.addTest(unittest.makeSuite(XSSElectronDataExtractorPbTestCase))
+    else:
+        print >>sys.stderr, "Error: This test can only be used with the " + \
+            "5000.03e table or the 82000.03e table \
+            (" + options.tablename + ") provided!"
+        sys.exit(1)
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.ACE \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end Data.ACE.XSSElectronDataExtractor.py
+#-----------------------------------------------------------------------------#

@@ -24,13 +24,13 @@
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )  
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that two vectors can be compared equal
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   equality,
 				   ScalarType )
 {
@@ -119,7 +119,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
   TEST_EQUALITY( vector.getRawPtr(), &vector[0] );
 
   const Geometry::Vector<ScalarType> const_vector;
-  
+
   TEST_EQUALITY( const_vector.getRawPtr(), &const_vector[0] )
 }
 
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   ScalarType )
 {
   Geometry::Vector<ScalarType> vector;
-  
+
   Teuchos::ArrayView<const ScalarType> view_1 = vector.view();
   Teuchos::ArrayView<const ScalarType> view_2 = vector();
 
@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   ScalarType )
 {
   Geometry::Vector<ScalarType> vector( 1.0, 0.0, 0.0 );
-  
+
   Geometry::Vector<ScalarType> second_vector( 1.0, 1.0, 1.0 );
 
   Geometry::Vector<ScalarType> ref_vector( 2.0, 1.0, 1.0 );
@@ -169,9 +169,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   ScalarType )
 {
   Geometry::Vector<ScalarType> vector( 1.0, 0.0, 0.0 );
-  
+
   Geometry::Vector<ScalarType> second_vector( 1.0, 1.0, 1.0 );
-  
+
   Geometry::Vector<ScalarType> ref_vector( 0.0, -1.0, -1.0 );
 
   vector -= second_vector;
@@ -215,7 +215,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
   Geometry::Vector<ScalarType> ref_vector( 3.0, 3.0, 3.0 );
 
   vector *= matrix;
-  
+
   TEST_EQUALITY( vector, ref_vector );
 }
 
@@ -228,7 +228,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   ScalarType )
 {
   Geometry::Vector<ScalarType> vector;
-  
+
   Geometry::Vector<ScalarType> x( 1.0, 1.0, 1.0 );
   Geometry::Matrix<ScalarType> A( 1.0, 1.0, 1.0,
 				1.0, 1.0, 1.0,
@@ -272,7 +272,7 @@ UNIT_TEST_INSTANTIATION( Vector, normalize );
 
 //---------------------------------------------------------------------------//
 // Check that the dot product of two vectors can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   dot,
 				   ScalarType )
 {
@@ -298,8 +298,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 
   ScalarType angle_cosine = vector_a.angleCosine( vector_b );
   ScalarType ref_angle_cosine = 1.0/3;
-  
-  TEST_FLOATING_EQUALITY( angle_cosine, 
+
+  TEST_FLOATING_EQUALITY( angle_cosine,
 			  ref_angle_cosine,
 			  Teuchos::ScalarTraits<ScalarType>::prec() );
 }
@@ -387,7 +387,7 @@ UNIT_TEST_INSTANTIATION( Vector, hasUniqueElements );
 
 //---------------------------------------------------------------------------//
 // Check that the 1-norm of the vector can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 				   normOne,
 				   ScalarType )
 {
@@ -408,7 +408,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
 
   ScalarType two_norm = sqrt( 1.0+4.0+9.0 );
 
-  TEST_FLOATING_EQUALITY( vector.normTwo(), 
+  TEST_FLOATING_EQUALITY( vector.normTwo(),
 			  two_norm,
 			  Teuchos::ScalarTraits<ScalarType>::prec() );
 }

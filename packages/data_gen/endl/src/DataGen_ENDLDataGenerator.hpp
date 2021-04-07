@@ -17,49 +17,40 @@ namespace DataGen{
 //! The electron-photon-relaxation data generator base class
 class ENDLDataGenerator
 {
-  
+
 public:
 
   //! Constructor
-  ENDLDataGenerator( const unsigned atomic_number );
+  ENDLDataGenerator();
 
   //! Destructor
   virtual ~ENDLDataGenerator()
   { /* ... */ }
 
   //! Populate the ENDL data container
-  virtual void populateENDLDataContainer( 
-        Data::ENDLVolatileDataContainer&
-        data_container ) const = 0;
+  virtual void populateENDLDataContainer() = 0;
 
   //! Populate the EADL data container
-  virtual void populateEADLDataContainer( 
-        Data::ENDLVolatileDataContainer&
-        data_container ) const = 0;
+  virtual void populateEADLDataContainer() = 0;
 
   //! Populate the EPDL data container
-  virtual void populateEPDLDataContainer( 
-        Data::ENDLVolatileDataContainer&
-        data_container ) const = 0;
+  virtual void populateEPDLDataContainer() = 0;
 
   //! Populate the EEDL data container
-  virtual void populateEEDLDataContainer( 
-        Data::ENDLVolatileDataContainer&
-        data_container ) const = 0;
+  virtual void populateEEDLDataContainer() = 0;
+
+  //! Get the data container
+  const Data::ENDLDataContainer& getDataContainer() const;
 
 protected:
 
-  //! Set the atomic number
-  void setAtomicNumber( Data::ENDLVolatileDataContainer&
-			data_container ) const;
-
-  //! Get the atomic number
-  unsigned getAtomicNumber() const;
+  //! Get the volatile data container
+  Data::ENDLVolatileDataContainer& getVolatileDataContainer();
 
 private:
 
-  // The atomic number for data being generated
-  unsigned d_atomic_number;
+  // The ENDL volatile data container
+  Data::ENDLVolatileDataContainer d_data_container;
 };
 
 } // end DataGen namespace

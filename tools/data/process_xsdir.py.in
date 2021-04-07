@@ -1,0 +1,47 @@
+#!${PYTHON_EXECUTABLE}
+##---------------------------------------------------------------------------##
+##!
+##! \file   process_xsdir.py
+##! \author Alex Robinson
+##! \brief  The process xsdir tool
+##!
+##---------------------------------------------------------------------------##
+
+from optparse import *
+import PyFrensie.Data as Data
+import PyFrensie.Utility as Utility
+import os.path
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-x", "--xsdir", type="string", dest="xsdir_file", default="xsdir",
+                  help="the xsdir file name")
+parser.add_option("-o", "--overwrite", action="store_true", dest="overwrite", default=False,
+                  help="overwrite existing database" )
+parser.add_option("-d", "--db_name", type="string", dest="db_name", default="database.xml",
+                  help="the database name (with extension)")
+parser.add_option("-l", "--log_file", type="string", dest="log_file",
+                  help="the file that will log data xsdir processing messages")
+options,args = parser.parse_args()
+
+if __name__ == "__main__":
+
+    if not options.log_file is None:
+        Utility.initializeSynchronousLogs( options.log_file )
+
+    if os.path.isfile( options.xsdir_file ):
+
+      xsdir = Data.Xsdir( options.xsdir_file, True )
+
+      database = Data.ScatteringCenterPropertiesDatabase()
+
+      xsdir.exportData( database )
+
+      database.saveToFile( options.db_name, options.overwrite )
+
+    else:
+      print "Error: xsdir file (", options.xsdir_file, ") does not exist!"
+
+##---------------------------------------------------------------------------##
+## process_xsdir.py
+##---------------------------------------------------------------------------##

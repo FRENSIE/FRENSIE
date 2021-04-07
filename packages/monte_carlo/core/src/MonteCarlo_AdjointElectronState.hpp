@@ -9,13 +9,17 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP
 #define MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP
 
+// Boost Includes
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_ChargedParticleState.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The adjoint electron state class
-class AdjointElectronState : public MassiveParticleState
+class AdjointElectronState : public ChargedParticleState
 {
 
 public:
@@ -59,17 +63,19 @@ public:
   double getRestMassEnergy() const;
 
   //! Print the adjoint electron state
-  virtual void print( std::ostream& os ) const;
+  virtual void toStream( std::ostream& os ) const;
 
 protected:
 
   //! Probe constructor
   AdjointElectronState( const ParticleState::historyNumberType history_number,
-                        const ParticleType probe_type );
+                        const ParticleType probe_type,
+                        const chargeType probe_charge );
 
   //! Probe copy constructor
   AdjointElectronState( const ParticleState& existing_base_state,
                         const ParticleType probe_type,
+                        const chargeType probe_charge,
                         const bool increment_generation_number,
                         const bool reset_collision_number );
 
@@ -78,9 +84,7 @@ private:
   // Save the state to an archive
   template<typename Archive>
   void serialize( Archive& ar, const unsigned version )
-  {
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
-  }
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ChargedParticleState); }
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -89,9 +93,10 @@ private:
 
 } // end MonteCarlo namespace
 
-BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronState, 0 );
-BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronState, 
-			 "AdjointElectronState" );
+BOOST_SERIALIZATION_CLASS_VERSION( AdjointElectronState, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AdjointElectronState, MonteCarlo );
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( MonteCarlo, AdjointElectronState );
+TYPE_NAME_TRAITS_QUICK_DECL2( AdjointElectronState, MonteCarlo );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP
 

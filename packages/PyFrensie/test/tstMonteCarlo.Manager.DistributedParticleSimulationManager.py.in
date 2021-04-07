@@ -1,0 +1,1162 @@
+#! /usr/bin/python2.7
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Manager electroatomic reaction unit tests
+#  \file   tstMonteCarlo.Manager.DistributedParticleSimulationManager.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.Manager.DistributedParticleSimulationManager helpers
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy
+import os.path
+from os import path
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="Set the verbosity level [default 2]")
+parser.add_option("-d", "--database_path", type="string", dest="database_path", default="",
+                  help="Set the path to the scattering center database that will be used to create the model")
+parser.add_option("-t", "--threads", type="int", dest="threads",
+                  help="Set the number of threads.")
+parser.add_option("-f", "--have_hdf5",
+                  action="store_true", dest="have_hdf5", default=False,
+                  help="Set the HAVE_FRENSIE_HDF5 to true.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Event = importPyFrensieModuleFromBuildDir('MonteCarlo.Event')
+Manager = importPyFrensieModuleFromBuildDir('MonteCarlo.Manager')
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Testing functions
+#-----------------------------------------------------------------------------#
+# void (*default_signal_handler)( int )
+
+# extern "C" void custom_signal_handler( int signal(self):
+        # "*Test MonteCarlo.Manager.DistributedParticleSimulationManager getThresholdEnergy"
+#   if( global_manager )
+#     global_manager.signalHandler( signal )
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the coupled electroatomic reaction
+class DistributedParticleSimulationManagerTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.Manager DistributedParticleSimulationManager"
+
+    @classmethod
+    def setUpClass(cls):
+
+        # Set the number of requested threads
+        cls.threads = options.threads
+
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
+        h_properties = database.getAtomProperties( Data.ZAID(1001) )
+        h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+        h_definition = cls.scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+        h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        cls.material_definition_database = Collision.MaterialDefinitionDatabase()
+
+        cls.material_definition_database.addDefinition( "H1 @ 293.6K", 1,
+                                                      ("H1 @ 293.6K",), (1.0,) )
+
+        cls.unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        cls.particle_distribution = tmp_particle_distribution
+
+    def setUp(self):
+        # Initialize the FRENSIE global MPI Session
+        self.session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
+
+#-----------------------------------------------------------------------------#
+    # Check that history details can be returned
+    def testGet_history_details(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager get_history_details"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( (MPI.GlobalMPISession.size()-1)*5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+
+        self.assertEqual( manager.getNextHistory(), 0 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+        self.assertEqual( manager.getRendezvousBatchSize(), (MPI.GlobalMPISession.size()-1)*5 )
+        self.assertEqual( manager.getBatchSize(), 5 )
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( (MPI.GlobalMPISession.size()-1)*10 )
+        properties.setMinNumberOfRendezvous( 2 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+
+        self.assertEqual( manager.getNextHistory(), 0 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+        self.assertEqual( manager.getRendezvousBatchSize(), (MPI.GlobalMPISession.size()-1)*5 )
+        self.assertEqual( manager.getBatchSize(), 5 )
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( (MPI.GlobalMPISession.size()-1)*100 )
+        properties.setMinNumberOfRendezvous( 2 )
+        properties.setMaxRendezvousBatchSize( (MPI.GlobalMPISession.size()-1)*10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+
+        self.assertEqual( manager.getNextHistory(), 0 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+        self.assertEqual( manager.getRendezvousBatchSize(), (MPI.GlobalMPISession.size()-1)*10 )
+        self.assertEqual( manager.getBatchSize(), 10 )
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+        properties = None
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( (MPI.GlobalMPISession.size()-1)*100 )
+        properties.setMinNumberOfRendezvous( 2 )
+        properties.setMaxRendezvousBatchSize( (MPI.GlobalMPISession.size()-1)*10 )
+        properties.setNumberOfBatchesPerProcessor( 2 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+
+        self.assertEqual( manager.getNextHistory(), 0 )
+        self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+        self.assertEqual( manager.getRendezvousBatchSize(), (MPI.GlobalMPISession.size()-1)*10 )
+        self.assertEqual( manager.getBatchSize(), 5 )
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can rename the simulation
+    def testSetSimulationName(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager setSimulationName"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+
+        manager.setSimulationName( "test_sim_2" )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim_2" )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.xml" ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can change the archive type
+    def testSetSimulationArchiveType(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager setSimulationArchiveType"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+
+        manager.setSimulationArchiveType( "txt" )
+
+        self.assertEqual( manager.getSimulationArchiveType(), "txt" )
+        self.assertTrue( path.exists( "test_sim_rendezvous_0.txt" ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that the simulation name and archive can be changed simultaneously
+    def testSetSimulationNameAndArchiveType(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager setSimulationNameAndArchiveType"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+
+        self.assertEqual( manager.getSimulationName(), "test_sim" )
+        self.assertEqual( manager.getSimulationArchiveType(), "xml" )
+
+        manager.setSimulationNameAndArchiveType( "test_sim_2", "txt" )
+
+        self.assertEqual( manager.getSimulationName(), "test_sim_2" )
+        self.assertEqual( manager.getSimulationArchiveType(), "txt" )
+        self.assertTrue( path.exists( "test_sim_2_rendezvous_0.txt" ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that the geometry model can be returned
+    def testGetModel(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager getModel"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "xml", self.threads )
+
+        manager = factory.getManager()
+
+        test_model = manager.getModel()
+        # self.assertTrue( manager.getModel() == model )
+
+#-----------------------------------------------------------------------------#
+    # Check that the source can be returned
+    def testGetSource(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager getSource"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "xml", self.threads )
+
+        manager = factory.getManager()
+
+        test_source = manager.getSource()
+        # self.assertTrue( manager.getSource() == source )
+
+#-----------------------------------------------------------------------------#
+    # Check that the event handler can be returned
+    def testGetEventHandler(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager getEventHandler"
+
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.NEUTRON_PHOTON_MODE )
+        properties.setNumberOfHistories( 5 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model, source, event_handler, properties, "test_sim", "xml", self.threads )
+
+        manager = factory.getManager()
+
+        test_event_handler = manager.getEventHandler()
+        # self.assertTrue( manager.getEventHandler() == event_handler )
+
+#-----------------------------------------------------------------------------#
+    # Check that a simulation can be run
+    def testRunSimulation_history_wall(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager runSimulation_history_wall"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setNumberOfHistories( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( manager.getNextHistory(), 10 )
+          self.assertEqual( manager.getNumberOfRendezvous(), 2 )
+        else:
+          self.assertEqual( manager.getNextHistory(), 0 )
+          self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a simulation can be run
+    def testRunSimulation_wall_time(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager runSimulation_wall_time"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.5 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( manager.getNextHistory() > 0 )
+          self.assertTrue( manager.getNumberOfRendezvous() > 0 )
+        else:
+          self.assertEqual( manager.getNextHistory(), 0 )
+          self.assertEqual( manager.getNumberOfRendezvous(), 0 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation summary can be printed
+    def testPrintSimulationSummary(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager printSimulationSummary"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setNumberOfHistories( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+        # manager.printSimulationSummary( std.cout ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation summary can be logged
+    def testLogSimulationSummary(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager logSimulationSummary"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setNumberOfHistories( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+
+        source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            "xml",
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+        manager.logSimulationSummary()
+
+# #-----------------------------------------------------------------------------#
+#     # Check that a particle simulation manager can handle a signal
+# # #ifdef HAVE_FRENSIE_OPENMP
+#     def testSignalHandler(self):
+#         "*Test MonteCarlo.Manager.DistributedParticleSimulationManager signalHandler"
+#         properties = MonteCarlo.SimulationProperties()
+#         properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+#         properties.setMaxRendezvousBatchSize( 100 )
+#         properties.setMaxBatchSize( 10 )
+
+#         model = Collision.FilledGeometryModel(
+#                                 self.database_path,
+#                                 self.scattering_center_definition_database,
+#                                 self.material_definition_database,
+#                                 properties,
+#                                 self.unfilled_model,
+#                                 False )
+
+
+#         source_component = [ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.unfilled_model, self.particle_distribution )]
+
+#         source = ActiveRegion.StandardParticleSource( source_component )
+
+#         event_handler = Event.EventHandler( properties )
+
+
+#         factory = Manager.ParticleSimulationManagerFactory( model,
+#                                                             source,
+#                                                             event_handler,
+#                                                             properties,
+#                                                             "test_sim",
+#                                                             "xml",
+#                                                             self.threads )
+
+#         manager = factory.getManager()
+
+# #   // Set the signal handler
+# #   global_manager = manager
+
+# #   default_signal_handler = std.signal( SIGINT, custom_signal_handler )
+
+# #   #pragma omp parallel num_self.threads( 2 )
+# #     if( Utility.OpenMPProperties.getThreadId() == 0 )
+# #       manager.runSimulation()
+# #     else
+# #       std.shared_ptr<Utility.Timer> timer =
+# #         Utility.OpenMPProperties.createTimer()
+
+# #       timer.start()
+
+# #       while( timer.elapsed().count() < 0.2 )
+
+# #       timer.stop()
+# #       timer.reset()
+
+# #       // Terminate the simulation (it is set up to run indefinitely unless it
+# #       // receives an interput signal)
+# #       std.raise( SIGINT )
+
+#         self.assertTrue( manager.getNextHistory() > 0 )
+#         self.assertTrue( manager.getNumberOfRendezvous() > 0 )
+
+# #   // Restore the default signal handler
+# #   std.signal( SIGINT, default_signal_handler )
+# #   global_manager.reset()
+# # #endif // end HAVE_FRENSIE_OPEMP
+
+class ParametrizedTestCase(unittest.TestCase):
+    """ TestCase classes that want to be parametrized should
+        inherit from this class.
+    """
+    def __init__(self, methodName='runTest', archive_type=None, source_id=None):
+        super(ParametrizedTestCase, self).__init__(methodName)
+        self.archive_type = archive_type
+        self.source_id = source_id
+
+    @staticmethod
+    def parametrize(testcase_class, archive_type=None, source_id=None):
+        """ Create a suite containing all tests taken from the given
+            subclass, passing them the parameters 'archive_type' and 'source_id'.
+        """
+        testloader = unittest.TestLoader()
+        testnames = testloader.getTestCaseNames(testcase_class)
+        suite = unittest.TestSuite()
+        for name in testnames:
+            suite.addTest(testcase_class(name, archive_type=archive_type, source_id=source_id))
+        return suite
+
+#-----------------------------------------------------------------------------#
+# Test the coupled electroatomic reaction
+class DistributedParticleSimulationManagerRestartTestCase(ParametrizedTestCase):
+    "TestCase class for MonteCarlo.Manager DistributedParticleSimulationManager restart"
+
+    @classmethod
+    def setUpClass(cls):
+        # Set the number of requested threads
+        cls.threads = options.threads
+
+        cls.database_path = options.database_path
+        database = Data.ScatteringCenterPropertiesDatabase(cls.database_path)
+        h_properties = database.getAtomProperties( Data.ZAID(1001) )
+        h1_properties = database.getNuclideProperties( Data.ZAID(1001) )
+        cls.scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+        h_definition = cls.scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+        h_definition.setPhotoatomicDataProperties(
+          h_properties.getSharedPhotoatomicDataProperties(
+                       Data.PhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setElectroatomicDataProperties(
+          h_properties.getSharedElectroatomicDataProperties(
+                     Data.ElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+              Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+        h_definition.setNuclearDataProperties(
+          h1_properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         7,
+                                         2.53010E-08,
+                                         True ) )
+
+        cls.material_definition_database = Collision.MaterialDefinitionDatabase()
+
+        cls.material_definition_database.addDefinition( "H1 @ 293.6K", 1,
+                                                      ("H1 @ 293.6K",), (1.0,) )
+
+        cls.unfilled_model = Geometry.InfiniteMediumModel( 1, 1, -1.0 )
+
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution( "test dist" )
+
+        cls.particle_distribution = tmp_particle_distribution
+
+    def setUp(self):
+        # Initialize the FRENSIE global MPI Session
+        argc = 2
+        argv = ["tstMonteCarlo.Manager.DistributedParticleSimulationManagerFactory.py", "default", "--report_level=detailed"]
+        self.session = MPI.GlobalMPISession( argc, argv )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation can be restarted
+    def testRestart_basic(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager restart_basic"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.25 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ ActiveRegion.StandardPhotonSourceComponent(
+                                                     self.source_id,
+                                                     1.0,
+                                                     self.unfilled_model,
+                                                     self.particle_distribution ) ]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            self.archive_type,
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        next_history = manager.getNextHistory()
+        rendezvous_number = manager.getNumberOfRendezvous()
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        # broadcast rank 0 to other ranks
+        rendezvous_number = Manager.broadcast( rendezvous_number )
+        next_history = Manager.broadcast( next_history )
+
+        archive_name = "test_sim_rendezvous_"
+        archive_name += str( rendezvous_number - 1 )
+        archive_name += "."
+        archive_name += self.archive_type
+
+
+        factory = Manager.ParticleSimulationManagerFactory( archive_name, self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( manager.getNextHistory() > next_history )
+          self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )
+        else:
+          self.assertEqual( manager.getNextHistory(), next_history )
+          self.assertEqual( manager.getNumberOfRendezvous(), rendezvous_number )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can be restarted
+    def testRestart_add_histories(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager restart_add_histories"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.25 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ ActiveRegion.StandardPhotonSourceComponent(
+                                                     self.source_id,
+                                                     1.0,
+                                                     self.unfilled_model,
+                                                     self.particle_distribution ) ]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            self.archive_type,
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        next_history = manager.getNextHistory()
+        rendezvous_number = manager.getNumberOfRendezvous()
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        # broadcast rank 0 to other ranks
+        rendezvous_number = Manager.broadcast( rendezvous_number )
+        next_history = Manager.broadcast( next_history )
+
+        archive_name = "test_sim_rendezvous_"
+        archive_name += str( rendezvous_number - 1 )
+        archive_name += "."
+        archive_name += self.archive_type
+
+        factory = Manager.ParticleSimulationManagerFactory( archive_name, 10, self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( manager.getNextHistory(), next_history+10 )
+          self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )
+        else:
+          self.assertEqual( manager.getNextHistory(), next_history )
+          self.assertEqual( manager.getNumberOfRendezvous(), rendezvous_number )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can be restarted
+    def testRestart_new_wall_time(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager restart_new_wall_time"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.25 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ ActiveRegion.StandardPhotonSourceComponent(
+                                                     self.source_id,
+                                                     1.0,
+                                                     self.unfilled_model,
+                                                     self.particle_distribution ) ]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            self.archive_type,
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        next_history = manager.getNextHistory()
+        rendezvous_number = manager.getNumberOfRendezvous()
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        # broadcast rank 0 to other ranks
+        rendezvous_number = Manager.broadcast( rendezvous_number )
+        next_history = Manager.broadcast( next_history )
+
+        archive_name = "test_sim_rendezvous_"
+        archive_name += str( rendezvous_number - 1 )
+        archive_name += "."
+        archive_name += self.archive_type
+
+        factory = Manager.ParticleSimulationManagerFactory( archive_name, 0.1, self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( manager.getNextHistory() > next_history )
+          self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )
+        else:
+          self.assertEqual( manager.getNextHistory(), next_history )
+          self.assertEqual( manager.getNumberOfRendezvous(), rendezvous_number )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can be restarted
+    def testRestart_add_histories_new_wall_time(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager restart_add_histories_new_wall_time"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.25 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ ActiveRegion.StandardPhotonSourceComponent(
+                                                     self.source_id,
+                                                     1.0,
+                                                     self.unfilled_model,
+                                                     self.particle_distribution ) ]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            self.archive_type,
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        next_history = manager.getNextHistory()
+        rendezvous_number = manager.getNumberOfRendezvous()
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        # broadcast rank 0 to other ranks
+        rendezvous_number = Manager.broadcast( rendezvous_number )
+        next_history = Manager.broadcast( next_history )
+
+        archive_name = "test_sim_rendezvous_"
+        archive_name += str( rendezvous_number - 1 )
+        archive_name += "."
+        archive_name += self.archive_type
+
+        factory = Manager.ParticleSimulationManagerFactory( archive_name, 10, 1.0, self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( manager.getNextHistory(), next_history+10 )
+          self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )
+        else:
+          self.assertEqual( manager.getNextHistory(), next_history )
+          self.assertEqual( manager.getNumberOfRendezvous(), rendezvous_number )
+
+#-----------------------------------------------------------------------------#
+    # Check that a particle simulation manager can be restarted
+    def testRestart_updated_props(self):
+        "*Test MonteCarlo.Manager.DistributedParticleSimulationManager restart_updated_props"
+        properties = MonteCarlo.SimulationProperties()
+        properties.setParticleMode( MonteCarlo.PHOTON_MODE )
+        properties.setSimulationWallTime( 0.25 )
+        properties.setMaxRendezvousBatchSize( 10 )
+
+        model = Collision.FilledGeometryModel(
+                                self.database_path,
+                                self.scattering_center_definition_database,
+                                self.material_definition_database,
+                                properties,
+                                self.unfilled_model,
+                                False )
+
+        source_component = [ ActiveRegion.StandardPhotonSourceComponent(
+                                                     self.source_id,
+                                                     1.0,
+                                                     self.unfilled_model,
+                                                     self.particle_distribution ) ]
+
+        source = ActiveRegion.StandardParticleSource( source_component )
+        event_handler = Event.EventHandler( properties )
+
+        factory = Manager.ParticleSimulationManagerFactory( model,
+                                                            source,
+                                                            event_handler,
+                                                            properties,
+                                                            "test_sim",
+                                                            self.archive_type,
+                                                            self.threads )
+
+        manager = factory.getManager()
+        manager.useMultipleRendezvousFiles()
+        manager.runSimulation()
+
+        next_history = manager.getNextHistory()
+        rendezvous_number = manager.getNumberOfRendezvous()
+
+        # Reset variables
+        source_component = None
+        source = None
+        factory = None
+        manager = None
+
+        # broadcast rank 0 to other ranks
+        rendezvous_number = Manager.broadcast( rendezvous_number )
+        next_history = Manager.broadcast( next_history )
+
+        archive_name = "test_sim_rendezvous_"
+        archive_name += str( rendezvous_number - 1 )
+        archive_name += "."
+        archive_name += self.archive_type
+
+        updated_properties = MonteCarlo.SimulationGeneralProperties()
+        updated_properties.setNumberOfHistories( 16 )
+        updated_properties.setMinNumberOfRendezvous( 2 )
+        updated_properties.setMaxRendezvousBatchSize( 100 )
+        updated_properties.setNumberOfBatchesPerProcessor( 2 )
+        updated_properties.setSimulationWallTime( 1.0 )
+
+        factory = Manager.ParticleSimulationManagerFactory( archive_name, updated_properties, self.threads )
+
+        manager = factory.getManager()
+        manager.runSimulation()
+        
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( manager.getNextHistory(), next_history+16 )
+          self.assertTrue( manager.getNumberOfRendezvous() > rendezvous_number )
+          self.assertEqual( manager.getRendezvousBatchSize(), 8 )
+          self.assertEqual( manager.getBatchSize(), 8/(2*(MPI.GlobalMPISession.size()-1)) )
+        else:
+          self.assertEqual( manager.getNextHistory(), next_history )
+          self.assertTrue( manager.getNumberOfRendezvous(), rendezvous_number )
+          self.assertEqual( manager.getRendezvousBatchSize(), 8 )
+          self.assertEqual( manager.getBatchSize(), 8/(2*(MPI.GlobalMPISession.size()-1)) )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(DistributedParticleSimulationManagerTestCase))
+    suite.addTest(ParametrizedTestCase.parametrize(DistributedParticleSimulationManagerRestartTestCase, archive_type="xml", source_id=0))
+    suite.addTest(ParametrizedTestCase.parametrize(DistributedParticleSimulationManagerRestartTestCase, archive_type="txt", source_id=1))
+    suite.addTest(ParametrizedTestCase.parametrize(DistributedParticleSimulationManagerRestartTestCase, archive_type="bin", source_id=2))
+    if options.have_hdf5:
+      suite.addTest(ParametrizedTestCase.parametrize(DistributedParticleSimulationManagerRestartTestCase, archive_type="h5fa", source_id=3))
+
+    print >>sys.stderr, \
+        "\n**************************\n" + \
+        "Testing MonteCarlo.Manager.DistributedParticleSimulationManager \n" + \
+        "**************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Manager.DistributedParticleSimulationManager.py
+#-----------------------------------------------------------------------------#

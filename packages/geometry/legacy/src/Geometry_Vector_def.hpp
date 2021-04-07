@@ -10,7 +10,7 @@
 #define GEOMETRY_VECTOR_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -38,7 +38,7 @@ Vector<ScalarType>::Vector( const ScalarType x,
 
 // Tuple constructor
 template<typename ScalarType>
-Vector<ScalarType>::Vector( 
+Vector<ScalarType>::Vector(
 		 const Utility::Trip<ScalarType,ScalarType,ScalarType> &tuple )
   : Utility::PrintableObject( "ThreeSpaceVector" ),
     ThreeSpaceObject( THREE_SPACE_VECTOR ),
@@ -48,7 +48,7 @@ Vector<ScalarType>::Vector(
   d_data[1] = tuple.second;
   d_data[2] = tuple.third;
 }
-  
+
 // Copy constructor
 template<typename ScalarType>
 Vector<ScalarType>::Vector( const Vector<ScalarType> &source_vector )
@@ -58,7 +58,7 @@ Vector<ScalarType>::Vector( const Vector<ScalarType> &source_vector )
 { /* ... */ }
 
 // Copies values from one vector to another
-template<typename ScalarType>						
+template<typename ScalarType>
 Vector<ScalarType>& Vector<ScalarType>::operator=(
 			              const Vector<ScalarType> &source_vector )
 {
@@ -77,7 +77,7 @@ ScalarType& Vector<ScalarType>::operator[]( const ordinalType index )
   testPrecondition( index >= 0 && index < 3 );
 
   return d_data[index];
-} 
+}
 
 // Element access method (const)
 template<typename ScalarType>
@@ -122,7 +122,7 @@ Vector<ScalarType>::operator()() const
 
 // Add another vector to this vector
 template<typename ScalarType>
-Vector<ScalarType>& Vector<ScalarType>::operator+=( 
+Vector<ScalarType>& Vector<ScalarType>::operator+=(
 			              const Vector<ScalarType> &source_vector )
 {
   d_data += source_vector.d_data;
@@ -150,9 +150,9 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=( const scalarType alpha )
 }
 
 // Multiply this vector by a matrix (x => Ax)
-/*! \details The source_matrix should be const qualified but the 
+/*! \details The source_matrix should be const qualified but the
  * Teuchos::SerialDenseMatrix constructors do not allow for const Pointers
- * to be passed. The source matrix will not be modified despite its 
+ * to be passed. The source matrix will not be modified despite its
  * qualification.
  */
 template<typename ScalarType>
@@ -161,12 +161,12 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=(
 {
   // Remove the const from source_matrix so that it is compatible with
   // Teuchos::SerialDenseMatrix interface
-  Matrix<ScalarType>& nonconst_source_matrix = 
+  Matrix<ScalarType>& nonconst_source_matrix =
     const_cast<Matrix<ScalarType>& >( source_matrix );
-  
+
   remember( const Matrix<ScalarType> copy_source_matrix( source_matrix ) );
-  
-  Teuchos::SerialDenseMatrix<ordinalType,ScalarType> 
+
+  Teuchos::SerialDenseMatrix<ordinalType,ScalarType>
     matrix_data( Teuchos::View, nonconst_source_matrix.getRawPtr(), 3, 3, 3 );
 
   Teuchos::SerialDenseVector<ordinalType,ScalarType>
@@ -179,17 +179,17 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=(
 		     matrix_data,
 		     vector_data,
 		     ST::zero() );
-    
+
   // Make sure that the multiplication was successful
   testPostcondition( multiply_success == 0 );
   // Make sure that the source matrix was not modified
   testPostcondition( source_matrix == copy_source_matrix );
 
-  return *this; 
+  return *this;
 }
 
 // Multiply alpha*A*x and add them to beta*<em>this</em>.
-/*! \details The matrix A and vector x should be const qualified but the 
+/*! \details The matrix A and vector x should be const qualified but the
  * Teuchos::SerialDenseMatrix constructors do not allow for const Pointers
  * to be passed. The matrix A and vector x will not be modified despite their
  * qualification.
@@ -205,11 +205,11 @@ void Vector<ScalarType>::multiply( const ScalarType alpha,
   // Teuchos::SerialDenseMatrix interface
   Matrix<ScalarType>& nonconst_A = const_cast<Matrix<ScalarType>& >( A );
   Vector<ScalarType>& nonconst_x = const_cast<Vector<ScalarType>& >( x );
-    
+
   remember( const Matrix<ScalarType> copy_A( A ) );
   remember( const Vector<ScalarType> copy_x( x ) );
 
-  Teuchos::SerialDenseMatrix<ordinalType,ScalarType> 
+  Teuchos::SerialDenseMatrix<ordinalType,ScalarType>
     A_data( Teuchos::View, nonconst_A.getRawPtr(), 3, 3, 3 );
 
   Teuchos::SerialDenseMatrix<ordinalType,ScalarType>
@@ -228,7 +228,7 @@ void Vector<ScalarType>::multiply( const ScalarType alpha,
   testPostcondition( x == copy_x );
 }
 
-// Normalize this vector 
+// Normalize this vector
 template<typename ScalarType>
 void Vector<ScalarType>::normalize()
 {
@@ -261,7 +261,7 @@ template<typename ScalarType>
 bool Vector<ScalarType>::isParallel( const Vector<ScalarType> &x ) const
 {
   ScalarType cos_angle = angleCosine( x );
-  
+
   if( ST::magnitude( cos_angle - ST::one() ) < ST::prec() )
     return true;
   else
@@ -273,7 +273,7 @@ template<typename ScalarType>
 bool Vector<ScalarType>::isAntiparallel( const Vector<ScalarType> &x ) const
 {
   ScalarType cos_angle = angleCosine( x );
-  
+
   if( ST::magnitude( cos_angle + ST::one() ) < ST::prec() )
     return true;
   else

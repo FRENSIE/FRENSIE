@@ -1,4 +1,4 @@
-# Configure the ROOT options that will be required in this project. The 
+# Configure the ROOT options that will be required in this project. The
 # following variables are set:
 #  1.) ROOT - stores the root library names
 MACRO(ENABLE_ROOT_SUPPORT)
@@ -31,10 +31,7 @@ MACRO(ENABLE_ROOT_SUPPORT)
 
   # Find the root executable
   FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_BINARY_DIR})
-  SET(ROOT_EXE ${ROOT_EXE} -b -l)
-
-  # Indicate that Root has been enabled
-  SET(HAVE_FRENSIE_ROOT "1")
+  SET(ROOT_EXE ${ROOT_EXE} -b -q -l)
 
   # Echo ROOT build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)

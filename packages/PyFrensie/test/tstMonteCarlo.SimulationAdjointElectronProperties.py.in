@@ -1,0 +1,236 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.SimulationAdjointElectronProperties class unit tests
+#  \file   tstMonteCarlo.SimulationAdjointElectronProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.SimulationAdjointElectronProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the SimulationAdjointElectronProperties class
+class SimulationAdjointElectronPropertiesTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.SimulationAdjointElectronProperties class"
+
+    def testDefaults(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties defaults"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        self.assertEqual( properties.getAbsoluteMinAdjointElectronEnergy(), 1.5e-5 )
+        self.assertEqual( properties.getMinAdjointElectronEnergy(), 1e-4 )
+        self.assertEqual( properties.getMaxAdjointElectronEnergy(), 20.0 )
+        self.assertEqual( properties.getAbsoluteMaxAdjointElectronEnergy(), 20.0 )
+        self.assertTrue(properties.isAdjointElasticModeOn() )
+        self.assertTrue(properties.isAdjointElectroionizationModeOn() )
+        self.assertTrue(properties.isAdjointBremsstrahlungModeOn() )
+        self.assertTrue(properties.isAdjointAtomicExcitationModeOn() )
+        self.assertEqual( properties.getAdjointElasticElectronDistributionMode(),
+                          MonteCarlo.COUPLED_DISTRIBUTION )
+        self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
+        self.assertEqual( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.TWOBS_DISTRIBUTION )
+        self.assertEqual( properties.getAdjointElectronEvaluationTolerance(), 1e-7 )
+        self.assertEqual( properties.getAdjointElasticCutoffAngleCosine(), 1.0 )
+        self.assertEqual( properties.getNumberOfAdjointElectronHashGridBins(), 500 )
+        self.assertEqual( len(properties.getCriticalAdjointElectronLineEnergies()), 0 )
+        self.assertEqual( properties.getAdjointElectronRouletteThresholdWeight(), 0.0 )
+        self.assertEqual( properties.getAdjointElectronRouletteSurvivalWeight(), 0.0 )
+
+    def testSetMinAdjointElectronEnergy(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setMinAdjointElectronEnergy"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setMinAdjointElectronEnergy( 1e-2 )
+        self.assertEqual( properties.getMinAdjointElectronEnergy(), 1e-2 )
+
+    def testSetMaxAdjointElectronEnergy(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setMaxAdjointElectronEnergy"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setMaxAdjointElectronEnergy( 15.0 )
+        self.assertEqual( properties.getMaxAdjointElectronEnergy(), 15.0 )
+
+    def testSetAdjointElasticModeOffOn(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElasticModeOffOn"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setAdjointElasticModeOff()
+        self.assertFalse(properties.isAdjointElasticModeOn() )
+
+        properties.setAdjointElasticModeOn()
+        self.assertTrue(properties.isAdjointElasticModeOn() )
+
+    def testSetAdjointElectroionizationModeOffOn(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectroionizationModeOffOn"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setAdjointElectroionizationModeOff()
+        self.assertFalse(properties.isAdjointElectroionizationModeOn() )
+
+        properties.setAdjointElectroionizationModeOn()
+        self.assertTrue(properties.isAdjointElectroionizationModeOn() )
+
+    def testSetAdjointBremsstrahlungModeOffOn(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointBremsstrahlungModeOffOn"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setAdjointBremsstrahlungModeOff()
+        self.assertFalse(properties.isAdjointBremsstrahlungModeOn() )
+
+        properties.setAdjointBremsstrahlungModeOn()
+        self.assertTrue(properties.isAdjointBremsstrahlungModeOn() )
+
+    def testSetAdjointAtomicExcitationModeOffOn(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointAtomicExcitationModeOffOn"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setAdjointAtomicExcitationModeOff()
+        self.assertFalse(properties.isAdjointAtomicExcitationModeOn() )
+
+        properties.setAdjointAtomicExcitationModeOn()
+        self.assertTrue(properties.isAdjointAtomicExcitationModeOn() )
+
+    def testSetAdjointElectronEvaluationTolerance(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectronEvaluationTolerance"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        self.assertEqual( properties.getAdjointElectronEvaluationTolerance(), 1e-7 )
+
+        properties.setAdjointElectronEvaluationTolerance( 1e-4 )
+        self.assertEqual( properties.getAdjointElectronEvaluationTolerance(), 1e-4 )
+
+    def testSetAdjointBremsstrahlungAngularDistributionFunction_Dipole(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointBremsstrahlungAngularDistributionFunction"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        function = MonteCarlo.DIPOLE_DISTRIBUTION
+        properties.setAdjointBremsstrahlungAngularDistributionFunction( function )
+
+        self.assertEqual( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.DIPOLE_DISTRIBUTION )
+
+    def testSetAdjointElasticElectronDistributionMode(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElasticElectronDistributionMode"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        self.assertEqual( properties.getAdjointElasticElectronDistributionMode(),
+                          MonteCarlo.COUPLED_DISTRIBUTION )
+
+        mode = MonteCarlo.DECOUPLED_DISTRIBUTION
+        properties.setAdjointElasticElectronDistributionMode( mode )
+        self.assertEqual( properties.getAdjointElasticElectronDistributionMode(),
+                          mode )
+
+    def testSetAdjointCoupledElasticSamplingMode(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointCoupledElasticSamplingMode"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
+                          MonteCarlo.MODIFIED_TWO_D_UNION )
+
+        mode = MonteCarlo.TWO_D_UNION
+        properties.setAdjointCoupledElasticSamplingMode( mode )
+        self.assertEqual( properties.getAdjointCoupledElasticSamplingMode(),
+                          mode )
+
+    def testSetAdjointBremsstrahlungAngularDistributionFunction_Tabular(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointBremsstrahlungAngularDistributionFunction"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        function = MonteCarlo.TABULAR_DISTRIBUTION
+        properties.setAdjointBremsstrahlungAngularDistributionFunction( function )
+        self.assertEqual( properties.getAdjointBremsstrahlungAngularDistributionFunction(),
+                          MonteCarlo.TABULAR_DISTRIBUTION )
+
+    def testSetAdjointElasticCutoffAngleCosine(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElasticCutoffAngleCosine"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setAdjointElasticCutoffAngleCosine( 0.9 )
+        self.assertEqual( properties.getAdjointElasticCutoffAngleCosine(), 0.9 )
+
+    def testSetNumberOfAdjointElectronHashGridBins(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setNumberOfAdjointElectronHashGridBins"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        properties.setNumberOfAdjointElectronHashGridBins( 750 )
+        self.assertEqual( properties.getNumberOfAdjointElectronHashGridBins(), 750 )
+
+    def testGetCriticalAdjointElectronLineEnergies(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setCriticalAdjointElectronLineEnergies"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        critical_line_energies = (1.0, 10.0)
+        properties.setCriticalAdjointElectronLineEnergies( critical_line_energies )
+        self.assertEqual( properties.getCriticalAdjointElectronLineEnergies(),
+                          critical_line_energies )
+
+    def testGetAdjointElectronRouletteThresholdWeight(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectronRouletteThresholdWeight"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        weight = 1e-14
+        properties.setAdjointElectronRouletteThresholdWeight( weight )
+
+        self.assertEqual( properties.getAdjointElectronRouletteThresholdWeight(),
+                          weight )
+
+    def testGetAdjointElectronRouletteSurvivalWeight(self):
+        "*Test MonteCarlo.SimulationAdjointElectronProperties setAdjointElectronRouletteSurvivalWeight"
+        properties = MonteCarlo.SimulationAdjointElectronProperties()
+
+        weight = 1e-12
+        properties.setAdjointElectronRouletteSurvivalWeight( weight )
+
+        self.assertEqual( properties.getAdjointElectronRouletteSurvivalWeight(),
+                          weight )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(SimulationAdjointElectronPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.SimulationAdjointElectronProperties.py
+#-----------------------------------------------------------------------------#

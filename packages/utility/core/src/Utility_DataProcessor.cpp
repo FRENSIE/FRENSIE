@@ -15,17 +15,17 @@
 
 namespace Utility{
 
-/*! \details This function simply converts the integer electron shell number to 
+/*! \details This function simply converts the integer electron shell number to
  * a string.
  * \param[in] shell An integer representing the electron shell number
- * \return A string of the electron shell number. 
+ * \return A string of the electron shell number.
  */
 std::string DataProcessor::uintToShellStr( const unsigned int shell )
 {
   std::stringstream shell_str;
   shell_str << shell;
   return shell_str.str();
-}  
+}
 
 } // end Utility namespace
 

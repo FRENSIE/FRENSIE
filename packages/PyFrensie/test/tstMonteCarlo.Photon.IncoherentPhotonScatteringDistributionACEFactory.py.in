@@ -1,0 +1,435 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class unit tests
+#  \file   tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-f", "--test_ace_file", type="string", dest="test_ace_file",
+                  help="the ace file used for testing")
+parser.add_option("-l", "--test_ace_file_start_line", type="int", dest="test_ace_file_start_line",
+                  help="set the ACE file start line.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Data = importPyFrensieModuleFromBuildDir('Data')
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+MonteCarlo = importPyFrensieModuleFromBuildDir( 'MonteCarlo' )
+Photon = importPyFrensieModuleFromBuildDir('MonteCarlo.Photon')
+
+Prng.RandomNumberGenerator.createStreams()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Check that a Klein-Nishina distribution can be created
+class IncoherentPhotonScatteringDistributionACEFactoryTestCase(unittest.TestCase):
+    "TestCase for MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory class"
+    @classmethod
+    def setUpClass(cls):
+        ace_file = ACE.ACEFileHandler( options.test_ace_file, "82000.12p", options.test_ace_file_start_line )
+        cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testCreateKleinNishinaDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (Klein-Nishina)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.KN_INCOHERENT_MODEL, 3.0 );
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 4.9893440508834e-1, delta=1e-12 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 9.2395260201544e-2, delta=1e-12 )
+
+        # Evaluate the pdf
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, 1.0 ), 1.7412387289976, delta=1e-12 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, -1.0 ), 0.32245161648103, delta=1e-12 )
+
+        # Evaluate the cross section
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.51099891013, 1e-6 ), 2.8653991941448027e-1, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 1.0, 1e-6 ), 2.1120787526380407e-1, delta=1e-15 )
+
+        # Sample from the distribution (left branch of Kahn's)
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999] )
+
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        # Sample from the distribution (right branch of Kahn's)
+        Prng.RandomNumberGenerator.setFakeStream( [0.273,
+                                                   0.5,
+                                                   0.459, # reject
+                                                   0.80,
+                                                   0.25,
+                                                   0.25] )
+
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Sample from the distribution (Koblinger's 1st term)
+        Prng.RandomNumberGenerator.setFakeStream( [0.12, 0.20] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.9046816718380433, delta=1e-12 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        # Sample from the distribution (Koblinger's 2nd term)
+        Prng.RandomNumberGenerator.setFakeStream( [0.698, 0.4] )
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 1.1066615373683126, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.7030902148167004, delta=1e-15 )
+        self.assertEqual( sample[2], 1 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 0.51099891013 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999,
+                                                   0.0] )
+        
+        bank = MonteCarlo.ParticleBank()
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertEqual( interaction_subshell, Data.UNKNOWN_SUBSHELL )
+        self.assertAlmostEqual( photon.getEnergy(), 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateWHIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (WH Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.WH_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.575780417613796, delta=1e-12 )
+
+        # Evaluate the pdf
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, -1.0 ), 0.329438478611696395, delta=1e-15 )
+
+        # Evaluate the cross section
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.001, 1e-4 ), 1.2373009639937291, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3), 34.40463889477637, delta=1e-15 )
+
+        # Sample from the distribution (left branch of Kahn's)
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999,
+                                                   0.989] )
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        # Sample from the distribution (Koblinger's method)
+        Prng.RandomNumberGenerator.setFakeStream( [0.818, # third term
+                                                   0.6,
+                                                   0.99997, # reject scatt func
+                                                   0.120, # first term
+                                                   0.2,
+                                                   0.9] ) # accept scatt func
+
+        sample = dist.sample( 3.1 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.9046816718380433, delta=1e-12 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+
+        # Sample and record trials (Kahn's method)
+        Prng.RandomNumberGenerator.setFakeStream( [0.27,
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999,
+                                                   0.989] )
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 0.51099891013, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+        self.assertEqual( sample[2], 2 )
+
+        # Sample and record trials (Koblinger's method)
+        Prng.RandomNumberGenerator.setFakeStream( [0.818, # third term
+                                                   0.6,
+                                                   0.99997, # reject scat func
+                                                   0.120, # first term
+                                                   0.2,
+                                                   0.9] ) # accept scat func
+
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.9046816718380433, delta=1e-12 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+        self.assertEqual( sample[2], 2 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scat func
+                                                   0.2, # select M3 subshell
+                                                   0.5] ) # theta=pi
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertEqual( interaction_subshell, Data.M3_SUBSHELL )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.ELECTRON )
+        self.assertAlmostEqual( bank.top().getEnergy(), 19.50173181484825, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getZDirection(), 0.9996898054103247, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getXDirection(), 0.024905681252821114, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-15 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateDHPDopplerBroadenedHybridIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (DHP Doppler Broadened Hybrid Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.575780417613796, delta=1e-12 )
+
+        # Evaluate the PDF
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluatePDF( 0.51099891013, -1.0 ), 0.329438478611696395, delta=1e-15 )
+
+        # Evaluate the integrated cross section
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.001, 1e-4 ), 1.2373009639937291, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluateIntegratedCrossSection( 0.1, 1e-3 ), 34.40463889477637, delta=1e-15 )
+
+        # Sample from the distribution (Kahn's method)
+        Prng.RandomNumberGenerator.setFakeStream( [0.27, 
+                                                   0.25,
+                                                   0.90, # reject
+                                                   0.10,
+                                                   0.50,
+                                                   0.999,
+                                                   0.989] ) # accept scat func
+
+        sample = dist.sample( 0.51099891013 )
+        self.assertEqual( len(sample), 2 )
+        self.assertAlmostEqual( sample[0], 0.255499455065, delta=1e-15 )
+        self.assertAlmostEqual( sample[1], 0.0, delta=1e-15 )
+
+        # Sample and record trials from the distribution (Koblinger's method)
+        Prng.RandomNumberGenerator.setFakeStream( [0.818, # third term
+                                                   0.6,
+                                                   0.99997, # reject scat func
+                                                   0.12, # first term
+                                                   0.2,
+                                                   0.9] ) # accept scat func
+        trials = 0
+        sample = dist.sampleAndRecordTrials( 3.1, trials )
+        self.assertEqual( len(sample), 3 )
+        self.assertAlmostEqual( sample[0], 0.9046816718380433, delta=1e-12 )
+        self.assertAlmostEqual( sample[1], 0.6, delta=1e-15 )
+        self.assertEqual( sample[2], 2 )
+        
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scat func
+                                                   0.005, # select shell 0- old
+                                                   0.005, # select shell 0- new
+                                                   6.427713151861e-01, # pz
+                                                   0.25, # energy loss
+                                                   0.5] ) # theta = pi
+
+        interaction_subshell = dist.scatterPhoton( photon, bank )
+        self.assertEqual( interaction_subshell, Data.K_SUBSHELL )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.ELECTRON )
+        self.assertAlmostEqual( bank.top().getEnergy(), 19.50173181484825, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getZDirection(), 0.9996898054103247, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getXDirection(), 0.024905681252821114, delta=1e-12 )
+        self.assertAlmostEqual( photon.getEnergy(), 0.352804013048420073, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateDFPDopperBroadenedHybridIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (DFP Doppler Broadened Hybrid Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.DECOUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.575780417613796, delta=1e-12 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scat func
+                                                   0.005, # select shell 0- old
+                                                   0.005, # select shell 0- new
+                                                   0.5, # select pz = 0.0
+                                                   0.5] ) # theta = pi
+
+        shell_of_interaction = dist.scatterPhoton( photon, bank )
+
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( shell_of_interaction, Data.K_SUBSHELL )
+
+    def testcreateCHPDopplerBroadenedHybridIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (CHP Doppler Broadened Hybrid Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.COUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.575780417613796, delta=1e-12 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scat func
+                                                   0.005, # select shell 0
+                                                   6.427713151861e-01,
+                                                   0.25, # select energy loss
+                                                   0.5] ) # theta = pi
+
+        shell_of_interaction = dist.scatterPhoton( photon, bank )
+        self.assertAlmostEqual( photon.getEnergy(), 0.352804013048420073, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( shell_of_interaction, Data.K_SUBSHELL )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+    def testCreateCFPDopplerBroadenedHybridIncoherentDistribution(self):
+        "*Test MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution (CFP Doppler Broadened Hybrid Incoherent)"
+        dist = Photon.IncoherentPhotonScatteringDistributionACEFactory.createDistribution( self.xss_extractor, MonteCarlo.COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL, 3.0 )
+
+        # Evaluate the distribution
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, 1.0 ), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( dist.evaluate( 0.51099891013, -1.0 ), 7.575780417613796, delta=1e-12 )
+
+        # Check that a photon can be scattered
+        photon = MonteCarlo.PhotonState( 0 )
+        photon.setEnergy( 20.0 )
+        photon.setDirection( 0.0, 0.0, 1.0 )
+
+        bank = MonteCarlo.ParticleBank()
+
+        Prng.RandomNumberGenerator.setFakeStream( [0.001, # first term
+                                                   0.5, # x=40.13902672495315
+                                                   0.5, # accept scatt func
+                                                   0.005, # select shell 0
+                                                   0.5, # select pz=0
+                                                   0.5] ) # theta = pi
+
+        shell_of_interaction = dist.scatterPhoton( photon, bank )
+
+        self.assertAlmostEqual( photon.getEnergy(), 0.4982681851517501, delta=1e-12 )
+        self.assertAlmostEqual( photon.getZDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getYDirection(), 0.0, delta=1e-15 )
+        self.assertAlmostEqual( photon.getXDirection(), -1.0, delta=1e-15 )
+        self.assertEqual( shell_of_interaction, Data.K_SUBSHELL )
+        
+        Prng.RandomNumberGenerator.unsetFakeStream()
+        
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(IncoherentPhotonScatteringDistributionACEFactoryTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************************************************\n" +\
+        "Testing MonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory \n" + \
+        "**************************************************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+        
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.Photon.IncoherentPhotonScatteringDistributionACEFactory.py
+#-----------------------------------------------------------------------------#

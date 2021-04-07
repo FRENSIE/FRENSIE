@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <list>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -22,7 +19,7 @@
 
 namespace DataGen{
 
-//! The free gas elastic marginal alpha function 
+//! The free gas elastic marginal alpha function
 class FreeGasElasticMarginalAlphaFunction
 {
 
@@ -30,14 +27,14 @@ public:
 
   //! Constructor
   FreeGasElasticMarginalAlphaFunction(
-         const Teuchos::RCP<Utility::OneDDistribution>& 
-	 zero_temp_elastic_cross_section,
-         const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
-	 cm_scattering_distribution,
-	 const double A,
-	 const double kT,
-	 const double beta,
-	 const double E );
+         const std::shared_ptr<Utility::UnivariateDistribution>&
+         zero_temp_elastic_cross_section,
+         const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
+         cm_scattering_distribution,
+         const double A,
+         const double kT,
+         const double beta,
+         const double E );
 
   //! Destructor
   ~FreeGasElasticMarginalAlphaFunction()
@@ -57,7 +54,7 @@ public:
 
   //! Evaluate the marginal PDF
   double operator()( const double alpha );
-  
+
   //! Evaluate the marginal CDF
   double evaluateCDF( const double alpha );
 
@@ -67,7 +64,7 @@ private:
   void updateCachedValues();
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;
@@ -88,7 +85,7 @@ private:
   double d_norm_constant;
 
   // Cached CDF values (first = alpha, second = CDF)
-  std::list<Utility::Pair<double,double> > d_cached_cdf_values;
+  std::list<std::pair<double,double> > d_cached_cdf_values;
 };
 
 } // end DataGen namespace

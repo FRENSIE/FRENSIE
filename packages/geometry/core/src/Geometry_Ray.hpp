@@ -9,56 +9,62 @@
 #ifndef GEOMETRY_RAY_HPP
 #define GEOMETRY_RAY_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_PrintableObject.hpp"
+#include "Utility_OStreamableObject.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Geometry{
 
 //! The ray class
-class Ray : public Utility::PrintableObject
+template<typename LengthUnit>
+class UnitAwareRay : public Utility::OStreamableObject
 {
+  // Typedef for length quantity
+  typedef typename Utility::UnitTraits<LengthUnit>::template GetQuantityType<double>::type LengthQuantity;
+    
+  // Typedef for length QuantityTraits
+  typedef Utility::QuantityTraits<LengthQuantity> LQT;
 
-private:
-  
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
-  //! Constructor
-  Ray( const double x_position,
-       const double y_position,
-       const double z_position,
-       const double x_direction,
-       const double y_direction,
-       const double z_direction );
+  //! The length quantity
+  typedef LengthQuantity Length;
 
   //! Constructor
-  Ray( const double position[3],
-       const double direction[3] );
+  UnitAwareRay( const Length x_position,
+                const Length y_position,
+                const Length z_position,
+                const double x_direction,
+                const double y_direction,
+                const double z_direction );
 
   //! Constructor
-  Ray( double position[3],
-       double direction[3],
-       const bool deep_copy = true );
-
-  //! Destructor
-  ~Ray();
+  UnitAwareRay( const Length position[3],
+                const double direction[3] );
   
+  //! Constructor
+  UnitAwareRay( Length position[3],
+                double direction[3],
+                const bool deep_copy = true );
+  
+  //! Destructor
+  ~UnitAwareRay();
+
   //! Return the x position of the ray
-  double getXPosition() const;
+  Length getXPosition() const;
 
   //! Return the y position of the ray
-  double getYPosition() const;
+  Length getYPosition() const;
 
   //! Return the z position of the ray
-  double getZPosition() const;
+  Length getZPosition() const;
 
   //! Return the position of the ray
-  const double* getPosition() const;
+  const Length* getPosition() const;
 
   //! Return the x direction of the ray
   double getXDirection() const;
@@ -81,21 +87,21 @@ public:
                         const double z_direction );
 
   //! Advance the head along its direction by the requested distance
-  void advanceHead( const double distance );
+  void advanceHead( const Length distance );
 
   //! Print method implementation
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
 private:
 
   // Default constructor
-  Ray();
-  
+  UnitAwareRay();
+
   // Copy constructor
-  Ray( const Ray& );
+  UnitAwareRay( const UnitAwareRay& );
 
   // The position
-  double* d_position;
+  Length* d_position;
 
   // The direction
   double* d_direction;
@@ -104,7 +110,18 @@ private:
   bool d_deep_copy_initialization;
 };
 
+//! The ray type (unit-agnostic)
+typedef UnitAwareRay<void> Ray;
+
 } // end Geometry namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Geometry_Ray_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end GEOMETRY_RAY_HPP
 

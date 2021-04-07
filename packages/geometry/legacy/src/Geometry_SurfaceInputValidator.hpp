@@ -52,7 +52,7 @@ private:
 
   // The surface definition parameter name
   static const std::string type_parameter;
-  
+
   // The surface definition parameter name
   static const std::string definition_parameter;
 

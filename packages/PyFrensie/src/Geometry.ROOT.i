@@ -1,19 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Geometry.Root.i
-//! \author Alex Robinson
-//! \brief  The Geometry.Root.i sub-module
+//! \file    Geometry.ROOT.i
+//! \author  Luke Kersting
+//! \brief   The Geometry.ROOT sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
 %define %geometry_root_docstring
 "
-PyFrensie.Geometry.Root is the python interface to the FRENSIE geometry/root
+PyFrensie.Geometry.ROOT is the python interface to the FRENSIE geometry/root
 subpackage.
 
-The purpose of Root is to allow a user to query ROOT geometry data and to
-ray trace on a ROOT geometry using python. This can be useful for debugging
-geometries.
+The purpose of ROOT is to allow a user to query root geometry data and to
+ray trace on a combinatorial geometry using python. This can be useful for
+debugging geometries.
 "
 %enddef
 
@@ -22,42 +22,34 @@ geometries.
         docstring = %geometry_root_docstring) ROOT
 
 %{
-// Trilinos Includes
-#include "PyTrilinos_config.h"
-#include "Teuchos_Comm.hpp"
-#include "Teuchos_DefaultSerialComm.hpp"
-#ifdef HAVE_MPI
-#include "Teuchos_DefaultMpiComm.hpp"
-#endif // end HAVE_MPI
+
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
-#include "PyFrensie_ArrayConversionHelpers.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Geometry_Root.hpp"
-#include "Geometry_RootInstanceFactory.hpp"
-#include "Utility_ContractException.hpp"
+#include "PyFrensie_PythonTypeTraits.hpp"
+#include "Geometry_InfiniteMediumNavigator.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
+#include "Geometry_RootModelProperties.hpp"
+#include "Geometry_RootModel.hpp"
+#include "Geometry_AdvancedModel.hpp"
+#include "Geometry_RootNavigator.hpp"
+#include "Geometry_Exceptions.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_DesignByContract.hpp"
+
+using namespace Geometry;
 %}
 
-// C++ STL support
+// // C++ STL support
 %include <stl.i>
-%include <std_string.i>
-%include <std_set.i>
-%include <std_map.i>
 %include <std_except.i>
 
 // Include typemaps support
 %include <typemaps.i>
 
-// Import the PyFrensie Teuchos Array conversion helpers
-%import "PyFrensie_ArrayConversionHelpers.hpp"
-
-// Import the ModuleTraits classes
-%import "MonteCarlo_ModuleTraits.hpp"
-%import "Geometry_ModuleTraits.hpp"
-
-// Import the Geometry.__init__.i file
-%import "Geometry.__init__.i"
+// Import the Geometry.Geometry__init__.i file
+%import "Geometry.Geometry__init__.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -77,7 +69,11 @@ geometries.
   {
     SWIG_exception( SWIG_ValueError, e.what() );
   }
-  catch( Geometry::InvalidRootGeometry& e )
+  catch( Geometry::InvalidGeometryRepresentation& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( std::runtime_error& e )
   {
     SWIG_exception( SWIG_RuntimeError, e.what() );
   }
@@ -87,212 +83,126 @@ geometries.
   }
 }
 
-//---------------------------------------------------------------------------//
-// Add support for the Root class
-//---------------------------------------------------------------------------//
-// Add more detailed docstrings for the Root class
-%feature("docstring")
-Geometry::Root
-"
-The Root class can be used to interact with a ROOT file that has been
-set up for use with FRENSIE. The query methods have been grouped into
-several groups based on the level of information that is sought. Some of
-these query methods can be called before the geometry has been loaded:
+// General ignore directives
+%ignore *::Volume;
+%ignore *::Area;
 
-ROOT File Properties:
-  *getMaterialPropertyName
-  *setMaterialPropertyName
-  *getVoidMaterialName
-  *setVoidMaterialName
-  *getTerminalMaterialName
-  *setTerminalMaterialName
-  *isInitialized
+// Add a few general templates
+%template(StringVector) std::vector<std::string>;
 
-Others must only be called after the geometry has been loaded:
+// Add a few general typemaps
+%apply std::vector<std::string>& OUTPUT { std::vector<std::string>& properties };
 
-Geometry Properties:
-  *doesCellExist
-  *isTerminationCell
-  *isVoidCell
-  *getCells
-
-Geometric Entity Properties:
-  *getCellVolume
-  *getCellMaterialNames
-  *getCellMaterialIds
-  *getCellDensities
-
-The initialize method is used to load the ROOT file and parse its properties 
-and geometric information. It is recommended that one use
-PyFrensie.Geometry.ROOT.initializeRoot to load the geometry instead of 
-calling the initialize method directly. Once the geometry has been loaded one
-may ray trace on the geometry. This can be useful for debugging ray trace
-errors encountered while running Monte Carlo particle simulations. A brief
-usage tutorial for this class is shown below:
-
-  import PyFrensie.Geometry.ROOT as ROOT
-
-  geom = ROOT.Root
-
-  geom.initialize( 'my_root_file.root', 1e-3 )
-
-  ray = PyFrensie.Geometry.Ray( 0, 0, 0, 0, 0, 1 )
-
-  cell = geom.findCellContainingExternalRay( ray )
-  distance_to_surface = geom.fireExternalRay( ray )
-
-  ray.advanceHead( distance_to_surface )
-
-  geom.setInternalRay( ray )
-
-  cell = geom.findCellContainingInternalRay()
-
-  distance_to_surface = geom.fireInternalRay()
-
-  geom.advanceInternalRayToCellBoundary()
-
-  cell = geom.findCellContainingInternalRay()
-"
-
-%feature("docstring")
-Geometry::Root::getMaterialIds
-"
-This method will return an IdSet that contains the material ids.
-"
-
-%feature("docstring")
-Geometry::Root::getCells
-"
-This method will return an IdSet that contains the cells of interest.
-"
-
-%feature("docstring")
-Geometry::Root::getCellMaterialNames
-"
-This method will return a CellIdMatNameMap that contains the cells and their
-assigned material names.
-"
-
-%feature("docstring")
-Geometry::Root::getCellMaterialIds
-"
-This method will return a CellIdMatIdMap that contains the cells and their
-assigned material ids.
-"
-
-%feature("docstring")
-Geometry::Root::getCellDensities
-"
-This method will return a CellIdDensityMap that contains the cells and their
-assigned densities.
-"
-
-// Typemaps for id sets that convert the inout set to an output set
-%typemap(in,numinputs=0) std::set<unsigned long long>& cell_set (std::set<unsigned long long> temp) "$1 = &temp;"
-
-%typemap(argout) std::set<unsigned long long>& cell_set {
-  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+// Add typemaps for converting file_path to and from Python string
+%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
+  temp = PyFrensie::convertFromPython<std::string>( $input );
+  $1 = &temp;
 }
 
-%typemap(in,numinputs=0) std::set<unsigned long long>& material_ids (std::set<unsigned long long> temp) "$1 = &temp;"
-
-%typemap(argout) std::set<unsigned long long>& material_ids {
-  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
 }
-
-// Typemaps for cell id mat id maps that convert the inout map to an output map
-%typemap(in,numinputs=0) std::map<unsigned long long, unsigned long long>& cell_id_mat_id_map (std::map<unsigned long long, unsigned long long> temp) "$1 = &temp;"
-
-%typemap(argout) std::map<unsigned long long, unsigned long long>& cell_id_mat_id_map {
-  %append_output(SWIG_NewPointerObj((new std::map< unsigned long long,unsigned long long,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,unsigned long long > > >(static_cast< const std::map< unsigned long long,unsigned long long,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,unsigned long long > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_long_long_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_std__pairT_unsigned_long_long_const_unsigned_long_long_t_t_t, SWIG_POINTER_OWN |  0 ));
-}
-
-// Typemaps for cell id density maps that convert the inout map to an output
-// map
-%typemap(in,numinputs=0) std::map<unsigned long long, double>& cell_id_density_map (std::map<unsigned long long, double> temp) "$1 = &temp;"
-
-%typemap(argout) std::map<unsigned long long, double>& cell_id_density_map {
-  %append_output(SWIG_NewPointerObj((new std::map< unsigned long long,double,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,double > > >(static_cast< const std::map< unsigned long long,double,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,double > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_long_long_double_std__lessT_unsigned_long_long_t_std__allocatorT_std__pairT_unsigned_long_long_const_double_t_t_t, SWIG_POINTER_OWN |  0 ));
-}
-
-// Typemaps for cell id material name maps that convert the inout map to an
-// output map
-%typemap(in,numinputs=0) std::map<unsigned long long, std::string>& cell_id_mat_name_map (std::map<unsigned long long, std::string> temp) "$1 = &temp;"
-
-%typemap(argout) std::map<unsigned long long, std::string>& cell_id_mat_name_map {
-  %append_output(SWIG_NewPointerObj((new std::map< unsigned long long,std::string,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,std::string > > >(static_cast< const std::map< unsigned long long,std::string,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,std::string > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_long_long_std__string_std__lessT_unsigned_long_long_t_std__allocatorT_std__pairT_unsigned_long_long_const_std__string_t_t_t, SWIG_POINTER_OWN |  0 ));
-}
-
-// Include the Root class
-%include "Geometry_Root.hpp"
-
-// Instantiate an IdSet
-%template(IdSet) std::set<unsigned long long>;
-
-// Instantiate the template getMaterialIds method
-%template(getMaterialIds) Geometry::Root::getMaterialIds<std::set<unsigned long long> >;
-
-// Instantiate the template getCells method
-%template(getCells) Geometry::Root::getCells<std::set<unsigned long long> >;
-
-// Instantiate a cell id to mat name map
-%template(CellIdMatNameMap) std::map<unsigned long long, std::string>;
-
-// Instantiate the template getCellMaterialNames method
-%template(getCellMaterialNames) Geometry::Root::getCellMaterialNames<std::map<unsigned long long, std::string> >;
-
-// Instantiate a cell id to mat id map
-%template(CellIdMatIdMap) std::map<unsigned long long, unsigned long long>;
-
-// Instantiate the template getCellMaterialIds method
-%template(getCellMaterialIds) Geometry::Root::getCellMaterialIds<std::map<unsigned long long, unsigned long long> >;
-
-// Instantiate a cell id to density map
-%template(CellIdDensityMap) std::map<unsigned long long, double>;
-
-// Instantiate the template getCellDensities method
-%template(getCellDensities) Geometry::Root::getCellDensities<std::map<unsigned long long, double> >;
 
 //---------------------------------------------------------------------------//
-// Add support for the RootInstanceFactory class
+// Add support for the RootModelProperties class
 //---------------------------------------------------------------------------//
-// Add more detailed docstrings for the RootInstanceFactory class
+// Include the RootModelProperties class
+%include "Geometry_RootModelProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the RootNavigator class
+//---------------------------------------------------------------------------//
+
 %feature("docstring")
-initializeRoot
+Geometry::RootNavigator
 "
-This is the recommended way to initialize a ROOT geometry. The 
-PyTrilinos.Teuchos.ParameterList object should store all of the ROOT file
-properties and the ROOT initialization options. A brief usage tutorial for
-this class is shown below:
+The RootNavigator class is primarily used to traverse a Model.
+Some geometric data, such as the surface normal at a point on a surface or the
+relationship between a point and a cell, can also be queried.
+A brief useage tutorial for this class is shown below:
 
-  import PyFrensie.Geometry.Root, PyTrilinos.Teuchos, numpy
-  
-  source = PyTrilinos.Teuchos.FileInputSource( 'my_geom_file.xml' )
-  xml_obj = source.getObject()
-  geom_init_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.ROOT.RootModel.getInstance()
+   properties = PyFrensie.Geometry.ROOT.RootModelProperties( 'my_geom.root' )
+   model.initialize( properties )
 
-  PyFrensie.Geometry.ROOT.initializeRoot( geom_init_list )
+   navigator = model.createNavigator()
 
-  geom = PyFrensie.Geometry.ROOT.Root
-  geom.isInitialize()
+   navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+   distance_to_surface_hit = navigator.fireRay()
+   navigator.advanceToCellBoundary()
+
+   ray_position = navigator.getPosition()
+   ray_cell = navigator.getCurrentCell()
+
+   distance_to_surface_hit, surface_hit = navigator.fireRayAndGetSurfaceHit()
+   reflected = navigator.advanceToCellBoundary()
+   if( reflected ):
+      print 'Surface ', surface_hit, ' reflected ray.'
+
+   distance_to_surface_hit = navigator.fireRay()
+   navigator.advanceBySubstep( 0.5*distance_to_surface_hit )
+   navigator.changeDirection( 0.0, 0.0, -1.0 )
+
+   navigator.fireRay()
+   reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
 "
 
-// Import the Teuchos_ParameterList interface
-%import <Teuchos.i>
+%navigator_interface_setup( RootNavigator )
 
-// Import the DagMCInstanceFactory class
-%import "Geometry_RootInstanceFactory.hpp"
+// Include the RootNavigator class
+%include "Geometry_RootNavigator.hpp"
 
-%inline %{
-void initializeRoot( const Teuchos::ParameterList& geom_rep )
+//---------------------------------------------------------------------------//
+// Add support for the RootModel class
+//---------------------------------------------------------------------------//
+
+// Add more detailed docstrings for the RootModel class
+%feature("docstring")
+Geometry::RootModel
+"
+The RootModel class stores a geometric model, from a combinatorial (.root).
+It can be used for querying properties of the geometry
+and for creating navigators, which can be used to traverse the geometry.
+A brief usage tutorial for this class is shown below:
+
+   import PyFrensie.Geometry, numpy
+
+   model = PyFrensie.Geometry.ROOT.RootModel.getInstance()
+   properties = PyFrensie.Geometry.ROOT.RootModelProperties( 'my_geom.root' )
+   model.initialize( properties )
+
+   cells = model.getCells( True, True )
+   materials = model.getMaterialIds()
+   cell_materials = model.getCellMaterialIds()
+   cell_densities = model.getCellDensities()
+   cell_estimator_data = model.getCellEstimatorData()
+   navigator = model.createNavigator()
+"
+
+%model_interface_setup( RootModel )
+
+%template(MatNameMap) std::map<Geometry::Model::EntityId,std::string>;
+
+// Add some useful methods to the RootModel class
+%extend Geometry::RootModel
 {
-  Geometry::RootInstanceFactory::initializeRoot( geom_rep );
-}
-%}
+  // Return the cell material names
+  std::map<Geometry::Model::EntityId,std::string> Geometry::RootModel::getCellMaterialNames() const
+  {
+    std::map<Geometry::Model::EntityId,std::string> cell_id_mat_name_map;
+    $self->getCellMaterialNames( cell_id_mat_name_map );
+
+    return cell_id_mat_name_map;
+  }
+};
+
+// Include the RootModel class
+%include "Geometry_RootModel.hpp"
 
 // Turn off the exception handling
 %exception;
 
 //---------------------------------------------------------------------------//
-// end Geometry.Root.i
-//---------------------------------------------------------------------------//
+// end Geometry.ROOT.i
+//---------------------------------------------------------------------------//e

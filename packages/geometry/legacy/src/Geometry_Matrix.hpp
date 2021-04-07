@@ -40,7 +40,7 @@ public:
   //@}
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
@@ -72,14 +72,14 @@ public:
   //@{
   //! Set methods
   //! Copies values from one matrix to another.
-  Matrix<ScalarType,N>& 
+  Matrix<ScalarType,N>&
   operator=( const Matrix<ScalarType,N> &source_matrix );
 
   //@{
   //! I/O methods
   //! Print method that defines the behavior of the std::stream << operator
   void print( std::ostream &os ) const;
-  //@}  
+  //@}
 };
 
 /*! A 4x4 matrix
@@ -102,7 +102,7 @@ public:
   //@}
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
@@ -114,16 +114,16 @@ public:
   Matrix();
 
   //! General constructor
-  Matrix( const ScalarType a00, 
-	  const ScalarType a01, 
+  Matrix( const ScalarType a00,
+	  const ScalarType a01,
 	  const ScalarType a02,
 	  const ScalarType a03,
-  	  const ScalarType a10, 
-	  const ScalarType a11, 
+  	  const ScalarType a10,
+	  const ScalarType a11,
 	  const ScalarType a12,
 	  const ScalarType a13,
-  	  const ScalarType a20, 
-	  const ScalarType a21, 
+  	  const ScalarType a20,
+	  const ScalarType a21,
 	  const ScalarType a22,
 	  const ScalarType a23 );
 
@@ -144,14 +144,14 @@ public:
   //@{
   //! Set methods
   //! Copies values from one matrix to another.
-  Matrix<ScalarType,4>& 
+  Matrix<ScalarType,4>&
   operator=( const Matrix<ScalarType,4> &source_matrix );
 
   //@{
   //! I/O methods
   //! Print method that defines the behavior of the std::stream << operator
   void print( std::ostream &os ) const;
-  //@}  
+  //@}
 };
 
 /*! A 2x2 matrix
@@ -174,7 +174,7 @@ public:
   //@}
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
@@ -186,13 +186,13 @@ public:
   Matrix();
 
   //! General constructor
-  Matrix( const ScalarType a00, const ScalarType a01, 
+  Matrix( const ScalarType a00, const ScalarType a01,
 	  const ScalarType a10, const ScalarType a11 );
-	  
+
   //! Symmetric constructor
   Matrix( const ScalarType a00,
   	  const ScalarType a10, const ScalarType a11 );
-  	  
+
   //! Copy constructor
   Matrix( const Matrix<ScalarType,2> &source_matrix );
 
@@ -204,14 +204,14 @@ public:
   //@{
   //! Set methods
   //! Copies values from one matrix to another.
-  Matrix<ScalarType,2>& 
+  Matrix<ScalarType,2>&
   operator=( const Matrix<ScalarType,2> &source_matrix );
 
   //@{
   //! I/O methods
   //! Print method that defines the behavior of the std::stream << operator
   void print( std::ostream &os ) const;
-  //@}  
+  //@}
 };
 
 } // end Geometry namespace

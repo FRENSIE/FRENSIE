@@ -27,13 +27,13 @@ std::string StandardSerializableObject<DerivedType,false>::packDataInString() co
   boost::archive::binary_oarchive ar(oss);
 
   ar << *dynamic_cast<const DerivedType*>(this);
-  
+
   return oss.str();
 }
 
 // Unpack the data from a string and store in the container
 template<typename DerivedType>
-void StandardSerializableObject<DerivedType,false>::unpackDataFromString( 
+void StandardSerializableObject<DerivedType,false>::unpackDataFromString(
 					     const std::string& packed_string )
 {
   std::istringstream iss( packed_string );

@@ -11,23 +11,23 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Tuple.hpp>
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace Data{
 
 /*! \defgroup endl_table Evaluate Nuclear Data Library (ENDL) Table
- * 
- * The first line of every ENDL table contains the zaids, 
- * the incident particle type, the outgoing particle type, 
- * the atomic mass (amu), the date the table was created and 
- * the interpolation flag. The table name and date arrays must have 10 elements. 
- * It is assumed that the desired table has already been found in the desired 
- * ENDL library.The task of reading in this data is handled by the 
+ *
+ * The first line of every ENDL table contains the zaids,
+ * the incident particle type, the outgoing particle type,
+ * the atomic mass (amu), the date the table was created and
+ * the interpolation flag. The table name and date arrays must have 10 elements.
+ * It is assumed that the desired table has already been found in the desired
+ * ENDL library.The task of reading in this data is handled by the
  * Data::ENDLFileHandler.
  */
 
@@ -73,12 +73,12 @@ public:
   //! Read the second table header
   void readSecondTableHeader( int& reaction_type,
                               int& electron_shell );
-  
+
   //! Skip table in ENDL file
   void skipTable();
 
-  //! Process two column table in ENDL file 
-  void processTwoColumnTable(     
+  //! Process two column table in ENDL file
+  void processTwoColumnTable(
     std::vector<double>& indep_variable,
     std::vector<double>& dep_variable );
 
@@ -96,20 +96,20 @@ public:
     std::vector<double>& column_four );
 
 
-  //! Map two column subshell data table in EADL file 
+  //! Map two column subshell data table in EADL file
   template< typename T>
   void mapTwoColumnSubshellData(
     std::vector<unsigned>& subshells,
     std::map<unsigned,T>& subshell_data );
 
-  //! Map three column subshell data table in EADL file 
+  //! Map three column subshell data table in EADL file
   template< typename T >
   void mapThreeColumnSubshellData(
     std::vector<unsigned>& subshells,
     std::map<unsigned,T>& subshell_indep_data,
     std::map<unsigned,T>& subshell_dep_data );
 
-  //! Map four column subshell data table in EADL file 
+  //! Map four column subshell data table in EADL file
   template< typename T >
   void mapFourColumnSubshellData(
     std::vector<unsigned>& subshells,

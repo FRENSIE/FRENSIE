@@ -24,7 +24,7 @@ SabElasticMode convertUnsignedToSabElasticMode( const unsigned mode );
 } // end Data namespace
 
 #endif // end DATA_SAB_ELASTIC_MODE_HPP
- 
+
 //---------------------------------------------------------------------------//
 // end Data_SabElasticMode.hpp
 //---------------------------------------------------------------------------//

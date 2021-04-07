@@ -33,7 +33,7 @@
   typedef space::map<int,Teuchos::RCP<Geometry::Surface<int,double> > > map##_i_d; \
   typedef space::map<long,Teuchos::RCP<Geometry::Surface<long,float> > > map##_l_f; \
   typedef space::map<long,Teuchos::RCP<Geometry::Surface<long,double> > > map##_l_d; \
-  
+
 #define UNIT_TEST_INSTANTIATION_STD_MAP( type, name )		\
   MAP_TYPEDEFS( std, map )						\
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, map_s_d ) \
@@ -49,8 +49,8 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-template<typename CellOrdinalType, 
-	 typename SurfaceOrdinalType, 
+template<typename CellOrdinalType,
+	 typename SurfaceOrdinalType,
 	 typename ScalarType>
 class TestCell : public Geometry::Cell<CellOrdinalType,
 				     SurfaceOrdinalType,
@@ -59,7 +59,7 @@ class TestCell : public Geometry::Cell<CellOrdinalType,
 public:
   TestCell() : Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>()
   { /* ... */ }
-  
+
   virtual ~TestCell()
   { /* ... */ }
 
@@ -74,18 +74,18 @@ template<typename SurfaceMap>
 void createConvexPolyhedronSurfaces( SurfaceMap &cell_surfaces,
 				     std::string &cell_definition )
 {
-  typedef typename SurfaceMap::mapped_type::element_type::ordinalType 
+  typedef typename SurfaceMap::mapped_type::element_type::ordinalType
     OrdinalType;
-  typedef typename SurfaceMap::mapped_type::element_type::scalarType 
+  typedef typename SurfaceMap::mapped_type::element_type::scalarType
     ScalarType;
   typedef Geometry::Surface<OrdinalType,ScalarType> Surface;
-  
+
   // Clear the map
   cell_surfaces.clear();
 
   // Create the cell definition
   cell_definition = "-1n2n-3n4n-5n6";
-  
+
   // Surface 1: x = 2
   Teuchos::RCP<Surface> surface_ptr( new Surface( 1,
 						  1, 0, 0,
@@ -128,21 +128,21 @@ template<typename SurfaceMap>
 void createUnitSphereSurfaces( SurfaceMap &cell_surfaces,
 			       std::string &cell_definition )
 {
-  typedef typename SurfaceMap::mapped_type::element_type::ordinalType 
+  typedef typename SurfaceMap::mapped_type::element_type::ordinalType
     OrdinalType;
-  typedef typename SurfaceMap::mapped_type::element_type::scalarType 
+  typedef typename SurfaceMap::mapped_type::element_type::scalarType
     ScalarType;
   typedef Geometry::Surface<OrdinalType,ScalarType> Surface;
-  
+
   // Clear the map
   cell_surfaces.clear();
 
   // Create the cell definition
   cell_definition = "-1";
-  
+
   // Surface 1: x = 2
   Teuchos::RCP<Surface> surface_ptr( new Surface( 1,
-						  1, 1, 1, 
+						  1, 1, 1,
 						  0, 0, 0,
 						  -1 ) );
   cell_surfaces[1] = surface_ptr;
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( Cell, simplifyCellDefinitionString )
   std::string cell_def( "1n2n3 n 4n5 n 6 n 7" );
 
   TestCell<int,int,double>::simplifyCellDefinitionString( cell_def );
-  
+
   std::string ref_simplified_cell_def( "1 2 3   4 5   6   7" );
 
   TEST_ASSERT( cell_def.compare( 0,
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   Cell polyhedron( 0, cell_definition, surface_map );
 
   // Test that the surfaces have been found and stored
-  typename Cell::SurfaceSensePairsIterator surface_sense_pair, 
+  typename Cell::SurfaceSensePairsIterator surface_sense_pair,
     end_surface_sense_pair;
   surface_sense_pair = polyhedron.beginSurfaceSensePairs();
   end_surface_sense_pair = polyhedron.endSurfaceSensePairs();
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -228,7 +228,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   Geometry::Vector<ScalarType> point_6( 0.0, -2.0, 0.0 );
   Geometry::Vector<ScalarType> point_7( 0.0, 0.0, 2.0 );
   Geometry::Vector<ScalarType> point_8( 0.0, 0.0, -2.0 );
-  
+
   TEST_ASSERT( polyhedron.isIn( point_1 ) );
   TEST_ASSERT( !polyhedron.isIn( point_2 ) );
   TEST_ASSERT( !polyhedron.isIn( point_3 ) );
@@ -251,7 +251,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -271,7 +271,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   Geometry::Vector<ScalarType> point_6( 0.0, -1.0, 0.0 );
   Geometry::Vector<ScalarType> point_7( 0.0, 0.0, 1.0 );
   Geometry::Vector<ScalarType> point_8( 0.0, 0.0, -1.0 );
-  
+
   TEST_ASSERT( sphere.isIn( point_1 ) );
   TEST_ASSERT( !sphere.isIn( point_2 ) );
   TEST_ASSERT( !sphere.isIn( point_3 ) );
@@ -294,7 +294,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   Geometry::Vector<ScalarType> point_6( 0.0, -2.0, 0.0 );
   Geometry::Vector<ScalarType> point_7( 0.0, 0.0, 2.0 );
   Geometry::Vector<ScalarType> point_8( 0.0, 0.0, -2.0 );
-  
+
   TEST_ASSERT( !polyhedron.isOn( point_1 ) );
   TEST_ASSERT( !polyhedron.isOn( point_2 ) );
   TEST_ASSERT( polyhedron.isOn( point_3 ) );
@@ -337,7 +337,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -357,7 +357,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   Geometry::Vector<ScalarType> point_6( 0.0, -1.0, 0.0 );
   Geometry::Vector<ScalarType> point_7( 0.0, 0.0, 1.0 );
   Geometry::Vector<ScalarType> point_8( 0.0, 0.0, -1.0 );
-  
+
   TEST_ASSERT( !sphere.isOn( point_1 ) );
   TEST_ASSERT( !sphere.isOn( point_2 ) );
   TEST_ASSERT( sphere.isOn( point_3 ) );
@@ -380,7 +380,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -391,7 +391,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Load th surfaces that define a sphere
   createUnitSphereSurfaces( surface_map, cell_definition );
-  
+
   // Create the spherical cell
   Cell sphere( 0, cell_definition, surface_map );
 
@@ -400,7 +400,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Boolean sense test array for the sphere
   Teuchos::ArrayRCP<bool> sphere_sense_tests( 1 );
-  
+
   // Polyhedron present
   polyhedron_sense_tests[0] = true;
   polyhedron_sense_tests[1] = true;
@@ -413,8 +413,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Polyhedron not present
   polyhedron_sense_tests[0] = false;
-  
-  TEST_ASSERT( !polyhedron.isCellPresent( polyhedron_sense_tests ) );  
+
+  TEST_ASSERT( !polyhedron.isCellPresent( polyhedron_sense_tests ) );
 
   // Sphere present
   sphere_sense_tests[0] = true;
@@ -423,7 +423,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Sphere not present
   sphere_sense_tests[0] = false;
-  
+
   TEST_ASSERT( !sphere.isCellPresent( sphere_sense_tests ) );
 }
 
@@ -439,7 +439,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -470,7 +470,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -478,11 +478,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Create the polyhedral cell
   Cell polyhedron( 0, cell_definition, surface_map );
-  
+
   // Set the polyhedral cell volume
   ScalarType volume = 123.45;
   polyhedron.setVolume( volume );
-  
+
   TEST_EQUALITY( polyhedron.getVolume(), volume );
 }
 
@@ -498,7 +498,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -506,7 +506,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Create the polyhedral cell
   Cell polyhedron( 0, cell_definition, surface_map );
-  
+
   // Surface areas
   Teuchos::Array<ScalarType> surface_areas( 6 );
   surface_areas[0] = 123.45;
@@ -523,7 +523,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   polyhedron.setSurfaceArea( 4, surface_areas[3] );
   polyhedron.setSurfaceArea( 5, surface_areas[4] );
   polyhedron.setSurfaceArea( 6, surface_areas[5] );
-  
+
   TEST_EQUALITY( polyhedron.getSurfaceArea( 1 ), surface_areas[0] );
   TEST_EQUALITY( polyhedron.getSurfaceArea( 2 ), surface_areas[1] );
   TEST_EQUALITY( polyhedron.getSurfaceArea( 3 ), surface_areas[2] );
@@ -544,7 +544,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 				   SurfaceMap )
 {
   typedef Geometry::Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType> Cell;
-  
+
   // Load the surfaces that define a cube
   std::string cell_definition;
   SurfaceMap surface_map;
@@ -552,7 +552,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   // Create the polyhedral cell
   Cell polyhedron( 0, cell_definition, surface_map );
-  
+
   typename Cell::SurfaceSensePairsIterator desired_pair, end_pair;
   end_pair = polyhedron.endSurfaceSensePairs();
 
@@ -561,13 +561,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 1 );
-  
+
   // Get the second surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 2 );
 
   TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 2 );
-  
+
   // Get the third surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 3 );
 
@@ -579,7 +579,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
 
   TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 4 );
-  
+
   // Get the fifth surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 5 );
 

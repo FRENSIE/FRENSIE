@@ -1,0 +1,1248 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ActiveRegion.ParticleSource class unit tests
+#  \file   tstMonteCarlo.ActiveRegion.ParticleSource.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ActiveRegion.ParticleSource class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-d", "--database", type="string", dest="database",
+                  help="Test scattering center database name with path.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
+Coordinate = importPyFrensieModuleFromBuildDir('Utility.Coordinate')
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
+ActiveRegion = importPyFrensieModuleFromBuildDir('MonteCarlo.ActiveRegion')
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the StandardParticleSourceComponent class
+class StandardParticleSourceComponentTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.StandardParticleSourceComponent class"
+
+    def setUp(self):
+        # Create the model
+        self.model = Geometry.InfiniteMediumModel( 1 )
+
+        # Create the particle distribution
+        spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "source distribution",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+        # Set the dimension distributions
+        raw_uniform_dist_a = Distribution.UniformDistribution( -1.0, 1.0, 0.5 )
+        raw_uniform_dist_b = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( x_dimension_dist )
+
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( y_dimension_dist )
+
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist_b )
+        tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+        # Create the fully tabular energy distribution
+        primary_grid = (-1.0, 0.0, 1.0 )
+        secondary_dists = [None] * 3
+
+        secondary_dists[0] = Distribution.UniformDistribution( 0.0, 10.0, 0.5 )
+        secondary_dists[1] = Distribution.UniformDistribution( 0.0, 20.0, 0.25 )
+        secondary_dists[2] = secondary_dists[1]
+
+        raw_dependent_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+        raw_dependent_dist.limitToPrimaryIndepLimits()
+
+        energy_dimension_dist = ActiveRegion.PrimarySpatialDependentEnergyDimensionDistribution( raw_dependent_dist )
+
+        tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+        tmp_particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.particle_distribution = tmp_particle_distribution
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSourceComponent constructor"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, self.model, self.particle_distribution )
+
+        self.assertEqual( source_component.getId(), 0 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+    def testConstructor_rejection_cells(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSourceComponent constructor_rejection_cells"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardNeutronSourceComponent( 0, 1.0, (1,), self.model, self.particle_distribution )
+
+        self.assertEqual( source_component.getId(), 0 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertTrue( bool(starting_cells) )
+        self.assertTrue( 1 in starting_cells )
+
+    def testSampleParticleState(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSourceComponent sampleParticleState"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardNeutronSourceComponent( 2, 1.0, self.model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        # Set the random number generator stream
+        fake_stream = [None] * 7
+        fake_stream[0] = 0.0         # x
+        fake_stream[1] = 0.5         # energy
+        fake_stream[2] = 0.5         # y
+        fake_stream[3] = 1.0-1e-15   # z
+        fake_stream[4] = 0.0         # theta
+        fake_stream[5] = 1.0-1e-15   # mu
+        fake_stream[6] = 0.0         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source_component.sampleParticleState( bank, 0 )
+
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getHistoryNumber(), 0 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.NEUTRON )
+        self.assertEqual( bank.top().getXPosition(), -1.0 )
+        self.assertEqual( bank.top().getYPosition(), 0.0 )
+        self.assertAlmostEqual( bank.top().getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( bank.top().getXDirection() < 1e-7 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 5.0 )
+        self.assertEqual( bank.top().getEnergy(), 5.0 )
+        self.assertEqual( bank.top().getSourceTime(), 0.0 )
+        self.assertEqual( bank.top().getTime(), 0.0 )
+        self.assertEqual( bank.top().getSourceId(), 2 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        bank.pop()
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.5         # x
+        fake_stream[1] = 0.5         # energy
+        fake_stream[2] = 0.0         # y
+        fake_stream[3] = 0.5         # z
+        fake_stream[4] = 0.0         # theta
+        fake_stream[5] = 0.0         # mu
+        fake_stream[6] = 0.5         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source_component.sampleParticleState( bank, 1 )
+
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getHistoryNumber(), 1 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.NEUTRON )
+        self.assertEqual( bank.top().getXPosition(), 0.0 )
+        self.assertEqual( bank.top().getYPosition(), -1.0 )
+        self.assertEqual( bank.top().getZPosition(), 0.0 )
+        self.assertTrue( bank.top().getXDirection() < 1e-12 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getZDirection(), -1.0, delta=1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 10.0 )
+        self.assertEqual( bank.top().getEnergy(), 10.0 )
+        self.assertEqual( bank.top().getSourceTime(), 0.5 )
+        self.assertEqual( bank.top().getTime(), 0.5 )
+        self.assertEqual( bank.top().getSourceId(), 2 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        bank.pop()
+
+        # Set the random number generator stream
+        fake_stream[0] = 1.0-1e-15         # x
+        fake_stream[1] = 1.0-1e-15         # energy
+        fake_stream[2] = 1.0-1e-15         # y
+        fake_stream[3] = 0.0         # z
+        fake_stream[4] = 0.5         # theta
+        fake_stream[5] = 0.5         # mu
+        fake_stream[6] = 1.0-1e-15         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source_component.sampleParticleState( bank, 2 )
+
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getHistoryNumber(), 2 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.NEUTRON )
+        self.assertAlmostEqual( bank.top().getXPosition(), 1.0, delta=1e-12 )
+        self.assertAlmostEqual( bank.top().getYPosition(), 1.0, delta=1e-12 )
+        self.assertEqual( bank.top().getZPosition(), -1.0 )
+        self.assertAlmostEqual( bank.top().getXDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertTrue( bank.top().getZDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getSourceEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( bank.top().getEnergy(), 20.0, delta=1e-12 )
+        self.assertAlmostEqual( bank.top().getSourceTime(), 1.0, delta=1e-15 )
+        self.assertAlmostEqual( bank.top().getTime(), 1.0, delta=1e-15 )
+        self.assertEqual( bank.top().getSourceId(), 2 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the source can accumulate sampling statistics
+    def testSampling_statistics(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSourceComponent sampling_statistics"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardNeutronSourceComponent( 2, 1.0, self.model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source_component.sampleParticleState( bank, i )
+
+        self.assertEqual( bank.size(), 1000 )
+        self.assertEqual( source_component.getNumberOfTrials(), 1000 )
+        self.assertEqual( source_component.getNumberOfSamples(), 1000 )
+        self.assertEqual( source_component.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), 1000 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        # Check that the source sampling statistics can be reset
+    def testResetData(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSourceComponent resetData"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardNeutronSourceComponent( 2, 1.0, self.model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source_component.sampleParticleState( bank, i )
+
+        source_component.resetData()
+
+        self.assertEqual( source_component.getNumberOfTrials(), 0 )
+        self.assertEqual( source_component.getNumberOfSamples(), 0 )
+        self.assertEqual( source_component.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the StandardAdjointParticleSourceComponent class
+class StandardAdjointParticleSourceComponentTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent class"
+
+    # Create the models
+    def setUp(self):
+      # Determine the database directory
+      database_path = options.database
+
+      # Load the database
+      database = Data.ScatteringCenterPropertiesDatabase( database_path )
+
+      h_properties = database.getAtomProperties( Data.ZAID(1001) )
+
+      # Set the scattering center definitions
+      scattering_center_definition_database = Collision.ScatteringCenterDefinitionDatabase()
+
+      h_definition = scattering_center_definition_database.createDefinition( "H1 @ 293.6K", Data.ZAID(1001) )
+
+      h_definition.setAdjointPhotoatomicDataProperties(
+          h_properties.getSharedAdjointPhotoatomicDataProperties(
+                Data.AdjointPhotoatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      h_definition.setAdjointElectroatomicDataProperties(
+          h_properties.getSharedAdjointElectroatomicDataProperties(
+                Data.AdjointElectroatomicDataProperties.Native_EPR_FILE, 0 ) )
+
+      # Set the material definitions
+      material_definition_database = Collision.MaterialDefinitionDatabase()
+
+      material_definition_database.addDefinition( "H1 @ 293.6K", 2,
+                                                 ("H1 @ 293.6K",), (1.0,) )
+
+      # Create the unfilled model
+      unfilled_model = Geometry.InfiniteMediumModel( 1, 2, 1.0 )
+
+      self.test_model = unfilled_model
+
+      # Create the adjoint photon model
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_PHOTON_MODE )
+      properties.setMaxAdjointPhotonEnergy( 10.0 )
+
+      self.adjoint_photon_model = Collision.FilledGeometryModel(
+                                      database_path,
+                                      scattering_center_definition_database,
+                                      material_definition_database,
+                                      properties,
+                                      unfilled_model,
+                                      True )
+
+      # Create the adjoint electron model
+      properties = MonteCarlo.SimulationProperties()
+      properties.setParticleMode( MonteCarlo.ADJOINT_ELECTRON_MODE )
+      properties.setMaxAdjointElectronEnergy( 10.0 )
+
+      self.adjoint_electron_model = Collision.FilledGeometryModel(
+                                      database_path,
+                                      scattering_center_definition_database,
+                                      material_definition_database,
+                                      properties,
+                                      unfilled_model,
+                                      True )
+
+      # Create the particle distribution
+      spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+      directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+      tmp_particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                      "source distribution",
+                                      spatial_coord_conversion_policy,
+                                      directional_coord_conversion_policy )
+
+      # Set the dimension distributions
+      raw_uniform_dist_a = Distribution.UniformDistribution( -1.0, 1.0, 0.5 )
+      raw_uniform_dist_b = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+      x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+      tmp_particle_distribution.setDimensionDistribution( x_dimension_dist )
+
+      y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+      tmp_particle_distribution.setDimensionDistribution( y_dimension_dist )
+
+      z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_a )
+      tmp_particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+      time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist_b )
+      tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+        # Create the fully tabular energy distribution
+      primary_grid = (-1.0, 0.0, 1.0 )
+      secondary_dists = [None] * 3
+
+      secondary_dists[0] = Distribution.UniformDistribution( 0.0, 10.0, 0.5 )
+      secondary_dists[1] = Distribution.UniformDistribution( 0.0, 20.0, 0.25 )
+      secondary_dists[2] = secondary_dists[1]
+
+      raw_dependent_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+      raw_dependent_dist.limitToPrimaryIndepLimits()
+
+      energy_dimension_dist = ActiveRegion.PrimarySpatialDependentEnergyDimensionDistribution( raw_dependent_dist )
+
+      tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+      tmp_particle_distribution.constructDimensionDistributionDependencyTree()
+
+      self.particle_distribution = tmp_particle_distribution
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent constructor"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, self.adjoint_photon_model, self.particle_distribution )
+
+        self.assertEqual( source_component.getId(), 0 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointElectronSourceComponent( 1, 1.0, self.adjoint_electron_model, self.particle_distribution )
+
+        self.assertEqual( source_component.getId(), 1 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 2, 1.0, self.test_model, self.particle_distribution, [0.1, 1.0] )
+
+        self.assertEqual( source_component.getId(), 2 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+        # Check that the source component can be constructed
+    def testConstructor_rejection_cells(self):
+        "*Test MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent constructor_rejection_cells"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, (1,), self.adjoint_photon_model, self.particle_distribution )
+
+        self.assertEqual( source_component.getId(), 0 )
+        self.assertEqual( source_component.getSelectionWeight(), 1.0 )
+
+        starting_cells = source_component.getStartingCells()
+
+        self.assertTrue( bool(starting_cells) )
+        self.assertTrue( 1 in starting_cells )
+
+        # Check that the particle state can be sampled
+    def testSampleParticleState(self):
+        "*Test MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent sampleParticleState"
+
+        particle_type = MonteCarlo.ADJOINT_PHOTON
+
+        # Construct a source component
+        if particle_type == MonteCarlo.ADJOINT_PHOTON:
+          source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, self.adjoint_photon_model, self.particle_distribution )
+        else:
+          source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, self.adjoint_photon_model, self.particle_distribution, (0.51099891013,) )
+
+        bank = MonteCarlo.ParticleBank()
+
+        # Set the random number generator stream
+        fake_stream = [None] * 13
+        fake_stream[0] = 0.0         # x
+        fake_stream[1] = 0.5         # energy
+        fake_stream[2] = 0.5         # y
+        fake_stream[3] = 1.0-1e-15   # z
+        fake_stream[4] = 0.0         # theta
+        fake_stream[5] = 1.0-1e-15   # mu
+        fake_stream[6] = 0.0         # time
+
+        fake_stream[7] = 0.5         # x
+        fake_stream[8] = 0.5         # y
+        fake_stream[9] = 0.5         # z
+        fake_stream[10] = 0.5         # theta
+        fake_stream[11] = 0.5         # mu
+        fake_stream[12] = 0.5         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source_component.sampleParticleState( bank, long(0) )
+
+        self.assertEqual( bank.size(), 2 )
+
+        self.assertEqual( bank.top().getHistoryNumber(), 0 )
+        self.assertEqual( bank.top().getParticleType(), particle_type )
+        self.assertEqual( bank.top().getXPosition(), -1.0 )
+        self.assertEqual( bank.top().getYPosition(), 0.0 )
+        self.assertAlmostEqual( bank.top().getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( bank.top().getXDirection() < 1e-7 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 5.0 )
+        self.assertEqual( bank.top().getEnergy(), 5.0 )
+        self.assertEqual( bank.top().getSourceTime(), 0.0 )
+        self.assertEqual( bank.top().getTime(), 0.0 )
+        self.assertEqual( bank.top().getSourceId(), 0 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        bank.pop()
+
+        self.assertEqual( bank.top().getHistoryNumber(), 0 )
+        self.assertEqual( bank.top().getParticleType(), particle_type )
+        self.assertEqual( bank.top().getXPosition(), 0.0 )
+        self.assertEqual( bank.top().getYPosition(), 0.0 )
+        self.assertEqual( bank.top().getZPosition(), 0.0 )
+        self.assertAlmostEqual( bank.top().getXDirection(), -1.0, delta=1e-12 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertTrue( bank.top().getZDirection() < 1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 0.51099891013 )
+        self.assertEqual( bank.top().getEnergy(), 0.51099891013 )
+        self.assertEqual( bank.top().getSourceTime(), 0.5 )
+        self.assertEqual( bank.top().getTime(), 0.5 )
+        self.assertEqual( bank.top().getSourceId(), 0 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 0.05 )
+        self.assertEqual( bank.top().getWeight(), 0.05 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the source can accumulate sampling statistics
+    def testSampling_statistics(self):
+        "*Test MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent sampling_statistics"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, self.adjoint_photon_model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source_component.sampleParticleState( bank, i )
+
+        energy_dimension_samples = 1000
+        energy_dimension_trials = 1000
+
+        samples = 2000
+        trials = 2000
+        bank_size = 2000
+
+        self.assertEqual( bank.size(), bank_size )
+        self.assertEqual( source_component.getNumberOfTrials(), trials )
+        self.assertEqual( source_component.getNumberOfSamples(), samples )
+        self.assertEqual( source_component.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), energy_dimension_trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), energy_dimension_samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        # Construct an adjoint electron source component
+        source_component = ActiveRegion.StandardAdjointElectronSourceComponent( 1, 1.0, self.adjoint_electron_model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source_component.sampleParticleState( bank, i )
+
+        samples = 1000
+        trials = 1000
+        bank_size = 1000
+
+        self.assertEqual( bank.size(), bank_size )
+        self.assertEqual( source_component.getNumberOfTrials(), trials )
+        self.assertEqual( source_component.getNumberOfSamples(), samples )
+        self.assertEqual( source_component.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), energy_dimension_trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), energy_dimension_samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), trials )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), samples )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        # Check that a summary of the source data can be printed
+    def testResetData(self):
+        "*Test MonteCarlo.ActiveRegion.StandardAdjointParticleSourceComponent resetData"
+
+        # Construct a source component
+        source_component = ActiveRegion.StandardAdjointPhotonSourceComponent( 0, 1.0, self.adjoint_photon_model, self.particle_distribution )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source_component.sampleParticleState( bank, i )
+
+        source_component.resetData()
+
+        self.assertEqual( source_component.getNumberOfTrials(), 0 )
+        self.assertEqual( source_component.getNumberOfSamples(), 0 )
+        self.assertEqual( source_component.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source_component.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source_component.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source_component.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+#-----------------------------------------------------------------------------#
+# Test the StandardParticleSource class
+class StandardParticleSourceTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ActiveRegion.StandardParticleSource class"
+
+    def setUp(self):
+        # Create the model
+        self.model = Geometry.InfiniteMediumModel( 1 )
+
+        # Create the particle distributions
+        spatial_coord_conversion_policy = Coordinate.BasicCartesianCoordinateConversionPolicy()
+        directional_coord_conversion_policy = Coordinate.BasicSphericalCoordinateConversionPolicy()
+
+        tmp_particle_distribution = ActiveRegion.StandardParticleDistribution(
+                                       "source distribution",
+                                       spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy )
+
+        # Set the dimension distributions
+        raw_uniform_dist_a = Distribution.UniformDistribution( -1.0, 1.0, 0.5 )
+        raw_uniform_dist_b = Distribution.UniformDistribution( 0.0, 1.0, 1.0 )
+
+        x_dimension_dist = ActiveRegion.IndependentPrimarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( x_dimension_dist )
+
+        y_dimension_dist = ActiveRegion.IndependentSecondarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( y_dimension_dist )
+
+        z_dimension_dist = ActiveRegion.IndependentTertiarySpatialDimensionDistribution( raw_uniform_dist_a )
+        tmp_particle_distribution.setDimensionDistribution( z_dimension_dist )
+
+        time_dimension_dist = ActiveRegion.IndependentTimeDimensionDistribution( raw_uniform_dist_b )
+        tmp_particle_distribution.setDimensionDistribution( time_dimension_dist )
+
+        # Create the fully tabular energy distribution
+        primary_grid = (-1.0, 0.0, 1.0 )
+        secondary_dists = [None] * 3
+
+        secondary_dists[0] = Distribution.UniformDistribution( 0.0, 10.0, 0.5 )
+        secondary_dists[1] = Distribution.UniformDistribution( 0.0, 20.0, 0.25 )
+        secondary_dists[2] = secondary_dists[1]
+
+        raw_dependent_dist = Distribution.HistogramFullyTabularBasicBivariateDistribution( primary_grid, secondary_dists )
+        raw_dependent_dist.limitToPrimaryIndepLimits()
+
+        energy_dimension_dist = ActiveRegion.PrimarySpatialDependentEnergyDimensionDistribution( raw_dependent_dist )
+
+        tmp_particle_distribution.setDimensionDistribution( energy_dimension_dist )
+        tmp_particle_distribution.constructDimensionDistributionDependencyTree()
+
+        self.particle_distribution = tmp_particle_distribution
+
+    def testConstructor(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSource constructor"
+        source_components = [None] * 2
+
+        source_components[0] = ActiveRegion.StandardNeutronSourceComponent( 0, 3.0, self.model, self.particle_distribution )
+        source_components[1] = ActiveRegion.StandardPhotonSourceComponent( 1, 1.0, self.model, self.particle_distribution )
+
+        source = ActiveRegion.StandardParticleSource( source_components )
+
+        self.assertEqual( source.getNumberOfComponents(), 2 )
+
+        starting_cells = source.getStartingCells()
+
+        self.assertFalse( bool(starting_cells) )
+
+        starting_cells.clear()
+
+        starting_cells = source.getStartingCells( 0 )
+
+        self.assertFalse( bool(starting_cells) )
+
+        starting_cells.clear()
+
+        starting_cells = source.getStartingCells( 1 )
+
+        self.assertFalse( bool(starting_cells) )
+
+        # Check that the particle source can be sampled
+    def testSampleParticleState(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSource sampleParticleState"
+
+        source_components = [None] * 2
+
+        source_components[0] = ActiveRegion.StandardNeutronSourceComponent( 0, 3.0, self.model, self.particle_distribution )
+        source_components[1] = ActiveRegion.StandardPhotonSourceComponent( 1, 1.0, self.model, self.particle_distribution )
+
+        source = ActiveRegion.StandardParticleSource( source_components )
+
+        bank = MonteCarlo.ParticleBank()
+
+        # Set the random number generator stream
+        fake_stream = [None] * 8
+        fake_stream[0] = 0.749         # neutron source component
+        fake_stream[1] = 0.0         # x
+        fake_stream[2] = 0.5         # energy
+        fake_stream[3] = 0.5         # y
+        fake_stream[4] = 1.0-1e-15         # z
+        fake_stream[5] = 0.0         # theta
+        fake_stream[6] = 1.0-1e-15         # mu
+        fake_stream[7] = 0.0         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source.sampleParticleState( bank, 0 )
+
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getHistoryNumber(), 0 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.NEUTRON )
+        self.assertEqual( bank.top().getXPosition(), -1.0 )
+        self.assertEqual( bank.top().getYPosition(), 0.0 )
+        self.assertAlmostEqual( bank.top().getZPosition(), 1.0, delta=1e-12 )
+        self.assertTrue( bank.top().getXDirection() < 1e-7 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getZDirection(), 1.0, delta=1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 5.0 )
+        self.assertEqual( bank.top().getEnergy(), 5.0 )
+        self.assertEqual( bank.top().getSourceTime(), 0.0 )
+        self.assertEqual( bank.top().getTime(), 0.0 )
+        self.assertEqual( bank.top().getSourceId(), 0 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        bank.pop()
+
+        # Set the random number generator stream
+        fake_stream[0] = 0.751         # photon source component
+        fake_stream[1] = 0.5         # x
+        fake_stream[2] = 0.5         # energy
+        fake_stream[3] = 0.0         # y
+        fake_stream[4] = 0.5         # z
+        fake_stream[5] = 0.0         # theta
+        fake_stream[6] = 0.0         # mu
+        fake_stream[7] = 0.5         # time
+
+        Prng.RandomNumberGenerator.setFakeStream( fake_stream )
+
+        source.sampleParticleState( bank, 1 )
+
+        self.assertEqual( bank.size(), 1 )
+        self.assertEqual( bank.top().getHistoryNumber(), 1 )
+        self.assertEqual( bank.top().getParticleType(), MonteCarlo.PHOTON )
+        self.assertEqual( bank.top().getXPosition(), 0.0 )
+        self.assertEqual( bank.top().getYPosition(), -1.0 )
+        self.assertEqual( bank.top().getZPosition(), 0.0 )
+        self.assertTrue( bank.top().getXDirection() < 1e-12 )
+        self.assertTrue( bank.top().getYDirection() < 1e-12 )
+        self.assertAlmostEqual( bank.top().getZDirection(), -1.0, 1e-12 )
+        self.assertEqual( bank.top().getSourceEnergy(), 10.0 )
+        self.assertEqual( bank.top().getEnergy(), 10.0 )
+        self.assertEqual( bank.top().getSourceTime(), 0.5 )
+        self.assertEqual( bank.top().getTime(), 0.5 )
+        self.assertEqual( bank.top().getSourceId(), 1 )
+        self.assertEqual( bank.top().getSourceCell(), 1 )
+        self.assertEqual( bank.top().getCell(), 1 )
+        self.assertEqual( bank.top().getSourceWeight(), 1.0 )
+        self.assertEqual( bank.top().getWeight(), 1.0 )
+
+        Prng.RandomNumberGenerator.unsetFakeStream()
+
+        # Check that the source can accumulate sampling statistics
+    def testSampling_statistics(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSource sampling_statistics"
+        source_components = [None] * 2
+
+        source_components[0] = ActiveRegion.StandardNeutronSourceComponent( 0, 3.0, self.model, self.particle_distribution )
+        source_components[1] = ActiveRegion.StandardPhotonSourceComponent( 1, 1.0, self.model, self.particle_distribution )
+
+        source = ActiveRegion.StandardParticleSource( source_components )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+          source.sampleParticleState( bank, i )
+
+        self.assertEqual( bank.size(), 1000 )
+        self.assertEqual( source.getNumberOfTrials(), 1000 )
+        self.assertEqual( source.getNumberOfSamples(), 1000 )
+        self.assertEqual( source.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source.getNumberOfTrials( 0 ) +
+                       source.getNumberOfTrials( 1 ),
+                       1000 )
+        self.assertEqual( source.getNumberOfSamples( 0 ) +
+                       source.getNumberOfTrials( 1 ),
+                       1000 )
+        self.assertEqual( source.getSamplingEfficiency( 0 ), 1.0 )
+        self.assertEqual( source.getSamplingEfficiency( 1 ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.ENERGY_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.ENERGY_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.ENERGY_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.ENERGY_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TIME_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TIME_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TIME_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TIME_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TIME_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), 1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), 1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.WEIGHT_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.WEIGHT_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.WEIGHT_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.WEIGHT_DIMENSION ),
+                       1000 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        starting_cells = source.getStartingCells()
+
+        self.assertEqual( len(starting_cells), 1 )
+        self.assertTrue( 1 in starting_cells )
+
+        starting_cells.clear()
+
+        starting_cells = source.getStartingCells( 0 )
+
+        self.assertEqual( len(starting_cells), 1 )
+        self.assertTrue( 1 in starting_cells )
+
+        starting_cells.clear()
+
+        starting_cells = source.getStartingCells( 1 )
+
+        self.assertEqual( len(starting_cells), 1 )
+        self.assertTrue( 1 in starting_cells )
+
+        # Check that the source sampling statistics can be reset
+    def testResetData(self):
+        "*Test MonteCarlo.ActiveRegion.StandardParticleSource resetData"
+        source_components = [None] * 2
+
+        source_components[0] = ActiveRegion.StandardNeutronSourceComponent( 0, 3.0, self.model, self.particle_distribution )
+        source_components[1] = ActiveRegion.StandardPhotonSourceComponent( 1, 1.0, self.model, self.particle_distribution )
+
+        source = ActiveRegion.StandardParticleSource( source_components )
+
+        bank = MonteCarlo.ParticleBank()
+
+        for i in range(1000):
+            source.sampleParticleState( bank, i )
+
+        source.resetData()
+
+        self.assertEqual( bank.size(), 1000 )
+        self.assertEqual( source.getNumberOfTrials(), 0 )
+        self.assertEqual( source.getNumberOfSamples(), 0 )
+        self.assertEqual( source.getSamplingEfficiency(), 1.0 )
+
+        self.assertEqual( source.getNumberOfTrials( 0 ) +
+                       source.getNumberOfTrials( 1 ),
+                       0 )
+        self.assertEqual( source.getNumberOfSamples( 0 ) +
+                       source.getNumberOfTrials( 1 ),
+                       0 )
+        self.assertEqual( source.getSamplingEfficiency( 0 ), 1.0 )
+        self.assertEqual( source.getSamplingEfficiency( 1 ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.PRIMARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.SECONDARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TERTIARY_SPATIAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.PRIMARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.SECONDARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TERTIARY_DIRECTIONAL_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.ENERGY_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.ENERGY_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.ENERGY_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.ENERGY_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.ENERGY_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.ENERGY_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.TIME_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.TIME_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.TIME_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.TIME_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.TIME_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.TIME_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.TIME_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( ActiveRegion.WEIGHT_DIMENSION ), 0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+        self.assertEqual( source.getNumberOfDimensionTrials( 0, ActiveRegion.WEIGHT_DIMENSION ) +
+                       source.getNumberOfDimensionTrials( 1, ActiveRegion.WEIGHT_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getNumberOfDimensionSamples( 0, ActiveRegion.WEIGHT_DIMENSION ) +
+                       source.getNumberOfDimensionSamples( 1, ActiveRegion.WEIGHT_DIMENSION ),
+                       0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 0, ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+        self.assertEqual( source.getDimensionSamplingEfficiency( 1, ActiveRegion.WEIGHT_DIMENSION ), 1.0 )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(StandardParticleSourceComponentTestCase))
+    suite.addTest(unittest.makeSuite(StandardAdjointParticleSourceComponentTestCase))
+    suite.addTest(unittest.makeSuite(StandardParticleSourceTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ActiveRegion.ParticleSource.py
+#-----------------------------------------------------------------------------#

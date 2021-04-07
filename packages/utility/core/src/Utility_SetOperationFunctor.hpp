@@ -41,7 +41,7 @@ public:
   //! Destructor
   ~IntersectionFunctor()
   { /* ... */ }
-  
+
   //! Function evaluation operator
   bool operator()( const bool first, const bool second ) { return first && second; }
 };
@@ -50,7 +50,7 @@ class UnionFunctor : public SetOperationFunctor
 {
 
 public:
-  
+
   //! Constructor
   UnionFunctor()
     : SetOperationFunctor()
@@ -75,4 +75,4 @@ public:
 //---------------------------------------------------------------------------//
 
 
-  
+

@@ -1,27 +1,9 @@
-# Find all headers and sources (no updates to this file necessary!)
-FILE(GLOB FRENSIE_MANAGER_HEADERS *.hpp)
-FILE(GLOB FRENSIE_MANAGER_SOURCES *.cpp)
-
-IF(CMAKE_VERBOSE_CONFIGURE)
-  MESSAGE("FRENSIE_MANAGER_HEADERS = ${FRENSIE_MANAGER_HEADERS}")
-  MESSAGE("FRENSIE_MANAGER_SOURCES = ${FRENSIE_MANAGER_SOURCES}")
-ENDIF()
-
-SET(SUBPACKAGE_LIB_NAME monte_carlo_manager)
-
-# Create the utilitycore library
-ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${FRENSIE_MANAGER_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} ${TEUCHOS_PARAMETER_LIST} utility_dist data_ace monte_carlo_source_native monte_carlo_estimator_native monte_carlo_collision_native)
-
-IF(FRENSIE_ENABLE_DAGMC)
-  TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_dagmc)
-ENDIF()
-IF(FRENSIE_ENABLE_ROOT)
-  TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_root)
-ENDIF()
-
-INSTALL(TARGETS ${SUBPACKAGE_LIB_NAME}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-INSTALL(FILES ${FRENSIE_MANAGER_HEADERS}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+FRENSIE_SETUP_PACKAGE(monte_carlo_manager
+  MPI_LIBRARIES ${MPI_CXX_LIBRARIES}
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} monte_carlo_core 
+  monte_carlo_collision_kernel 
+  monte_carlo_active_region_source 
+  monte_carlo_event_forced_collisions 
+  monte_carlo_event_population_control
+  monte_carlo_event_weight_cutoff 
+  monte_carlo_event_dispatcher)

@@ -3,14 +3,14 @@
 //! \file   Geometry_Matrix_def.hpp
 //! \author Alex Robinson
 //! \brief  Matrix class (in N<4 space) definition.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef GEOMETRY_MATRIX_DEF_HPP
 #define GEOMETRY_MATRIX_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Geometry{
 
@@ -19,13 +19,13 @@ template<typename ScalarType, int N>
 Matrix<ScalarType,N>::Matrix()
   : ThreeSpaceObject( THREE_SPACE_MATRIX ),
     SerialDenseMatrixExtension<ScalarType>( N )
-{ 
-  testStaticPrecondition( N == 3 ); 
+{
+  testStaticPrecondition( N == 3 );
 }
 
 // General constructor
 template<typename ScalarType, int N>
-Matrix<ScalarType,N>::Matrix( 
+Matrix<ScalarType,N>::Matrix(
 	     const ScalarType a00, const ScalarType a01, const ScalarType a02,
 	     const ScalarType a10, const ScalarType a11, const ScalarType a12,
 	     const ScalarType a20, const ScalarType a21, const ScalarType a22 )
@@ -33,7 +33,7 @@ Matrix<ScalarType,N>::Matrix(
     SerialDenseMatrixExtension<ScalarType>( N )
 {
   testStaticPrecondition( N == 3 );
-    
+
   this->operator()( 0, 0 ) = a00;
   this->operator()( 0, 1 ) = a01;
   this->operator()( 0, 2 ) = a02;
@@ -48,14 +48,14 @@ Matrix<ScalarType,N>::Matrix(
 // Symmetric constructor
 template<typename ScalarType, int N>
 Matrix<ScalarType,N>::Matrix(
-	     const ScalarType a00, 
+	     const ScalarType a00,
 	     const ScalarType a10, const ScalarType a11,
 	     const ScalarType a20, const ScalarType a21, const ScalarType a22 )
   : ThreeSpaceObject( THREE_SPACE_MATRIX ),
     SerialDenseMatrixExtension<ScalarType>( N )
 {
   testStaticPrecondition( N == 3 );
-  
+
   this->operator()( 0, 0 ) = a00;
   this->operator()( 0, 1 ) = a10;
   this->operator()( 0, 2 ) = a20;
@@ -72,7 +72,7 @@ template<typename ScalarType,int N>
 Matrix<ScalarType,N>::Matrix( const Matrix<ScalarType,N> &source_matrix )
   : ThreeSpaceObject( THREE_SPACE_MATRIX ),
     SerialDenseMatrixExtension<ScalarType>( N )
-{  
+{
   this->operator()( 0, 0 ) = source_matrix( 0, 0 );
   this->operator()( 0, 1 ) = source_matrix( 0, 1 );
   this->operator()( 0, 2 ) = source_matrix( 0, 2 );

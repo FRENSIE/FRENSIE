@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_IntegratorExcpetion.hpp
+//! \file   Utility_IntegratorException.hpp
 //! \author Luke Kersting
 //! \brief  Exception class for handling Integrator errors.
 //!
@@ -31,5 +31,5 @@ public:
 #endif // end UTILITY_INTEGRATOR_EXCEPTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_IntegratorExcpetion.hpp
+// end Utility_IntegratorException.hpp
 //---------------------------------------------------------------------------//

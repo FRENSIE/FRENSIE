@@ -1,0 +1,22 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie.DataGen init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie.DataGen ${DATA_GEN_MODULE_DOCSTRING}
+"""
+
+# Import the special init submodule
+${DATA_GEN_MODULE_INIT}
+
+# Set the __all__ special variable
+${DATA_GEN_MODULE_ALL}
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

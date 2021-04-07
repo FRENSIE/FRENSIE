@@ -7,9 +7,9 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_AdjointElectronProbeState.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -20,33 +20,35 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 { /* ... */ }
 
 // Constructor
-AdjointElectronProbeState::AdjointElectronProbeState( 
-		       const ParticleState::historyNumberType history_number )
-  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE ),
+AdjointElectronProbeState::AdjointElectronProbeState(
+                       const ParticleState::historyNumberType history_number )
+  : AdjointElectronState( history_number, ADJOINT_ELECTRON, -1 ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronProbeState::AdjointElectronProbeState( 
-			              const ParticleState& existing_base_state,
-				      const bool increment_generation_number,
-				      const bool reset_collision_number )
+AdjointElectronProbeState::AdjointElectronProbeState(
+                                      const ParticleState& existing_base_state,
+                                      const bool increment_generation_number,
+                                      const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          ADJOINT_ELECTRON,
+                          -1,
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-AdjointElectronProbeState::AdjointElectronProbeState( 
-			    const AdjointElectronProbeState& existing_base_state,
-			    const bool increment_generation_number,
-			    const bool reset_collision_number )
+AdjointElectronProbeState::AdjointElectronProbeState(
+                            const AdjointElectronProbeState& existing_base_state,
+                            const bool increment_generation_number,
+                            const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          ADJOINT_ELECTRON,
+                          -1,
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 
@@ -54,7 +56,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 // Set the energy of the particle (MeV)
 /*! \details An active probe particle gets killed when its energy changes. A
  * probe particle should only be activated after its initial energy has been
- * set. 
+ * set.
  */
 void AdjointElectronProbeState::setEnergy( const energyType energy )
 {
@@ -72,7 +74,7 @@ bool AdjointElectronProbeState::isProbe() const
 
 // Activate the probe
 /*! \details Once a probe has been activated the next call to set energy
- * will cause is to be killed. 
+ * will cause is to be killed.
  */
 void AdjointElectronProbeState::activate()
 {
@@ -93,21 +95,25 @@ AdjointElectronProbeState* AdjointElectronProbeState::clone() const
 
 
 // Print the adjoint electron state
-void AdjointElectronProbeState::print( std::ostream& os ) const
+void AdjointElectronProbeState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: ";
-  
+
   if( d_active )
     os << "Active ";
   else
     os << "Inactive ";
 
   os << "Adjoint Electron Probe" << std::endl;
-  
+
   this->printImplementation<AdjointElectronProbeState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( AdjointElectronProbeState );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointElectronProbeState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointElectronProbeState.cpp

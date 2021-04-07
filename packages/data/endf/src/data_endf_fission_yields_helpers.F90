@@ -23,7 +23,7 @@ module data_endf_fission_yields_helpers
   contains
 
     !> Skip the table header.
-    !> \details This function will go through the table header. 
+    !> \details This function will go through the table header.
     !> The function assumes that the file is already open.
     subroutine skip_endf_fission_yields_first_header( file_id ) &
          bind(c, name='skipEndfFissionYieldsFirstHeader')
@@ -54,7 +54,7 @@ module data_endf_fission_yields_helpers
 
     !> Reads the header
     !> \details This function will read the table header for the data set.
-    !> The zaid and the number of energy points point are returned. This 
+    !> The zaid and the number of energy points point are returned. This
     !> fucntion assumes the first header block has already been skipped.
     subroutine read_endf_fission_yields_header( file_id, zaid, number_energies ) &
          bind(c, name='readEndfFissionYieldsHeader')
@@ -70,7 +70,7 @@ module data_endf_fission_yields_helpers
       zaid = 0
       number_energies = 0
       zaid_double = 0.0
-       
+
       ! Skip first header line
       read(file_id,*)
 
@@ -98,7 +98,7 @@ module data_endf_fission_yields_helpers
 
       read(file_id,'(5es11.6,I11)') energy,dummy_variable,&
            dummy_variable,dummy_variable,dummy_variable,number_data_sets
- 
+
     end subroutine read_endf_fission_yields_data_header
 
     !> Reads the current data section
@@ -136,7 +136,7 @@ module data_endf_fission_yields_helpers
 
     end subroutine read_endf_fission_yields_data
 
-  end module data_endf_fission_yields_helpers  
+  end module data_endf_fission_yields_helpers
 
 !!---------------------------------------------------------------------------!!
 !! end data_endf_fission_yields_helpers.F90

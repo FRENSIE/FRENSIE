@@ -1,8 +1,0 @@
-<ParameterList name="Geometry">
-
-  <Parameter name="Handler" type="string" value="DagMC"/>
-  <Parameter name="CAD File" type="string" 
-	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_basic_geom.sat"/>
-  <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
-
-</ParameterList>

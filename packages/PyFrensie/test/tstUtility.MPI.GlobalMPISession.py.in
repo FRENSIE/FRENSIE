@@ -1,0 +1,407 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.MPI.GlobalMPISession module unit tests
+#  \file   tstUtility.MPI.GlobalMPISession.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Utility.MPI.GlobalMPISession module
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import os
+import unittest
+from optparse import *
+import numpy
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+MPI = importPyFrensieModuleFromBuildDir('Utility.MPI')
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-t", "--constructor_type", type="string", dest="constructor_type",
+                  help="Set the Global MPI Session constructor type.")
+options,args = parser.parse_args()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the GlobalMPISession
+class GlobalMPISessionTestCase(unittest.TestCase):
+    "TestCase class for Utility.MPI.GlobalMPISession class"
+
+    def setUp(self):
+        self.mpi_session = MPI.GlobalMPISession( len(sys.argv), sys.argv )
+
+#-----------------------------------------------------------------------------#
+    # Check if MPI is used
+    def testIsMPIUsed(self):
+        "*Test Utility.MPI.GlobalMPISession isMPIUsed"
+        if MPI.__pyfrensie_mpi_enabled__:
+            self.assertTrue( self.mpi_session.isMPIUsed() )
+            self.assertTrue( MPI.GlobalMPISession.isMPIUsed() )
+        else:
+            self.assertFalse( self.mpi_session.isMPIUsed() )
+            self.assertFalse( MPI.GlobalMPISession.isMPIUsed() )
+
+#-----------------------------------------------------------------------------#
+    # Check that an output stream can be initialized
+    def testInitializeOutputStream(self):
+        "*Test Utility.MPI.GlobalMPISession initializeOutputStream"
+        # Allow all procs to output to the stream
+        filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
+        message = "Hello from " + str(MPI.GlobalMPISession.rank())
+
+        self.mpi_session.initializeOutputStream( filename )
+
+        f = open(filename,"r+")
+        f.write( message )
+        f.seek(0)
+
+        self.assertEqual( f.read(), message )
+
+        f.seek(0)
+        f.truncate()
+
+        # Block all procs from outputting to the stream except for the root
+        self.mpi_session.initializeOutputStream( filename, 0, True )
+
+        f.write( message )
+        f.seek(0)
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( f.read(), "Hello from 0" )
+        else:
+          print "os.path.getsize(",filename,") = ",os.path.getsize(filename)
+          f.seek(0)
+          print f.read()
+          self.assertTrue( os.path.getsize(filename) > 0 )
+
+        f.seek(0)
+        f.truncate()
+
+        # Restore the stream on all procs
+        self.mpi_session.restoreOutputStream( filename )
+
+        f.write( message )
+        f.seek(0)
+
+        self.assertEqual( f.read(), message )
+
+        f.seek(0)
+        f.truncate()
+
+        # Block all procs from outputting to the stream except for the root
+        MPI.GlobalMPISession.initializeOutputStream( filename, 0, True )
+        MPI.GlobalMPISession.initializeOutputStream( 0, True )
+
+        f.write( message )
+        f.seek(0)
+        print message
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( f.read(), "Hello from 0" )
+        else:
+          self.assertTrue( os.path.getsize(filename) > 0 )
+
+        f.seek(0)
+        f.truncate()
+
+        self.mpi_session.barrier()
+
+        # Restore all streams on all procs
+        MPI.GlobalMPISession.restoreOutputStreams()
+
+        f.write( message )
+        f.seek(0)
+        print message
+
+        self.assertEqual( f.read(), message )
+        os.remove(filename)
+
+#-----------------------------------------------------------------------------#
+    # Check that the error log can be initialized
+    def testInitializeErrorLog(self):
+        "*Test Utility.MPI.GlobalMPISession initializeErrorLog"
+        # Make sure that all sinks have been removed from the log
+        Utility.removeAllLogs()
+
+        # Setup the default error log
+        filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
+        message = "testing on proc " + str(MPI.GlobalMPISession.rank())
+
+        self.mpi_session.initializeErrorLog( filename )
+
+        # Log an error
+        Utility.logError( message )
+        Utility.flushAllLogs()
+
+        f = open(filename,"r+")
+        self.assertTrue( message in f.read() )
+
+        f.seek(0)
+        f.truncate()
+
+        # Remove the logs
+        Utility.removeAllLogs()
+
+        # Setup error logging on the root process only
+        self.mpi_session.initializeErrorLog( filename, 0, True )
+
+        # Log an error
+        Utility.logError( message )
+        Utility.flushAllLogs()
+
+        self.mpi_session.barrier()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( message in f.read() )
+        else:
+          self.assertFalse( os.path.getsize(filename) > 0 )
+
+        self.mpi_session.restoreOutputStreams()
+        os.remove(filename)
+
+#-----------------------------------------------------------------------------#
+    # Check that the warning log can be initialized
+    def testInitializeWarningLog(self):
+        "*Test Utility.MPI.GlobalMPISession initializeWarningLog"
+        # Make sure that all sinks have been removed from the log
+        Utility.removeAllLogs()
+
+        # Setup the default warning log
+        filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
+        message = "testing on proc " + str(MPI.GlobalMPISession.rank())
+
+        self.mpi_session.initializeWarningLog( filename )
+
+        # Log a warning
+        Utility.logWarning( message )
+        Utility.flushAllLogs()
+
+        f = open(filename,"r+")
+        self.assertTrue( message in f.read() )
+
+        f.seek(0)
+        f.truncate()
+
+        # Remove the logs
+        Utility.removeAllLogs()
+
+        # Setup warning logging on the root process only
+        self.mpi_session.initializeWarningLog( filename, 0, True )
+
+        # Log a warning
+        Utility.logWarning( message )
+        Utility.flushAllLogs()
+
+        self.mpi_session.barrier()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( message in f.read() )
+        else:
+          self.assertFalse( os.path.getsize(filename) > 0 )
+
+        self.mpi_session.restoreOutputStreams()
+        os.remove(filename)
+
+#-----------------------------------------------------------------------------#
+    # Check that the notification log can be initialized
+    def testInitializeNotificationLog(self):
+        "*Test Utility.MPI.GlobalMPISession initializeNotificationLog"
+        # Make sure that all sinks have been removed from the log
+        Utility.removeAllLogs()
+
+        # Setup the default notification log
+        filename = "test_"+str( MPI.GlobalMPISession.rank() )+".txt"
+        message = "testing on proc " + str(MPI.GlobalMPISession.rank())
+
+        self.mpi_session.initializeNotificationLog( filename )
+
+        # Log a notification
+        Utility.logNotification( message )
+        Utility.flushAllLogs()
+
+        f = open(filename,"r+")
+        self.assertTrue( message in f.read() )
+
+        f.seek(0)
+        f.truncate()
+
+        # Remove the logs
+        Utility.removeAllLogs()
+
+        # Setup notification logging on the root process only
+        self.mpi_session.initializeNotificationLog( filename, 0, True )
+
+        # Log a notification
+        Utility.logNotification( message )
+        Utility.flushAllLogs()
+
+        self.mpi_session.barrier()
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertTrue( message in f.read() )
+        else:
+          self.assertFalse( os.path.getsize(filename) > 0 )
+
+        self.mpi_session.restoreOutputStreams()
+        os.remove(filename)
+
+#-----------------------------------------------------------------------------#
+    # Check that a set of integers can be summed on all processes
+    def testSum_int(self):
+        "*Test Utility.MPI.GlobalMPISession sum_int"
+        local_int = 1
+
+        global_int_sum = MPI.GlobalMPISession.sum( local_int )
+
+        self.assertEqual( global_int_sum, MPI.GlobalMPISession.size() )
+
+#-----------------------------------------------------------------------------#
+    # Check that a set of doubles can be summed on all processes
+    def testSum_double(self):
+        "*Test Utility.MPI.GlobalMPISession sum_double"
+        local_double = 0.5
+
+        global_double_sum = MPI.GlobalMPISession.sum( local_double )
+
+        self.assertEqual( global_double_sum, MPI.GlobalMPISession.size()*0.5 )
+
+#-----------------------------------------------------------------------------#
+    # Check that a boolean can be checked as True on all procs
+    def testIsGloballyTrue(self):
+        "*Test Utility.MPI.GlobalMPISession isGloballyTrue"
+        local_bool = True
+
+        self.assertTrue( MPI.GlobalMPISession.isGloballyTrue( local_bool ) )
+
+        if MPI.GlobalMPISession.rank() == 0:
+          local_bool = False
+
+        self.assertFalse( MPI.GlobalMPISession.isGloballyTrue( local_bool ) )
+
+        local_bool = False
+
+        self.assertFalse( MPI.GlobalMPISession.isGloballyTrue( local_bool ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that a boolean can be checked as False on all procs
+    def testIsGloballyFalse(self):
+        "*Test Utility.MPI.GlobalMPISession isGloballyFalse"
+        local_bool = False
+
+        self.assertTrue( MPI.GlobalMPISession.isGloballyFalse( local_bool ) )
+
+        if MPI.GlobalMPISession.rank() == 0:
+          local_bool = True
+
+        self.assertFalse( MPI.GlobalMPISession.isGloballyFalse( local_bool ) )
+
+        local_bool = True
+
+        self.assertFalse( MPI.GlobalMPISession.isGloballyFalse( local_bool ) )
+
+#-----------------------------------------------------------------------------#
+    # Check that messages can be gathered on a specific process
+    def testGatherMessages(self):
+        "*Test Utility.MPI.GlobalMPISession gatherMessages"
+        oss = str(MPI.GlobalMPISession.rank())  + "/" + str(MPI.GlobalMPISession.size() )
+
+        messages = MPI.GlobalMPISession.gatherMessages( 0, oss )
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( len(messages), MPI.GlobalMPISession.size() )
+
+          for i in range(MPI.GlobalMPISession.size()):
+            local_oss = str(i) + "/" + str(MPI.GlobalMPISession.size())
+            self.assertEqual( messages[i], local_oss )
+
+        else:
+          self.assertFalse( len(messages) > 0 )
+
+        if MPI.GlobalMPISession.size() > 1:
+          messages = MPI.GlobalMPISession.gatherMessages( 1, oss )
+
+          if( MPI.GlobalMPISession.rank() == 1 ):
+            self.assertEqual( len(messages), MPI.GlobalMPISession.size() )
+
+            for i in range(MPI.GlobalMPISession.size() ):
+              local_oss = str(i) + "/" + str(MPI.GlobalMPISession.size())
+
+              self.assertEqual( messages[i], local_oss )
+          else:
+            self.assertFalse( len(messages) > 0 )
+
+
+#-----------------------------------------------------------------------------#
+    # Check that bools can be gathered on a specific process
+    def testGatherData(self):
+        "*Test Utility.MPI.GlobalMPISession gatherData"
+
+        if MPI.GlobalMPISession.rank()%2 == 0:
+          local_data = 1
+        else:
+          local_data = 0
+
+        data = MPI.GlobalMPISession.gatherData( 0, local_data )
+
+        if MPI.GlobalMPISession.rank() == 0:
+          self.assertEqual( len(data), MPI.GlobalMPISession.size() )
+
+          for i in range(MPI.GlobalMPISession.size() ):
+            if i%2 == 0:
+              self.assertEqual( data[i], 1 )
+            else:
+              self.assertEqual( data[i], 0 )
+        else:
+            self.assertFalse( len(data) > 0 )
+
+        if MPI.GlobalMPISession.size() > 1:
+          data = MPI.GlobalMPISession.gatherData( 1, local_data )
+
+          if MPI.GlobalMPISession.rank() == 1:
+            self.assertEqual( len(data), MPI.GlobalMPISession.size() )
+
+            for i in range(MPI.GlobalMPISession.size() ):
+              if i%2 == 0:
+                self.assertEqual( data[i], 1 )
+              else:
+                self.assertEqual( data[i], 0 )
+        else:
+            self.assertEqual( len(data), 1 )
+            self.assertEqual( data[0], local_data )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(GlobalMPISessionTestCase))
+
+    print >>sys.stderr, \
+        "\n********************\n" + \
+        "Testing Utility.MPI.GlobalMPISession \n" + \
+        "********************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.MPI.GlobalMPISession.py
+#-----------------------------------------------------------------------------#

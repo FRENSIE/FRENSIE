@@ -26,7 +26,7 @@ class CellInputValidator
 {
 
 public:
-  
+
   //! Validate individual cell
   static void validateCell( const Teuchos::ParameterList& cell,
 			    const std::string& name,
@@ -49,11 +49,11 @@ public:
   static const std::set<std::string>& getCellNames();
 
 private:
-  
+
   // Constructor
   CellInputValidator()
   { /* ... */ }
-  
+
   // Destructor
   ~CellInputValidator()
   { /* ... */ }
@@ -63,7 +63,7 @@ private:
 
   // The cell material parameter name
   static const std::string material_parameter;
-  
+
   // The cell density parameter name
   static const std::string density_parameter;
 

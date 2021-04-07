@@ -1,21 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility.Distribution.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The Utility.Distribution sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
 %define %utility_dist_docstring
 "
-PyFrensie.Utility.Distribution is the python interface to the FRENSIE 
+PyFrensie.Utility.Distribution is the python interface to the FRENSIE
 utility/distribution subpackage.
 
 The purpose of Distribution is to provide a variety of 1-D distributions and
-a variety of higher dimension distributions that can be used for both 
-evaluation and sampling. All distributions are compatible with the 
-Teuchos::ParameterList and its Python wrapper 
-(PyTrilinos.Teuchos.ParameterList).
+a variety of higher dimension distributions that can be used for both
+evaluation and sampling.
 "
 %enddef
 
@@ -45,7 +43,7 @@ Teuchos::ParameterList and its Python wrapper
   {
     SWIG_exception( SWIG_ValueError, e.what() );
   }
-  catch( Utility::InvalidDistributionStringRepresentation& e )
+  catch( Utility::BadUnivariateDistributionParameter& e )
   {
     SWIG_exception( SWIG_RuntimeError, e.what() );
   }
@@ -55,10 +53,33 @@ Teuchos::ParameterList and its Python wrapper
   }
 }
 
-// Distribution support
-%include "Utility_OneDDistribution.i"
+%{
+// FRENSIE Includes
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_DistributionSerializationHelpers.hpp"
+%}
 
+// Include the serialization helpers
+%include "Utility_SerializationHelpers.hpp"
+%include "Utility_DistributionSerializationHelpers.hpp"
+
+// Import the explicit template instantiation helpers
+%import "Utility_ExplicitTemplateInstantiationMacros.hpp"
+
+// Distribution support
+%pythoncode
+%{
+from PyFrensie.Utility.UnivariateDistribution import *
+%}
+
+%pythoncode
+%{
+from PyFrensie.Utility.BivariateDistribution import *
+%}
+
+//---------------------------------------------------------------------------//
 // Turn off the exception handling
+//---------------------------------------------------------------------------//
 %exception;
 
 //---------------------------------------------------------------------------//

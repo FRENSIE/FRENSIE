@@ -1,0 +1,5 @@
+FRENSIE_SETUP_PACKAGE(utility_grid
+  MPI_LIBRARIES ${MPI_CXX_LIBRARIES}
+  NON_MPI_LIBRARIES utility_core utility_archive utility_interp 
+  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})
+

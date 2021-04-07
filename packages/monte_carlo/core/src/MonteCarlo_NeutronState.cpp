@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -20,17 +20,18 @@ NeutronState::NeutronState()
 { /* ... */ }
 
 // Constructor
-NeutronState::NeutronState( 
+NeutronState::NeutronState(
 		        const ParticleState::historyNumberType history_number )
-  : MassiveParticleState( history_number, NEUTRON )
+  : MassiveParticleState( history_number, NEUTRON, 0 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 NeutronState::NeutronState( const ParticleState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
-  : MassiveParticleState( existing_base_state, 
+  : MassiveParticleState( existing_base_state,
 			  NEUTRON,
+			  0,
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  increment_generation_number,
 			  reset_collision_number )
@@ -40,8 +41,9 @@ NeutronState::NeutronState( const ParticleState& existing_base_state,
 NeutronState::NeutronState( const NeutronState& existing_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
-  : MassiveParticleState( existing_state, 
+  : MassiveParticleState( existing_state,
 			  NEUTRON,
+			  0,
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  increment_generation_number,
 			  reset_collision_number )
@@ -60,16 +62,17 @@ NeutronState* NeutronState::clone() const
 }
 
 // Print the neutron state
-void NeutronState::print( std::ostream& os ) const
+void NeutronState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Neutron" << std::endl;
 
   this->printImplementation<NeutronState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( NeutronState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::NeutronState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::NeutronState );
 
 //---------------------------------------------------------------------------//

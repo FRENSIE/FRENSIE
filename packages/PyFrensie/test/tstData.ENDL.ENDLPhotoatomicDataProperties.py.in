@@ -1,0 +1,131 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ENDLPhotoatomicDataProperties class unit tests
+#  \file   tstData.ENDL.ENDLPhotoatomicDataProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ENDL.ENDLPhotoatomicDataProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+ENDL = importPyFrensieModuleFromBuildDir('Data.ENDL')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ENDLPhotoatomicDataProperties class
+class ENDLPhotoatomicDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.ENDL.ENDLPhotoatomicDataProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = ENDL.ENDLPhotoatomicDataProperties(
+                                              1.0,
+                                              "photoatomic_data/h_data.txt",
+                                              10,
+                                              Data.H_ATOM )
+
+    def testConstructor(self):
+        "*Test Data.ENDLPhotoatomicDataProperties constructor"
+        with self.assertRaises(ValueError):
+            ENDL.ENDLPhotoatomicDataProperties( -1.0,
+                                                "photoatomic_data/h_data.txt",
+                                                10,
+                                                Data.H_ATOM )
+
+    def testAtom(self):
+        "*Test Data.ENDLPhotoatomicDataProperties atom"
+        self.assertEqual( self.properties.atom(), Data.H_ATOM )
+
+    def testFileType(self):
+        "*Test Data.ENDLPhotoatomicDataProperties fileType"
+        self.assertEqual( self.properties.fileType(),
+                          Data.PhotoatomicDataProperties.Native_ENDL_FILE )
+
+        local_properties = ENDL.ENDLPhotoatomicDataProperties(
+                                              1.0,
+                                              "photoatomic_data/h_data.txt",
+                                              10,
+                                              Data.H_ATOM )
+
+        self.assertEqual( local_properties.fileType(),
+                          Data.PhotoatomicDataProperties.Native_ENDL_FILE )
+
+    def testAtomicWeight(self):
+        "*Test Data.ENDLPhotoatomicDataProperties atomicWeight"
+        self.assertEqual( self.properties.atomicWeight(), 1.0 )
+
+    def testFilePath(self):
+        "*Test Data.ENDLPhotoatomicDataProperties filePath"
+        self.assertEqual( self.properties.filePath(),
+                          "photoatomic_data/h_data.txt" )
+
+    def testFileStartLine(self):
+        "*Test Data.ENDLPhotoatomicDataProperties fileStartLine"
+        self.assertEqual( self.properties.fileStartLine(), 0 )
+
+    def testFileVersion(self):
+        "*Test Data.ENDLPhotoatomicDataProperties fileVersion"
+        self.assertEqual( self.properties.fileVersion(), 10 )
+
+    def testTableName(self):
+        "*Test Data.ENDLPhotoatomicDataProperties tableName"
+        self.assertEqual( self.properties.tableName(), "" )
+
+    def testClone(self):
+        "*Test Data.ENDLPhotoatomicDataProperties constructor"
+        properties_clone = self.properties.clone()
+
+        self.assertTrue( properties_clone )
+        self.assertEqual( properties_clone.atomicWeight(), 1.0 )
+        self.assertEqual( properties_clone.filePath(),
+                          "photoatomic_data/h_data.txt" )
+        self.assertEqual( properties_clone.fileStartLine(), 0 )
+        self.assertEqual( properties_clone.fileVersion(), 10 )
+        self.assertEqual( properties_clone.tableName(), "" )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test Suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ENDLPhotoatomicDataPropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ENDL.ENDLPhotoatomicDataProperties.py
+#-----------------------------------------------------------------------------#

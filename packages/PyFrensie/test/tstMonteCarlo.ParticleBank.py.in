@@ -1,0 +1,260 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## MonteCarlo.ParticleBank class unit tests
+#  \file   tstMonteCarlo.ParticleBank.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the MonteCarlo.ParticleBank class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import os
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
+
+#-----------------------------------------------------------------------------#
+# Testing functions
+#-----------------------------------------------------------------------------#
+def compareHistoryNumbers( state_a, state_b):
+  return state_a.getHistoryNumber() < state_b.getHistoryNumber()
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ParticleBank class
+class ParticleBankTestCase(unittest.TestCase):
+    "TestCase class for MonteCarlo.ParticleBank class"
+
+    def testPush(self):
+        "*Test MonteCarlo.ParticleBank push"
+        bank = MonteCarlo.ParticleBank()
+
+        self.assertTrue( bank.isEmpty() )
+        self.assertEqual( bank.size(), 0 )
+
+        photon = MonteCarlo.PhotonState( 0 )
+
+        bank.push( photon )
+
+        self.assertFalse( bank.isEmpty() )
+        self.assertEqual( bank.size(), 1 )
+
+        neutron = MonteCarlo.NeutronState( 0 )
+
+        bank.push( neutron )
+
+        self.assertFalse( bank.isEmpty() )
+        self.assertEqual( bank.size(), 2 )
+
+        neutron = MonteCarlo.NeutronState( 1 )
+
+        bank.push( neutron, 0 )
+
+        self.assertFalse( bank.isEmpty() )
+        self.assertEqual( bank.size(), 3 )
+
+        electron = MonteCarlo.ElectronState( 2 )
+
+        bank.push( electron )
+
+        self.assertFalse( bank.isEmpty() )
+        self.assertEqual( bank.size(), 4 )
+
+        positron = MonteCarlo.PositronState( 3 )
+
+        bank.push( positron )
+
+        self.assertFalse( bank.isEmpty() )
+        self.assertEqual( bank.size(), 5 )
+
+    def testTop(self):
+        "*Test MonteCarlo.ParticleBank top"
+        bank = MonteCarlo.ParticleBank()
+
+        particle = MonteCarlo.PhotonState( 1 )
+
+        bank.push( particle )
+
+        base_particle = particle
+
+        self.assertEqual( bank.top().getHistoryNumber(), 1 )
+
+        const_bank = bank
+
+        self.assertEqual( const_bank.top().getHistoryNumber(), 1 )
+
+    def testPop(self):
+        "*Test MonteCarlo.ParticleBank pop"
+        bank = MonteCarlo.ParticleBank()
+
+        particle = MonteCarlo.PhotonState( 0 )
+
+        bank.push( particle )
+
+        self.assertFalse( bank.isEmpty() )
+
+        bank.pop()
+
+        self.assertTrue( bank.isEmpty() )
+
+    def testPop_store(self):
+        "*Test MonteCarlo.ParticleBank pop_store"
+        bank = MonteCarlo.ParticleBank()
+
+        particle = MonteCarlo.PhotonState( 0 )
+
+        bank.push( particle )
+
+        particle = MonteCarlo.NeutronState( 1 )
+
+        bank.push( particle )
+
+        particle = MonteCarlo.ElectronState( 2 )
+
+        bank.push( particle )
+
+        particle = MonteCarlo.PositronState( 3 )
+
+        bank.push( particle )
+
+        self.assertEqual( bank.size(), 4 )
+
+        particle_1 = bank.pop()
+
+        self.assertEqual( particle_1.getHistoryNumber(), 0 )
+        self.assertEqual( particle_1.getParticleType(), MonteCarlo.PHOTON )
+        self.assertEqual( bank.size(), 3 )
+
+        particle_2 = bank.pop()
+
+        self.assertEqual( particle_2.getHistoryNumber(), 1 )
+        self.assertEqual( particle_2.getParticleType(), MonteCarlo.NEUTRON )
+        self.assertEqual( bank.size(), 2 )
+
+        particle_3 = bank.pop()
+
+        self.assertEqual( particle_3.getHistoryNumber(), 2 )
+        self.assertEqual( particle_3.getParticleType(), MonteCarlo.ELECTRON )
+        self.assertEqual( bank.size(), 1 )
+
+        particle_4 = bank.pop()
+
+        self.assertEqual( particle_4.getHistoryNumber(), 3 )
+        self.assertEqual( particle_4.getParticleType(), MonteCarlo.POSITRON )
+        self.assertEqual( bank.size(), 0 )
+
+    def testSplice(self):
+        "*Test MonteCarlo.ParticleBank splice"
+        bank_a = MonteCarlo.ParticleBank()
+        bank_b = MonteCarlo.ParticleBank()
+
+        photon = MonteCarlo.PhotonState( 2 )
+        bank_a.push( photon )
+
+        neutron = MonteCarlo.NeutronState( 4 )
+        bank_a.push( neutron )
+
+        electron = MonteCarlo.ElectronState( 0 )
+        bank_a.push( electron )
+
+        positron = MonteCarlo.PositronState( 6 )
+        bank_a.push( positron )
+
+        photon = MonteCarlo.PhotonState( 3 )
+        bank_b.push( photon )
+
+        neutron = MonteCarlo.NeutronState( 1 )
+        bank_b.push( neutron )
+
+        electron = MonteCarlo.ElectronState( 5 )
+        bank_b.push( electron )
+
+        positron = MonteCarlo.PositronState( 7 )
+        bank_b.push( positron )
+
+        bank_a.splice( bank_b )
+
+        self.assertEqual( bank_a.size(), 8 )
+        self.assertEqual( bank_b.size(), 0 )
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 2 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.PHOTON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 4 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.NEUTRON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 0 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.ELECTRON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 6 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.POSITRON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 3 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.PHOTON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 1 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.NEUTRON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 5 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.ELECTRON )
+
+        bank_a.pop()
+
+        self.assertEqual( bank_a.top().getHistoryNumber(), 7 )
+        self.assertEqual( bank_a.top().getParticleType(), MonteCarlo.POSITRON )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ParticleBankTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing MonteCarlo.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstMonteCarlo.ParticleBank.py
+#-----------------------------------------------------------------------------#

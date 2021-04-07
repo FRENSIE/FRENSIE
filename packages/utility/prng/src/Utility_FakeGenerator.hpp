@@ -19,13 +19,13 @@
 namespace Utility{
 
 /*! A fake random number generator
- * \details This class is used primarily for testing purposes. It allows a 
+ * \details This class is used primarily for testing purposes. It allows a
  * user to supply a stream of random numbers, which this generator will then
  * supply to components that require random numbers.
  */
 class FakeGenerator : public LinearCongruentialGenerator
 {
-  
+
 public:
 
   //! Constructor
@@ -39,7 +39,7 @@ public:
   double getRandomNumber();
 
 private:
-  
+
   // Verify that all numbers in the stream are valid - in [0,1)
   static bool validStream( const std::vector<double>& stream );
 
@@ -47,7 +47,7 @@ private:
   std::vector<double> d_fake_stream;
 
   // Index of next random number to return from the fake stream
-  unsigned d_fake_stream_index;  
+  unsigned d_fake_stream_index;
 };
 
 } // end Utility namespace

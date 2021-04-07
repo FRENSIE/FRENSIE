@@ -9,45 +9,46 @@
 #ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 #define UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// std Includes
+#include <vector>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 
-
 namespace Utility{
 
-  //! Gauss-Kronrod quadrature set traits 
-  template<int Points>
-  struct GaussKronrodQuadratureSetTraits
-  {
-    //! Valid rule
-    static const bool valid_rule = false;
+//typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
-    //! Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
-    
-    //! Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+//! Gauss-Kronrod quadrature set traits
+template<int Points, typename FloatType, typename Enabled = void>
+struct GaussKronrodQuadratureSetTraits
+{
+  //! Valid rule
+  static const bool valid_rule = false;
 
-    //! Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+  //! Gauss quadrature weights
+  static const std::vector<FloatType> gauss_weights;
 
-    private:
+  //! Kronrod quadrature weights
+  static const std::vector<FloatType> kronrod_weights;
 
-    // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeGaussWeights()
-    { return Teuchos::Array<double>(); }
+  //! Kronrod quadrature abscissae
+  static const std::vector<FloatType> kronrod_abscissae;
 
-    // Initialize the kronrod weight array
-    static inline Teuchos::Array<double> initializeKronrodWeights()
-    { return Teuchos::Array<double>(); }
+private:
 
-    // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeKronrodAbscissae()
-    { return Teuchos::Array<double>(); }
-  };
+  // Initialize the gauss weight array
+  static inline std::vector<FloatType> initializeGaussWeights()
+  { return std::vector<FloatType>(); }
+
+  // Initialize the kronrod weight array
+  static inline std::vector<FloatType> initializeKronrodWeights()
+  { return std::vector<FloatType>(); }
+
+  // Initialize the gauss weight array
+  static inline std::vector<FloatType> initializeKronrodAbscissae()
+  { return std::vector<FloatType>(); }
+};
 
 } // end Utility namespace
 

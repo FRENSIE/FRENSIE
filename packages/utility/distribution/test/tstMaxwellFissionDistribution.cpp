@@ -14,95 +14,126 @@
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_OneDDistribution.hpp"
 #include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
 
 using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
 
+typedef TestArchiveHelper::TestArchives TestArchives;
+
+typedef std::tuple<
+  std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
+  std::tuple<cgs::energy,si::amount,si::energy,si::amount>,
+  std::tuple<si::energy,si::length,cgs::energy,cgs::length>,
+  std::tuple<cgs::energy,cgs::length,si::energy,si::length>,
+  std::tuple<si::energy,si::mass,cgs::energy,cgs::mass>,
+  std::tuple<cgs::energy,cgs::mass,si::energy,si::mass>,
+  std::tuple<si::energy,si::dimensionless,cgs::energy,cgs::dimensionless>,
+  std::tuple<cgs::energy,cgs::dimensionless,si::energy,si::dimensionless>,
+  std::tuple<si::energy,void*,cgs::energy,void*>,
+  std::tuple<cgs::energy,void*,si::energy,void*>,
+  std::tuple<ElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<ElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<ElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<KiloElectronVolt,si::amount,MegaElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,si::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,cgs::energy,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,ElectronVolt,si::amount>,
+  std::tuple<MegaElectronVolt,si::amount,KiloElectronVolt,si::amount>,
+  std::tuple<void*,MegaElectronVolt,void*,KiloElectronVolt>
+ > TestUnitTypeQuads;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
-
-Teuchos::RCP<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 				 new Utility::MaxwellFissionDistribution( 1.0, 1.0, 0.1 ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution( new Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 1e6*eV, 1e3*keV, 0.1*MeV ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, evaluate )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = exp( -1.0 );
-  
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  double test_value_2 = sqrt( 0.9 )*exp( -0.9 );
+
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), test_value_1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.9 ), test_value_2 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluate )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluate )
 {
-  double scale_factor = exp(-1.0);
-
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
-		       scale_factor*si::mole );
+
+  double scale_factor = sqrt( 0.9 )*exp( -0.9 );
+
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.9*MeV ),
+                       scale_factor*si::mole );
+  
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV ),
+		       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, evaluatePDF )
 {
-  double test_value_1 = 0.0 ;
-  double test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - sqrt(0.9) * exp(-0.9) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -1.0 );
-
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
+  double test_value_1 = 0.0;
+  double test_value_2 = sqrt( 0.9 )*exp( -0.9 )/
+    (sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
+     sqrt(0.9)*exp(-0.9));
+  
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.0 ), test_value_1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.9 ), test_value_2 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 1.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluatePDF )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluatePDF )
 {
-  double scale_factor = exp(-1.0)/( sqrt(Utility::PhysicalConstants::pi)*0.5*
-				    erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) );
+  double scale_factor = sqrt( 0.9 )*exp( -0.9 )/
+    (sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
+     sqrt(0.9)*exp(-0.9));
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 0.0*MeV ),
 		       0.0/MeV );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
-		       scale_factor/MeV );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 0.9*MeV ),
+                       scale_factor/MeV );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( 1.0*MeV ),
+		       0.0/MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sample )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, sample )
 {
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.9526660807223237;
@@ -118,17 +149,17 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 0.89106359701991, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.89106359701991, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sample )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sample )
 {
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.9526660807223237;
@@ -144,18 +175,18 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<MegaElectronVolt> sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.78269807500829*MeV, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.78269807500829*MeV, 1e-14 );
 
   sample = unit_aware_distribution->sample();
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.89106359701991*MeV, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.89106359701991*MeV, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be sampled using OpenMC method and the 
+// Check that the distribution can be sampled using OpenMC method and the
 // trials can be recorded
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 {
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.9526660807223237;
@@ -170,15 +201,15 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
-  TEST_FLOATING_EQUALITY( sample, 0.89106359701991, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.89106359701991, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -186,7 +217,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method
 // and the trials can be recorded
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 {
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.9526660807223237;
@@ -201,16 +232,16 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  Utility::DistributionTraits::Counter trials = 0;
 
-  quantity<MegaElectronVolt> sample = 
+  quantity<MegaElectronVolt> sample =
     unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.78269807500829*MeV, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.78269807500829*MeV, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.89106359701991*MeV, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.89106359701991*MeV, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -218,7 +249,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution,
 		   sample_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -233,22 +264,22 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, nuclear_temperature, restriction_energy, sample;
-  
+
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
   sample = Utility::MaxwellFissionDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
-  TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
-  
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
+
   incident_energy = 0.75;
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
 
   sample = Utility::MaxwellFissionDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
-  TEST_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -256,7 +287,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   sample_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -271,23 +302,23 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
-    
+
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;
   restriction_energy = 0.01*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt>::sample( incident_energy, nuclear_temperature, restriction_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
-  
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
+
   incident_energy = 0.75*MeV;
   nuclear_temperature = 0.5*MeV;
   restriction_energy = 0.25*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt>::sample( incident_energy, nuclear_temperature, restriction_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -295,7 +326,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution,
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -310,23 +341,23 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incident_energy, nuclear_temperature, restriction_energy, sample;
-  unsigned trials = 0;
-  
+  Utility::DistributionTraits::Counter trials = 0;
+
   incident_energy = 0.5;
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
   sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
-  TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
-  
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
+
   incident_energy = 0.75;
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
 
   sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
-  TEST_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -334,7 +365,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be sampled using OpenMC method,
 // passing in parameters
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );
@@ -349,24 +380,24 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
   fake_stream[8] = 0.4770873202414019;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature,
     restriction_energy, sample;
-  unsigned trials = 0;
-  
+  Utility::DistributionTraits::Counter trials = 0;
+
   incident_energy = 0.5*MeV;
   nuclear_temperature = 0.1*MeV;
   restriction_energy = 0.01*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,void>::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
-  
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
+
   incident_energy = 0.75*MeV;
   nuclear_temperature = 0.5*MeV;
   restriction_energy = 0.25*MeV;
 
   sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -374,524 +405,663 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getUpperBoundOfIndepVar )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 0.9 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(), 0.9 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the upper bound of the unit-aware distribution independent 
+// Check that the upper bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   getUpperBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
 		       0.9*MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution independent variable can be
 // returned
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getLowerBoundOfIndepVar )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the lower bound of the unit-aware distribution independent 
+// Check that the lower bound of the unit-aware distribution independent
 // variable can be returned
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
 		   getLowerBoundOfIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
 		       0.0*MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( distribution->getDistributionType(),
-		       Utility::MAXWELLFISSION_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
+		       Utility::MAXWELL_FISSION_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution type can be returned
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, getDistributionType )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, getDistributionType )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
-		       Utility::MAXWELLFISSION_DISTRIBUTION );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
+		       Utility::MAXWELL_FISSION_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is tabular
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isTabular )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, isTabular )
 {
-  TEST_ASSERT( !distribution->isTabular() );
+  FRENSIE_CHECK( !distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is tabular
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isTabular )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isTabular )
 {
-  TEST_ASSERT( !unit_aware_distribution->isTabular() );
+  FRENSIE_CHECK( !unit_aware_distribution->isTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the distribution is continuous
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isContinuous )
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, isContinuous )
 {
-  TEST_ASSERT( distribution->isContinuous() );
+  FRENSIE_CHECK( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the unit-aware distribution is continuous
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isContinuous )
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isContinuous )
 {
-  TEST_ASSERT( unit_aware_distribution->isContinuous() );
+  FRENSIE_CHECK( unit_aware_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toParameterList )
+// Check if the distribution is compatible with the interpolation type
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, isCompatibleWithInterpType )
 {
-  Teuchos::RCP<Utility::MaxwellFissionDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution );
-  
-  Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Utility::MaxwellFissionDistribution>( "test distribution", 
-						     *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"maxwellfission_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
-    Teuchos::getParametersFromXmlFile( "maxwellfission_dist_test_list.xml" );
-  
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<Utility::MaxwellFissionDistribution> 
-    copy_distribution( new Utility::MaxwellFissionDistribution );
-
-  *copy_distribution = read_parameter_list->get<Utility::MaxwellFissionDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, toParameterList )
+// Check if the unit-aware distribution is compatible with the interp type
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
+                   isCompatibleWithInterpType )
 {
-  typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
-    UnitAwareMaxwellFissionDistribution;
-  
-  Teuchos::RCP<UnitAwareMaxwellFissionDistribution> true_distribution =
-    Teuchos::rcp_dynamic_cast<UnitAwareMaxwellFissionDistribution>( unit_aware_distribution );
-  
-  Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<UnitAwareMaxwellFissionDistribution>( "test distribution", 
-							   *true_distribution );
-
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-					"unit_aware_maxwellfission_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
-    Teuchos::getParametersFromXmlFile( "unit_aware_maxwellfission_dist_test_list.xml" );
-  
-  TEST_EQUALITY( parameter_list, *read_parameter_list );
-
-  Teuchos::RCP<UnitAwareMaxwellFissionDistribution> 
-    copy_distribution( new UnitAwareMaxwellFissionDistribution );
-
-  *copy_distribution = read_parameter_list->get<UnitAwareMaxwellFissionDistribution>(
-							  "test distribution");
-
-  TEST_EQUALITY( *copy_distribution, *true_distribution );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, fromParameterList )
+// Check that the distribution can be placed in a stream
+FRENSIE_UNIT_TEST( MaxwellFissionDistribution, ostream_operator )
 {
-  double test_value_1;
-  double test_value_2;
+  std::ostringstream oss;
 
-  Utility::MaxwellFissionDistribution read_distribution = 
-    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution A" );
+  oss << Utility::MaxwellFissionDistribution();
 
-  test_value_1 = 0.0 ;
-  test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - sqrt(0.9) * exp(-0.9) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -1.0 );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::MaxwellFissionDistribution( 2.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::MaxwellFissionDistribution( 3.0, 2.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::MaxwellFissionDistribution( 3.0, 2.0, 1.0 );
   
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
 
-  read_distribution = 
-    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution B" );
-  
-  test_value_1 = 0.0 ;
-  test_value_2 = pow( 2.0, 1.5 ) * ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -0.5 );
-  
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
-  read_distribution = 
-    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution C" );
+  oss.str( "" );
+  oss.clear();
 
-  test_value_1 = 0.0 ;
-  test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
-  test_value_2 = pow( test_value_2, -1.0 );
-  test_value_2 = test_value_2 * exp( -1.0 );
-  
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
+  oss << Utility::MaxwellFissionDistribution( 3.0, 2.0, 1.0, 10.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 10.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.1, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from an xml file
-TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, fromParameterList )
+// Check that the unit-aware distribution can be placed in a stream
+FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, ostream_operator )
 {
-  typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
-    UnitAwareMaxwellFissionDistribution;
-  
-  UnitAwareMaxwellFissionDistribution read_distribution = 
-    test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution A" );
+  std::ostringstream oss;
 
-  double scale_factor = exp(-1.0)/
-    ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - 
-      sqrt(0.9) * exp(-0.9) );
+  oss << Utility::UnitAwareMaxwellFissionDistribution<ElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareMaxwellFissionDistribution<ElectronVolt,si::amount>( 2.0*eV );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+  
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareMaxwellFissionDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareMaxwellFissionDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareMaxwellFissionDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV, 10.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 10.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << *unit_aware_distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Maxwell Fission Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.1*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( MaxwellFissionDistribution,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_maxwell_fission_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some maxwell fission distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
     
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 0.0*MeV ), 
-				  0.0*si::mole,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
-				  0.0/MeV,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0*MeV ), 
-				  10.0*exp(-1.0)*si::mole,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
-				  scale_factor/MeV,
-				  1e-15 );
+    Utility::MaxwellFissionDistribution dist_a;
+    Utility::MaxwellFissionDistribution dist_b( 3.0 );
+    Utility::MaxwellFissionDistribution dist_c( 3.0, 2.0 );
+    Utility::MaxwellFissionDistribution dist_d( 3.0, 2.0, 1.0 );
+    Utility::MaxwellFissionDistribution dist_e( 3.0, 2.0, 1.0, 10.0 );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution B" );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( distribution )
+                             );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Utility::MaxwellFissionDistribution dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_a, Utility::MaxwellFissionDistribution() );
+
+  Utility::MaxwellFissionDistribution dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_b, Utility::MaxwellFissionDistribution( 3.0 ) );
+
+  Utility::MaxwellFissionDistribution dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_c, Utility::MaxwellFissionDistribution( 3.0, 2.0 ) );
+
+  Utility::MaxwellFissionDistribution dist_d;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_d, Utility::MaxwellFissionDistribution( 3.0, 2.0, 1.0 ) );
+
+  Utility::MaxwellFissionDistribution dist_e;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_e, Utility::MaxwellFissionDistribution( 3.0, 2.0, 1.0, 10.0 ) );
+
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::MaxwellFissionDistribution*>( shared_dist.get() ),
+                       *dynamic_cast<Utility::MaxwellFissionDistribution*>( distribution.get() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareMaxwellFissionDistribution,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  scale_factor = exp( -0.5 )/
-    ( pow( 2.0, 1.5 )*(sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(1.0))-
-		       sqrt(1.0)*exp(-1.0)) );
+  std::string archive_base_name( "test_unit_aware_maxwell_fission_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some maxwell fission distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
     
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
-				  0.0/MeV,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
-				  scale_factor/MeV,
-				  1e-15 );
+    Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_a;
+    Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_b( 3.0*MeV );
+    Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_c( 3.0*MeV, 2.0*MeV );
+    Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_d( 3.0*MeV, 2.0*MeV, 1.0*MeV );
+    Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_e( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 );
 
-  read_distribution = 
-    test_dists_list->get<UnitAwareMaxwellFissionDistribution>( "Unit-Aware Maxwell Fission Distribution C" );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e )
+                             );
+    FRENSIE_REQUIRE_NO_THROW(
+                  (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution )
+                             );
+  }
 
-  scale_factor = exp(-1.0 )/
-    (sqrt(Utility::PhysicalConstants::pi)*0.5* erf(sqrt(1.0)) -
-     sqrt(1.0)*exp(-1.0));
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
   
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 0.0*MeV ), 
-				  0.0/MeV,
-				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( read_distribution.evaluatePDF( 1.0*MeV ), 
-				  scale_factor/MeV,
-				  1e-15 );
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_a;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>()) );
+
+  Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_b;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
+
+  Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_c;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
+
+  Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_d;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_d, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
+
+  Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount> dist_e;
+
+  FRENSIE_REQUIRE_NO_THROW(
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e )
+                           );
+  FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
+
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>*>( shared_dist.get() )),
+                       (*dynamic_cast<Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
+                       
 }
 
 //---------------------------------------------------------------------------//
 // Check that distributions can be scaled
-TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareMaxwellFissionDistribution,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareMaxwellFissionDistribution,
 				   explicit_conversion,
-				   IndepUnitA,
-				   DepUnitA,
-				   IndepUnitB,
-				   DepUnitB )
+                                   TestUnitTypeQuads )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawIndepUnitA );
+  FETCH_TEMPLATE_PARAM( 1, RawDepUnitA );
+  FETCH_TEMPLATE_PARAM( 2, RawIndepUnitB );
+  FETCH_TEMPLATE_PARAM( 3, RawDepUnitB );
+
+  typedef typename std::remove_pointer<RawIndepUnitA>::type IndepUnitA;
+  typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
+  typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
+  typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
+  
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
-  
+
   typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
   typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy = Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *dynamic_cast<Utility::MaxwellFissionDistribution*>( distribution.get() ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitB,DepUnitB>
     unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  IndepQuantityA indep_quantity_a = 
+  IndepQuantityA indep_quantity_a =
     Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
-  InverseIndepQuantityA inv_indep_quantity_a = 
+  InverseIndepQuantityA inv_indep_quantity_a =
     Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
-  DepQuantityA dep_quantity_a = 
+  DepQuantityA dep_quantity_a =
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
   InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
-  Utility::setQuantity( indep_quantity_a, 1.0 );
+
+  Utility::setQuantity( indep_quantity_a, 0.899999999999999 );
   Utility::setQuantity( inv_indep_quantity_a,
-			exp(-1.0)/( sqrt(Utility::PhysicalConstants::pi)*0.5*
-				    erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) ) );
-  Utility::setQuantity( dep_quantity_a, exp(-1.0) );			
+			sqrt(0.9)*exp(-0.9)/
+                        (sqrt(Utility::PhysicalConstants::pi)*0.5*
+                         erf(sqrt(0.9)) - sqrt(0.9)*exp(-0.9) ) );
+  Utility::setQuantity( dep_quantity_a, sqrt(0.9)*exp(-0.9) );
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
   inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
 			   dep_quantity_a,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
 			inv_indep_quantity_a,
 			1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
 			   dep_quantity_b,
 			   1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
 			inv_indep_quantity_b,
 			1e-15 );
-  
-  // std::cout << indep_quantity_a << " " << indep_quantity_b << " " << std::endl;
-  // std::cout << inv_indep_quantity_a << " " << inv_indep_quantity_b << " " << std::endl;
-  // std::cout << dep_quantity_a << " " << dep_quantity_b << " " << std::endl;
 }
 
-typedef si::energy si_energy;
-typedef cgs::energy cgs_energy;
-typedef si::amount si_amount;
-typedef si::length si_length;
-typedef cgs::length cgs_length;
-typedef si::mass si_mass;
-typedef cgs::mass cgs_mass;
-typedef si::dimensionless si_dimensionless;
-typedef cgs::dimensionless cgs_dimensionless;
-
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_length,
-				      cgs_energy,
-				      cgs_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_length,
-				      si_energy,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_mass,
-				      cgs_energy,
-				      cgs_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_mass,
-				      si_energy,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      si_dimensionless,
-				      cgs_energy,
-				      cgs_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      cgs_dimensionless,
-				      si_energy,
-				      si_dimensionless );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      si_energy,
-				      void,
-				      cgs_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      cgs_energy,
-				      void,
-				      si_energy,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      ElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      KiloElectronVolt,
-				      si_amount,
-				      MegaElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      si_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      cgs_energy,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      ElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      MegaElectronVolt,
-				      si_amount,
-				      KiloElectronVolt,
-				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
-				      explicit_conversion,
-				      void,
-				      MegaElectronVolt,
-				      void,
-				      KiloElectronVolt );
-
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  std::string test_dists_xml_file;
-
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_dists_xml_file",
-		 &test_dists_xml_file,
-		 "Test distributions xml file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  TEUCHOS_ADD_TYPE_CONVERTER( Utility::MaxwellFissionDistribution );
-  typedef Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>
-    UnitAwareMaxwellFissionDistribution;
-  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareMaxwellFissionDistribution );
-
-  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstMaxwellFissionDistribution.cpp

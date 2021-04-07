@@ -10,7 +10,7 @@
 #define MONTE_CARLO_PARTICLE_BANK_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -24,10 +24,33 @@ void ParticleBank::push( SmartPointer<State>& particle )
 {
   // Make sure the particle is valid
   testPrecondition( particle.get() );
-  // Check that use count is 1
-  // testPrecondition( particle.count() == 1 );
 
   this->push( *particle );
+
+  particle.reset();
+}
+
+// Insert a particle into the bank (Most Efficient/Recommended)
+/*! \details The bank will take ownership of the particle passed into it. If
+ * the particle pointer is unique (i.e. it has a use count of 1) the bank
+ * will simply copy the pointer and the input pointer will be reset to
+ * ensure sole ownership. Otherwise it will create a copy (clone) of the
+ * particle and the input smart pointer will be reset.
+ */
+template<typename State>
+void ParticleBank::push( std::shared_ptr<State>& particle )
+{
+  // Make sure the particle is valid
+  testPrecondition( particle.get() );
+
+  // If this pointer is unique we can simply take it
+  if( particle.use_count() == 1 )
+  {
+    d_particle_states.push_back( particle );
+  }
+  // The pointer is not unique - make a clone
+  else
+    this->push( *particle );
 
   particle.reset();
 }
@@ -40,16 +63,12 @@ void ParticleBank::push( SmartPointer<State>& particle )
  */
 template<template<typename> class SmartPointer>
 void ParticleBank::push( SmartPointer<NeutronState>& neutron,
-			 const NuclearReactionType reaction )
+			 const int reaction )
 {
   // Make sure the particle is valid
   testPrecondition( neutron.get() );
-  // Check that use count is 1
-  // testPrecondition( particle.count() == 1 );
 
   this->push( *neutron, reaction );
-
-  neutron.reset();
 }
 
 // Pop the top particle from the bank and store it in the smart pointer
@@ -58,7 +77,7 @@ void ParticleBank::pop( SmartPointer<ParticleState>& particle )
 {
   // Make sure the bank is not empty
   testPrecondition( !this->isEmpty() );
-  
+
   particle.reset( this->top().clone() );
 
   this->pop();

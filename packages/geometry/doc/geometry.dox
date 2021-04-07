@@ -8,7 +8,7 @@
  * This package provides ray tracing functionality through a generic
  * interface. This generic interface operates on a Geometry::Ray class, which
  * stores ray state information. The package is divided into the following
- * subpackages: 
+ * subpackages:
  * <ul>
  *  <li>core</li>
  *  <li>dagmc</li>
@@ -18,41 +18,41 @@
  * \section geometry_core_sec The Geometry Core Subpackage
  * The core subpackage provides the low-level classes and functions required
  * by the Geometry::ModuleInterface. The most important of which is the
- * Geometry::Ray class. The default Geometry::ModuleInterface 
- * (Geometry_ModuleInterfaceDecl.hpp) can be found in this subpackage. Note 
- * that the default interface is designed so that it will not compile. 
+ * Geometry::Ray class. The default Geometry::ModuleInterface
+ * (Geometry_ModuleInterfaceDecl.hpp) can be found in this subpackage. Note
+ * that the default interface is designed so that it will not compile.
  * Specializations of the interface for specific geometry "handlers" are
  * needed to actually use the interface. Each of the subpackages described
- * in the following sections contain a geometry handler for a specific 
- * external geometry package and a specialization of the 
- * Geometry::ModuleInterface. 
+ * in the following sections contain a geometry handler for a specific
+ * external geometry package and a specialization of the
+ * Geometry::ModuleInterface.
  *
  * \section geometry_dagmc_sec The Geometry DagMC Subpackage
  * The dagmc subpackage provides the Geometry::DagMC handler class. It is
  * essentially a wrapper around the moab::DagMC tool that allows one to
- * ray trace on and query properties of a CAD (.sat) file. The 
+ * ray trace on and query properties of a CAD (.h5m) file. The
  * Geometry::DagMC handler class allows one to check if cells and/or surfaces
  * exist, get cell volumes and/or surface areas, get estimator properties and
- * estimator entity associations, get the material ids assigned to cells, 
- * get cell densities, and ray trace on the CAD geometry. 
+ * estimator entity associations, get the material ids assigned to cells,
+ * get cell densities, and ray trace on the CAD geometry.
  *
  * There are currently two ways that one can ray trace on the CAD geometry
  * using the Geometry::DagMC handler class. The first way is by using
- * the Geometry::Ray class, which is referred to as external ray tracing. 
+ * the Geometry::Ray class, which is referred to as external ray tracing.
  * The second way is by using the internal ray tracing capabilities. These
- * internal methods completely hide the internal ray object 
+ * internal methods completely hide the internal ray object
  * (Geometry::DagMCRay) from the user. If performance is a concern, the
- * internal ray tracing capabilities should be used. 
- * 
- * The dagmc subpackage also provides the module interface specialization for 
- * the DagMC handler (Geometry::ModuleInterface<Geometry::DagMC>). 
+ * internal ray tracing capabilities should be used.
+ *
+ * The dagmc subpackage also provides the module interface specialization for
+ * the DagMC handler (Geometry::ModuleInterface<Geometry::DagMC>).
  *
  * \section geometry_root_sec The Geometry Root Subpackage
  * The root subpackage provides the Geometry::Root handler class. It is a
  * high level interface for ray tracing on and querying properties of a
  * Root geometry file. The Geometry::Root handler class allows one to check
  * if cells exist, get cell volumes, get the material ids assigned to cells,
- * get cell densities, and ray trace on the Root geometry. Note that Root does 
+ * get cell densities, and ray trace on the Root geometry. Note that Root does
  * not keep track of surfaces in a way that is conducive to particle transport.
  * We therefore completely ignore surfaces in the Geometry::Root handler class.
  *
@@ -60,11 +60,11 @@
  * using the Geometry::Root handler class. The first way is by using the
  * Geometry::Ray class, which is referred to as external ray tracing.
  * The second way is by using the internal ray tracing capabilities present
- * in the Root TGeoManager class, which are wrapped in the Geometry::Root 
+ * in the Root TGeoManager class, which are wrapped in the Geometry::Root
  * handler class. If performance is a concern, the internal ray tracing
  * capability should be used.
  *
- * The root subpackage also provides the module interface specialization for 
+ * The root subpackage also provides the module interface specialization for
  * the Root handler (Geometry::ModuleInterface<Geometry::Root>).
  *
  * \section geometry_config_sec Configuring the Geometry Package
@@ -74,11 +74,11 @@
  * system will create a file called Geometry_Config.hpp (found in the
  * geometry package binary cmake directory). If a subpackage is enabled
  * this config file will contain a macro called <b>HAVE_FRENSIE_subpackage</b>
- * where subpackage is the name of the particular subpackage (in all caps). 
+ * where subpackage is the name of the particular subpackage (in all caps).
  * Any code in other parts of FRENSIE that relies on a particular geometry
- * subpackage will have to be placed inside of a 
+ * subpackage will have to be placed inside of a
  * "#ifdef HAVE_FRENSIE_subpackage" preprocessor block to ensure that the
- * dependent code is only built if the subpackage is enabled. 
+ * dependent code is only built if the subpackage is enabled.
  *
  * \section geometry_add_new_subpackage_sec Adding New Subpackages
  * Before adding a new geometry subpackage for an external geometry
@@ -96,12 +96,12 @@
  * final question is okay as the cell properties can be assigned in the
  * geometry xml file.
  *
- * Once it has been determined that a subpackage can be created for the 
+ * Once it has been determined that a subpackage can be created for the
  * external tool. The following steps should be followed to create the
  * subpackage:
  * <ol>
  *  <li>Update the build system so that it will search for the external tool
- *      if a user has requested the new subpackage associated with the 
+ *      if a user has requested the new subpackage associated with the
  *      tool.</li>
  *  <li>Modify the Geometry_Config.hpp.in file so that the build system will
  *      correctly configure the Geometry package. This file is found in
@@ -120,26 +120,26 @@
  *      takes a geometry xml file (see the examples directory). This factory
  *      method will read the xml file, which at the very least must
  *      specify the name of the geometry handler and the name of the
- *      geometry file, and initialize the new geometry handler 
- *      (see Geometry::DagMCInstanceFactory and 
+ *      geometry file, and initialize the new geometry handler
+ *      (see Geometry::DagMCInstanceFactory and
  *      Geometry::RootInstanceFactory).</li>
- *  <li>Specialize the Geometry::ModuleInterface for the new geometry 
+ *  <li>Specialize the Geometry::ModuleInterface for the new geometry
  *      handler.</li>
  *  <li>As always, add unit tests for all added classes and methods.</li>
  * </ol>
- *      
+ *
  * After the new geometry subpackage is finished there are several more
  * steps that must be taken before particle transport can be done with it:</li>
  * <ol>
- *  <li><b>Estimator initialization:</b> a specialization of the 
+ *  <li><b>Estimator initialization:</b> a specialization of the
  *      MonteCarlo::StandardEstimatorFactory must be made for the new
- *      geometry handler 
+ *      geometry handler
  *      (see MonteCarlo::StandardEstimatorFactory<Geometry::DagMC> and
  *      MonteCarlo::StandardEstimatorFactory<Geometry::Root>). At the very
  *      least, this factory will use the handler to get cell volumes used
  *      to normalize estimators. Don't forget to write unit tests for this
  *      specialization.</li>
- *  <li><b>Material initialization:</b> a specialization of the 
+ *  <li><b>Material initialization:</b> a specialization of the
  *      MonteCarlo::StandardCollisionHandlerFactory must be made for
  *      the new geometry handler
  *      (see MonteCarlo::StandardCollisionHandlerFactory<Geometry::DagMC> and
@@ -147,18 +147,18 @@
  *      factory will use the handler to get the material ids associated with
  *      cells and the cell densities. Don't forget to write unit tests for this
  *      specialization.</li>
- *  <li><b>Particle simulation manager initialization:</b> a method must be 
+ *  <li><b>Particle simulation manager initialization:</b> a method must be
  *      added to the MonteCarlo::ParticleSimulationManagerFactory for creating
  *      a MonteCarlo::ParticleSimulationManager with the new geometry handler.
  *      The name of this method should be "createManagerWithHandler" where
- *      "Handler" is the name of the new handler. See the 
- *      createManagerWithDagMC and createManagerWithRoot methods for 
+ *      "Handler" is the name of the new handler. See the
+ *      createManagerWithDagMC and createManagerWithRoot methods for
  *      examples. Note that the createManager method will have to be
  *      modified as well.</li>
- *  <li><b>Verification testing:</b> a verification test suite has also been 
- *      created. This test suite ensures that FACEMC gives expected answers to 
- *      some basic problems. These tests are set up so that any geometry 
- *      handler can be used. New test executables that run the verification 
+ *  <li><b>Verification testing:</b> a verification test suite has also been
+ *      created. This test suite ensures that FACEMC gives expected answers to
+ *      some basic problems. These tests are set up so that any geometry
+ *      handler can be used. New test executables that run the verification
  *      tests with the new geometry handler will have to be created (see the
  *      tools/facemc/test directory for examples).</li>
  * </ol>
@@ -167,10 +167,10 @@
  * FRENSIE master! Congrats and sincere thanks for all of your contributions.
  *
  * \subsection geometry_desired_new_subpackage Desired Additional Subpackages
- * The following is a list of desired additional subpackages that the 
+ * The following is a list of desired additional subpackages that the
  * developers hope to create in the future
  * <ul>
- *  <li><b>brlcad:</b> Will allow ray tracing on 
+ *  <li><b>brlcad:</b> Will allow ray tracing on
  *                     <a href=http://brlcad.org/>BRLCAD</a> geometries.</li>
  *  <li><b>native:</b> Will allow ray tracing on a native geometry format.</li>
  * </ul>

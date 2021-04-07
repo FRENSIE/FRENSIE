@@ -3,7 +3,7 @@
 ## Geometry.Ray class unit tests
 #  \file   tstGeometry.Ray.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.Ray class 
+#  \brief  Unit tests for the Geometry.Ray class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -78,9 +78,9 @@ class RayTestCase(unittest.TestCase):
         "*Test Geometry.Ray advanceHead method"
         ray = Geometry.Ray( 1.0, 1.0, 1.0, 0.5773502691896258, 0.5773502691896258, 0.5773502691896258 )
         ray.advanceHead( 1.7320508075688772 )
-        self.assertAlmostEqual( ray.getXPosition(), 2.0, delta=1e-12)
-        self.assertAlmostEqual( ray.getYPosition(), 2.0, delta=1e-12)
-        self.assertAlmostEqual( ray.getZPosition(), 2.0, delta=1e-12)
+        self.assertAlmostEqual( ray.getXPosition(), 2.0, delta=2.0*1e-12)
+        self.assertAlmostEqual( ray.getYPosition(), 2.0, delta=2.0*1e-12)
+        self.assertAlmostEqual( ray.getZPosition(), 2.0, delta=2.0*1e-12)
 
 #-----------------------------------------------------------------------------#
 # Custom main

@@ -1,17 +1,9 @@
 Patches:
-	1.) Teuchos_TwoDArray_patch
-	2.) DagMC_cpp_patch
+	1.) GeomQueryTool_cpp_patch
 
-1.) FRENSIE requires the Teuchos::TwoDArray. Unfortunately the const access
-    operator and the const ArrayView operator are not defined properly. These
-    operators should return an ArrayView of const objects and not a const
-    ArrayView (compiler errors are given with the current source code).
-    Applying this patch will fix the Teuchos::TwoDArray source code. This
-    patch is automatically applied by the build system.
-
-2.) FRENSIE can be built with DagMC enabled. Unfortunately the moab::DagMC
-    object is not thread safe as of moab version 4.6.3. This patch file
-    must be applied to make DagMC thread safe. Because the DagMC.cpp file
-    must be patched this patch file must be applied before FRENSIE is
-    built. The build system will check if the patch has been applied and
-    report an error if it has not.
+1.) FRENSIE can be built with GeomQueryTool enabled. Unfortunately the
+    moab::GeomQueryTool object is not thread safe as of moab version 5.0.0. This
+    patch file must be applied to make GeomQueryTool thread safe. Because the
+    GeomQueryTool.cpp file must be patched this patch file must be applied
+    before FRENSIE is built. The build system will check if the patch has been
+    applied and report an error if it has not.

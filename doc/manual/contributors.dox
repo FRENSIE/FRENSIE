@@ -1,7 +1,7 @@
 // This file is used to add material to the contributors page
 
 /*! \page contributors Contributors
- * 
+ *
  * The following people have contributed to FRENSIE:
  * <ul>
  *  <li> University of Wisconsin - Madison
@@ -10,6 +10,9 @@
  *    <li> <a href=https://github.com/aprobinson>Alex Robinson</a> </li>
  *    <li> <a href=https://github.com/lkersting>Luke Kersting</a> </li>
  *    <li> <a href=https://github.com/ecmoll>Eli Moll</a> </li>
+ *    <li> <a href=https://github.com/psbritt>Philip Britt</a> </li>
+ *    <li> Ryan Pease </li>
+ *    <li> Lewis Gross </li>
  *   </ul>
  *  </li>
  *  <li> University of Michigan
@@ -25,4 +28,4 @@
  *   </ul>
  *  </li>
  * </ul>
- */ 
+ */

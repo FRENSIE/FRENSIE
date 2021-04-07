@@ -1,6 +1,6 @@
 # wait for other critical processes to finish before continuing
 function wait_for_critical_procs() {
-    
+
     for arg in $@; do
 	if [ -n "$regex" ]; then
 	    regex="$regex|$arg"
@@ -8,7 +8,7 @@ function wait_for_critical_procs() {
 	    regex="$arg"
 	fi
     done
-    
+
     while [ $(pgrep "$regex") > /dev/null ]; do
 	sleep 5
     done
@@ -31,13 +31,13 @@ function prevent_multiple_instances() {
 # enter process queue (assumes that processes are ids are incremented)
 function enter_process_queue() {
     min_pid=1000000000
-    
+
     for pid in $(pgrep -d " " "$1"); do
 	if [ "$min_pid" -gt "$pid" ]; then
     	    min_pid=$pid
     	fi
     done
-	    
+
     #echo "min:$min_pid this:$$"
 
     if [ $min_pid != $$ ]; then

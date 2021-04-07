@@ -1,9 +1,0 @@
-<ParameterList name="Materials">
-  
-  <ParameterList name="Hydrogen Block 1">
-    <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Fractions" type="Array" value="{1.0}"/>
-    <Parameter name="Isotopes" type="Array(string)" value="{H-1_293.6K}"/>
-  </ParameterList>
-
-</ParameterList>

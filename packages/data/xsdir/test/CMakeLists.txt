@@ -1,0 +1,8 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(data_xsdir)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Xsdir DEPENDS tstXsdir.cpp)
+FRENSIE_ADD_TEST(Xsdir
+  EXTRA_ARGS
+  --test_xsdir_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_xsdir)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(data_xsdir)

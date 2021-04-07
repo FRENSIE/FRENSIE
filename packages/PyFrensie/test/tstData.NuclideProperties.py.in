@@ -1,0 +1,480 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.NuclideProperties class unit tests
+#  \file   tstData.NuclideProperties.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.NuclideProperties class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the NuclideProperties class
+class NuclidePropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.NuclideProperties class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.properties = Data.NuclideProperties( Data.ZAID(1001), 1.0 )
+
+    def testConstructor(self):
+        "*Test Data.NuclideProperties constructor"
+        self.assertTrue( Data.NuclideProperties( Data.ZAID(2004), 4.0 ) )
+        with self.assertRaises(RuntimeError):
+            Data.NuclideProperties( Data.ZAID(1001), 0.0 )
+        with self.assertRaises(RuntimeError):
+            Data.NuclideProperties( Data.ZAID(1001), -1.0 )
+
+    def testZaid(self):
+        "*Test Data.NuclideProperties zaid"
+        self.assertEqual( self.properties.zaid(), Data.ZAID(1001) )
+
+        he4_properties = Data.NuclideProperties( Data.ZAID(2004), 4.0 )
+        self.assertEqual( he4_properties.zaid(), Data.ZAID(2004) )
+
+    def testAtomicWeight(self):
+        "*Test Data.NuclideProperties atomicWeight"
+        neutron_rest_amu = 1.0086649160043
+        self.assertEqual( self.properties.atomicWeight(), neutron_rest_amu )
+
+    def testAtomicWeightRatio(self):
+        "*Test Data.NuclideProperties atomicWeightRatio"
+        self.assertEqual( self.properties.atomicWeightRatio(), 1.0 )
+
+    def testNuclearDataAvailable(self):
+        "*Test Data.NuclideProperties nuclearDataAvailable"
+        self.assertFalse(self.properties.nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE ) )
+        self.assertFalse(self.properties.nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 0 ) )
+        self.assertFalse(self.properties.nuclearDataAvailable( Data.NuclearDataProperties.ACE_FILE, 0, 0.0 ) )
+        self.assertFalse(self.properties.nuclearDataAvailableAtMeV( Data.NuclearDataProperties.ACE_FILE, 0, 0.0 ) )
+
+    def testGetNuclearDataFileTypes(self):
+        "*Test Data.NuclideProperties getNuclearDataFileTypes"
+        self.assertTrue( len(self.properties.getNuclearDataFileTypes() ) == 0 )
+
+    def testGetDataFileVersions_nuclear(self):
+        "*Test Data.NuclideProperties getNuclearDataFileVersions"
+        self.assertFalse( self.properties.getNuclearDataFileVersions( Data.NuclearDataProperties.ACE_FILE ) )
+
+    def testGetRecommendedDataFileVersion_nuclear(self):
+        "*Test Data.NuclideProperties getRecommendedNuclearDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedNuclearDataFileVersion( Data.NuclearDataProperties.ACE_FILE )
+        self.assertEqual( 'Error: Nuclear data properties with file type ACE does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetDataEvaluationTempsInMeV_nuclear(self):
+        "*Test Data.NuclideProperties constructor"
+        self.assertFalse(self.properties.getDataEvaluationTempsInMeV( Data.NuclearDataProperties.ACE_FILE, 0 ) )
+
+    def testGetDataEvaluationTemps_nuclear(self):
+        "*Test Data.NuclideProperties getDataEvaluationTemps"
+        self.assertFalse(self.properties.getDataEvaluationTemps( Data.NuclearDataProperties.ACE_FILE, 0 ) )
+
+    def testGetNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getNuclearDataProperties(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Nuclear data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Nuclear data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getSharedNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedNuclearDataProperties(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Nuclear data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getSharedNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedNuclearDataPropertiesAtMeV(
+                                         Data.NuclearDataProperties.ACE_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Nuclear data properties with file type ACE do not exist',
+                          err.exception.message.split('!')[0] )
+
+
+
+
+
+    def testThermalNuclearDataAvailable(self):
+        "*Test Data.NuclideProperties thermalNuclearDataAvailable"
+        self.assertFalse(self.properties.thermalNuclearDataAvailable( "H20" ) )
+        self.assertFalse(self.properties.thermalNuclearDataAvailable(
+            "D20",
+            Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE) )
+        self.assertFalse(self.properties.thermalNuclearDataAvailable(
+            "D20",
+            Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+            0) )
+        self.assertFalse(self.properties.thermalNuclearDataAvailable(
+            "D20",
+            Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+            0,
+            0.0) )
+        self.assertFalse(self.properties.thermalNuclearDataAvailableAtMeV(
+            "D20",
+            Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+            0,
+            0.0) )
+
+    def testGetThermalNuclearDataFileTypes(self):
+        "*Test Data.NuclideProperties getThermalNuclearDataFileTypes"
+        self.assertTrue( len(self.properties.getThermalNuclearDataFileTypes( "H20") ) == 0 )
+
+    def testGetDataFileVersions_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getThermalNuclearDataFileVersions"
+        self.assertFalse( self.properties.getThermalNuclearDataFileVersions( "H20", Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE ) )
+        self.assertFalse( self.properties.getThermalNuclearDataFileVersions( "H20", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE ) )
+
+    def testGetRecommendedDataFileVersion_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getRecommendedThermalNuclearDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedThermalNuclearDataFileVersion( "H20", Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE )
+        self.assertEqual( 'Error: Thermal nuclear data properties for H20 with file type Standard ACE do not have a recommended version',
+                          err.exception.message.split('!')[0] )
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedThermalNuclearDataFileVersion( "H20", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE )
+        self.assertEqual( 'Error: Thermal nuclear data properties for H20 with file type MCNP6 ACE do not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetDataEvaluationTempsInMeV_thermal_nuclear(self):
+        "*Test Data.NuclideProperties constructor"
+        self.assertFalse(self.properties.getDataEvaluationTempsInMeV( "H2O", Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE, 0 ) )
+        self.assertFalse(self.properties.getDataEvaluationTempsInMeV( "H2O", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE, 0 ) )
+
+    def testGetDataEvaluationTemps_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getDataEvaluationTemps"
+        self.assertFalse(self.properties.getDataEvaluationTemps( "H2O", Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE, 0 ) )
+        self.assertFalse(self.properties.getDataEvaluationTemps( "H2O", Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE, 0 ) )
+
+    def testGetThermalNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getThermalNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetThermalNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getThermalNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedThermalNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getSharedThermalNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedThermalNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getSharedThermalNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.STANDARD_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.ThermalNuclearDataProperties.MCNP6_ACE_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+
+
+
+    def testAdjointNuclearDataAvailable(self):
+        "*Test Data.NuclideProperties adjointNuclearDataAvailable"
+        self.assertFalse(self.properties.adjointNuclearDataAvailable( Data.AdjointNuclearDataProperties.Native_FILE ) )
+        self.assertFalse(self.properties.adjointNuclearDataAvailable( Data.AdjointNuclearDataProperties.Native_FILE, 0 ) )
+        self.assertFalse(self.properties.adjointNuclearDataAvailable( Data.AdjointNuclearDataProperties.Native_FILE, 0, 0.0 ) )
+        self.assertFalse(self.properties.adjointNuclearDataAvailableAtMeV( Data.AdjointNuclearDataProperties.Native_FILE, 0, 0.0 ) )
+
+    def testGetAdjointNuclearDataFileTypes(self):
+        "*Test Data.NuclideProperties getAdjointNuclearDataFileTypes"
+        self.assertTrue( len(self.properties.getAdjointNuclearDataFileTypes() ) == 0 )
+
+    def testGetDataFileVersions_adjoint_nuclear(self):
+        "*Test Data.NuclideProperties getAdjointNuclearDataFileVersions"
+        self.assertFalse( self.properties.getAdjointNuclearDataFileVersions( Data.AdjointNuclearDataProperties.Native_FILE ) )
+
+    def testGetRecommendedDataFileVersion_adjoint_nuclear(self):
+        "*Test Data.NuclideProperties getRecommendedAdjointNuclearDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedAdjointNuclearDataFileVersion( Data.AdjointNuclearDataProperties.Native_FILE )
+        self.assertEqual( 'Error: Adjoint nuclear data properties with file type Native does not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetDataEvaluationTempsInMeV_adjoint_nuclear(self):
+        "*Test Data.NuclideProperties constructor"
+        self.assertFalse(self.properties.getDataEvaluationTempsInMeV( Data.AdjointNuclearDataProperties.Native_FILE, 0 ) )
+
+    def testGetDataEvaluationTemps_adjoint_nuclear(self):
+        "*Test Data.NuclideProperties getDataEvaluationTemps"
+        self.assertFalse(self.properties.getDataEvaluationTemps( Data.AdjointNuclearDataProperties.Native_FILE, 0 ) )
+
+    def testGetAdjointNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getAdjointNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getAdjointNuclearDataProperties(
+                                         Data.AdjointNuclearDataProperties.Native_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Adjoint nuclear data properties with file type Native do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetAdjointNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getAdjointNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getAdjointNuclearDataPropertiesAtMeV(
+                                         Data.AdjointNuclearDataProperties.Native_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Adjoint nuclear data properties with file type Native do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedAdjointNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getSharedAdjointNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedAdjointNuclearDataProperties(
+                                         Data.AdjointNuclearDataProperties.Native_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Adjoint nuclear data properties with file type Native do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedAdjointNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getSharedAdjointNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedAdjointNuclearDataPropertiesAtMeV(
+                                         Data.AdjointNuclearDataProperties.Native_FILE,
+                                         0,
+                                         0.0,
+                                         True )
+        self.assertEqual( 'Error: Adjoint nuclear data properties with file type Native do not exist',
+                          err.exception.message.split('!')[0] )
+
+
+
+
+
+    def testAdjointThermalNuclearDataAvailable(self):
+        "*Test Data.NuclideProperties adjointThermalNuclearDataAvailable"
+        self.assertFalse(self.properties.adjointThermalNuclearDataAvailable( "H20" ) )
+        self.assertFalse(self.properties.adjointThermalNuclearDataAvailable(
+            "D20",
+            Data.AdjointThermalNuclearDataProperties.Native_FILE) )
+        self.assertFalse(self.properties.adjointThermalNuclearDataAvailable(
+            "D20",
+            Data.AdjointThermalNuclearDataProperties.Native_FILE,
+            0) )
+        self.assertFalse(self.properties.adjointThermalNuclearDataAvailable(
+            "D20",
+            Data.AdjointThermalNuclearDataProperties.Native_FILE,
+            0,
+            0.0) )
+        self.assertFalse(self.properties.adjointThermalNuclearDataAvailableAtMeV(
+            "D20",
+            Data.AdjointThermalNuclearDataProperties.Native_FILE,
+            0,
+            0.0) )
+
+    def testGetAdjointThermalNuclearDataFileTypes(self):
+        "*Test Data.NuclideProperties getAdjointThermalNuclearDataFileTypes"
+        self.assertTrue( len(self.properties.getAdjointThermalNuclearDataFileTypes( "H20") ) == 0 )
+
+    def testGetDataFileVersions_adjoint_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getAdjointThermalNuclearDataFileVersions"
+        self.assertFalse( self.properties.getAdjointThermalNuclearDataFileVersions( "H20", Data.AdjointThermalNuclearDataProperties.Native_FILE ) )
+
+    def testGetRecommendedDataFileVersion_adjoint_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getRecommendedAdjointThermalNuclearDataFileVersion"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getRecommendedAdjointThermalNuclearDataFileVersion( "H20", Data.AdjointThermalNuclearDataProperties.Native_FILE )
+        self.assertEqual( 'Error: Adjoint thermal nuclear data properties for H20 with file type Native do not have a recommended version',
+                          err.exception.message.split('!')[0] )
+
+    def testGetDataEvaluationTempsInMeV_adjoint_thermal_nuclear(self):
+        "*Test Data.NuclideProperties constructor"
+        self.assertFalse(self.properties.getDataEvaluationTempsInMeV( "H2O", Data.AdjointThermalNuclearDataProperties.Native_FILE, 0 ) )
+
+    def testGetDataEvaluationTemps_adjoint_thermal_nuclear(self):
+        "*Test Data.NuclideProperties getDataEvaluationTemps"
+        self.assertFalse(self.properties.getDataEvaluationTemps( "H2O", Data.AdjointThermalNuclearDataProperties.Native_FILE, 0 ) )
+
+    def testGetAdjointThermalNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getAdjointThermalNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getAdjointThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.AdjointThermalNuclearDataProperties.Native_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Adjoint thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetAdjointThermalNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getAdjointThermalNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getAdjointThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.AdjointThermalNuclearDataProperties.Native_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Adjoint thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedAdjointThermalNuclearDataProperties(self):
+        "*Test Data.NuclideProperties getSharedAdjointThermalNuclearDataProperties"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedAdjointThermalNuclearDataProperties(
+                                        "H20",
+                                        Data.AdjointThermalNuclearDataProperties.Native_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Adjoint thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+    def testGetSharedAdjointThermalNuclearDataPropertiesAtMeV(self):
+        "*Test Data.NuclideProperties getSharedAdjointThermalNuclearDataPropertiesAtMeV"
+        with self.assertRaises(RuntimeError) as err:
+            self.properties.getSharedAdjointThermalNuclearDataPropertiesAtMeV(
+                                        "H20",
+                                        Data.AdjointThermalNuclearDataProperties.Native_FILE,
+                                        0,
+                                        0.0,
+                                        True )
+        self.assertEqual( 'Error: Adjoint thermal nuclear data properties with name H20 do not exist',
+                          err.exception.message.split('!')[0] )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(NuclidePropertiesTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.Model \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.NuclideProperties.py
+#-----------------------------------------------------------------------------#

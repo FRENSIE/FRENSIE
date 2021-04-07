@@ -13,8 +13,8 @@
 namespace Data{
 
 // Convert an ENDF designator to a Subshell enumeration
-SubshellType convertENDFDesignatorToSubshellEnum( 
-					       const unsigned endf_designator )
+SubshellType convertENDFDesignatorToSubshellEnum(
+               const unsigned endf_designator )
 {
   switch( endf_designator )
   {
@@ -62,8 +62,8 @@ SubshellType convertENDFDesignatorToSubshellEnum(
 }
 
 // Convert an EADL designator to a Subshell enumeration
-SubshellType convertEADLDesignatorToSubshellEnum( 
-					       const unsigned eadl_designator )
+SubshellType convertEADLDesignatorToSubshellEnum(
+               const unsigned eadl_designator )
 {
   switch( eadl_designator )
   {
@@ -112,8 +112,8 @@ SubshellType convertEADLDesignatorToSubshellEnum(
 
 
 // Convert an EADL designator to an ENDF designator
-unsigned convertEADLDesignatorToENDFDesignator( 
-					       const unsigned eadl_designator )
+unsigned convertEADLDesignatorToENDFDesignator(
+               const unsigned eadl_designator )
 {
   switch( eadl_designator )
   {
@@ -156,60 +156,77 @@ unsigned convertEADLDesignatorToENDFDesignator(
   case 58: return 37;
   case 60: return 38;
   case 61: return 39;
-  default: return INVALID_SUBSHELL;
-  }
-}
-
-// Convert a Subshell enumeration to a string
-std::string convertSubshellEnumToString( const SubshellType subshell )
-{
-  switch( subshell )
-  {
-  case K_SUBSHELL: return "K";
-  case L1_SUBSHELL: return "L1";
-  case L2_SUBSHELL: return "L2";
-  case L3_SUBSHELL: return "L3";
-  case M1_SUBSHELL: return "M1";
-  case M2_SUBSHELL: return "M2";
-  case M3_SUBSHELL: return "M3";
-  case M4_SUBSHELL: return "M4";
-  case M5_SUBSHELL: return "M5";
-  case N1_SUBSHELL: return "N1";
-  case N2_SUBSHELL: return "N2";
-  case N3_SUBSHELL: return "N3";
-  case N4_SUBSHELL: return "N4";
-  case N5_SUBSHELL: return "N5";
-  case N6_SUBSHELL: return "N6";
-  case N7_SUBSHELL: return "N7";
-  case O1_SUBSHELL: return "O1";
-  case O2_SUBSHELL: return "O2";
-  case O3_SUBSHELL: return "O3";
-  case O4_SUBSHELL: return "O4";
-  case O5_SUBSHELL: return "O5";
-  case O6_SUBSHELL: return "O6";
-  case O7_SUBSHELL: return "O7";
-  case O8_SUBSHELL: return "O8";
-  case O9_SUBSHELL: return "O9";
-  case P1_SUBSHELL: return "P1";
-  case P2_SUBSHELL: return "P2";
-  case P3_SUBSHELL: return "P3";
-  case P4_SUBSHELL: return "P4";
-  case P5_SUBSHELL: return "P5";
-  case P6_SUBSHELL: return "P6";
-  case P7_SUBSHELL: return "P7";
-  case P8_SUBSHELL: return "P8";
-  case P9_SUBSHELL: return "P9";
-  case P10_SUBSHELL: return "P10";
-  case P11_SUBSHELL: return "P11";
-  case Q1_SUBSHELL: return "Q1";
-  case Q2_SUBSHELL: return "Q2";
-  case Q3_SUBSHELL: return "Q3";
-  case UNKNOWN_SUBSHELL: return "Unknown";
-  default: return "Invalid";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "The EADL subshell designator is invalid!" );
   }
 }
 
 } // end Data namespace
+
+namespace Utility{
+
+// Convert a Data::SubshellType to a string
+std::string ToStringTraits<Data::SubshellType>::toString(
+                                            const Data::SubshellType subshell )
+{
+  switch( subshell )
+  {
+  case Data::K_SUBSHELL: return "K";
+  case Data::L1_SUBSHELL: return "L1";
+  case Data::L2_SUBSHELL: return "L2";
+  case Data::L3_SUBSHELL: return "L3";
+  case Data::M1_SUBSHELL: return "M1";
+  case Data::M2_SUBSHELL: return "M2";
+  case Data::M3_SUBSHELL: return "M3";
+  case Data::M4_SUBSHELL: return "M4";
+  case Data::M5_SUBSHELL: return "M5";
+  case Data::N1_SUBSHELL: return "N1";
+  case Data::N2_SUBSHELL: return "N2";
+  case Data::N3_SUBSHELL: return "N3";
+  case Data::N4_SUBSHELL: return "N4";
+  case Data::N5_SUBSHELL: return "N5";
+  case Data::N6_SUBSHELL: return "N6";
+  case Data::N7_SUBSHELL: return "N7";
+  case Data::O1_SUBSHELL: return "O1";
+  case Data::O2_SUBSHELL: return "O2";
+  case Data::O3_SUBSHELL: return "O3";
+  case Data::O4_SUBSHELL: return "O4";
+  case Data::O5_SUBSHELL: return "O5";
+  case Data::O6_SUBSHELL: return "O6";
+  case Data::O7_SUBSHELL: return "O7";
+  case Data::O8_SUBSHELL: return "O8";
+  case Data::O9_SUBSHELL: return "O9";
+  case Data::P1_SUBSHELL: return "P1";
+  case Data::P2_SUBSHELL: return "P2";
+  case Data::P3_SUBSHELL: return "P3";
+  case Data::P4_SUBSHELL: return "P4";
+  case Data::P5_SUBSHELL: return "P5";
+  case Data::P6_SUBSHELL: return "P6";
+  case Data::P7_SUBSHELL: return "P7";
+  case Data::P8_SUBSHELL: return "P8";
+  case Data::P9_SUBSHELL: return "P9";
+  case Data::P10_SUBSHELL: return "P10";
+  case Data::P11_SUBSHELL: return "P11";
+  case Data::Q1_SUBSHELL: return "Q1";
+  case Data::Q2_SUBSHELL: return "Q2";
+  case Data::Q3_SUBSHELL: return "Q3";
+  case Data::UNKNOWN_SUBSHELL: return "Unknown";
+  case Data::INVALID_SUBSHELL: return "Invalid";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "The requested subshell type is not supported! " );
+  }
+}
+
+// Place the Data::SubshellType in a stream
+void ToStringTraits<Data::SubshellType>::toStream(
+                               std::ostream& os, const Data::SubshellType obj )
+{
+  os << ToStringTraits<Data::SubshellType>::toString( obj );
+}
+
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end Data_Subshell.cpp

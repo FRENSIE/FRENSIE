@@ -10,11 +10,11 @@
 #define DATA_ENDF_FISSION_YIELDS_HELPER_WRAPPERS_HPP
 
 extern "C" {
-  void skipEndfFissionYieldsFirstHeader( const int file_id ); 
-  void readEndfFissionYieldsHeader( const int file_id, int* zaid, int* number_energies ); 
-  void readEndfFissionYieldsDataHeader( const int file_id, int* number_data_sets, double* energy ); 
-  void readEndfFissionYieldsData( const int file_id , 
-                                  const int* number_data_sets, 
+  void skipEndfFissionYieldsFirstHeader( const int file_id );
+  void readEndfFissionYieldsHeader( const int file_id, int* zaid, int* number_energies );
+  void readEndfFissionYieldsDataHeader( const int file_id, int* number_data_sets, double* energy );
+  void readEndfFissionYieldsData( const int file_id ,
+                                  const int* number_data_sets,
                                         int* zaid,
                                         int* meta_state,
                                         double* yield,
@@ -24,6 +24,6 @@ extern "C" {
 #endif // end DATA_ENDF_FISSION_YIELDS_HELPER_WRAPPER_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_ENDFFisionYieldsHelperWrappers.hpp
+// end Data_ENDFFissionYieldsHelperWrappers.hpp
 //---------------------------------------------------------------------------//
 

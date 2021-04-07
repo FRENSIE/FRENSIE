@@ -25,7 +25,7 @@
 namespace Geometry{
 
 /*! \brief Eighth space enumeration
- * 
+ *
  * Assigning the booleans in this order assures that the octants
  * are iterated through in counter-clockwise order w.r.t. the x-y plane.
  */
@@ -84,9 +84,9 @@ public:
 		     const OrdinalType second_surface_id,
 		     const OrdinalType third_surface_id,
 		     const bool is_star_corner = false );
-  
+
   //! Copy constructor
-  IntersectionPoint( const IntersectionPoint<OrdinalType,ScalarType> 
+  IntersectionPoint( const IntersectionPoint<OrdinalType,ScalarType>
 		     &source_point );
 
   //! Destructor
@@ -101,11 +101,11 @@ public:
   const ScalarType& operator[]( const ordinalType index ) const;
 
   //! Equality of two intersection points
-  bool operator==( 
+  bool operator==(
 	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
 
   //! Inequality of two intersection points
-  bool operator!=( 
+  bool operator!=(
 	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
 
   //! X coordinate access method
@@ -143,7 +143,7 @@ public:
 		      &test_point ) const;
 
   //! Test if this point lies on the same curve as another intersection point
-  bool isOnSameCurve( const IntersectionPoint<OrdinalType,ScalarType> 
+  bool isOnSameCurve( const IntersectionPoint<OrdinalType,ScalarType>
 		      &test_point ) const;
 
   //! Test if the intersection point is a real intersection point on a cell
@@ -151,7 +151,7 @@ public:
   bool isRealIntersectionPoint( const Cell &cell ) const;
 
   //! Get the unshared surface id between this point and another point
-  OrdinalType getUnsharedSurfaceId( 
+  OrdinalType getUnsharedSurfaceId(
 			        const IntersectionPoint<OrdinalType,ScalarType>
 				&connected_point ) const;
 
@@ -159,9 +159,9 @@ public:
   void print( std::ostream &os ) const;
 
 protected:
-  
+
   // Get the number of shared surfaces between two intersection points
-  static unsigned getNumberOfSharedSurfaces( 
+  static unsigned getNumberOfSharedSurfaces(
 	       const IntersectionPoint<OrdinalType,ScalarType> &first_point,
 	       const IntersectionPoint<OrdinalType,ScalarType> &second_point );
 
@@ -176,7 +176,7 @@ protected:
   static unsigned getPointTestFunctionMultiplier( const Octant octant );
 
 private:
-  
+
   // Intersection point
   ScalarType d_x;
   ScalarType d_y;
@@ -185,7 +185,7 @@ private:
   // Intersection point connectivity data
   OrdinalType d_first_surface_id;
   OrdinalType d_second_surface_id;
-  OrdinalType d_third_surface_id; 
+  OrdinalType d_third_surface_id;
 
   // It must be recorded whether or not this point is a star corner
   bool d_is_star_corner;

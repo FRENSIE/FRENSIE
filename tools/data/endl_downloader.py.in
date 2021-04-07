@@ -1,0 +1,214 @@
+#!@PYTHON_EXECUTABLE@
+##---------------------------------------------------------------------------##
+##!
+##! \file   endl_downloader.py
+##! \author Luke Kersting, Alex Robinson
+##! \brief  tool to generate a shell script that will download the endl data
+##!
+##---------------------------------------------------------------------------##
+
+import sys
+from optparse import *
+
+elemental_information = {"H":   "001000",
+                         "He":  "002000",
+                         "Li":  "003000",
+                         "Be":  "004000",
+                         "B" :  "005000",
+                         "C" :  "006000",
+                         "N" :  "007000",
+                         "O" :  "008000",
+                         "F" :  "009000",
+                         "Ne":  "010000",
+                         "Na":  "011000",
+                         "Mg":  "012000",
+                         "Al":  "013000",
+                         "Si":  "014000",
+                         "P" :  "015000",
+                         "S" :  "016000",
+                         "Cl":  "017000",
+                         "Ar":  "018000",
+                         "K" :  "019000",
+                         "Ca":  "020000",
+                         "Sc":  "021000",
+                         "Ti":  "022000",
+                         "V" :  "023000",
+                         "Cr":  "024000",
+                         "Mn":  "025000",
+                         "Fe":  "026000",
+                         "Co":  "027000",
+                         "Ni":  "028000",
+                         "Cu":  "029000",
+                         "Zn":  "030000",
+                         "Ga":  "031000",
+                         "Ge":  "032000",
+                         "As":  "033000",
+                         "Se":  "034000",
+                         "Br":  "035000",
+                         "Kr":  "036000",
+                         "Rb":  "037000",
+                         "Sr":  "038000",
+                         "Y" :  "039000",
+                         "Zr":  "040000",
+                         "Nb":  "041000",
+                         "Mo":  "042000",
+                         "Tc":  "043000",
+                         "Ru":  "044000",
+                         "Rh":  "045000",
+                         "Pd":  "046000",
+                         "Ag":  "047000",
+                         "Cd":  "048000",
+                         "In":  "049000",
+                         "Sn":  "050000",
+                         "Sb":  "051000",
+                         "Te":  "052000",
+                         "I" :  "053000",
+                         "Xe":  "054000",
+                         "Cs":  "055000",
+                         "Ba":  "056000",
+                         "La":  "057000",
+                         "Ce":  "058000",
+                         "Pr":  "059000",
+                         "Nd":  "060000",
+                         "Pm":  "061000",
+                         "Sm":  "062000",
+                         "Eu":  "063000",
+                         "Gd":  "064000",
+                         "Tb":  "065000",
+                         "Dy":  "066000",
+                         "Ho":  "067000",
+                         "Er":  "068000",
+                         "Tm":  "069000",
+                         "Yb":  "070000",
+                         "Lu":  "071000",
+                         "Hf":  "072000",
+                         "Ta":  "073000",
+                         "W" :  "074000",
+                         "Re":  "075000",
+                         "Os":  "076000",
+                         "Ir":  "077000",
+                         "Pt":  "078000",
+                         "Au":  "079000",
+                         "Hg":  "080000",
+                         "Tl":  "081000",
+                         "Pb":  "082000",
+                         "Bi":  "083000",
+                         "Po":  "084000",
+                         "At":  "085000",
+                         "Rn":  "086000",
+                         "Fr":  "087000",
+                         "Ra":  "088000",
+                         "Ac":  "089000",
+                         "Th":  "090000",
+                         "Pa":  "091000",
+                         "U" :  "092000",
+                         "Np":  "093000",
+                         "Pu":  "094000",
+                         "Am":  "095000",
+                         "Cm":  "096000",
+                         "Bk":  "097000",
+                         "Cf":  "098000",
+                         "Es":  "099000",
+                         "Fm":  "100000"}
+
+def generateBashScript( element_list ):
+
+    # The site base path
+    #site_base_path = "https://www.nndc.bnl.gov/endf/epics/ENDL2017/"
+    site_base_path = "https://www-nds.iaea.org/epics2014/ENDL/"
+    
+    print "#!/bin/bash"
+    print "##---------------------------------------------------------------------------##"
+    print "## ENDL Data Downloader"
+    print "##---------------------------------------------------------------------------##\n"
+    print "# Set data directory path."
+    print "#echo -n \"Enter cross_section.xml directory: > \""
+    print "#read cross_section_directory"
+    print "endl_data_dir=./endldata\n"
+    
+    print "while getopts ld: option"
+    print "do case \"${option}\""
+    print "in" 
+    print "d) cross_section_directory=${OPTARG};;"
+    print "l) endl_data_dir=./;;"
+    print "esac" 
+    print "done" 
+    
+    print "if [ -d \"$cross_section_directory\" ]; then" 
+    
+    print "  cd $cross_section_directory\n" 
+    print "  if [ ! -d \"$endl_data_dir\" ]; then" 
+    print "    mkdir \"$endl_data_dir\"" 
+    print "  fi\n" 
+    print "  cd \"$endl_data_dir\"\n" 
+    
+    print "  if [ ! -d ./eadl ]; then" 
+    print "    mkdir eadl" 
+    print "  fi\n" 
+    
+    print "  if [ ! -d ./epdl ]; then" 
+    print "    mkdir epdl" 
+    print "  fi\n" 
+    
+    print "  if [ ! -d ./eedl ]; then" 
+    print "    mkdir eedl" 
+    print "  fi\n" 
+
+    for element_name in element_list:
+        if element_name not in elemental_information:
+            print element_name, " is not valid!"
+            sys.exit(1)
+
+        element = "za" + elemental_information[element_name]
+
+        print "  printf \"Getting " + element + " data: \\t\""
+
+        print "  if [ -f ./eadl/" + element + " ]; then" 
+        print "    printf \"EADL data already exists\\n\"\t"
+        print "  else" 
+        print "    cd ./eadl" 
+        print "    wget " + site_base_path + "EADL/" + element
+        print "    cd ../" 
+        print "  fi\n" 
+        
+        print "  if [ -f ./epdl/" + element + " ]; then" 
+        print "    printf \"EPDL data already exists\\n\"\t" 
+        print "  else" 
+        print "    cd ./epdl" 
+        print "    wget " + site_base_path + "EPDL/" + element
+        print "    cd ../" 
+        print "  fi\n" 
+        
+        print "  if [ -f ./eedl/" + element + " ]; then" 
+        print "    printf \"EEDL data already exists\\n\"\t" 
+        print "  else" 
+        print "    cd ./eedl" 
+        print "    wget " + site_base_path + "EEDL/" + element
+        print "    cd ../" 
+        print "  fi\n"
+
+        print "  printf \"done \\n\"\n"
+        
+    print "else" 
+    print "  printf \"ERROR: Invalid cross_section_directory!\\n\""
+    print "  printf \"  endl_downloader.sh -d cross_section_directory\\n\""
+    print "  exit 1"
+    print "fi\n" 
+
+##---------------------------------------------------------------------------##
+## Custom main
+##---------------------------------------------------------------------------##
+if __name__ == "__main__":
+
+    parser = OptionParser()
+    parser.add_option("-l", "--element_list", type="string", dest="element_list",
+                      help="The list of elements that need data.")
+    parser.add_option("-a", "--all", action="store_true", dest="use_all_elements", default=False,
+                      help="All elements need data.")
+    options,args = parser.parse_args()
+
+    if options.use_all_elements:
+        generateBashScript( list(elemental_information.keys()) )
+    else:
+        generateBashScript( options.element_list.split( "," ) )
+

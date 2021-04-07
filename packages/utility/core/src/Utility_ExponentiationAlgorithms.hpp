@@ -9,20 +9,32 @@
 #ifndef UTILITY_EXPONENTIATION_ALGORITHMS_HPP
 #define UTILITY_EXPONENTIATION_ALGORITHMS_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
+// FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
+
 namespace Utility{
 
 namespace Exponentiation{
 
 //! Recursive exponentiation algorithm
 template<typename BaseScalarType, typename ExponentOrdinalType>
-BaseScalarType recursive( const BaseScalarType x, 
-			  const ExponentOrdinalType y );
+typename std::enable_if<std::is_arithmetic<BaseScalarType>::value,BaseScalarType>::type
+recursive( const BaseScalarType x, const ExponentOrdinalType y );
+
+//! Recursive exponentiation algorithm (compile-time)
+template<size_t N, typename BaseScalarType>
+typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type
+recursive( const BaseScalarType x );
 
 //! Recursive modular exponentiation algorithm
 template<typename OrdinalType>
-OrdinalType recursiveMod( const OrdinalType x, 
-			  const OrdinalType y,
-			  const OrdinalType m );
+typename std::enable_if<std::is_integral<OrdinalType>::value,OrdinalType>::type
+recursiveMod( const OrdinalType x,
+              const OrdinalType y,
+              const OrdinalType m );
 
 } // end Exponentiation namespace
 

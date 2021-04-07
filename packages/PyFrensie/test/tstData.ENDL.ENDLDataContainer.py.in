@@ -1,0 +1,388 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ENDL.ENDLDataContainer class unit tests
+#  \file   tstData.ENDL.ENDLDataContainer.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.ENDL.ENDLDataContainer class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--endlfile", type="string", dest="endlfile",
+                  help="set the ENDL file to test.")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ENDL = importPyFrensieModuleFromBuildDir('Data.ENDL')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ENDLDataContainer
+class ENDLDataContainerTestCase(unittest.TestCase):
+    "TestCase for Data.ENDL.ENDLDataContainer class"
+    @classmethod
+    def setUpClass(cls):
+        cls.endl_container = ENDL.ENDLDataContainer( options.endlfile )
+
+    def testConstructor(self):
+        "*Test Data.ENDL.ENDLDataContainer constructor"
+        self.assertTrue(isinstance(self.endl_container, ENDL.ENDLDataContainer))
+
+    def testGetArchiveName(self):
+        "*Test Data.ENDL.ENDLDataContainer getArchiveName method"
+        self.assertEqual(self.endl_container.getArchiveName(), 'container')
+
+    def testGetAtomicNumber(self):
+        "*Test Data.ENDL.ENDLDataContainer getAtomicNumber method"
+        self.assertEqual(self.endl_container.getAtomicNumber(), 1)
+
+    def testGetAtomicWeight(self):
+        "*Test Data.ENDL.ENDLDataContainer getAtomicWeight method"
+        self.assertEqual(self.endl_container.getAtomicWeight(), 1.0079)
+
+    def testRelaxationData(self):
+        "*Test Data.ENDL.ENDLDataContainer get relaxation data methods"
+        self.assertEqual(len(self.endl_container.getSubshells() ), 1 )
+        self.assertTrue(1 in self.endl_container.getSubshells() )
+        self.assertFalse(2 in self.endl_container.getSubshells() )
+        self.assertFalse(3 in self.endl_container.getSubshells() )
+
+        self.assertEqual(self.endl_container.getSubshellOccupancy( 1 ), 1 )
+        self.assertEqual(self.endl_container.getSubshellBindingEnergy( 1 ), 1.361e-5 )
+        self.assertEqual(self.endl_container.getSubshellKineticEnergy( 1 ),1.361e-5 )
+        self.assertEqual(self.endl_container.getSubshellAverageRadius( 1 ), 7.9356e-9 )
+
+    def testCoherentPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer coherent photon data methods"
+        data = self.endl_container.getCoherentCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 362 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getCoherentCrossSection()
+        self.assertEqual( len(data), 362 )
+        self.assertEqual( data[0], 9.887553e-06 )
+        self.assertEqual( data[len(data)-1], 4.62616e-16 )
+
+        data = self.endl_container.getCoherentFormFactorArgument()
+        self.assertEqual( len(data), 90 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1e17 )
+
+        data = self.endl_container.getCoherentFormFactor()
+        self.assertEqual( len(data), 90 )
+        self.assertEqual( data[0], 1.0 )
+        self.assertEqual( data[len(data)-1], 8.1829e-39 )
+
+        data = self.endl_container.getCoherentImaginaryAnomalousFactorIncidentEnergy()
+        self.assertEqual( len(data), 194 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 10.0 )
+
+        data = self.endl_container.getCoherentImaginaryAnomalousFactor()
+        self.assertEqual( len(data), 194 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 6.26566e-12 )
+
+        data = self.endl_container.getCoherentRealAnomalousFactorIncidentEnergy()
+        self.assertEqual( len(data), 308 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 10.0 )
+
+        data = self.endl_container.getCoherentRealAnomalousFactor()
+        self.assertEqual( len(data), 308 )
+        self.assertEqual( data[0], -9.96148299999999987e-01 )
+        self.assertEqual( data[len(data)-1], -2.66550900000000010e-05 )
+
+        data = self.endl_container.getCoherentAveragePhotonIncidentEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getCoherentAveragePhotonEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+    def testIncoherentPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer incoherent photon data methods"
+        data = self.endl_container.getIncoherentCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentCrossSection()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 9.5623e-08 )
+        self.assertEqual( data[len(data)-1], 1.7042e-05 )
+
+        data = self.endl_container.getIncoherentScatteringFunctionArgument()
+        self.assertEqual( len(data), 94 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1e17 )
+
+        data = self.endl_container.getIncoherentScatteringFunction()
+        self.assertEqual( len(data), 94 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.0 )
+
+        data = self.endl_container.getIncoherentAveragePhotonIncidentEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentAveragePhotonEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 9.99997299999999901e-07 )
+        self.assertEqual( data[len(data)-1], 9.95531699999999910e+03 )
+
+        data = self.endl_container.getIncoherentAverageElectronIncidentEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentAverageElectronEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 2.74027e-12 )
+        self.assertEqual( data[len(data)-1], 9.00446799999999930e+04 )
+
+    def testPhotoelectricPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer Photoelectric photon data methods"
+        data = self.endl_container.getPhotoelectricCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 73 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getPhotoelectricCrossSection()
+        self.assertEqual( len(data), 73 )
+        self.assertEqual( data[0], 6.305834e6 )
+        self.assertEqual( data[len(data)-1], 7.736e-15 )
+
+        data = self.endl_container.getPhotoelectricAverageResidualIncidentEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getPhotoelectricAverageResidualEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1.361e-05 )
+
+        data = self.endl_container.getPhotoelectricAveragePhotonsIncidentEnergy()
+        self.assertEqual( len(data), 0 )
+
+        data = self.endl_container.getPhotoelectricAveragePhotonsEnergy()
+        self.assertEqual( len(data), 0 )
+
+        data = self.endl_container.getPhotoelectricAverageElectronsIncidentEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05)
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container. getPhotoelectricAverageElectronsEnergy()
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+    def testSubshellPhotoelectricPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer subshell Photoelectric photon data methods"
+        data = self.endl_container.getPhotoelectricCrossSectionEnergyGrid(1)
+        self.assertEqual( len(data), 73 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getPhotoelectricCrossSection(1)
+        self.assertEqual( len(data), 73 )
+        self.assertEqual( data[0], 6.305834e6 )
+        self.assertEqual( data[len(data)-1], 7.736e-15 )
+
+        data = self.endl_container.getPhotoelectricAverageResidualIncidentEnergy(1)
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getPhotoelectricAverageResidualEnergy(1)
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05 )
+        self.assertEqual( data[len(data)-1], 1.361e-05 )
+
+        data = self.endl_container.getPhotoelectricAverageElectronsIncidentEnergy(1)
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 1.361e-05)
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container. getPhotoelectricAverageElectronsEnergy(1)
+        self.assertEqual( len(data), 2 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+
+    def testIncoherentPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer incoherent photon data methods"
+        data = self.endl_container.getIncoherentCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentCrossSection()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 9.5623e-08 )
+        self.assertEqual( data[len(data)-1], 1.7042e-05 )
+
+        data = self.endl_container.getIncoherentScatteringFunctionArgument()
+        self.assertEqual( len(data), 94 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1e17 )
+
+        data = self.endl_container.getIncoherentScatteringFunction()
+        self.assertEqual( len(data), 94 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.0 )
+
+        data = self.endl_container.getIncoherentAveragePhotonIncidentEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentAveragePhotonEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 9.99997299999999901e-07 )
+        self.assertEqual( data[len(data)-1], 9.95531699999999910e+03 )
+
+        data = self.endl_container.getIncoherentAverageElectronIncidentEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 1e-6 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getIncoherentAverageElectronEnergy()
+        self.assertEqual( len(data), 111 )
+        self.assertEqual( data[0], 2.74027e-12 )
+        self.assertEqual( data[len(data)-1], 9.00446799999999930e+04 )
+
+    def testPairProductionPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer Pair Production photon data methods"
+        data = self.endl_container.getPairProductionCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 83 )
+        self.assertEqual( data[0], 1.022)
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getPairProductionCrossSection()
+        self.assertEqual( len(data), 83 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 9.60100000000000016e-03 )
+
+    def testTripletProductionPhotonData(self):
+        "*Test Data.ENDL.ENDLDataContainer Triplet Production photon data methods"
+        data = self.endl_container.getTripletProductionCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 77 )
+        self.assertEqual( data[0], 2.044 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getTripletProductionCrossSection()
+        self.assertEqual( len(data), 77 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 1.11e-02 )
+
+    def testElasticElectronData(self):
+        "*Test Data.ENDL.ENDLDataContainer Elastic Electron data methods"
+        data = self.endl_container.getElasticEnergyGrid()
+        self.assertEqual( len(data), 101 )
+        self.assertEqual( data[0], 1e-5 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getCutoffElasticCrossSection()
+        self.assertEqual( len(data), 101 )
+        self.assertEqual( data[0], 2.74896e+08 )
+        self.assertEqual( data[len(data)-1], 1.31176e-05 )
+
+        data = self.endl_container.getTotalElasticCrossSection()
+        self.assertEqual( len(data), 101 )
+        self.assertEqual( data[0], 2.74896e+08 )
+        self.assertEqual( data[len(data)-1], 1.29871e+04 )
+
+        data = self.endl_container.getCutoffElasticAngles()
+        self.assertEqual( len(data), 16 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[1e5]), 96 )
+
+        data = self.endl_container.getCutoffElasticPDF()
+        self.assertEqual( len(data), 16 )
+        self.assertEqual( len(data[1e-5]), 2 )
+        self.assertEqual( len(data[1e5]), 96 )
+
+    def testElectroionizationElectronData(self):
+        "*Test Data.ENDL.ENDLDataContainer Electroionization Electron data methods"
+        data = self.endl_container.getElectroionizationCrossSectionEnergyGrid(1)
+        self.assertEqual( len(data), 35 )
+        self.assertEqual( data[0], 1.361e-5 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getElectroionizationCrossSection(1)
+        self.assertEqual( len(data), 35 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 8.28924e4 )
+
+    def testBremsstrahlungElectronData(self):
+        "*Test Data.ENDL.ENDLDataContainer Bremsstrahlung Electron data methods"
+        data = self.endl_container.getBremsstrahlungCrossSectionEnergyGrid()
+        self.assertEqual( len(data), 96 )
+        self.assertEqual( data[0], 1e-5 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getBremsstrahlungCrossSection()
+        self.assertEqual( len(data), 96 )
+        self.assertEqual( data[0], 2.97832e1 )
+        self.assertEqual( data[len(data)-1], 9.90620999999999974e-01 )
+
+    def testAtomicExcitationElectronData(self):
+        "*Test Data.ENDL.ENDLDataContainer AtomicExcitation Electron data methods"
+        data = self.endl_container.getAtomicExcitationEnergyGrid()
+        self.assertEqual( len(data), 170 )
+        self.assertEqual( data[0], 1.361e-5 )
+        self.assertEqual( data[len(data)-1], 1e5 )
+
+        data = self.endl_container.getAtomicExcitationCrossSection()
+        self.assertEqual( len(data), 170 )
+        self.assertEqual( data[0], 0.0 )
+        self.assertEqual( data[len(data)-1], 8.14416e+04 )
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(ENDLDataContainerTestCase))
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.ENDL \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ENDL.ENDLDataContainer.py
+#-----------------------------------------------------------------------------#

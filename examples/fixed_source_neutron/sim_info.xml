@@ -1,3 +1,0 @@
-<ParameterList name="Simulation Info">
-  <Parameter name="Histories" type="unsigned int" value="1000000"/>
-</ParameterList>

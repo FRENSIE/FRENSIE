@@ -8,19 +8,19 @@
  * A framework is a platform for developing software applications. A framework
  * is similar to an application programming interface (API) in that a set of
  * "tools" are provided to help develop software. Typically, a framework will
- * include an API, which provides access to elements supported by the 
- * framework along with other tools to support software development.  
+ * include an API, which provides access to elements supported by the
+ * framework along with other tools to support software development.
  *
- * Using a framework to develop software has many advantages. First, 
- * frameworks promote the development of modular and therefore reusable code. 
+ * Using a framework to develop software has many advantages. First,
+ * frameworks promote the development of modular and therefore reusable code.
  * This further allows developers to write less code to achieve their goals.
- * Frameworks also promote the development of robust and reliable code through 
+ * Frameworks also promote the development of robust and reliable code through
  * the use of unit and integral testing. Code that is designed to be reusable
  * must be reliable or developers will not use it.
  *
  * The use of object-oriented programming practices within a framework over
- * procedure-oriented programming has many advantages as well. To begin, 
- * the creation of objects (classes) encapsulates data and information. 
+ * procedure-oriented programming has many advantages as well. To begin,
+ * the creation of objects (classes) encapsulates data and information.
  * Encapsulation further enforces data abstraction and promotes code reuse.
  * Objects also provide a flexible mechanism for modeling real-world objects.
  * The relationships between real-world objects can be further modeled with
@@ -28,7 +28,7 @@
  * (virtual class interfaces) makes it possible to modify and extend
  * objects. Software complexity is also reduced because most (if not all)
  * state information is encapsulated within each object, rather than floating
- * around as global variables. 
+ * around as global variables.
  *
  * \section frensie_sec FRENSIE
  * The Framework for REsearch in Nuclear ScIence and Engineering (FRENSIE)
@@ -38,143 +38,99 @@
  * choice of coding language is very important if extensibility is a priority.
  * As explained in the \ref framework_sec "last" section, it is much easier
  * to make object-oriented software extensible so an object-oriented language
- * is a natural choice. Two popular software languages commonly used to 
+ * is a natural choice. Two popular software languages commonly used to
  * develop scientific software are C++ and Fortran. Fortran isn't commonly
  * thought of as an object-oriented language. However, modern Fortran (2003)
  * is fully object-oriented. Making a choice between the two came down to
  * the support in C++ for generic programming (templates), which currently
- * doesn't have an equivalent in Fortran. In some low-level functions, 
- * Fortran 2003 is used. The bulk of the code in FRENSIE is written in C++. 
+ * doesn't have an equivalent in Fortran. In some low-level functions,
+ * Fortran 2003 is used. The bulk of the code in FRENSIE is written in C++.
+ * Python is used as the primary user interface to the C++ API.
  *
  * In addition to coding language, the organization of the framework and the
- * software design strategies employed are also very important for 
+ * software design strategies employed are also very important for
  * extensibility and code reuse. In the following subsections, both of these
- * topics will be discussed. The code testing practices that have been 
+ * topics will be discussed. The code testing practices that have been
  * adopted along with the specific development tools that are used will also
  * be discussed.
  *
  * \subsection frensie_org_subsec Organization and Package Overview
- * At the highest level, the framework is organized into packages. Each 
+ * At the highest level, the framework is organized into packages. Each
  * package has a particular, clearly defined purpose. Packages are often
  * further divided into subpackages and in some cases, sub-subpackages. As with
- * the class dependency graph, the package dependency graph should be a 
- * directed acyclic. Cyclical dependencies indicate code design failures and 
- * should be fixed immediately. All code within a FRENSIE package is also 
- * contained within a common namespace to avoid name collisions with code in 
- * other packages. The following packages are currently contained within 
+ * the class dependency graph, the package dependency graph should be a
+ * directed acyclic. Cyclical dependencies indicate code design failures and
+ * should be fixed immediately. All code within a FRENSIE package is also
+ * contained within a common namespace to avoid name collisions with code in
+ * other packages. The following packages are currently contained within
  * FRENSIE:
  * <ul>
  *  <li> \subpage utility "utility" </li>
  *  <li> \subpage data "data" </li>
  *  <li> \subpage geometry "geometry" </li>
  *  <li> \subpage monte_carlo "monte carlo" </li>
+ *  <li> \subpage data_gen "data gen" </li>
+ *  <li> \subpage pyfrensie "PyFrensie" </li>
  * </ul>
- * 
+ *
  * The utility package provides a collection of low-level classes and functions
- * that can be useful in a variety of applications. Some useful algorithms 
- * include binary searching, efficient exponentiation and numeric quadrature. 
+ * that can be useful in a variety of applications. Some useful algorithms
+ * include binary searching, efficient exponentiation and numeric quadrature.
  * Some useful classes include objects that provide stream support
- * (Utility::PrintableObject), XML support 
- * (Utilitiy::ParameterListCompatibleObject), 
- * HDF5 support (Utility::HDF5FileHandler), random number generation 
- * (Utility::RandomNumberGenerator) and sampling from generic distributions 
+ * (Utility::PrintableObject), XML support
+ * (Utilitiy::ParameterListCompatibleObject),
+ * HDF5 support (Utility::HDF5FileHandler), random number generation
+ * (Utility::RandomNumberGenerator) and sampling from generic distributions
  * (Utility::OneDDistribution).
  *
- * The data package provides a collection of data file readers.Currently 
- * support for ACE files (Data::ACEFileHandler), EPDL files 
- * (Data::ENDLIB97FileHandler) and some ENDF files 
- * (Data::ENDFFissionYieldsFileHandler) is provided.
+ * The data package provides a collection of data file readers.Currently
+ * support for ACE files (Data::ACEFileHandler), EPDL files
+ * (Data::ENDLIB97FileHandler) and native files.
  *
- * The geometry package provides a host of ray tracing
- * capabilities. The most important low-level class provided by this package
- * is the Geometry::Ray class. It stores the ray state information and is
- * used by the generic interface for ray tracing on a geometry model 
- * (Geometry::ModuleInterface). This generic interface for ray tracing can be 
- * specialized for a specific tool. Currently, the interface has been 
- * specialized for the DagMC tool (Geometry::ModuleInterface<moab::DagMC>), 
- * which allows one to ray trace on CAD geometries. The interface is also being
- * specialized for the ROOT tool. Any code that uses the generic interface will
- * be completely agnostic to the type of geometry and ray tracing tool that is 
- * ultimately used. 
+ * The geometry package provides a host of geometry loading, querying and ray
+ * tracing capabilities. 
  *
  * The functionality necessary to perform Monte Carlo particle simulations
  * is provided by the monte carlo package. Arguably the
- * two most important low-level classes are the particle state class 
+ * two most important low-level classes are the particle state class
  * (MonteCarlo::ParticleState) and the particle bank class
- * (MonteCarlo::ParticleBank). Instances of these classes are operated on 
+ * (MonteCarlo::ParticleBank). Instances of these classes are operated on
  * by all of the other classes provided by the package. Other classes are
  * also provided for modeling individual nuclides, materials, and a variety of
  * estimators and sources. A series of manager classes are also provided that
- * manage the simulation of particles (MonteCarlo::ParticleSimulationManager).
- *
- * \subsection frensie_high_design_subsec High-Level Software Design Strategy
- * At the lowest level, all software is simply a collection of functions and
- * procedures. In object-oriented languages, functions and procedures with a
- * single, coherent purpose can then be organized into classes. In FRENSIE,
- * individual classes, functions and procedures can then be organized into
- * packages that also have a coherent purpose. The two types of packages that
- * exist in FRENSIE are <em>white-box</em> packages and <em>black-box</em>
- * packages, which are referred to as <em>modules</em> (not to be confused with
- * Fortran modules). <em>White-box</em> packages are like any other software
- * library and are designed to provide a collection of useful classes and
- * functions. <em>Modules</em> are designed to be interacted with through a 
- * single generic interface. The decision to design a package as a 
- * <em>white-box</em> or a <em>module</em> depends on many factors. However, 
- * the more coherent the purpose of the package, the more likely that it is
- * appropriate to design it as a <em>module</em>. 
- *
- * Both package types have advantages and disadvantages in terms of
- * extensibility. In <em>white-box</em> packages, new classes and functions
- * can simply be added. However, the addition of new classes will typically
- * result in greater code complexity and possibly the need for propagating
- * changes through to other code that uses the package. In <em>modules</em>, 
- * new functions can be added to the generic interface to provide additional
- * features. However, this presents the same disadvantage as with 
- * <em>white-box</em> packages. The power of the module becomes apparent when
- * one simply wants a new implementation of the interface. Then no changes
- * are necessary in other code that uses the module (This is very similar
- * to the idea of an abstract base class. However, instead of a single class
- * interface, the interface to the entire package has been abstracted). The
- * best example of the <em>module</em> in FRENSIE is the geometry package.
- * The interface to this package is provided in the Geometry::ModuleInterface.
+ * manage the simulation of particles.
  *
  * \subsection frensie_low_design_subsec Low-Level Software Design Strategy
  * FRENSIE provides support for a software design strategy called
- * <em>design-by-contract</em> (DBC). DBC prescribes that software designers 
- * should define formal, precise and verifiable interface specifications for 
+ * <em>design-by-contract</em> (DBC). DBC prescribes that software designers
+ * should define formal, precise and verifiable interface specifications for
  * software components (e.g. functions and procedures). These specifications are
- * referred to as contracts. The three contract categories are preconditions, 
- * postconditions, and invariants. 
+ * referred to as contracts. The three contract categories are preconditions,
+ * postconditions, and invariants.
  *
  * FRENSIE developers are highly encouraged to take advantage of the DBC
  * support provided by the framework. Many errors occur when implicit function
- * contracts are broken. When these contracts are made explicit using DBC, 
- * many errors can be caught without the need for even stepping through a 
- * debugger. The FRENSIE developers who have employed the DBC strategy have 
+ * contracts are broken. When these contracts are made explicit using DBC,
+ * many errors can be caught without the need for even stepping through a
+ * debugger. The FRENSIE developers who have employed the DBC strategy have
  * realized a significant reduction in debugging time and therefore greater
- * productivity. 
+ * productivity.
  *
- * When a FRENSIE developer has incorporated explicit contracts into their 
+ * When a FRENSIE developer has incorporated explicit contracts into their
  * software, the checking of these contracts can be activated at configure
- * time by setting the <em>FRENSIE_ENABLE_DBC</em> CMake variable to 
+ * time by setting the <em>FRENSIE_ENABLE_DBC</em> CMake variable to
  * <em>ON</em>. By default, DBC checks are deactivated due to the overhead that
- * they incur. For more information on adding contracts to software, please 
- * refer to the \ref contract_exceptions_macros "Design-by-Contract" page. 
+ * they incur. For more information on adding contracts to software, please
+ * refer to the \ref contract_exceptions_macros "Design-by-Contract" page.
  *
  * \subsection frensie_test_subsec Unit and Regression Testing
  * Unit testing is a very important software development practice, especially
  * in a framework such as FRENSIE where multiple developers can be working
- * on the same package or even the same piece of code. Unit tests help to 
+ * on the same package or even the same piece of code. Unit tests help to
  * ensure that a unit of code (usually an individual function or procedure)
  * behaves as expected. After a unit test has been written, it can also
  * function as a regression test, which ensures that future code development
- * does not change the expected behavior of the particular unit of code. 
- *
- * Unit testing is supported in FRENSIE using either the Teuchos unit test
- * harness or the boost unit test harness. The unit tests are integrated
- * directly into the CMake build system using CTest, which allows one to 
- * run all unit tests with ease. CTest also dumps a summary report, which 
- * can be used to quickly identify failed tests.
+ * does not change the expected behavior of the particular unit of code.
  *
  * \subsection Software Development Tools
  * Many software development tools are currently used in FRENSIE. They are
@@ -186,99 +142,69 @@
  *  <li> <a href=http://www.stack.nl/~dimitri/doxygen/>Doxygen</a> </li>
  * </ul>
  *
- * Git is the version control software employed by the FRENSIE developers. 
- * Git is very feature rich and therefore rather complicated. New developers
- * are encouraged to go through a 
- * <a href=https://www.atlassian.com/git/tutorials/>git tutorial</a>  before 
- * checking out the FRENSIE git repo. To help with collaboration, the FRENSIE
- * git repo is stored on <a href=https://github.com/>GitHub</a>. For more on
- * the collaboration workflow that is employed, please refer to the
- * \ref frensie_collab_workflow "collaboration workflow" section. 
- *
- * CMake is a modern, cross-platform build system. It is used to build the 
- * FRENSIE packages and tools and to run the tests registered with CTest. 
- *
- * Finally, Doxygen is a code documentation tool. Using special commands within
- * code comments, a developer can easily create API documentation. Usually
- * API documentation and code development are separate activities. Doxygen
- * allows the two to be combined, which greatly reduces errors in
- * documentation.
- *
  * \subsection parallel_considerations Parallel Considerations
  * FRENSIE is written to take advantage of both shared memory systems and
  * distributed memory systems. There is currently no support for GPU's or
  * co-processors (MIC chips). Some considerations that developer's should keep
- * in mind when writing code that will run in parallel will be discussed 
- * briefly. 
+ * in mind when writing code that will run in parallel will be discussed
+ * briefly.
  *
- * Developers that write code that runs in parallel on a shared memory system 
- * have to be very careful about preventing race conditions since all of the 
- * parallel threads will be accessing the same objects in memory. Read 
+ * Developers that write code that runs in parallel on a shared memory system
+ * have to be very careful about preventing race conditions since all of the
+ * parallel threads will be accessing the same objects in memory. Read
  * operations (calls to const member functions) are safe and will not result in
- * race conditions. Write operations (calls to non-const member functions) are 
+ * race conditions. Write operations (calls to non-const member functions) are
  * not safe and will likely result in race conditions. To avoid race conditions
- * developers must ensure that only one thread does the write operation at a 
- * time. Since we use <a href=http://openmp.org/wp/>OpenMP</a> to enable and 
+ * developers must ensure that only one thread does the write operation at a
+ * time. Since we use <a href=http://openmp.org/wp/>OpenMP</a> to enable and
  * manage threads, the simplest way to ensure that only one thread does a write
- * operation at a time is by placing the write operation inside of an 
+ * operation at a time is by placing the write operation inside of an
  * <b>omp critical</b> block. These blocks will degrade parallel scaling
  * efficiency so developers should try to minimize their use if possible.
  *
- * FRENSIE developers that write code that runs in parallel on a distributed 
- * memory system will be using the MPI API, or more accurately, C++ wrappers 
- * around the MPI API. FRENSIE takes advantage of the 
- * <a href=https://trilinos.org/docs/dev/packages/teuchos/doc/html/index.html#TeuchosComm_src>Teuchos Communication Subpackage</a>
- * since it provides a very nice C++ MPI wrapper. Unfortunately the 
- * package does not provide wrappers around the MPI_Probe and MPI_Iprobe
- * methods, which are used by FRENSIE. To avoid raw MPI API calls, for 
- * reasons that will be discussed shortly, wrappers for MPI_Probe and
- * MPI_Iprobe have been provided (see Utility_CommHelpers.hpp) that mimic
- * the Teuchos wrappers. If additional wrappers are needed in the future,
- * they should be added to the Utility_CommHelpers.hpp file. One of the 
- * primary benefits of using the C++ wrappers is that they can be used
- * safely whether or not FRENSIE has been built with MPI (no #ifdefs are
- * required). In addition, the C++ wrappers take advantage of the C++
- * error handler instead of the MPI error code.
+ * FRENSIE developers that write code that runs in parallel on a distributed
+ * memory system will be using custom c++ wrappers arround the MPI API, which
+ * are provided in the utility/mpi package.
  *
  * \subsection pre_release_checklist Pre-release Checklist
  * Before a new version of FRENSIE is released the following checklist
  * should be followed:
  * <ol>
- *  <li>Make sure the build number has been updated (in the Version.cmake 
+ *  <li>Make sure the build number has been updated (in the Version.cmake
  *      file).</li>
  *  <li>Make sure that all documentation is up-to-date. In addition, make
  *      sure that all new code has documentation.</li>
  *  <li>Make sure that all unit and verification tests are passing.</li>
- *  <li>Make sure that all of the example problems are up-to-date and 
+ *  <li>Make sure that all of the example problems are up-to-date and
  *      can be run.</li>
  *  <li>Make sure that the build script templates are up-to-date (in the
  *      scripts directory). </li>
- * </ol> 
+ * </ol>
  *
  *  * \section frensie_collab_workflow FRENSIE Collaboration Workflow
- * The official FRENSIE code repository is hosted on 
+ * The official FRENSIE code repository is hosted on
  * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. To check out
- * this repository, one would simply type 
+ * this repository, one would simply type
  * `git clone git@github.com:aprobinson/FRENSIE.git` in the command line.
- * While it is acceptable to check out this repository, any pushes made 
+ * While it is acceptable to check out this repository, any pushes made
  * directly to the master branch will be erased. Allowing many people to push
  * directly to the master branch has the potential to cause merge conflicts and
  * it becomes more difficult to implement quality control measures such as
- * code reviews. To avoid these problems, a combination of the 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking</a> 
- * and 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow>branching</a> 
- * workflows has been adopted for collaboration, which will be called the 
- * fork-then-branch workflow. 
+ * code reviews. To avoid these problems, a combination of the
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking</a>
+ * and
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow>branching</a>
+ * workflows has been adopted for collaboration, which will be called the
+ * fork-then-branch workflow.
  *
  * \subsection fork_setup Setting Up a Fork
- * The first step of the fork-then-branch workflow is to fork the main 
- * FRENSIE repo hosted on 
+ * The first step of the fork-then-branch workflow is to fork the main
+ * FRENSIE repo hosted on
  * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. Once the repo
  * has been forked, you will now own a copy of the FRENSIE repo. Go to the
- * GitHub page for this new fork and create a clone of it on your personal 
+ * GitHub page for this new fork and create a clone of it on your personal
  * computer: `git clone git@github.com:your-moniker/FRENSIE.git`.
- * You now have a working fork that you can work with to add features to 
+ * You now have a working fork that you can work with to add features to
  * FRENSIE. However, there is still one modification to the fork that must
  * be made before you can start coding, which will be discussed shortly.
  *
@@ -289,11 +215,11 @@
  * sync his or her feature branch with the master branch frequently, it is
  * likely that there will be many merge conflicts when the code maintainer
  * tries to merge the feature into the master branch. This situation can be
- * avoided with forks by setting what is called the "upstream" repository, 
- * which can be "pulled" from to make sure that the fork is up-to-date.  
+ * avoided with forks by setting what is called the "upstream" repository,
+ * which can be "pulled" from to make sure that the fork is up-to-date.
  * The upstream repository will be set to the aprobinson/FRENSIE repo, which is
- * currently functioning as the main repo. To set the upstream repo, first 
- * enter your FRENSIE fork. Then run the following command: 
+ * currently functioning as the main repo. To set the upstream repo, first
+ * enter your FRENSIE fork. Then run the following command:
  * `git remote add upstream https://github.com/aprobinson/FRENSIE`.
  * If you run the command `git remote -v`, you should see an origin (your
  * fork) and an upstream (main) remote repo. At this point, your fork is ready!
@@ -323,7 +249,7 @@
  *         `git pull upstream master`</li>
  *     <li>Fix merge conflicts (if any) and push changes (if any) to the fork's
  *         master: `git push origin master`.
- *         <ul><li><b>Danger:</b> While possible, you should never push 
+ *         <ul><li><b>Danger:</b> While possible, you should never push
                    upstream.
 	   </ul></li>
  *   </ol></li>
@@ -334,7 +260,7 @@
  *    <li>Pull changes down from your fork's remote feature branch to ensure
  *        that your local copy is up-to-date:
  *        `git pull origin branch_name`</li>
- *    <li>Fix merge conflicts (if any).</li> 
+ *    <li>Fix merge conflicts (if any).</li>
  *    <li>Add new code to or modify existing code in the branch.</li>
  *    <li>Check that all unit/regression tests pass.</li>
  *    <li>Commit your changes to your local feature branch:
@@ -346,14 +272,14 @@
  *        <ol>
  *          <li>Checkout master branch: `git checkout master`.</li>
  *          <li>Update local master: `git pull origin master`.</li>
- *          <li>Merge master with feature branch: 
+ *          <li>Merge master with feature branch:
  *              `git merge feature_branch`.</li>
  *          <li>Fix merge conflicts if any and push changes to the fork's
  *              master branch: `git push origin master`.</li>
  *        </ol></li>
  *    <li>If you feel it is time for your new code to become part of the main
  *        repo, issue a pull request on GitHub. This is where the main repo
- *        maintainer will conduct a code review to ensure that the new code 
+ *        maintainer will conduct a code review to ensure that the new code
  *        is acceptable. If the new code is deemed acceptable, the main
  *        repo maintainer will pull from your fork's master branch.</li>
  *   </ol></li>
@@ -361,8 +287,8 @@
  *
  * It is important to note that in this workflow everyones master branch
  * contains the most up-to-date working state (all unit/regression tests
- * should pass) of a fork. Developers should avoid working on new features 
- * directly in the master branch to prevent the master from entering a 
+ * should pass) of a fork. Developers should avoid working on new features
+ * directly in the master branch to prevent the master from entering a
  * non-working state. If small changes need to be made, it is usually okay
  * to make them directly in the master branch because the cost of creating
  * a new branch would outweigh the benefits (too much setup time).
@@ -373,7 +299,7 @@
  * pull requests. Each issue is given a unique number that can be used to
  * reference it. When committing code, one can reference an issue in the
  * commit message by adding a the # character followed immediately by the
- * issue number (e.g. "This commit relates to issue #9"). This will allow 
+ * issue number (e.g. "This commit relates to issue #9"). This will allow
  * developers to keep track of their progress dealing with a specific issue.
  *
  * \section frensie_naming_conventions FRENSIE Naming Conventions
@@ -383,19 +309,19 @@
  * following naming conventions.
  *
  * \subsection frensie_file_names_conv_subsec File Names
- * File names should start with the root package name followed by an 
- * underscore and then followed by an appropriate file name with extension 
- * (either ".hpp", "_def.hpp", or ".cpp" depending on if the file is a header, 
- * a template implementation file or a standard implementation file 
- * respectively). For classes, the class name should be used. Consider the 
+ * File names should start with the root package name followed by an
+ * underscore and then followed by an appropriate file name with extension
+ * (either ".hpp", "_def.hpp", or ".cpp" depending on if the file is a header,
+ * a template implementation file or a standard implementation file
+ * respectively). For classes, the class name should be used. Consider the
  * following examples:
  * > Package_MyClass.hpp \n
  * > Package_MyClass_def.hpp \n
  * > Package_MyClass.cpp \n
- * 
+ *
  * \subsection frensie_file_hf_conv_subsec File Organization
- * All files, whether a header, template implementation or standard 
- * implementation file should have a header an a footer. All header includes 
+ * All files, whether a header, template implementation or standard
+ * implementation file should have a header an a footer. All header includes
  * should appear before any declarations but after the header protection macro.
  * Template implementation file includes should appear after all declarations
  * and implementations but before the final preprocessor conditional statement.
@@ -414,12 +340,10 @@
  *
  * // Std Lib Includes
  * #include <iostream>
+ * #include <vector>
  *
  * // Boost Includes
  * #include <boost/shared_ptr.hpp>
- *
- * // Trilinos Includes
- * #include <Teuchos_Array.hpp>
  *
  * // FRENSIE Includes
  * #include "Package_MyOtherClass.hpp"
@@ -432,14 +356,14 @@
  *
  * //---------------------------------------------------------------------------//
  * // Template Includes
- * //---------------------------------------------------------------------------// 
+ * //---------------------------------------------------------------------------//
  *
  * #include "Package_MyClass_def.hpp"
  *
  * //---------------------------------------------------------------------------//
  *
  * #endif // end PACKAGE_MY_CLASS_HPP
- * 
+ *
  * //---------------------------------------------------------------------------//
  * // end Package_MyClass.hpp
  * //---------------------------------------------------------------------------//
@@ -462,13 +386,13 @@
  * #include "Package_MyFunctionHelpers.hpp"
  *
  * namespace Package{
- * 
+ *
  * ...
  *
  * } // end Package namespace
  *
  * #endif // end PACKAGE_MY_CLASS_HPP
- * 
+ *
  * //---------------------------------------------------------------------------//
  * // end Package_MyClass_def.hpp
  * //---------------------------------------------------------------------------//
@@ -502,12 +426,12 @@
  * is reserved for a special emacs macro).
  *
  * <b>NOTE:</b> In the header of a file, there should be no space to between
- * the "//" character sequence and the "!" charater. The \"//&zwj;!\" 
- * character sequence tells Doxygen that the comments should be parsed. It is 
+ * the "//" character sequence and the "!" charater. The \"//&zwj;!\"
+ * character sequence tells Doxygen that the comments should be parsed. It is
  * for this reason that it cannot be added directly to the above code blocks.
  *
  * \subsection frensie_ifdef_conv_subsec Preprocessor Conditional Statements
- * Preprocessor conditional statements are always closed with a 
+ * Preprocessor conditional statements are always closed with a
  * <em>#endif</em>. When there is a lot of code between conditional statements
  * it can become difficult to determine which conditional statement a
  * <em>#endif</em> statement is closing. Developers should therefore put
@@ -525,7 +449,7 @@
  *
  *  #endif // end MACRO_NAME
  * \endcode
- * 
+ *
  * \subsection frensie_namespace_conv_subsec Namespaces
  * Every FRENSIE package has its own namespace. The namespace is simply the
  * name of the package with the first letter capitalized. All package code
@@ -539,10 +463,10 @@
  *  namespace Package{
  *
  *  ...
- * 
+ *
  *  } // end Package namespace
  * \endcode
- * 
+ *
  * \subsection frensie_variable_conv_subsec Variables
  * When declaring variables in routines interfaces and implementations, the
  * names must be all lowercase with underscores between words. It is important
@@ -563,7 +487,7 @@
  * of the first word of the name in lowercase. All subsequent words of the
  * name should be capitalized. There should be no underscores in routine
  * names. In addition, good function name should identify the return value.
- * A good procedure name should typically be an action verb followed by a 
+ * A good procedure name should typically be an action verb followed by a
  * noun (usually the object being operated on). Consider the following
  * examples:
  * \code{.cpp}
@@ -574,7 +498,7 @@
  *                     const double x_max );
  * \endcode
  * While all routine names adhere to the naming convention, only the first
- * and third are descriptive and therefore good names. 
+ * and third are descriptive and therefore good names.
  *
  * \subsection frensie_class_conv_subsec Classes
  * All classes should have the first letter of each word in the name
@@ -582,7 +506,7 @@
  * there is no convention to distinguish between base classes, derived classes
  * and classes that derive from multiple base classes (multiple inheritance).
  * Developers who see a use in making that distinction can adopt their own
- * convention (e.g. "_b", "_d", "_m"). 
+ * convention (e.g. "_b", "_d", "_m").
  *
  * When creating a class, the following order should be followed in the class
  * declaration:
@@ -592,7 +516,7 @@
  *  <li>public static member functions</li>
  *  <li>public member functions</li>
  *  <li>protected member functions</li>
- *  <li>protected member data 
+ *  <li>protected member data
  *   <ul>
  *    <li>This should rarely be used because it breaks encapsulation.</li>
  *   </ul>
@@ -601,9 +525,9 @@
  *  <li>private member functions</li>
  *  <li>private static member data
  *   <ul>
- *    <li>There is no required naming convention for static member data. 
- *        This is because static member data should be used within member 
- *        functions using the following convention 
+ *    <li>There is no required naming convention for static member data.
+ *        This is because static member data should be used within member
+ *        functions using the following convention
  *        (MyClass::my_static_data).</li>
  *   </ul>
  *  </li>
@@ -620,9 +544,6 @@
  *    public:
  *      typedef int MyClassType;
  *
- *    private:
- *      typedef Teuchos::ScalarTraits<double> ST;
- *
  *    public:
  *      static int getDefaultValue();
  *      static void setDefaultValue( const MyClassType value );
@@ -631,377 +552,22 @@
  *
  *      ~MyClass();
  *
- *      virtual void doMyStuff( const Teuchos::Array<MyClassType>& data );
+ *      virtual void doMyStuff( const std::vector<MyClassType>& data );
  *
  *   protected:
  *
- *	void doStuffImplementation( const Teuchos::Array<MyClassType>& data );
+ *	void doStuffImplementation( const std::vector<MyClassType>& data );
  *
  *   private:
  *
  *      static bool isValueValid( const MyClassType value );
- * 
+ *
  *      void doOneThing( const MyClassType data_point );
  *
  *      static MyClassType default_value;
- *      
- *      int d_id;   
+ *
+ *      int d_id;
  *  };
  * \endcode
  *
- * \section cpp_primer_sec C++ Primer
- * FRENSIE developers should be familiar with C++ before contributing code.
- * That being said, developers are not expected to be C++ experts. C++ is a
- * complicated language and becoming an expert can take years. This section
- * is geared towards new developers with little to no C++ experience. It
- * is by no means a full C++ course but can be used to gain some insights
- * into the language. At the end of this section some references are given
- * for those who want to learn more about C++.
- *
- * \subsection cpp_primer_func_subsec Functions and Procedures
- * A function is a routine that returns a value whereas a procedure is a
- * routine that typically does not return a value. In C++ a routine is
- * typically declared in a header file (.hpp) and then defined in an
- * implementation file (.cpp). Consider the following header file excerpt:
- * \code{.cpp}
- *  double computeCosine( const double x );
- *  void printValue( std::ostream& os, const double value );
- * \endcode
- * and the corresponding implementation file:
- * \code{.cpp}
- *  double computeAbsoluteValue( const double x )
- *  {
- *    if( x < 0.0 )
- *      return -x;
- *    else
- *      return x;
- *  }
- *
- *  void printValue( std::ostream& os, const double value )
- *  {
- *    os << value << std::endl;
- *  }
- * \endcode	
- * The first routine is an example of a function and the second is an
- * example of a procedure. For the function, the return type is declared as
- * double and for the procedure, the return type is declared as void. A return
- * type of void is used to indicated that there is no return type. 
- *
- * It is generally considered good practice to declare variables that should
- * not be modified within the routine as const (defensive programming). When 
- * other developers look at the API, it becomes immediately clear that a passed 
- * value will not be modified inside of the routing. 
- *
- * In C++ it is possible to pass values to functions in two ways: by value
- * and by reference. Pass-by-value should be used when the type is primitive
- * (e.g. int, double) or when the type is a pointer that will not be modified
- * within the function. Pass-by-value creates a copy of the variable within
- * the routine. Pass-by-reference should be used when the type is a class
- * (e.g. std::ostream) to avoid copy overhead. Pass-by-reference passes the
- * memory address of the variable instead of making a copy. Pass-by-reference
- * can be used with primitive types but there will be no cost savings because
- * pointer types (memory addresses) have the same size as the primitive types
- * (more or less). Pass-by-reference can also be used to have more than one
- * return from a function. To pass a variable by reference an & is placed
- * after the variable type and before the variable name. 
- *
- * Routines that have been designed correctly should have a single, easily
- * identifiable purpose. Routines that have multiple purposes should be
- * broken into multiple routines. This helps to manage the complexity of
- * software. In addition, routines should be mutually exclusive. Routines
- * that have an overlapping and/or duplicate purpose should be immediately
- * refactored. 
- *
- * When creating functions and procedures, the name is also very important from
- * a complexity management standpoint. A function should be named after the 
- * the return value and a procedure name should typically be an action verb 
- * followed by a noun. Both example routines have good names. When the 
- * names are read, it becomes immediately clear what they do, which is an 
- * example of self-documenting code (a complexity management strategy).
- *
- * \subsection cpp_primer_inline_subsec Inline Routines 
- * C++ has a built in optimization tool called inlining. Calling a function
- * typically has a very small cost. However, when a function is called many
- * times while executing a program, the cost associated with calling the
- * function can be eliminated by inlining the function. Consider the 
- * previous example routines:
- * \code{.cpp}
- *  inline double computeCosine( const double x )
- *  {
- *    if( x < 0.0 )
- *      return -x;
- *    else
- *      return x;
- *  }
- *  
- *  inline void printValue( std::ostream& os, const double value )
- *  {
- *    os << value << std::endl;
- *  }
- * \endcode
- *
- * When declaring functions inline, the definition of the function must
- * also appear "inline" (in the header file). The compiler will then take
- * an instance of the function call and replace it with the function
- * definition, thus eliminating function call overhead. The declaration of
- * a function as inline does not guarantee that the function will be inlined - 
- * the compiler will ultimately make that decision. The use of inlined
- * functions will also result in larger executables. It important to do 
- * function inlining sparingly and only when it is quite certain that 
- * a function will be called a large number of times during the execution
- * of a program. 
- *
- * \subsection cpp_primer_class_subsec Classes
- * An abstract data type (ADT) or class is a collection of data and operations
- * that work on that data. Classes that have been designed properly encapsulate
- * data and provide an abstraction or interface for interacting with that
- * data. Consider the following class declaration:
- * \code{.cpp}
- *   class ParticleState
- *   {
- *     public:
- *
- *     ParticleState( const double[3] position,
- *                    const double[3] direction,
- *                    const double energy );
- *
- *     ~ParticleState();
- *   
- *     const double* getPosition() const;
- *     const double* getDirection() const;
- *     double getEnergy() const;
- *
- *     void setPosition( const double[3] position );
- *     void setDirection( const double[3] direction );
- *     void setEnergy( const double energy );
- *
- *     private:
- *     
- *     double[3] d_position;
- *     double[3] d_direction;
- *     double d_energy;
- *   };
- *
- *   ParticleState::ParticleState( const double[3] position,
- *         			   const double[3] direction,
- *                                 const double energy )
- *   : d_position(),
- *     d_direction(),
- *     d_energy( energy )
- *   {
- *     d_position[0] = position[0];
- *     d_position[1] = position[1];
- *     d_position[2] = position[2];
- *
- *     d_direction[0] = direction[0];
- *     d_direction[1] = direction[1];
- *     d_direction[2] = direction[2];
- *   }
- * \endcode
- *
- * In the particle state class, the state data is encapsulated by declaring
- * it private. Only the class itself can modify the private data. The
- * data is accessed and modified through the public interface. In this
- * case, the data is accessed using the "get" functions and it is modified
- * using the "set" functions. Note that the "get" functions are declared
- * const. This means that they will not modify the underlying class data. 
- * If an object of type ParticleState is declared const, only its const 
- * member functions can be called. 
- * 
- * Here are a few of the many benefits to creating and using classes:
- * <ul>
- *  <li> Implementation details are hidden </li>
- *  <li> Internal changes don't propagate </li>
- *  <li> Software becomes more self-documenting </li>
- * </ul>
- *
- * \subsection cpp_primer_inheritance_subsec Inheritance
- * In the previous section, a simple class was created. In this section,
- * it will be shown how to create a class that can be extended. To begin
- * the particle state class will be modified slightly:
- * \code{.cpp}
- *   class ParticleState
- *   {
- *     public:
- *
- *     ParticleState( const double[3] position,
- *                    const double[3] direction,
- *                    const double energy );
- *
- *     ~ParticleState();
- *   
- *     const double* getPosition() const;
- *     const double* getDirection() const;
- *     double getEnergy() const;
- *     double getTime() const;
- *     virtual getSpeed() const = 0;
- *
- *     void setPosition( const double[3] position );
- *     void setDirection( const double[3] direction );
- *     void setEnergy( const double energy );
- *
- *     virtual void advance( const double distance );
- *
- *     private:
- *     
- *     double[3] d_position;
- *     double[3] d_direction;
- *     double d_energy;
- *     double d_time;
- *   };
- *
- *   ParticleState::ParticleState( const double[3] position,
- *         			   const double[3] direction,
- *                                 const double energy )
- *   : d_position(),
- *     d_direction(),
- *     d_energy( energy )
- *     d_time( 0.0 )
- *   {
- *     d_position[0] = position[0];
- *     d_position[1] = position[1];
- *     d_position[2] = position[2];
- *
- *     d_direction[0] = direction[0];
- *     d_direction[1] = direction[1];
- *     d_direction[2] = direction[2];
- *   }
- *
- *   void ParticleState::advance( const double distance )
- *   {
- *      d_position[0] = d_direction[0]*distance;
- *      d_position[1] = d_direction[1]*distance;
- *      d_position[2] = d_direction[2]*distance;
- *   
- *      d_time += distance/this->getSpeed();
- *   } 
- * \endcode
- * Two functions have been declared virtual, which means that classes that
- * inherit from this class can override the functions. In the case of the
- * getSpeed member function, there is also an "= 0" at the end of the function
- * declaration. These types of functions are called pure virtual. Pure virtual
- * functions provide no default function behavior. Any class that has a pure
- * virtual member function is referred to as an abstract base class. An 
- * abstract base class can not be instantiated because of the missing function 
- * definition. All derived classes must provide an implementation for the pure 
- * virtual function or they will not be able to be instantiated either.
- * Pointers of the abstract base class can be created as long as they only
- * store the memory address of a derived class.
- *  
- * Consider the following derived class:
- * \code{.cpp}
- *   class NeutronState : public ParticleState
- *   {
- *     public:
- *
- *     NeutronState( const double[3] position,
- *                    const double[3] direction,
- *                    const double energy );
- *
- *     ~NeutronState();
- *   
- *     const double* getPosition() const;
- *     const double* getDirection() const;
- *     double getEnergy() const;
- *     getSpeed() const;
- *
- *     void setPosition( const double[3] position );
- *     void setDirection( const double[3] direction );
- *     void setEnergy( const double energy );
- *
- *     private:
- *     
- *     double[3] d_position;
- *     double[3] d_direction;
- *     double d_energy;
- *   };
- *
- *   NeutronState::NeutronState( const double[3] position,
- *         			 const double[3] direction,
- *                               const double energy )
- *   : ParticleState( position, direction, energy ){}
- *  
- *   NeutronState::getSpeed() const
- *   {
- *     return sqrt(2*getEnergy()/mass_of_neutron);
- *   } 
- * \endcode
- * The neutron state class has been declared as inheriting the public
- * interface from the particle state base class. The getSpeed member function
- * has been redeclared to indicated that it will be overridden. The advance
- * member function has not been declared, which indicates that the base
- * class implementation of that function will be used. 
- *
- * The power of inheritance becomes obvious when other classes and routines
- * are created that operate on the base class:
- * \code{.cpp} 
- * void advanceParticle( ParticleState& particle, const double distance )
- * {
- *    particle.advance( distance );
- * }
- *
- * int main()
- * {
- *   double[3] position = {0.0, 0.0, 0.0}
- *   double[3] direction = {1.0, 0.0, 0.0}
- *
- *   ParticleState* particle_ptr_a = new NeutronState( position, direction, 1.0 );
- *   ParticleState* particle_ptr_b = new PhotonState( position, direction, 1.0 );
- *
- *   advanceParticle( *particle_ptr_a, 1.0 );
- *   advanceParticle( *particle_ptr_b, 1.0 );
- *
- *   NeutronState particle_a( position, direction, 1.0 );
- *   PhotonState particle_b( position, direction, 1.0 );
- *
- *   advanceParticle( particle_a, 1.0 );
- *   advanceParticle( particle_b, 1.0 );
- * }
- * \endcode
- * A base class pointer can be used to store the memory address of a derived 
- * class instance. When the virtual functions are called, the derived class 
- * implementation will actually be used. Therefore, the behavior of the 
- * advanceParticle function will be different depending on the type of derived 
- * class that the base class pointer actually points to. 
- *
- * \subsection cpp_primer_heap_subsec Heap Allocated Variables
- * All local variables are created on the stack. As soon as the variables
- * go out of scope (the routine finishes) they are deleted. If a variable
- * needs to persist outside of the current scope, it can be allocated on 
- * the heap. This is done with the "new" command. Note that this command
- * returns a pointer of a particular type (as seen in the final example in
- * the previous section). 
- *
- * Heap allocated variables can be dangerous if used improperly. If a heap
- * allocated variable goes out of scope without being freed (calling
- * "delete" on the variable), it leads to a memory-leak, which is where
- * a particular piece of memory cannot be accessed again during the current
- * program execution. The best way to avoid memory-leaks is to use a special
- * class called a smart pointer. Smart pointers will automatically deallocate 
- * memory when it is no longer needed. Both the boost and the Teuchos 
- * libraries provide smart pointer classes. In almost all cases, these classes
- * should be used instead of raw pointers.
- * \code{.cpp}
- * Teuchos::RCP<double> double_pointer = new double( 3.0 );
- * boost::shared_ptr<ParticleState> = new NeutronState( position, direction, energy );
- * boost::scoped_ptr<ParticleState> = new PhotonState( position, direction, energy );
- * \endcode
- *
- * While there are many types of smart pointers, the one that is used most
- * often in FRENSIE is the reference counting smart pointer. The reference
- * counting smart pointer keeps track of the number of other smart pointers
- * that are storing a particular memory location. Essentially, every time
- * a particular smart pointer is copied, the reference count goes up by one.
- * When a smart pointer storing a particular memory location goes out of 
- * scope or is deleted by some other means, the reference count goes down
- * by one. If a reference counting smart pointer gets deleted and the
- * reference count goes to zero, the smart pointer will automatically free
- * the memory that it stores. Both the Teuchos::RCP and the boost::shared_ptr 
- * are examples of reference counting smart pointers.  
- *
- * \subsection cpp_primer_temp_func_subsec Template Functions and Procedures
- * \subsection cpp_primer_temp_class_subsec Template Classes
- * \subsection cpp_primer_traits_policy_subsec Traits and Policies
- * \subsection cpp_primer_fortran_subsec Fortran 2003 Interoperability
- * \subsection cpp_primer_further_reading Further Reading 
  */

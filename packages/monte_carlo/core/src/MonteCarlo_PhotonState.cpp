@@ -7,10 +7,12 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_Archives.hpp" // Must be included first
 #include "MonteCarlo_PhotonState.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace MonteCarlo{
 
@@ -21,15 +23,16 @@ PhotonState::PhotonState()
 
 // Constructor
 PhotonState::PhotonState(const ParticleState::historyNumberType history_number)
-  : MasslessParticleState( history_number, PHOTON )
+  : MasslessParticleState( history_number, PHOTON, 0 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 PhotonState::PhotonState( const ParticleState& existing_base_state,
 			  const bool increment_generation_number,
 			  const bool reset_collision_number )
-  : MasslessParticleState( existing_base_state, 
+  : MasslessParticleState( existing_base_state,
 			   PHOTON,
+			   0,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }
@@ -38,8 +41,9 @@ PhotonState::PhotonState( const ParticleState& existing_base_state,
 PhotonState::PhotonState( const PhotonState& existing_base_state,
 			  const bool increment_generation_number,
 			  const bool reset_collision_number )
-  : MasslessParticleState( existing_base_state, 
+  : MasslessParticleState( existing_base_state,
 			   PHOTON,
+			   0,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }
@@ -51,16 +55,17 @@ PhotonState* PhotonState::clone() const
 }
 
 // Print the photon state
-void PhotonState::print( std::ostream& os ) const
+void PhotonState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Photon" << std::endl;
-  
+
   this->printImplementation<PhotonState>( os );
 }
 
+EXPLICIT_CLASS_SERIALIZE_INST( PhotonState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::PhotonState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::PhotonState );
 
 //---------------------------------------------------------------------------//

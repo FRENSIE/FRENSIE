@@ -1,0 +1,14 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_event_forced_collisions)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DefaultCollisionForcer DEPENDS tstDefaultCollisionForcer.cpp)
+FRENSIE_ADD_TEST(DefaultCollisionForcer)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardCollisionForcer
+  DEPENDS tstStandardCollisionForcer.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(StandardCollisionForcer
+  ACE_LIB_DEPENDS 1001.70c
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_event_forced_collisions)

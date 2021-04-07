@@ -8,8 +8,9 @@
 
 // FRENSIE Includes
 #include "Data_XSSSabDataExtractor.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 
 namespace Data{
 
@@ -18,26 +19,42 @@ namespace Data{
  * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
  */
-XSSSabDataExtractor::XSSSabDataExtractor( 
-				   const Teuchos::ArrayView<const int>& nxs,
-				   const Teuchos::ArrayView<const int>& jxs,
-				   const Teuchos::ArrayRCP<const double>& xss )
-  : d_nxs( nxs ),
-    d_jxs( jxs ),
-    d_xss( xss )
+XSSSabDataExtractor::XSSSabDataExtractor(
+                       const Utility::ArrayView<const int>& nxs,
+                       const Utility::ArrayView<const int>& jxs,
+		       const std::shared_ptr<const std::vector<double> >& xss )
+  : d_nxs( nxs.begin(), nxs.end() ),
+    d_jxs( jxs.begin(), jxs.end() ),
+    d_xss( xss ),
+    d_xss_view(),
+    d_itie_block(),
+    d_itce_block()
 {
-  // Make sure the arrays have the correct size
-  testPrecondition( nxs.size() == 16 );
-  testPrecondition( jxs.size() == 32 );
-  testPrecondition( xss.size() == nxs[0] );
+  // Make sure that the xss array exists
+  testPrecondition( xss.get() );
   
+  // Make sure the arrays have the correct size
+  TEST_FOR_EXCEPTION( nxs.size() != 16,
+                      std::runtime_error,
+                      "Invalid nxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( jxs.size() != 32,
+                      std::runtime_error,
+                      "Invalid jxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( xss->size() != nxs[0],
+                      std::runtime_error,
+                      "The nxs array expected the xss array to have size "
+                      << nxs[0] << " but it was found to have size "
+                      << xss->size() << "!" );
+
   // Adjust the indices in the JXS array so that they correspond to a C-array
-  for( unsigned i = 0; i < d_jxs.size(); ++i )
-    if( d_jxs[i] != 0 )
-    {
-      d_jxs[i] -= 1;
-    }
-    
+  for( size_t i = 0; i < d_jxs.size(); ++i )
+    d_jxs[i] -= 1;
+
+  // Create the XSS view
+  d_xss_view = Utility::arrayViewOfConst( *d_xss );
+      
   // Determine whether this is a continuous energy or discrete energy 
   //   S(alpha,beta) table
   if( d_nxs[6] == 2 )
@@ -73,7 +90,7 @@ XSSSabDataExtractor::XSSSabDataExtractor(
     }
     else
     {
-      d_itce_block = Teuchos::ArrayView<const double>();
+      d_itce_block = Utility::ArrayView<const double>();
     }
       
     // Extract and cache the ITCA block
@@ -84,40 +101,41 @@ XSSSabDataExtractor::XSSSabDataExtractor(
     }
       else
     {
-      d_itca_block = Teuchos::ArrayView<const double>();
+      d_itca_block = Utility::ArrayView<const double>();
     }
   }
   // Parse the data into the four separate blocks if we are using the (1999)
   //   discrete data.
   else
   {
-    d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*2 + 1 );
-    
+    // Extract and cache the ITIE block and the ITCE block
+    d_itie_block = d_xss_view( d_jxs[0], (int)d_xss_view[d_jxs[0]]*2 + 1 );
+
     int num_out_energies = d_nxs[3] + 4;
     int num_out_angles = d_nxs[2] + 1;
     int distance = num_out_energies*num_out_angles;
     
-    d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*2 + 1, distance*(int)d_xss[d_jxs[0]] );
+    d_itxe_block = d_xss_view( (int)d_xss_view[d_jxs[0]]*2 + 1, distance*(int)d_xss_view[d_jxs[0]] );
     
     // Extract and cache the ITCE block
-    if( d_jxs[3] != 0 )
+    if( d_jxs[3] != -1 )
     {
-      d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+              d_itce_block = d_xss_view( d_jxs[3], (int)d_xss_view[d_jxs[3]]*2 + 1 );    
     }
     else
     {
-      d_itce_block = Teuchos::ArrayView<const double>();
+      d_itce_block = Utility::ArrayView<const double>();
     }
     
     // Extract and cache the ITCA block
     if( d_jxs[3] != 0 && d_nxs[5] != -1 )
     {
-      int elastic_energies = (int)d_xss[d_jxs[3]];
-      d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
+      int elastic_energies = (int)d_xss_view[d_jxs[3]];
+      d_itca_block = d_xss_view( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
     }
       else
     {
-      d_itca_block = Teuchos::ArrayView<const double>();
+      d_itca_block = Utility::ArrayView<const double>();
     }
   }
 }
@@ -128,14 +146,14 @@ SabInelasticMode XSSSabDataExtractor::getInelasticScatteringMode() const
   try{
     return convertUnsignedToSabInelasticMode( d_nxs[1] );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: invalid inelastic scattering mode found "
 			   "while parsing nxs array.\n" );
 }
 
 // Return if elastic scattering cross section data is present
-/*! \details Elastic scattering cross section data is only present if 
- * jxs[3] != 0
+/*! \details Elastic scattering cross section data is only present if
+ * jxs[3] != -1
  */
 bool XSSSabDataExtractor::hasElasticScatteringCrossSectionData() const
 {
@@ -144,8 +162,8 @@ bool XSSSabDataExtractor::hasElasticScatteringCrossSectionData() const
 
 // Return if elastic scattering angular distribution is present
 /*! \details Elastic scattering cross section data is only present if
- * jxs[3] != 0 and nxs[5] != -1
- */ 
+ * jxs[3] != -1 and nxs[5] != -1
+ */
 bool XSSSabDataExtractor::hasElasticScatteringAngularDistributionData() const
 {
   return d_jxs[3] != 0 && d_nxs[5] != -1;
@@ -158,84 +176,128 @@ SabElasticMode XSSSabDataExtractor::getElasticScatteringMode() const
 }
 
 // Extract the ITIE block from the XSS array
-Teuchos::ArrayView<const double> XSSSabDataExtractor::extractITIEBlock() const
+Utility::ArrayView<const double> XSSSabDataExtractor::extractITIEBlock() const
 {
   return d_itie_block;
 }
 
 // Extract the inelastic energy grid from the XSS array
-Teuchos::ArrayView<const double> 
-XSSSabDataExtractor::extractInelasticEnergyGrid() const
+Utility::ArrayView<const double> XSSSabDataExtractor::extractInelasticEnergyGrid() const
 {
   return d_itie_block( 1, (int)d_itie_block[0] );
 }
 
-// Extract the inelastic cross section from the XSS array
-Teuchos::ArrayView<const double> 
-XSSSabDataExtractor::extractInelasticCrossSection() const
+// Extract the inelastic energy grid from the XSS array
+auto XSSSabDataExtractor::extractInelasticEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
 {
-  return d_itie_block( 1+(int)d_itie_block[0], (int)d_itie_block[0] );
+  return Utility::ArrayView<const Energy>(
+               Utility::reinterpretAsQuantity<Energy>( d_itie_block.data()+1 ),
+               Utility::ArrayView<const Energy>::size_type(d_itie_block[0]) );
+}
+
+// Extract the inelastic cross section from the XSS array
+Utility::ArrayView<const double> XSSSabDataExtractor::extractInelasticCrossSection() const
+{
+  return d_itie_block( 1 + (int)d_itie_block[0], (int)d_itie_block[0] );
+}
+
+// Extract the inelastic cross section from the XSS array
+auto XSSSabDataExtractor::extractInelasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
+{
+  return Utility::ArrayView<const Area>(
+           Utility::reinterpretAsQuantity<Area>(d_itie_block.data()+1+(int)d_itie_block[0]),
+           Utility::ArrayView<const Area>::size_type(d_itie_block[0]) );
 }
 
 // Extract the inelastic distribution locations from the XSS array
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double> 
 XSSSabDataExtractor::extractInelasticDistributionLocations() const
 {
   return d_itie_block( 1+2*(int)d_itie_block[0], (int)d_itie_block[0] );
 }
 
 // Extract the number of outgoing energies list from the XSS array
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double> 
 XSSSabDataExtractor::extractNumberOfOutgoingEnergies() const
 {
   return d_itie_block( 1+3*(int)d_itie_block[0], (int)d_itie_block[0] );
 }
 
 // Extract the ITCE block from the XSS array
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITCEBlock() const
 {
   return d_itce_block;
 }
 
 // Extract the elastic energy grid from the XSS array
-Teuchos::ArrayView<const double> 
-XSSSabDataExtractor::extractElasticEnergyGrid() const
+Utility::ArrayView<const double> XSSSabDataExtractor::extractElasticEnergyGrid() const
 {
-  if( hasElasticScatteringCrossSectionData() )
+  if( this->hasElasticScatteringCrossSectionData() )
     return d_itce_block( 1, (int)d_itce_block[0] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
+}
+
+// Extract the elastic energy grid from the XSS array
+auto XSSSabDataExtractor::extractElasticEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
+{
+  if( this->hasElasticScatteringCrossSectionData() )
+  {
+    return Utility::ArrayView<const Energy>(
+               Utility::reinterpretAsQuantity<Energy>( d_itce_block.data()+1 ),
+               Utility::ArrayView<const Energy>::size_type(d_itce_block[0]) );
+  }
+  else
+    return Utility::ArrayView<const Energy>();
 }
 
 // Extract the elastic cross section from the XSS array
-Teuchos::ArrayView<const double> 
-XSSSabDataExtractor::extractElasticCrossSection() const
+Utility::ArrayView<const double> XSSSabDataExtractor::extractElasticCrossSection() const
 {
-  if( hasElasticScatteringCrossSectionData() )
-    return d_itce_block( 1+(int)d_itce_block[0], (int)d_itce_block[0] );
+  if( this->hasElasticScatteringCrossSectionData() )
+    return d_itce_block( 1 + (int)d_itce_block[0], (int)d_itce_block[0] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
+}
+
+// Extract the elastic cross section from the XSS array
+auto XSSSabDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
+{
+  if( this->hasElasticScatteringCrossSectionData() )
+  {
+    return Utility::ArrayView<const Area>(
+            Utility::reinterpretAsQuantity<Area>(d_itce_block.data()+1+(int)d_itce_block[0]),
+            Utility::ArrayView<const Area>::size_type(d_itce_block[0]) );
+  }
+  else
+    return Utility::ArrayView<const Area>();
 }
 
 // Extract the ITXE block from the XSS array
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITXEBlock() const
 {
-  return d_itxe_block;
+  if( hasElasticScatteringCrossSectionData() )
+    return d_xss_view( d_jxs[2], d_jxs[3] - d_jxs[2] );
+  else
+    return d_xss_view( d_jxs[2], d_nxs[0] - d_jxs[2] );
 }
 
 // Extract the ITCA block from the XSS array
-Teuchos::ArrayView<const double> 
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITCABlock() const
 {
-  return d_itca_block;
-}
+  if( hasElasticScatteringAngularDistributionData() )
+    return d_xss_view( d_jxs[5], d_nxs[0] - d_jxs[5] );
+  else
+    return Utility::ArrayView<const double>();}
 
 // Determine if the data is continuous energy
 bool XSSSabDataExtractor::isDataContinuousEnergy() const
 {
   return d_continuous_energy_data;
+
 }
 
 } // end Data namespace

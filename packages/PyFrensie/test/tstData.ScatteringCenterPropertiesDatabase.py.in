@@ -1,0 +1,140 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ScatteringCenterPropertiesDatabase class unit tests
+#  \file   tstData.ScatteringCenterPropertiesDatabase.py
+#  \author Luke Kersting
+#  \brief  Unit tests for the Data.ScatteringCenterPropertiesDatabase class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-5", "--hdf5", action="store_true", dest="hdf5_on", default=False,
+                  help="run test for hdf5.")
+
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Data = importPyFrensieModuleFromBuildDir('Data')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ScatteringCenterPropertiesDatabase class
+class ScatteringCenterPropertiesDatabaseTestCase(unittest.TestCase):
+    "TestCase class for Data.ScatteringCenterPropertiesDatabase class"
+
+    @classmethod
+    def setUpClass(cls):
+        cls.database = Data.ScatteringCenterPropertiesDatabase()
+        cls.database.initializeAtomProperties( Data.H_ATOM, 1.0 )
+        cls.database.initializeNuclideProperties( Data.ZAID(1001), 1.0 )
+        cls.database.initializeAtomProperties( Data.He_ATOM, 4.0 )
+        cls.database.initializeNuclideProperties( Data.ZAID(2004), 4.0 )
+
+    def testArchiveConstructor(self):
+        "*Test Data.ScatteringCenterPropertiesDatabase archive_constructor"
+        name = "test_scattering_center_database.xml"
+        self.database.saveToFile(name, True)
+        database = Data.ScatteringCenterPropertiesDatabase(name)
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+
+        name = "test_scattering_center_database.txt"
+        self.database.saveToFile(name, True)
+        database = Data.ScatteringCenterPropertiesDatabase(name)
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+
+        name = "test_scattering_center_database.bin"
+        self.database.saveToFile(name, True)
+        database = Data.ScatteringCenterPropertiesDatabase(name)
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
+
+        self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+        self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
+
+        self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+        self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+
+        if options.hdf5_on:
+          name = "test_scattering_center_database.h5fa"
+          self.database.saveToFile(name, True)
+          database = Data.ScatteringCenterPropertiesDatabase(name)
+
+          self.assertTrue( database.doAtomPropertiesExist( Data.H_ATOM ) )
+          self.assertEqual( database.getAtomProperties( Data.ZAID(1000) ).atomicWeightRatio(), 1.0 )
+
+          self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(1001) ) )
+          self.assertEqual( database.getNuclideProperties( Data.ZAID(1001) ).atomicWeightRatio(), 1.0 )
+
+          self.assertTrue( database.doAtomPropertiesExist( Data.He_ATOM ) )
+          self.assertEqual( database.getAtomProperties( Data.ZAID(2000) ).atomicWeightRatio(), 4.0 )
+
+          self.assertTrue( database.doNuclidePropertiesExist( Data.ZAID(2004) ) )
+          self.assertEqual( database.getNuclideProperties( Data.ZAID(2004) ).atomicWeightRatio(), 4.0 )
+
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the testSuite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the testSuite
+    suite.addTest(unittest.makeSuite(ScatteringCenterPropertiesDatabaseTestCase))
+
+    print >>sys.stderr, \
+        "\n**************************************\n" + \
+        "Testing Data.ScatteringCenterPropertiesDatabase \n" + \
+        "**************************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ScatteringCenterPropertiesDatabase.py
+#-----------------------------------------------------------------------------#
