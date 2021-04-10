@@ -12,6 +12,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Data{
 
@@ -56,7 +57,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
   // Extract and cache the ESZ block
-  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[2] );
+  d_esz_block = d_xss_view( d_jxs[0], 5*d_nxs[nes] );
 
   // sort given jxs array into map data structure to be used later
   // perhaps turn below into a class method and call from the constructor
@@ -116,37 +117,39 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
   else
     return false;
 }
-  // given a block index, return the size in the map
-  int XSSNeutronDataExtractor::queryBlockSize(int block_index) const
-  {
-    // need a const iterator since this function is declared const
-    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(block_index);
-    if ( it!=block_to_start_length_pair.end() ) {
-      // if block exists, return the length 
-      return it->second.second;
-    } else {
-      // block does not exist, return 0
-      return 0;
-      } 
-  }
 
-  int XSSNeutronDataExtractor::queryNXS(int nxs_index) const
-  {
-    if(nxs_index < last_nxs) {
-      return d_nxs[nxs_index];
-    } else {
-      return 0;
-    }
-  }
+// given a block index, return the size in the map
+int XSSNeutronDataExtractor::queryBlockSize(int block_index) const
+{
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(block_index);
+  if ( it!=block_to_start_length_pair.end() ) {
+    // if block exists, return the length 
+    return it->second.second;
+  } else {
+    // block does not exist, return 0
+    return 0;
+    } 
+}
 
-  int XSSNeutronDataExtractor::queryJXS(int jxs_index) const 
-  {
-    if(jxs_index < last_jxs) {
-      return d_jxs[jxs_index];
-    } else {
-      return 0;
-    }
+int XSSNeutronDataExtractor::queryNXS(int nxs_index) const
+{
+  if(nxs_index < last_nxs) {
+    return d_nxs[nxs_index];
+  } else {
+    return 0;
   }
+}
+
+// TODO, should we return the negative 1 or just a 0 in that case?
+int XSSNeutronDataExtractor::queryJXS(int jxs_index) const 
+{
+  if(jxs_index < last_jxs) {
+    return d_jxs[jxs_index];
+  } else {
+    return 0;
+  }
+}
 
 // Extract the ESZ block from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() const
@@ -157,8 +160,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractESZBlock() cons
 // Extract the energy grid from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractEnergyGrid() const
 {
-  // TODO remove d_nxs[2] way, change to computing start and length before call and passing in
-  Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
+  Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[nes] );
 
   // Make sure the extracted energy grid is sorted
   TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -174,7 +176,7 @@ auto XSSNeutronDataExtractor::extractEnergyGridInMeV() const -> Utility::ArrayVi
 {
   Utility::ArrayView<const Energy> energy_grid(
                   Utility::reinterpretAsQuantity<Energy>( d_esz_block.data() ),
-                  Utility::ArrayView<const Energy>::size_type(d_nxs[2]) ); //TODO remove d_nxs[2] way
+                  Utility::ArrayView<const Energy>::size_type(d_nxs[nes]) ); 
 
   // Make sure the extracted energy grid is sorted
   TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
@@ -188,57 +190,57 @@ auto XSSNeutronDataExtractor::extractEnergyGridInMeV() const -> Utility::ArrayVi
 // Extract the total cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalCrossSection() const
 {
-  return d_esz_block( d_nxs[2], d_nxs[2] ); //TODO remove d_nxs[2] way
+  return d_esz_block( d_nxs[nes], d_nxs[nes] );
 }
 
 // Extract the total cross section from the XSS array
 auto XSSNeutronDataExtractor::extractTotalCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
-           Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+d_nxs[2] ),
-           Utility::ArrayView<const Area>::size_type(d_nxs[2]) );
+           Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+d_nxs[nes] ),
+           Utility::ArrayView<const Area>::size_type(d_nxs[nes]) );
 }
 
 // Extract the total absorption cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalAbsorptionCrossSection() const
 {
-  return d_esz_block( 2*d_nxs[2], d_nxs[2] ); //TODO remove d_nxs[2] way
+  return d_esz_block( 2*d_nxs[nes], d_nxs[nes] );
 }
 
 // Extract the total absorption cross section from the XSS array
 auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSectionInBarns() const -> Utility::ArrayView<const Area>
-{ //TODO remove d_nxs[2] way
+{
   return Utility::ArrayView<const Area>(
-         Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+2*d_nxs[2] ),
-         Utility::ArrayView<const Area>::size_type(d_nxs[2]) );
+         Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+2*d_nxs[nes] ),
+         Utility::ArrayView<const Area>::size_type(d_nxs[nes]) );
 }
 
 // Extract the elastic cross section from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractElasticCrossSection() const
-{ //TODO remove d_nxs[2] way
-  return d_esz_block( 3*d_nxs[2], d_nxs[2] );
+{
+  return d_esz_block( 3*d_nxs[nes], d_nxs[nes] );
 }
 
 // Extract the elastic cross section from the XSS array
 auto XSSNeutronDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
-{ //TODO remove d_nxs[2] way
+{
   return Utility::ArrayView<const Area>(
-         Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+3*d_nxs[2] ),
-         Utility::ArrayView<const Area>::size_type(d_nxs[2]) );
+         Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+3*d_nxs[nes] ),
+         Utility::ArrayView<const Area>::size_type(d_nxs[nes]) );
 }
 
 // Extract the average heating numbers from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractAverageHeatingNumbers() const
-{ //TODO remove d_nxs[2] way
-  return d_esz_block( 4*d_nxs[2], d_nxs[2] );
+{
+  return d_esz_block( 4*d_nxs[nes], d_nxs[nes] );
 }
 
 // Extract the average heating numbers from the XSS array
 auto XSSNeutronDataExtractor::extractAverageHeatingNumbersInMeV() const -> Utility::ArrayView<const Energy>
-{ //TODO remove d_nxs[2] way
+{
   return Utility::ArrayView<const Energy>(
-       Utility::reinterpretAsQuantity<Energy>( d_esz_block.data()+4*d_nxs[2] ),
-       Utility::ArrayView<const Energy>::size_type(d_nxs[2]) );
+       Utility::reinterpretAsQuantity<Energy>( d_esz_block.data()+4*d_nxs[nes] ),
+       Utility::ArrayView<const Energy>::size_type(d_nxs[nes]) );
 }
 
 // Extract the NU block form the XSS array
@@ -382,11 +384,11 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLANDBlock() con
     int length = d_nxs[nr] + 1 ;
     return d_xss_view( start , length);
   } else {
-    // TODO what goes here? compiler may be upset with no return
-    // options
-    // return 1; this is an option since there should always be a land block, but could be cryptic to debug ...
-    // OR
-    // return Utility::ArrayView<const double>(); the standard elsewhere, but there should really be some kind of error if this happens
+    // this else statement should never be entered
+    // because there should always be an key 
+    // corresponding to the and block in the map
+    THROW_EXCEPTION(std::runtime_error, "Entered a forbidden else statement: expected land block to be found in jxs block map ")
+    THROW_EXCEPTION(std::logic_error, "Entered a forbidden else statement: expected land block to be found in jxs block map ")
   }
 }
 
@@ -401,11 +403,11 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDBlock() cons
     int length = it->second.second;
     return d_xss_view( start, length );
   } else {
-    // TODO what goes here? compiler may be upset with no return
-    // options
-    // return 1; this is an option since there should always be an and block, but could be cryptic to debug ...
-    // OR
-    // return Utility::ArrayView<const double>(); the standard elsewhere, but there should really be some kind of error if this happens
+    // this else statement should never be entered
+    // because there should always be an key 
+    // corresponding to the and block in the map
+    //THROW_EXCEPTION(std::runtime_error, "Entered a forbidden else statement: expected and block to be found in jxs block map ")
+    THROW_EXCEPTION(std::logic_error, "Entered a forbidden else statement: expected and block to be found in jxs block map ")
   }
 }
 
@@ -567,7 +569,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractFISBlock() cons
 {
   // need a const iterator since this function is declared const
   std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(fis);
-  if( it!=block_to_start_length_pair.end() && d_jxs[fis] >= 0 ) { // TODO like this or below
+  if( it!=block_to_start_length_pair.end() && d_jxs[fis] >= 0 ) { 
     // this block has a length defined by the MCNP manual
     int start = it->second.first;
     int length = (int)d_xss_view[d_jxs[20]+1] + 2;
@@ -582,7 +584,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractUNRBlock() cons
 {
   // need a const iterator since this function is declared const
   std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(lunr);
-  if( it!=block_to_start_length_pair.end() && it->second.first >= 0 ) {  // TODO like this or above
+  if( it!=block_to_start_length_pair.end() && it->second.first >= 0 ) {  
     // no fixed size in the MCNP manual, this block requires the map implementation 
     int start = it->second.first;
     int length = it->second.second;

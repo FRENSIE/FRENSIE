@@ -70,11 +70,13 @@ public:
   //! Check if the nuclide has unresolved resonances
   bool hasUnresolvedResonanceData() const;
 
-  // Query block size given a blockId 
+  // Query block size in the map given a blockId 
   int queryBlockSize(int block_index) const;
 
+  // Query the nxs array, returns whatever value is is stored at nxs_index
   int queryNXS(int nxs_index) const;
 
+  // Query the jxs array, returns whatever value is is stored at jxs_index  (the c style version, so a -1 is posisble)
   int queryJXS(int jxs_index) const;
 
   //! Extract the ESZ block from the XSS array
