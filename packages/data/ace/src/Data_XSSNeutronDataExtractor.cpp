@@ -63,9 +63,12 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   // perhaps turn below into a class method and call from the constructor
 
   // first, add available blocks 
-  int last_block = dned;// probably don't want anything past dned since it is particle produciton
+  // this is the index of the last block that FRENSIE knows how to process
+  // if FRENSIE gains particle production blocks or new blocks from MCNP, 
+  // this should be changed from dned to the index of the last block in the array
+  int last_block = dned;
   std::vector<std::pair<int,int> > available_blocks;
-    for(int block = 0 ; block < last_block ; block++) {
+    for(int block = 0 ; block <= last_block ; block++) {
     if(d_jxs[block]>=0) {
       available_blocks.push_back(std::make_pair(d_jxs[block],block));
     }
@@ -630,9 +633,9 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractBDDBlock() cons
  */
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNEDLBlock() const
 {
+  // need a const iterator since this function is declared const
   std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dnedl);
   if( it!=block_to_start_length_pair.end() && d_nxs[npcr] != 0 ) {
-    // need a const iterator since this function is declared const
     // this block has a length defined by the MCNP manual
     int start = it->second.first;
     int length = d_nxs[npcr];
@@ -645,9 +648,9 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNEDLBlock() co
 // Extract the delayed neutron DLW block from the XSS array
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractDNEDBlock() const
 {
-  if( d_nxs[npcr] != 0 ) {
-    // need a const iterator since this function is declared const
-    std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dned);
+  // need a const iterator since this function is declared const
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(dned);
+  if( it!=block_to_start_length_pair.end() && d_nxs[npcr] != 0 ) {
     // no fixed size in the MCNP manual, this block requires the map implementation 
     int start = it->second.first;
     int length = it->second.second;
