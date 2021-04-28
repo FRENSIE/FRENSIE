@@ -35,3 +35,4 @@ GRTAGS
 GPATH
 .vscode/
 build/
+packages/utility/direction_discretization/test/workspace.code-workspace
