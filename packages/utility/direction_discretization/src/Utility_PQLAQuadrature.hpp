@@ -20,7 +20,6 @@
 #include "Utility_Array.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_3DCartesianVectorHelpers.hpp"
 
 namespace Utility{
 
