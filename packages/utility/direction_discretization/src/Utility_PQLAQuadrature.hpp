@@ -29,7 +29,7 @@ struct SphericalTriangle
    * \details First element of the tuple is an array that contains the
    * 2-norm direction representing a vertex of the triangle. 
    * Second is the length of the spherical triangle side opposite from that vertex
-   * (or angle that the 2 other vertices of the triangle make with each other).
+   * ( or angle that the 2 other vertices of the triangle make with each other ).
    * Third is the angle made from the sides of the spherical triangle from that vertex.
    * Note their order does NOT matter so long as they are consistent with the above definition
    */
@@ -39,7 +39,7 @@ struct SphericalTriangle
   double area;
 
     //! Processes spherical triangle information
-  void computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector);
+  void computeAndStoreTriangleParameters( std::vector<std::array<double, 3>>& vertex_vector );
 
   // Serialize the data
   template<typename Archive>
@@ -56,17 +56,17 @@ class PQLAQuadrature
   public:
 
   //! Constructor
-  PQLAQuadrature(unsigned quadrature_order);
+  PQLAQuadrature( unsigned quadrature_order );
 
   //! Destructor
   ~PQLAQuadrature()
   { /* ... */ }
 
   //! Find which triangle bin a direction vector is in
-  size_t findTriangleBin( const std::array<double, 3>& direction) const;
+  size_t findTriangleBin(  const std::array<double, 3>& direction ) const;
 
   //! Find which triangle bin a direction vector is in
-  size_t findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
+  size_t findTriangleBin(  const double x_direction, const double y_direction, const double z_direction ) const;
 
   //! Return the order of the quadrature
   unsigned getQuadratureOrder() const;
@@ -75,42 +75,42 @@ class PQLAQuadrature
   size_t getNumberOfTriangles() const;
   
   //! Get the area of a specific spherical triangle
-  double getTriangleArea(const size_t triangle_index) const;
+  double getTriangleArea( const size_t triangle_index ) const;
 
-  /*! Get a random direction from within a spherical triangle (evenly distributed probability) - reference here
+  /*! Get a random direction from within a spherical triangle ( evenly distributed probability ) - reference here
    * \details reference: Stratified Sampling of Spherical Triangles, James Arvo, SIGGRAPH '95
    */
-  void sampleIsotropicallyFromTriangle(std::array<double, 3>& direction_vector, 
-                                       const size_t triangle_index) const;
+  void sampleIsotropicallyFromTriangle( std::array<double, 3>& direction_vector, 
+                                       const size_t triangle_index ) const;
 
   const std::vector<SphericalTriangle>& getSphericalTriangleVector() const;
 
   private:
 
-  //! Default constructor (for archiving)
+  //! Default constructor ( for archiving )
   PQLAQuadrature()
   { /* ... */ }
 
   //! Vector operation for the purpose of sampleIsotropicallyFromTriangle
-  void isotropicSamplingVectorOperation(const std::array<double, 3>& vertex_1,
+  void isotropicSamplingVectorOperation( const std::array<double, 3>& vertex_1,
                                         const std::array<double, 3>& vertex_2,
-                                        std::array<double, 3>& result_vector) const;
+                                        std::array<double, 3>& result_vector ) const;
 
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm( const std::array<double, 3>& direction_2_norm,
-                                 std::array<double, 3>& direction_1_norm) const;
+  void normalizeVectorToOneNorm(  const std::array<double, 3>& direction_2_norm,
+                                 std::array<double, 3>& direction_1_norm ) const;
   
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm(  const double x_direction, 
+  void normalizeVectorToOneNorm(   const double x_direction, 
                                   const double y_direction, 
                                   const double z_direction,
-                                  std::array<double, 3>& direction_1_norm) const;
+                                  std::array<double, 3>& direction_1_norm ) const;
 
   //! Take lower bounding plane indices of direction vector to form triangle index
-  size_t calculatePositiveTriangleBinIndex(const unsigned i_x, const unsigned i_y, const unsigned i_z) const;
+  size_t calculatePositiveTriangleBinIndex( const unsigned i_x, const unsigned i_y, const unsigned i_z ) const;
 
   //! Take direction signs to calculate secondary index
-  size_t findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
+  size_t findSecondaryIndex( const bool x_sign, const bool y_sign, const bool z_sign ) const;
 
   //! Quadrature order
   unsigned d_quadrature_order;
