@@ -421,7 +421,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDBlock() cons
 Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLDLWBlock() const
 {
   // need a const iterator since this function is declared const
-  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(landb);
+  std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(ldlw);
   if ( it!=block_to_start_length_pair.end() && d_nxs[nr] != 0 ) {
     // this block has a length defined by the MCNP manual
     int start = it->second.first;
