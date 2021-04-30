@@ -39,11 +39,11 @@ struct SphericalTriangle
   double area;
 
     //! Processes spherical triangle information
-  void computeAndStoreTriangleParameters( std::vector<std::array<double, 3>>& vertex_vector );
+  void computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector);
 
   // Serialize the data
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
+  void serialize(Archive& ar, const unsigned version)
   { 
     ar & BOOST_SERIALIZATION_NVP( triangle_parameter_vector );
     ar & BOOST_SERIALIZATION_NVP( area );
@@ -56,7 +56,7 @@ class PQLAQuadrature
   public:
 
   //! Constructor
-  PQLAQuadrature( unsigned quadrature_order );
+  PQLAQuadrature(unsigned quadrature_order);
 
   //! Destructor
   ~PQLAQuadrature()
