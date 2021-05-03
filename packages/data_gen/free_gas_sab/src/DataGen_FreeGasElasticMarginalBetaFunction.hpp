@@ -59,13 +59,13 @@ public:
   //! Evaluate the marginal CDF
   double evaluateCDF( const double beta );
 
-  void populatePDF( Teuchos::Array<double>& energy_array );
+  void populatePDF( std::vector<double>& energy_array );
 
-  void getPDF( Teuchos::Array<double>& pdf_array );
+  void getPDF( std::vector<double>& pdf_array );
 
-  void populateCDF( Teuchos::Array<double>& energy_array );
+  void populateCDF( std::vector<double>& energy_array );
 
-  void getCDF( Teuchos::Array<double>& cdf_array );
+  void getCDF( std::vector<double>& cdf_array );
 
 private:
 
@@ -103,8 +103,8 @@ private:
   // Cached CDF values (first = beta, second = CDF)
   std::list<std::pair<double,double> > d_cached_cdf_values;
 
-  Teuchos::Array<double> d_pdf_array;
-  Teuchos::Array<double> d_cdf_array;
+  std::vector<double> d_pdf_array;
+  std::vector<double> d_cdf_array;
 };
 
 } // end DataGen namespace

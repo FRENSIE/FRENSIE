@@ -81,7 +81,7 @@
  * (Utilitiy::ParameterListCompatibleObject),
  * HDF5 support (Utility::HDF5FileHandler), random number generation
  * (Utility::RandomNumberGenerator) and sampling from generic distributions
- * (Utility::OneDDistribution).
+ * (Utility::UnivariateDistribution).
  *
  * The data package provides a collection of data file readers.Currently
  * support for ACE files (Data::ACEFileHandler), EPDL files

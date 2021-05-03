@@ -14,38 +14,27 @@
 #include <map>
 #include <vector>
 #include <sstream>
-#include <iostream>
 #include <fstream>
 #include <array>
 #include <cstdio>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include <Utility_UnitTestHarnessWithMain.hpp>
 #include "DataGen_AdjointFreeGasElasticCrossSectionFactory.hpp"
-#include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
 #include "DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp"
 #include "DataGen_AdjointFreeGasElasticMarginalBetaFunction.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_ACEFileHandler.hpp"
-#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_UniformDistribution.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -55,9 +44,9 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt";
+std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt"; // this will not work....
 std::string table_name = "1001.70c";
-Teuchos::RCP<DataGen::AdjointFreeGasElasticCrossSectionFactory> free_gas_factory;
+std::shared_ptr<DataGen::AdjointFreeGasElasticCrossSectionFactory> free_gas_factory;
 std::vector<double> kT_vector{ 2.5301e-8, 5.1704e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};
 int num_particles = 100;
 int num_scatters  = 1;
@@ -73,7 +62,7 @@ std::vector<double> source_2500K{0,3,6,7,8,11,12,15,18,22,26,31,38,46,54,70,85,1
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
   double kT            = kT_vector[0];
@@ -86,11 +75,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
   
-  Teuchos::Array<double> energy_array;
+  std::vector<double> energy_array;
 
   free_gas_factory->getEnergyArray( energy_array );
 
@@ -122,7 +111,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 /*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
   double kT            = kT_vector[0];
@@ -135,11 +124,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+  std::shared_ptr<Utility::HistogramDistribution> source_distribution;
 
   source_distribution.reset( 
     new Utility::HistogramDistribution( bin_boundaries,
@@ -190,7 +179,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 /*
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling600K )
 {
   double kT            = kT_vector[1];
@@ -203,11 +192,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+  std::shared_ptr<Utility::HistogramDistribution> source_distribution;
 
   source_distribution.reset( 
     new Utility::HistogramDistribution( bin_boundaries,
@@ -255,7 +244,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling900K )
 {
   double kT            = kT_vector[2];
@@ -268,11 +257,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+  std::shared_ptr<Utility::HistogramDistribution> source_distribution;
 
   source_distribution.reset( 
     new Utility::HistogramDistribution( bin_boundaries,
@@ -320,7 +309,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling1200K )
 {
   double kT            = kT_vector[3];
@@ -333,11 +322,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+  std::shared_ptr<Utility::HistogramDistribution> source_distribution;
 
   source_distribution.reset( 
     new Utility::HistogramDistribution( bin_boundaries,
@@ -385,7 +374,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the energy grid can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
+FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling2500K )
 {
   double kT            = kT_vector[4];
@@ -398,11 +387,11 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   free_gas_factory->serializeMapIn( filename );
 
-  Teuchos::RCP<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
+  std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
   free_gas_factory->getEnergyDistribution( distribution );
 
-  Teuchos::RCP<Utility::HistogramDistribution> source_distribution;
+  std::shared_ptr<Utility::HistogramDistribution> source_distribution;
 
   source_distribution.reset( 
     new Utility::HistogramDistribution( bin_boundaries,
@@ -450,24 +439,20 @@ TEUCHOS_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 */
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  clp.setOption( "test_neutron_ace_file",
-		 &test_neutron_ace_file_name,
-		 "Test neutron ACE file name" );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+ ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_neutron_ace_file",
+                                       test_neutron_ace_file_name,
+                                       "",
+                                       "Test neutron ACE file name" );
 
   std::string table_name( "1001.70c" );
 
@@ -475,18 +460,8 @@ int main( int argc, char** argv )
                             test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);  
 }
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstFreeGasElasticCrossSectionGenerator.cpp

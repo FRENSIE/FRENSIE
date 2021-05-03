@@ -10,12 +10,8 @@
 #include <string>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
+#include <Utility_UnitTestHarnessWithMain.hpp>
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSSabDataExtractor.hpp"
 
@@ -25,29 +21,29 @@
 std::string test_inelastic_only_sab_ace_file_name;
 std::string test_inelastic_only_sab_ace_table_name;
 
-Teuchos::RCP<Data::XSSSabDataExtractor> xss_data_extractor_inelastic_only;
+std::shared_ptr<Data::XSSSabDataExtractor> xss_data_extractor_inelastic_only;
 
 std::string test_no_elastic_dist_sab_ace_file_name;
 std::string test_no_elastic_dist_sab_ace_table_name;
 
-Teuchos::RCP<Data::XSSSabDataExtractor> xss_data_extractor_no_elastic_dist;
+std::shared_ptr<Data::XSSSabDataExtractor> xss_data_extractor_no_elastic_dist;
 
 std::string test_full_sab_ace_file_name;
 std::string test_full_sab_ace_table_name;
 
-Teuchos::RCP<Data::XSSSabDataExtractor> xss_data_extractor_full;
+std::shared_ptr<Data::XSSSabDataExtractor> xss_data_extractor_full;
 
-Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
+std::shared_ptr<Data::ACEFileHandler> ace_file_handler;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct inelastic
 // scattering mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   getInelasticScatteringMode_inelastic_only )
 {
-  TEST_EQUALITY_CONST( 
+  FRENSIE_CHECK_EQUAL( 
 	       xss_data_extractor_inelastic_only->getInelasticScatteringMode(),
 	       Data::EQUIPROBABLE_COSINE_INELASTIC_MODE );
 }
@@ -55,28 +51,28 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic cross section 
 // data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringCrossSectionData_inelastic_only )
 {
-  TEST_ASSERT( !xss_data_extractor_inelastic_only->hasElasticScatteringCrossSectionData() );
+  FRENSIE_CHECK( !xss_data_extractor_inelastic_only->hasElasticScatteringCrossSectionData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic angular 
 // angular distribution data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringAngularDistributionData_inelastic_only )
 {
-  TEST_ASSERT( !xss_data_extractor_inelastic_only->hasElasticScatteringAngularDistributionData() );
+  FRENSIE_CHECK( !xss_data_extractor_inelastic_only->hasElasticScatteringAngularDistributionData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct elastic scattering
 // mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   getElasticScatteringMode_inelastic_only )
 {
-  TEST_EQUALITY_CONST( 
+  FRENSIE_CHECK_EQUAL( 
 		 xss_data_extractor_inelastic_only->getElasticScatteringMode(),
 		 Data::INCOHERENT_ELASTIC_MODE );
 }
@@ -84,112 +80,112 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITIE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_inelastic_only )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_inelastic_only )
 {
-  Teuchos::ArrayView<const double> itie_block = 
+  Utility::ArrayView<const double> itie_block = 
     xss_data_extractor_inelastic_only->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 58 );
-  TEST_EQUALITY_CONST( itie_block.back(), 2.03743300000E+01 );
+  FRENSIE_CHECK_EQUAL( itie_block.size(), 58*2+1 );
+  FRENSIE_CHECK_EQUAL( itie_block.front(), 58 );
+  FRENSIE_CHECK_EQUAL( itie_block.back(), 2.03743300000E+01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic energy grid
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractInelasticEnergyGrid_inelastic_only )
 {
-  Teuchos::ArrayView<const double> inelastic_energy_grid = 
+  Utility::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_inelastic_only->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.front(), 1.00000000000e-11 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic cross section
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractInelasticCrossSection_inelastic_only )
 {
-  Teuchos::ArrayView<const double> inelastic_cross_section = 
+  Utility::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_inelastic_only->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 1.07923800000E+03 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.03743300000E+01 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.front(), 1.07923800000E+03 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.back(), 2.03743300000E+01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_inelastic_only )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_inelastic_only )
 {
-  Teuchos::ArrayView<const double> itce_block =
+  Utility::ArrayView<const double> itce_block =
     xss_data_extractor_inelastic_only->extractITCEBlock();
 
-  TEST_EQUALITY_CONST( itce_block.size(), 0 );
+  FRENSIE_CHECK_EQUAL( itce_block.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic energy grid from
 // the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractElasticEnergyGrid_inelastic_only )
 {
-  Teuchos::ArrayView<const double> elastic_energy_grid = 
+  Utility::ArrayView<const double> elastic_energy_grid = 
     xss_data_extractor_inelastic_only->extractElasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( elastic_energy_grid.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic cross section
 // from the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractElasticCrossSection_inelastic_only )
 {
-  Teuchos::ArrayView<const double> elastic_cross_section = 
+  Utility::ArrayView<const double> elastic_cross_section = 
     xss_data_extractor_inelastic_only->extractElasticCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cross_section.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITXE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractITXEBlock_inelastic_only )
 {
-  Teuchos::ArrayView<const double> itxe_block = 
+  Utility::ArrayView<const double> itxe_block = 
     xss_data_extractor_inelastic_only->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 7.42341363215E-12 );
-  TEST_EQUALITY_CONST( itxe_block.back(),  9.96505931866E-01 );
+  FRENSIE_CHECK_EQUAL( itxe_block.size(), 63104 );
+  FRENSIE_CHECK_EQUAL( itxe_block.front(), 7.42341363215E-12 );
+  FRENSIE_CHECK_EQUAL( itxe_block.back(),  9.96505931866E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCA block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractITCABlock_inelastic_only )
 {
-  Teuchos::ArrayView<const double> itca_block = 
+  Utility::ArrayView<const double> itca_block = 
     xss_data_extractor_inelastic_only->extractITCABlock();
 
-  TEST_EQUALITY_CONST( itca_block.size(), 0 );
+  FRENSIE_CHECK_EQUAL( itca_block.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct inelastic
 // scattering mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   getInelasticScatteringMode_no_elastic_dist )
 {
-  TEST_EQUALITY_CONST( 
+  FRENSIE_CHECK_EQUAL( 
 	      xss_data_extractor_no_elastic_dist->getInelasticScatteringMode(),
 	      Data::EQUIPROBABLE_COSINE_INELASTIC_MODE );
 }
@@ -197,28 +193,28 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic cross section 
 // data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringCrossSectionData_no_elastic_dist )
 {
-  TEST_ASSERT( xss_data_extractor_no_elastic_dist->hasElasticScatteringCrossSectionData() );
+  FRENSIE_CHECK( xss_data_extractor_no_elastic_dist->hasElasticScatteringCrossSectionData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic angular 
 // distribution data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringAngularDistributionData_no_elastic_dist )
 {
-  TEST_ASSERT( !xss_data_extractor_no_elastic_dist->hasElasticScatteringAngularDistributionData() );
+  FRENSIE_CHECK( !xss_data_extractor_no_elastic_dist->hasElasticScatteringAngularDistributionData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct elastic scattering
 // mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   getElasticScatteringMode_no_elastic_dist )
 {
-  TEST_EQUALITY_CONST( 
+  FRENSIE_CHECK_EQUAL( 
 		xss_data_extractor_no_elastic_dist->getElasticScatteringMode(),
 		Data::COHERENT_ELASTIC_MODE );
 }
@@ -226,117 +222,117 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITIE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_no_elastic_dist )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> itie_block = 
+  Utility::ArrayView<const double> itie_block = 
     xss_data_extractor_no_elastic_dist->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 58 );
-  TEST_EQUALITY_CONST( itie_block.back(), 4.58635378012E+00 );
+  FRENSIE_CHECK_EQUAL( itie_block.size(), 58*2+1 );
+  FRENSIE_CHECK_EQUAL( itie_block.front(), 58 );
+  FRENSIE_CHECK_EQUAL( itie_block.back(), 4.58635378012E+00 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic energy grid
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractInelasticEnergyGrid_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> inelastic_energy_grid = 
+  Utility::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_no_elastic_dist->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.front(), 1.00000000000e-11 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic cross section
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractInelasticCrossSection_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> inelastic_cross_section = 
+  Utility::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_no_elastic_dist->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 2.52791900000E+00 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 4.58635378012E+00 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.front(), 2.52791900000E+00 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.back(), 4.58635378012E+00 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_no_elastic_dist )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> itce_block =
+  Utility::ArrayView<const double> itce_block =
     xss_data_extractor_no_elastic_dist->extractITCEBlock();
 
-  TEST_EQUALITY_CONST( itce_block.size(), 166*2+1 );
-  TEST_EQUALITY_CONST( itce_block.front(), 166 );
-  TEST_EQUALITY_CONST( itce_block.back(), 6.25957273359E-07 );
+  FRENSIE_CHECK_EQUAL( itce_block.size(), 166*2+1 );
+  FRENSIE_CHECK_EQUAL( itce_block.front(), 166 );
+  FRENSIE_CHECK_EQUAL( itce_block.back(), 6.25957273359E-07 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic energy grid from
 // the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractElasticEnergyGrid_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> elastic_energy_grid = 
+  Utility::ArrayView<const double> elastic_energy_grid = 
     xss_data_extractor_no_elastic_dist->extractElasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( elastic_energy_grid.size(), 166 );
-  TEST_EQUALITY_CONST( elastic_energy_grid.front(), 1.82219700000E-09 );
-  TEST_EQUALITY_CONST( elastic_energy_grid.back(), 1.18488400000E-06 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.size(), 166 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.front(), 1.82219700000E-09 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.back(), 1.18488400000E-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic cross section
 // from the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractElasticCrossSection_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> elastic_cross_section = 
+  Utility::ArrayView<const double> elastic_cross_section = 
     xss_data_extractor_no_elastic_dist->extractElasticCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cross_section.size(), 166 );
-  TEST_EQUALITY_CONST( elastic_cross_section.front(), 1.34746493552E-08 );
-  TEST_EQUALITY_CONST( elastic_cross_section.back(), 6.25957273359E-07 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.size(), 166 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.front(), 1.34746493552E-08 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.back(), 6.25957273359E-07 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITXE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_no_elastic_dist )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> itxe_block = 
+  Utility::ArrayView<const double> itxe_block = 
     xss_data_extractor_no_elastic_dist->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 1.61025581807E-09 );
-  TEST_EQUALITY_CONST( itxe_block.back(), 9.56408384461E-01 );
+  FRENSIE_CHECK_EQUAL( itxe_block.size(), 63104 );
+  FRENSIE_CHECK_EQUAL( itxe_block.front(), 1.61025581807E-09 );
+  FRENSIE_CHECK_EQUAL( itxe_block.back(), 9.56408384461E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCA block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   extractITCABlock_no_elastic_dist )
 {
-  Teuchos::ArrayView<const double> itca_block = 
+  Utility::ArrayView<const double> itca_block = 
     xss_data_extractor_no_elastic_dist->extractITCABlock();
 
-  TEST_EQUALITY_CONST( itca_block.size(), 0 );
+  FRENSIE_CHECK_EQUAL( itca_block.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct inelastic
 // scattering mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   getInelasticScatteringMode_full )
 {
-  TEST_EQUALITY_CONST( 
+  FRENSIE_CHECK_EQUAL( 
 	      xss_data_extractor_full->getInelasticScatteringMode(),
 	      Data::EQUIPROBABLE_COSINE_INELASTIC_MODE );
 }
@@ -344,181 +340,168 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor,
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic cross section 
 // data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringCrossSectionData_full )
 {
-  TEST_ASSERT(xss_data_extractor_full->hasElasticScatteringCrossSectionData());
+  FRENSIE_CHECK(xss_data_extractor_full->hasElasticScatteringCrossSectionData());
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return if elastic angular 
 // distribution data is present
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, 
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, 
 		   hasElasticScatteringAngularDistributionData_full )
 {
-  TEST_ASSERT( xss_data_extractor_full->hasElasticScatteringAngularDistributionData() );
+  FRENSIE_CHECK( xss_data_extractor_full->hasElasticScatteringAngularDistributionData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can return the correct elastic scattering
 // mode
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, getElasticScatteringMode_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, getElasticScatteringMode_full )
 {
-  TEST_EQUALITY_CONST( xss_data_extractor_full->getElasticScatteringMode(),
+  FRENSIE_CHECK_EQUAL( xss_data_extractor_full->getElasticScatteringMode(),
 		       Data::INCOHERENT_ELASTIC_MODE );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITIE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_full )
 {
-  Teuchos::ArrayView<const double> itie_block = 
+  Utility::ArrayView<const double> itie_block = 
     xss_data_extractor_full->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 58*2+1 );
-  TEST_EQUALITY_CONST( itie_block.front(), 58 );
-  TEST_EQUALITY_CONST( itie_block.back(), 2.06047492000E+01 );
+  FRENSIE_CHECK_EQUAL( itie_block.size(), 58*2+1 );
+  FRENSIE_CHECK_EQUAL( itie_block.front(), 58 );
+  FRENSIE_CHECK_EQUAL( itie_block.back(), 2.06047492000E+01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic energy grid
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractInelasticEnergyGrid_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractInelasticEnergyGrid_full )
 {
-  Teuchos::ArrayView<const double> inelastic_energy_grid = 
+  Utility::ArrayView<const double> inelastic_energy_grid = 
     xss_data_extractor_full->extractInelasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( inelastic_energy_grid.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( inelastic_energy_grid.back(), 4.46000000000E-06 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.front(), 1.00000000000e-11 );
+  FRENSIE_CHECK_EQUAL( inelastic_energy_grid.back(), 4.46000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the inelastic cross section
 // from the ITIE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractInelasticCrossSection_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractInelasticCrossSection_full )
 {
-  Teuchos::ArrayView<const double> inelastic_cross_section = 
+  Utility::ArrayView<const double> inelastic_cross_section = 
     xss_data_extractor_full->extractInelasticCrossSection();
 
-  TEST_EQUALITY_CONST( inelastic_cross_section.size(), 58 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.front(), 3.45990500000E+02 );
-  TEST_EQUALITY_CONST( inelastic_cross_section.back(), 2.06047492000E+01 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.size(), 58 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.front(), 3.45990500000E+02 );
+  FRENSIE_CHECK_EQUAL( inelastic_cross_section.back(), 2.06047492000E+01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITCEBlock_full )
 {
-  Teuchos::ArrayView<const double> itce_block =
+  Utility::ArrayView<const double> itce_block =
     xss_data_extractor_full->extractITCEBlock();
 
-  TEST_EQUALITY_CONST( itce_block.size(), 364*2+1 );
-  TEST_EQUALITY_CONST( itce_block.front(), 364 );
-  TEST_EQUALITY_CONST( itce_block.back(), 1.37951000000E-01 );
+  FRENSIE_CHECK_EQUAL( itce_block.size(), 364*2+1 );
+  FRENSIE_CHECK_EQUAL( itce_block.front(), 364 );
+  FRENSIE_CHECK_EQUAL( itce_block.back(), 1.37951000000E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic energy grid from
 // the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractElasticEnergyGrid_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractElasticEnergyGrid_full )
 {
-  Teuchos::ArrayView<const double> elastic_energy_grid = 
+  Utility::ArrayView<const double> elastic_energy_grid = 
     xss_data_extractor_full->extractElasticEnergyGrid();
 
-  TEST_EQUALITY_CONST( elastic_energy_grid.size(), 364 );
-  TEST_EQUALITY_CONST( elastic_energy_grid.front(), 1.00000000000e-11 );
-  TEST_EQUALITY_CONST( elastic_energy_grid.back(), 4.25000000000E-06 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.size(), 364 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.front(), 1.00000000000e-11 );
+  FRENSIE_CHECK_EQUAL( elastic_energy_grid.back(), 4.25000000000E-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the elastic cross section
 // from the ITCE block
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractElasticCrossSection_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractElasticCrossSection_full )
 {
-  Teuchos::ArrayView<const double> elastic_cross_section = 
+  Utility::ArrayView<const double> elastic_cross_section = 
     xss_data_extractor_full->extractElasticCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cross_section.size(), 364 );
-  TEST_EQUALITY_CONST( elastic_cross_section.front(), 8.19227100000E+01 );
-  TEST_EQUALITY_CONST( elastic_cross_section.back(), 1.37951000000E-01 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.size(), 364 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.front(), 8.19227100000E+01 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_section.back(), 1.37951000000E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITXE block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITXEBlock_full )
 {
-  Teuchos::ArrayView<const double> itxe_block = 
+  Utility::ArrayView<const double> itxe_block = 
     xss_data_extractor_full->extractITXEBlock();
 
-  TEST_EQUALITY_CONST( itxe_block.size(), 63104 );
-  TEST_EQUALITY_CONST( itxe_block.front(), 1.06498867488E-09 );
-  TEST_EQUALITY_CONST( itxe_block.back(), 9.93495780141E-01 );
+  FRENSIE_CHECK_EQUAL( itxe_block.size(), 63104 );
+  FRENSIE_CHECK_EQUAL( itxe_block.front(), 1.06498867488E-09 );
+  FRENSIE_CHECK_EQUAL( itxe_block.back(), 9.93495780141E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSSabDataExtractor can extract the ITCA block from the
 // XSS array
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITCABlock_full )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, extractITCABlock_full )
 {
-  Teuchos::ArrayView<const double> itca_block = 
+  Utility::ArrayView<const double> itca_block = 
     xss_data_extractor_full->extractITCABlock();
 
-  TEST_EQUALITY_CONST( itca_block.size(), 5824 );
-  TEST_EQUALITY_CONST( itca_block.front(), -9.37458100000E-01 );
-  TEST_EQUALITY_CONST( itca_block.back(), 9.99892600000E-01 );
+  FRENSIE_CHECK_EQUAL( itca_block.size(), 5824 );
+  FRENSIE_CHECK_EQUAL( itca_block.front(), -9.37458100000E-01 );
+  FRENSIE_CHECK_EQUAL( itca_block.back(), 9.99892600000E-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the data is continuous in energy
-TEUCHOS_UNIT_TEST( XSSSabDataExtractor, test_continuous_energy )
+FRENSIE_UNIT_TEST( XSSSabDataExtractor, test_continuous_energy )
 {
-  TEST_ASSERT(!xss_data_extractor_full->isDataContinuousEnergy());
+  FRENSIE_CHECK(!xss_data_extractor_full->isDataContinuousEnergy());
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_inelastic_only_sab_ace_file",
-		 &test_inelastic_only_sab_ace_file_name,
-		 "Test S(a,b) ACE file name with inelastic data only" );
-  clp.setOption( "test_inelastic_only_sab_ace_table",
-		 &test_inelastic_only_sab_ace_table_name,
-		 "Test S(a,b) ACE table name in ACE file with inelastic data only" );
-
-  clp.setOption( "test_no_elastic_dist_sab_ace_file",
-		 &test_no_elastic_dist_sab_ace_file_name,
-		 "Test S(a,b) ACE file name with elastic and inelastic data but no elastic scattering angular distribution" );
-  clp.setOption( "test_no_elastic_dist_sab_ace_table",
-		 &test_no_elastic_dist_sab_ace_table_name,
-		 "Test S(a,b) ACE table name in ACE file with elastic and inelastic data but no elastic scattering angular distribution" );
-
-  clp.setOption( "test_full_sab_ace_file",
-		 &test_full_sab_ace_file_name,
-		 "Test S(a,b) ACE file name with elastic and inelastic data" );
-  clp.setOption( "test_full_sab_ace_table",
-		 &test_full_sab_ace_table_name,
-		 "Test S(a,b) ACE table name in ACE file with elastic and inelastic data" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-  
-  // Initialize ace file handler and data extractor
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_inelastic_only_sab_ace_file",
+                                        test_inelastic_only_sab_ace_file_name, "",
+                                        "Test S(a,b) ACE file name with inelastic data only" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_inelastic_only_sab_ace_table",
+                                        test_inelastic_only_sab_ace_table_name, "",
+                                        "Test S(a,b) ACE table name in ACE file with inelastic data only" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_no_elastic_dist_sab_ace_file",
+                                        test_no_elastic_dist_sab_ace_file_name, "",
+                                        "Test S(a,b) ACE file name with elastic and inelastic data but no elastic scattering angular distribution" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_no_elastic_dist_sab_ace_table",
+                                        test_no_elastic_dist_sab_ace_table_name, "",
+                                        "Test S(a,b) ACE table name in ACE file with elastic and inelastic data but no elastic scattering angular distribution" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_full_sab_ace_file",
+                                        test_full_sab_ace_file_name, "",
+                                        "Test S(a,b) ACE file name with elastic and inelastic data" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_full_sab_ace_table",
+                                        test_full_sab_ace_table_name, "",
+                                        "Test S(a,b) ACE table name in ACE file with elastic and inelastic data" );
+    // Initialize ace file handler and data extractor
   ace_file_handler.reset( 
 	      new Data::ACEFileHandler( test_inelastic_only_sab_ace_file_name,
 					test_inelastic_only_sab_ace_table_name,
@@ -548,22 +531,9 @@ int main( int argc, char** argv )
        new Data::XSSSabDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);  
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstXSSSabDataExtractor.cpp

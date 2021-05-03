@@ -45,7 +45,7 @@ public:
                        size_t& outgoing_index,
                        double& energy_prime ) const override;
 
-  void getDistribution( AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution energy_distribution );
+  void getDistribution( AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution& energy_distribution );
 
   EnergyDistribution d_energy_distribution;
 

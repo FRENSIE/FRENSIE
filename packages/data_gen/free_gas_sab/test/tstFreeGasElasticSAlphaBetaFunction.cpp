@@ -248,16 +248,16 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 {
 
   // Calculate the integral value at energy 1e-6 MeV
-  double beta_min = Utility::calculateBetaMin( 1e-6, 
+  double beta_min = MonteCarlo::calculateBetaMin( 1e-6, 
 					       sab_function->getTemperature());
 
-  double alpha_min = Utility::calculateAlphaMin( 
+  double alpha_min = MonteCarlo::calculateAlphaMin( 
 					  1e-6,
 					  beta_min,
 					  sab_function->getAtomicWeightRatio(),
 					  sab_function->getTemperature() );
   
-  double alpha_max = Utility::calculateAlphaMax( 
+  double alpha_max = MonteCarlo::calculateAlphaMax( 
 					  1e-6,
 					  beta_min,
 					  sab_function->getAtomicWeightRatio(),
@@ -371,6 +371,10 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   std::cout << sab_value << std::endl;
 
   value = integratedCrossSectionValue( 0.999167,
+                                       2.53010e-8,
+                                       1e-9,
+                                       0.0,
+                                       1.0e-06,
                                        sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
@@ -408,6 +412,10 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   std::cout << sab_value << std::endl;
 
   value = integratedCrossSectionValue( 0.999167,
+                                       2.53010e-8,
+                                       0.0,
+                                       0.0,
+                                       1.0e-06,
                                        sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,

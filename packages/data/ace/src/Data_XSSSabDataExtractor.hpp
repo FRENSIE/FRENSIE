@@ -128,7 +128,7 @@ private:
   std::vector<int> d_nxs;
 
   // The jxs array (a copy will be stored)
-  Utility::Array<int> d_jxs;
+  std::vector<int> d_jxs;
   
   // Discrete or Continuous
   bool d_continuous_energy_data;

@@ -42,8 +42,8 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
     d_A( A ),
     d_kT( kT ),
     d_beta_min( 0.0 ),
-    d_norm_constant( 1.0 ),
-    d_cached_cdf_values()
+    d_norm_constant( 1.0 )//,
+    //d_cached_cdf_values()
 {
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
@@ -73,7 +73,7 @@ double FreeGasElasticMarginalBetaFunction::getBetaMin() const
   
 double FreeGasElasticMarginalBetaFunction::getBetaMax() 
 {
-  return Utility::calculateBetaMax( d_A );
+  return MonteCarlo::calculateBetaMax( d_A );
 }
 
 // Get the normalization constant
@@ -92,7 +92,7 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   {
     return 0.0;
   }
-  else if ( beta >= Utility::calculateBetaMax( d_A ) )
+  else if ( beta >= MonteCarlo::calculateBetaMax( d_A ) )
   {
     return 0.0;
   }
@@ -103,40 +103,40 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
 }
 
 void FreeGasElasticMarginalBetaFunction::populatePDF( 
-    Teuchos::Array<double>& energy_array )
+    std::vector<double>& energy_array )
 {
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
-    if( beta <= Utility::calculateBetaMax( d_A ) )
+    if( beta <= MonteCarlo::calculateBetaMax( d_A ) )
     {
-      d_pdf_array.append( (*this)( beta ) );
+      d_pdf_array.push_back( (*this)( beta ) );
     }
     else
     {
-      d_pdf_array.append( 0.0 );
+      d_pdf_array.push_back( 0.0 );
     }
   }
 }
 
 void FreeGasElasticMarginalBetaFunction::getPDF( 
-    Teuchos::Array<double>& pdf_array )
+    std::vector<double>& pdf_array )
 {
   pdf_array = d_pdf_array;
 }
 
 void FreeGasElasticMarginalBetaFunction::populateCDF( 
-    Teuchos::Array<double>& energy_array )
+    std::vector<double>& energy_array )
 {
   for( int i = 0; i < energy_array.size(); ++i )
   {
     double beta = (energy_array[i] - d_E)/d_kT;
-    d_cdf_array.append( this->evaluateCDF( beta ) );
+    d_cdf_array.push_back( this->evaluateCDF( beta ) );
   }
 }
 
 void FreeGasElasticMarginalBetaFunction::getCDF( 
-    Teuchos::Array<double>& cdf_array )
+    std::vector<double>& cdf_array )
 {
   cdf_array = d_cdf_array;
 }

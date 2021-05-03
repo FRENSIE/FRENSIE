@@ -33,9 +33,9 @@ public:
       const MonteCarlo::NuclearReactionType base_reaction_type,
       const unsigned photon_production_id,
       const double temperature,
-      const std::shared_ptr<const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >&
+      std::shared_ptr< const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >&
         photon_production_distribution,
-      const std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& total_reaction,
+      const std::shared_ptr<MonteCarlo::NeutronNuclearReaction>& total_reaction,
       const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >& total_mt_yield_array )
     : MonteCarlo::DecoupledPhotonProductionReaction( base_reaction_type,
                                                      photon_production_id,
@@ -65,7 +65,7 @@ public:
   { return 0.0; }
 
   // Return the base reaction cross section at a given energy
-  double getBaseReactionCrossSection( const double energy ) const final override
+  double getReactionCrossSection( const double energy ) const final override
   { return 0.0; }
 
   // Return the cross section at a given energy
@@ -102,9 +102,9 @@ FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getPhotonProductionId )
 
 //---------------------------------------------------------------------------//
 // Check that the base reaction type can be returned
-FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getBaseReactionType )
+FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getReactionType )
 {
-  FRENSIE_CHECK_EQUAL( nuclear_reaction->getBaseReactionType(),
+  FRENSIE_CHECK_EQUAL( nuclear_reaction->getReactionType(),
 		       MonteCarlo::N__GAMMA_REACTION );
 }
 
@@ -192,7 +192,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       total_mt_yield_array;
     total_mt_yield_array.push_back( d_mtp_yield );
 
-    std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> total_reaction(
+    const std::shared_ptr< MonteCarlo::NeutronNuclearReaction> total_reaction(
           new MonteCarlo::NeutronAbsorptionReaction(
                            energy_grid,
                            cross_section,
@@ -201,13 +201,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                            0.0,
                            ace_file_handler->getTableTemperature().value() ) );
 
-    nuclear_reaction.reset( new TestDecoupledPhotonProductionReaction(
-			       MonteCarlo::N__GAMMA_REACTION,
-                               reaction_type,
-                               ace_file_handler->getTableTemperature().value(),
-                               photon_production_distribution,
-                               total_reaction,
-                               total_mt_yield_array ) );
+    nuclear_reaction.reset(new TestDecoupledPhotonProductionReaction(
+                                  MonteCarlo::N__GAMMA_REACTION,
+                                  reaction_type,
+                                  ace_file_handler->getTableTemperature().value(),
+                                  photon_production_distribution,
+                                  total_reaction,
+                                  total_mt_yield_array));
   }
 
   // Initialize the random number generator

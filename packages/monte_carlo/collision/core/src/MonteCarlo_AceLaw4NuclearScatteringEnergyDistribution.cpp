@@ -39,6 +39,10 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy( const double en
   return this->sampleEnergy( energy, incoming_index, outgoing_index, energy_prime );
 }
 
+void AceLaw4NuclearScatteringEnergyDistribution::getDistribution( AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution& energy_distribution )
+{
+  energy_distribution = d_energy_distribution;
+}
 
 // Sample a scattering energy
 double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(

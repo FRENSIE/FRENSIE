@@ -40,14 +40,14 @@ public:
 
   //! Create the angular distribution
   static void createSAlphaBetaDistribution( 
-	    const Teuchos::ArrayView<const double>& energy_grid,
-	    const Teuchos::ArrayView<const double>& itca_block,
-	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+	    const Utility::ArrayView<const double>& energy_grid,
+	    const Utility::ArrayView<const double>& itca_block,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution );
   
   //! Create an isotropic angular distribution
   static void createSAlphaBetaIsotropicDistribution(
-    const Teuchos::ArrayView<const double>& energy_grid,
-	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+    const Utility::ArrayView<const double>& energy_grid,
+	   std::shared_ptr<NuclearScatteringAngularDistribution>& distribution );
 
 private:
 

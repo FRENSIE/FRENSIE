@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclideACEFactory.hpp"
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SAlphaBetaDecoupledPhotonProductionReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
 #include "MonteCarlo_SAlphaBetaNuclearReactionACEFactory.hpp"
@@ -27,23 +27,31 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
-			 Teuchos::RCP<Nuclide>& nuclide,
+			 std::shared_ptr<Nuclide>& nuclide,
 			 const bool use_unresolved_resonance_data,
 			 const bool use_photon_production_data,
 			 const std::string& sab_alias,
-			 const Data::XSSSabDataExtractor& sab_nuclide_data )
+			 const Data::XSSSabDataExtractor& sab_nuclide_data,
+			 const SimulationProperties& properties)
 {
   // Extract the common energy grid used for this nuclide
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
+  std::shared_ptr< std::vector< double>> energy_grid;
+  energy_grid.reset( new std::vector< double>(raw_nuclide_data.extractEnergyGrid()) );
   
+	std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher = std::make_shared<Utility::StandardHashBasedGridSearcher<std::vector<double>,false> >(
+						energy_grid,
+						properties.getNumberOfAdjointElectronHashGridBins() );
+
   // Create the nuclear reaction factory
-  SAlphaBetaNuclearReactionACEFactory reaction_factory( nuclide_alias,
+  SAlphaBetaNuclearReactionACEFactory reaction_factory( 
+	  					  nuclide_alias,
 					      atomic_weight_ratio,
 					      temperature,
-					      energy_grid.getConst(),
+					      energy_grid,
 					      raw_nuclide_data,
-					      sab_nuclide_data );	  
+					      sab_nuclide_data,
+						  grid_searcher,
+						  properties );	  
 					  
   // Create the standard scattering reactions
   Nuclide::ReactionMap standard_scattering_reactions;
@@ -82,43 +90,48 @@ void SAlphaBetaNuclideACEFactory::createNuclide(
   if( use_photon_production_data )
   {
     // Create the photon production reaction factory
-    SAlphaBetaDecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory( 
-                  nuclide_alias,
-					        atomic_weight_ratio,
-					        temperature,
-					        energy_grid.getConst(),
-					        raw_nuclide_data,
-					        sab_nuclide_data ); 
-				        
-		// Create the photon production reactions 
-		DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
-		                                               photon_production_reactions;
-		                                               
-		photon_production_reaction_factory.createPhotonProductionReactions( 
-		                                             photon_production_reactions );
-   
-    nuclide.reset( new DecoupledPhotonProductionNuclide( nuclide_alias,
-			        atomic_number,
-			        atomic_mass_number,
-			        isomer_number,
-			        atomic_weight_ratio,
-			        temperature,
-			        energy_grid,
-			        standard_scattering_reactions,
-			        standard_absorption_reactions,
-			        photon_production_reactions ) );
+    SAlphaBetaDecoupledPhotonProductionReactionACEFactory
+        photon_production_reaction_factory( nuclide_alias,
+											atomic_weight_ratio,
+                                           	temperature, 
+											energy_grid,
+                                           	raw_nuclide_data,
+											sab_nuclide_data, 
+											grid_searcher, 
+											properties);
+
+    // Create the photon production reactions
+    DecoupledPhotonProductionNuclide::ConstPhotonProductionReactionMap
+        photon_production_reactions;
+
+    photon_production_reaction_factory.createPhotonProductionReactions(
+        photon_production_reactions);
+
+    nuclide.reset(new DecoupledPhotonProductionNuclide(
+        nuclide_alias, 
+		atomic_number, 
+		atomic_mass_number, 
+		isomer_number,
+        atomic_weight_ratio, 
+		temperature, 
+		energy_grid,
+		grid_searcher,
+        standard_scattering_reactions, 
+		standard_absorption_reactions,
+        photon_production_reactions));
   }
   else
   {
-    nuclide.reset( new Nuclide( nuclide_alias,
-			        atomic_number,
-			        atomic_mass_number,
-			        isomer_number,
-			        atomic_weight_ratio,
-			        temperature,
-			        energy_grid,
-			        standard_scattering_reactions,
-			        standard_absorption_reactions ) );
+    nuclide.reset(new Nuclide( nuclide_alias, 
+						       atomic_number, 
+							   atomic_mass_number,
+                               isomer_number, 
+							   atomic_weight_ratio, 
+							   temperature,
+                               energy_grid,
+							   grid_searcher,
+							   standard_scattering_reactions,
+                               standard_absorption_reactions));
   }
 }
 

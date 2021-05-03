@@ -71,22 +71,22 @@ XSSSabDataExtractor::XSSSabDataExtractor(
   if ( this->isDataContinuousEnergy() )
   {
     // Extract and cache the ITIE block
-    d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*4 + 1 );
+    d_itie_block = d_xss_view( d_jxs[0], (int)d_xss_view[d_jxs[0]]*4 + 1 );
     
     // Find appropriate data for ITXE block
-    int last_energies = d_xss[ (int)d_xss[d_jxs[0]]*4 ];
-    int last_position = d_xss[ (int)d_xss[d_jxs[0]]*3 ];
+    int last_energies = d_xss_view[ (int)d_xss_view[d_jxs[0]]*4 ];
+    int last_position = d_xss_view[ (int)d_xss_view[d_jxs[0]]*3 ];
     int number_angles = d_nxs[2];
     int distance      = last_position + last_energies*(number_angles + 2) - 
-                          ((int)d_xss[d_jxs[0]]*4 + 1);
+                          ((int)d_xss_view[d_jxs[0]]*4 + 1);
 
     // Extract and cache the ITXE block                     
-    d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*4 + 1, distance );
+    d_itxe_block = d_xss_view( (int)d_xss_view[d_jxs[0]]*4 + 1, distance );
 
     // Extract and cache the ITCE block
     if( d_jxs[3] != 0 )
     {
-      d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+      d_itce_block = d_xss_view( d_jxs[3], (int)d_xss_view[d_jxs[3]]*2 + 1 );
     }
     else
     {
@@ -96,8 +96,8 @@ XSSSabDataExtractor::XSSSabDataExtractor(
     // Extract and cache the ITCA block
     if( d_jxs[3] != 0 && d_nxs[5] != -1 )
     {
-      int elastic_energies = (int)d_xss[d_jxs[3]];
-      d_itca_block = d_xss( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
+      int elastic_energies = (int)d_xss_view[d_jxs[3]];
+      d_itca_block = d_xss_view( d_jxs[5], elastic_energies*(d_nxs[5] + 1) );
     }
       else
     {

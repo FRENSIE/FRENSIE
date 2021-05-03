@@ -25,7 +25,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const std::shared_ptr<const ScatteringDistribution>&
        photon_production_distribution,
-       const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+       const std::shared_ptr<NeutronNuclearReaction>& total_reaction,
        const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
        total_mt_yield_array )
   : BaseType( incoming_energy_grid,
@@ -52,7 +52,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
        grid_searcher,
        const std::shared_ptr<const ScatteringDistribution>&
        photon_production_distribution,
-       const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+       const std::shared_ptr<NeutronNuclearReaction>& total_reaction,
        const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
        total_mt_yield_array )
   : BaseType( incoming_energy_grid,
@@ -69,7 +69,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
 }
 
 // Return the cross section at a given energy
-double DecoupledCrossSectionBasedPhotonProductionReaction::getBaseReactionCrossSection( const double energy ) const
+double DecoupledCrossSectionBasedPhotonProductionReaction::getReactionCrossSection( const double energy ) const
 {
   return DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( energy );
 }

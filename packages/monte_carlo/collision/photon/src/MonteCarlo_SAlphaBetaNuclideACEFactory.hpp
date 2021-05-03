@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_S_ALPHA_BETA_NUCLIDE_ACE_FACTORY_HPP
 #define MONTE_CARLO_S_ALPHA_BETA_NUCLIDE_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -34,11 +31,12 @@ public:
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
-			 Teuchos::RCP<Nuclide>& nuclide,
+			 std::shared_ptr<Nuclide>& nuclide,
 			 const bool use_unresolved_resonance_data,
 			 const bool use_photon_production_data,
 			 const std::string& sab_alias,
-			 const Data::XSSSabDataExtractor& sab_nuclide_data  );
+			 const Data::XSSSabDataExtractor& sab_nuclide_data,
+			 const SimulationProperties& properties  );
 
 private:
 

@@ -109,7 +109,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
           new std::vector<double>( xss_data_extractor->extractTotalCrossSection() ) );
 
   // Create the total reaction
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> total_reaction(
+  std::shared_ptr<MonteCarlo::NeutronNuclearReaction> total_reaction(
                         new MonteCarlo::NeutronAbsorptionReaction(
                            energy_grid,
                            total_cross_section,
@@ -133,18 +133,20 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
   std::shared_ptr<const std::vector<double> > xs_energy_values_rcp(
                               new std::vector<double>( xs_energy_values_av ) );
-  
+
+  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> > tmp_vec;
+
   // Create the nuclear reaction
   nuclear_reaction.reset( new MonteCarlo::DecoupledCrossSectionBasedPhotonProductionReaction(
-			       MonteCarlo::N__GAMMA_REACTION,
+			                         MonteCarlo::N__GAMMA_REACTION,
                                102001u,
-			       ace_file_handler->getTableTemperature().value(),
+			                         ace_file_handler->getTableTemperature().value(),
                                0u,
                                energy_grid_rcp,
                                xs_energy_values_rcp,
                                photon_production_distribution,
                                total_reaction,
-                               std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >() ) );
+                               tmp_vec) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

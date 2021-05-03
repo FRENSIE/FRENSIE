@@ -15,13 +15,11 @@
 #include <boost/multiprecision/float128.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace DataGen{
 
@@ -54,9 +52,9 @@ public:
 
   //! Constructor
   AdjointFreeGasElasticSAlphaBetaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const std::shared_ptr<Utility::UnivariateDistribution>& 
 	  zero_temp_elastic_cross_section,
-          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT );
@@ -118,13 +116,13 @@ private:
   static double min_exp_arg;
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The zero temperature cross section
-  Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;
+  std::shared_ptr<Utility::UnivariateDistribution> d_zero_temp_elastic_cross_section;
 
   // The cm scattering angle PDF
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+  std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>
   d_cm_scattering_distribution;
 
   // The atomic weight ratio

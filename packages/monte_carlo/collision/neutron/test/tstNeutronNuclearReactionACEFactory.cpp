@@ -81,13 +81,12 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createScatteringReaction
                             *properties,
                             *h1_xss_data_extractor ) );
 
-  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
-
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr< MonteCarlo::NeutronNuclearReaction> > reactions;
   factory->createScatteringReactions( reactions );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 1 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& elastic_reaction =
+  std::shared_ptr<MonteCarlo::NeutronNuclearReaction>& elastic_reaction =
     reactions.find( MonteCarlo::N__N_ELASTIC_REACTION )->second;
 
   FRENSIE_CHECK_EQUAL( elastic_reaction->getReactionType(),
@@ -115,15 +114,15 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createScatteringReactio
                            *properties,
                            *o16_xss_data_extractor ) );
 
-  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr< MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createScatteringReactions( reactions );
 
-  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
+  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 18 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& elastic_reaction =
+  std::shared_ptr<MonteCarlo::NeutronNuclearReaction>& elastic_reaction =
     reactions.find( MonteCarlo::N__N_ELASTIC_REACTION )->second;
 
   FRENSIE_CHECK_EQUAL( elastic_reaction->getReactionType(),
@@ -136,7 +135,7 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createScatteringReactio
   FRENSIE_CHECK_EQUAL( elastic_reaction->getCrossSection( 150.0 ),
 		       1.48000000000e-01 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& inelastic_level_1_reaction =
+  std::shared_ptr<MonteCarlo::NeutronNuclearReaction>& inelastic_level_1_reaction =
     reactions.find( MonteCarlo::N__N_EXCITED_STATE_1_REACTION )->second;
   FRENSIE_CHECK_EQUAL( inelastic_level_1_reaction->getQValue(),
 		       -6.04940000000e+00 );
@@ -153,7 +152,7 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createScatteringReactio
   FRENSIE_CHECK_EQUAL( inelastic_level_1_reaction->getCrossSection( 150.0 ),
 		       0.0 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& inelastic_continuum_reaction =
+  std::shared_ptr<MonteCarlo::NeutronNuclearReaction>& inelastic_continuum_reaction =
     reactions.find( MonteCarlo::N__N_CONTINUUM_REACTION )->second;
   FRENSIE_CHECK_EQUAL( inelastic_continuum_reaction->getQValue(),
 		       -9.58500000000e+00 );
@@ -183,13 +182,13 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createAbsorptionReaction
                             *properties,
                             *h1_xss_data_extractor ) );
 
-  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createAbsorptionReactions( reactions );
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 3 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& n_gamma_reaction =
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction>& n_gamma_reaction =
     reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
 
   FRENSIE_CHECK_EQUAL( n_gamma_reaction->getReactionType(),
@@ -202,7 +201,7 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createAbsorptionReaction
   FRENSIE_CHECK_EQUAL( n_gamma_reaction->getCrossSection( 2.0e1 ),
 		       2.722354e-5 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& d_production_reaction =
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction>& d_production_reaction =
     reactions.find( MonteCarlo::N__TOTAL_D_PRODUCTION )->second;
 
   FRENSIE_CHECK_EQUAL( d_production_reaction->getReactionType(),
@@ -216,7 +215,7 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createAbsorptionReaction
   FRENSIE_CHECK_EQUAL( d_production_reaction->getCrossSection( 2.0e1 ),
 		       2.722354e-5 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& dpa_reaction =
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction>& dpa_reaction =
     reactions.find( MonteCarlo::N__DAMAGE )->second;
 
   FRENSIE_CHECK_EQUAL( dpa_reaction->getReactionType(),
@@ -242,15 +241,15 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createAbsorptionReactio
                            *properties,
                            *o16_xss_data_extractor ) );
 
-  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr< MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createAbsorptionReactions( reactions );
 
-  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
+  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr< MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 51 );
 
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& n_gamma_reaction =
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction>& n_gamma_reaction =
     reactions.find( MonteCarlo::N__GAMMA_REACTION )->second;
 
   FRENSIE_CHECK_EQUAL( n_gamma_reaction->getReactionType(),
@@ -262,7 +261,7 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createAbsorptionReactio
 		       9.55754000000e-03 );
   FRENSIE_CHECK_EQUAL( n_gamma_reaction->getCrossSection( 150.0 ), 0.0 );
 
- std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& n_alpha_ex_3_reaction =
+ std::shared_ptr< MonteCarlo::NeutronNuclearReaction>& n_alpha_ex_3_reaction =
     reactions.find( MonteCarlo::N__ALPHA_EXCITED_STATE_3_REACTION )->second;
 
   FRENSIE_CHECK_EQUAL( n_alpha_ex_3_reaction->getReactionType(),

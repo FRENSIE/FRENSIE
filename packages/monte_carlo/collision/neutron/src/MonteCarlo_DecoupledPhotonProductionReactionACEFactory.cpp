@@ -85,7 +85,7 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
                                                      base_reaction_type_map );
 
   // Construct a map of required base reaction classes
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> > base_reaction_map;
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > base_reaction_map;
 
   DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
                                                     base_reaction_type_map,
@@ -271,7 +271,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 // Create the base reaction map
 void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
   std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
   std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
@@ -279,7 +279,7 @@ void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
 
-  std::shared_ptr<const NeutronNuclearReaction> base_reaction;
+  std::shared_ptr<NeutronNuclearReaction> base_reaction;
 
   while( reaction != end_reaction )
   {
@@ -347,7 +347,7 @@ void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProd
        const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
        const double temperature,
        const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-       const std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+       const std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
        const SimulationProperties& properties,
        PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory )
 {

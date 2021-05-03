@@ -15,9 +15,6 @@
 // Boost Includes
 #include <boost/function.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "DataGen_AdjointFreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -33,9 +30,9 @@ public:
 
   //! Constructor
   AdjointFreeGasElasticMarginalBetaFunction(
-	      const Teuchos::RCP<Utility::OneDDistribution>& 
+	      const std::shared_ptr<Utility::UnivariateDistribution>& 
 	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+              const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	      cm_scattering_distribution,
 	      const double A,
 	      const double kT,
@@ -62,13 +59,13 @@ public:
   //! Evaluate the marginal CDF
   double evaluateCDF( const double beta );
 
-  void populatePDF( Teuchos::Array<double>& energy_array );
+  void populatePDF( std::vector<double>& energy_array );
 
-  void getPDF( Teuchos::Array<double>& pdf_array );
+  void getPDF( std::vector<double>& pdf_array );
 
-  void populateCDF( Teuchos::Array<double>& energy_array );
+  void populateCDF( std::vector<double>& energy_array );
 
-  void getCDF( Teuchos::Array<double>& cdf_array );
+  void getCDF( std::vector<double>& cdf_array );
 
   double principleOfDetailedBalance( double beta );
 
@@ -82,10 +79,10 @@ private:
   double integratedSAlphaBetaFunction( const double beta );
 
   // The integration gkq_set for integrating over alpha values
-  Utility::GaussKronrodIntegrator d_alpha_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_alpha_gkq_set;
 
   // The integration gkq_set for integrating over beta values
-  Utility::GaussKronrodIntegrator d_beta_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_beta_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   AdjointFreeGasElasticSAlphaBetaFunction d_sab_function;
@@ -106,10 +103,10 @@ private:
   double d_norm_constant;
 
   // Cached CDF values (first = beta, second = CDF)
-  std::list<Utility::Pair<double,double> > d_cached_cdf_values;
+  std::list<std::pair<double,double> > d_cached_cdf_values;
 
-  Teuchos::Array<double> d_pdf_array;
-  Teuchos::Array<double> d_cdf_array;
+  std::vector<double> d_pdf_array;
+  std::vector<double> d_cdf_array;
 };
 
 } // end DataGen namespace

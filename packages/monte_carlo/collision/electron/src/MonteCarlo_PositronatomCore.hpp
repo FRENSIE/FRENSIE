@@ -33,10 +33,10 @@ namespace MonteCarlo{
  * to share the positron-atomic data without copying that data (even if each
  * positron-nuclide has its own copy of the positron-atom core object).
  */
-class PositronatomCore : public AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,boost::unordered_map,std::unordered_set>
+class PositronatomCore : public AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,std::unordered_map,std::unordered_set>
 {
   // Typedef for the base type
-  typedef AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,boost::unordered_map,std::unordered_set> BaseType;
+  typedef AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,std::unordered_map,std::unordered_set> BaseType;
 
 public:
 

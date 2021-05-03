@@ -13,7 +13,7 @@
 #include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
@@ -179,10 +179,10 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, evaluateCDF )
 
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated
-TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessNormalization )
+FRENSIE_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessNormalization )
 {
   std::vector<double> beta_vector;
-  double beta_min = Utility::calculateBetaMin( 2.53010e-8, 2.53010e-8 );
+  double beta_min = MonteCarlo::calculateBetaMin( 2.53010e-8, 2.53010e-8 );
   double beta_max = -5*beta_min;
   double num_points = 1001;
   double beta_spacing = (beta_max - beta_min)/(num_points - 1);
@@ -201,13 +201,13 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessNormalization )
 
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated
-TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessPDF )
+FRENSIE_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, assessPDF )
 {
   double beta = -0.5; 
   alpha_function->setIndependentVariables( beta, 2.53010e-8 );
 
-  double alpha_min = Utility::calculateAlphaMin( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
-  double alpha_max = Utility::calculateAlphaMax( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
+  double alpha_min = MonteCarlo::calculateAlphaMin( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
+  double alpha_max = MonteCarlo::calculateAlphaMax( 2.53010e-8, beta, 0.999167, 2.53010e-8 );
   double alpha_space = (alpha_max - alpha_min)/(1000);
 
   for (int i = 0; i < 1001; ++i)

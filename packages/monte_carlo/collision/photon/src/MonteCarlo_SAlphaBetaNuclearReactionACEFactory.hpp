@@ -9,12 +9,11 @@
 #ifndef MONTE_CARLO_S_ALPHA_BETA_NUCLEAR_REACTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_S_ALPHA_BETA_NUCLEAR_REACTION_ACE_FACTORY_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+// std Includes
+#include <map>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_SAlphaBetaNuclearScatteringDistributionACEFactory.hpp"
 #include "Data_XSSSabDataExtractor.hpp"
@@ -27,7 +26,7 @@ namespace MonteCarlo{
  * The array parameters used in the class constructor have the same name as 
  * the corresponding ACE data block.
  */
-class SAlphaBetaNuclearReactionACEFactory : public NuclearReactionACEFactory
+class SAlphaBetaNuclearReactionACEFactory : public NeutronNuclearReactionACEFactory
 {
 
 public:
@@ -37,9 +36,12 @@ public:
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const double temperature,
-		 const Teuchos::ArrayRCP<const double>& energy_grid,
+		 const std::shared_ptr<const std::vector<double> >& energy_grid,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data,
-		 const Data::XSSSabDataExtractor& sab_nuclide_data );
+		 const Data::XSSSabDataExtractor& sab_nuclide_data,
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher,
+     const SimulationProperties& properties );
 		 
   //! Destructor
   ~SAlphaBetaNuclearReactionACEFactory()
@@ -47,7 +49,7 @@ public:
 
   //! Create the scattering reactions 
   void createSAlphaBetaReactions( 
-      boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       sab_reactions ) const;
 
 protected:
@@ -55,12 +57,12 @@ protected:
   //! Update the reaction threshold index map
   static void setSAlphaBetaUpperEnergyLimitMap( 
        const Data::XSSSabDataExtractor& sab_nuclide_data,
-       boost::unordered_map<NuclearReactionType, double>& upper_energy_limits );
+       std::unordered_map<NuclearReactionType, double>& upper_energy_limits );
 
   //! Update the reaction cross section map
   static void setSAlphaBetaCrossSectionMap( 
     const Data::XSSSabDataExtractor& sab_nuclide_data,
-    boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
       reaction_cross_section  );
 
 private:
@@ -69,14 +71,14 @@ private:
   void initializeSAlphaBetaReactions( 
     const double temperature,
     const Data::XSSSabDataExtractor& sab_nuclide_data,
-    boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
       reaction_cross_section,
     const SAlphaBetaNuclearScatteringDistributionACEFactory& 
       scattering_dist_factory );
       
   // S(alpha,beta) reactions
   // A map of the scattering reactions
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >
   d_s_alpha_beta_reactions;
 
 };

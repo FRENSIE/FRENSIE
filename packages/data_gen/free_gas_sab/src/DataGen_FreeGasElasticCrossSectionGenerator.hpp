@@ -13,13 +13,7 @@
 #include <string>
 #include <iostream>
 #include <math.h>
-#include <vector>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
@@ -27,11 +21,13 @@
 #include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_UniformDistribution.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Vector.hpp"
 
 namespace DataGen{
 
@@ -41,16 +37,16 @@ class FreeGasElasticCrossSectionGenerator
 
 public:
 
-  typedef boost::unordered_map< std::pair<double, double>, double >
+  typedef std::unordered_map< std::pair<double, double>, double, Utility::custom_hash_pair >
     DoubleDifferentialCrossSection;
     
-  typedef boost::unordered_map< double, DoubleDifferentialCrossSection >
+  typedef std::unordered_map< double, DoubleDifferentialCrossSection >
     DoubleDifferentialCrossSectionMap;
 
   typedef std::vector< std::pair< double, double > > 
     DifferentialEnergyCrossSection;
 
-  typedef boost::unordered_map< double, DifferentialEnergyCrossSection >
+  typedef std::unordered_map< double, DifferentialEnergyCrossSection >
     DifferentialEnergyCrossSectionMap;
 
   //! Constructor
@@ -100,7 +96,7 @@ public:
   void getBaseAngularDistribution();
 
   //! Get total cross section
-  void getTotalCrossSection( boost::unordered_map< double, double >& total_cross_section );
+  void getTotalCrossSection( std::unordered_map< double, double >& total_cross_section );
 
 private: 
 
@@ -132,28 +128,28 @@ private:
   double d_zero_tolerance;
 
   // Bound state cross section 
-  Teuchos::RCP<Utility::OneDDistribution> d_cross_section;
+  std::shared_ptr<Utility::UnivariateDistribution> d_cross_section;
 
   // Bound state angular distribution
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> d_angular_distribution;
+  std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution> d_angular_distribution;
 
   // S(alpha,beta) Function
-  Teuchos::RCP<DataGen::FreeGasElasticSAlphaBetaFunction> d_sab_function;
+  std::shared_ptr<DataGen::FreeGasElasticSAlphaBetaFunction> d_sab_function;
 
   // Energy cross section value 
   std::vector<double> d_energy_cross_section;
 
   // Total cross section value 
-  boost::unordered_map< double, double > d_total_cross_section;
+  std::unordered_map< double, double > d_total_cross_section;
 
   // Double differential cross section 
   DoubleDifferentialCrossSectionMap d_double_differential_cross_section_map;
 
   // Beta Function
-  Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
+  std::shared_ptr<DataGen::FreeGasElasticMarginalBetaFunction> d_beta_function;
 
   // Alpha Function
-  Teuchos::RCP<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
+  std::shared_ptr<DataGen::FreeGasElasticMarginalAlphaFunction> d_alpha_function;
 
   // Differential Energy cross section
   DifferentialEnergyCrossSectionMap d_beta_pdf_map; 

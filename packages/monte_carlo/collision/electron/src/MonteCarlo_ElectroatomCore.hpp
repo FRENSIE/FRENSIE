@@ -33,10 +33,10 @@ namespace MonteCarlo{
  * share the electroatomic data without copying that data (even if each
  * electro-nuclide has its own copy of the electroatom core object).
  */
-class ElectroatomCore : public AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,boost::unordered_map,std::unordered_set>
+class ElectroatomCore : public AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,std::unordered_map,std::unordered_set>
 {
   // Typedef for the base type
-  typedef AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,boost::unordered_map,std::unordered_set> BaseType;
+  typedef AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,std::unordered_map,std::unordered_set> BaseType;
 
 public:
 

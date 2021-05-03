@@ -207,9 +207,6 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 
   double alpha_min = MonteCarlo::calculateAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = MonteCarlo::calculateAlphaMax(E,beta,d_A,d_kT);
-
-  double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT);
-  double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT);
   double value;
 
   // Test for special condition (alpha = 0.0)

@@ -9,9 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_SAlphaBetaDecoupledPhotonProductionReactionACEFactory.hpp"
@@ -21,7 +18,7 @@
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 
 namespace MonteCarlo{
@@ -35,15 +32,19 @@ SAlphaBetaDecoupledPhotonProductionReactionACEFactory::SAlphaBetaDecoupledPhoton
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const double temperature,
-		 const Teuchos::ArrayRCP<const double>& energy_grid,
+		 const std::shared_ptr<const std::vector<double> >&  energy_grid,
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data,
-		 const Data::XSSSabDataExtractor& sab_nuclide_data )
+		 const Data::XSSSabDataExtractor& sab_nuclide_data,          
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher,
+     const SimulationProperties& properties )
 		 : SAlphaBetaNuclearReactionACEFactory( table_name,
 		                              atomic_weight_ratio,
 		                              temperature,
 		                              energy_grid,
 		                              raw_nuclide_data,
-		                              sab_nuclide_data )
+		                              sab_nuclide_data,
+                                  grid_searcher,
+                                  properties )
 { 
   // Create the scattering distribution factory
   PhotonProductionNuclearScatteringDistributionACEFactory 
@@ -52,24 +53,24 @@ SAlphaBetaDecoupledPhotonProductionReactionACEFactory::SAlphaBetaDecoupledPhoton
 			                              raw_nuclide_data );
 
   // Extract the required blocks
-  Teuchos::ArrayView<const double> mtrp_block = 
+  Utility::ArrayView<const double> mtrp_block = 
     raw_nuclide_data.extractMTRPBlock();
-  Teuchos::ArrayView<const double> lsigp_block = 
+  Utility::ArrayView<const double> lsigp_block = 
     raw_nuclide_data.extractLSIGPBlock();
-  Teuchos::ArrayView<const double> sigp_block = 
+  Utility::ArrayView<const double> sigp_block = 
     raw_nuclide_data.extractSIGPBlock();
   
   // Create a map of the reaction types and their table ordering
-  boost::unordered_map<unsigned,unsigned> reaction_ordering;
+  std::unordered_map<unsigned,unsigned> reaction_ordering;
   SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap( mtrp_block,
 							reaction_ordering );
 
   // Parse the SIGP data and create the necessary data maps
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> > yield_energy_map;
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> > yield_values_map;
-  boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> > xs_based_map;
-  boost::unordered_map<unsigned,unsigned> threshold_energy_map;
-  boost::unordered_map<unsigned,NuclearReactionType> base_reaction_type_map;
+  std::unordered_map<unsigned,Utility::ArrayView<const double> > yield_energy_map;
+  std::unordered_map<unsigned,Utility::ArrayView<const double> > yield_values_map;
+  std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > > xs_based_map;
+  std::unordered_map<unsigned,unsigned> threshold_energy_map;
+  std::unordered_map<unsigned,NuclearReactionType> base_reaction_type_map;
   
   SAlphaBetaDecoupledPhotonProductionReactionACEFactory::parseSIGP( 
                                                      lsigp_block,
@@ -82,7 +83,7 @@ SAlphaBetaDecoupledPhotonProductionReactionACEFactory::SAlphaBetaDecoupledPhoton
                                                      base_reaction_type_map );
 
   // Construct a map of required base reaction classes
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> > base_reaction_map;
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > base_reaction_map;
   
   SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
                                                     base_reaction_type_map,
@@ -123,7 +124,7 @@ SAlphaBetaDecoupledPhotonProductionReactionACEFactory::SAlphaBetaDecoupledPhoton
 
 // Create the photon production reactions 
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createPhotonProductionReactions( 
-      boost::unordered_map<unsigned,Teuchos::RCP<DecoupledPhotonProductionReaction> >&
+      std::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> >&
       photon_production_reactions ) const
 {
   photon_production_reactions.insert( d_photon_production_reactions.begin(),
@@ -132,25 +133,25 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createPhotonProducti
 
 // Create the total reaction for weight normalization
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createTotalReaction(
-                       const Teuchos::ArrayView<const double>& total_xs_block,
-                       const Teuchos::ArrayRCP<const double>& energy_grid,
+                       const Utility::ArrayView<const double>& total_xs_block,
+                       const std::shared_ptr<const std::vector<double> >& energy_grid,
                        const double temperature )
 {
-  Teuchos::ArrayRCP<double> total_cross_section;
-  total_cross_section.deepCopy(total_xs_block);
+  std::shared_ptr<std::vector<double> > total_cross_section(new std::vector<double>(total_xs_block));
 
-  d_total_reaction.reset( new NeutronAbsorptionReaction( N__TOTAL_REACTION,
-							 temperature,
-							 0.0,
-							 0u,
-							 energy_grid,
-							 total_cross_section ) );
+  d_total_reaction.reset( new NeutronAbsorptionReaction( energy_grid,
+                                                         total_cross_section,
+                                                         0u,
+                                                         N__TOTAL_REACTION,
+                                                         0.0,
+                                                         temperature ) );
+
 }
 
 // Create the reaction type ordering map
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap( 
-        const Teuchos::ArrayView<const double>& mtrp_block,
-        boost::unordered_map<unsigned,unsigned>& reaction_ordering )
+        const Utility::ArrayView<const double>& mtrp_block,
+        std::unordered_map<unsigned,unsigned>& reaction_ordering )
 
 {  
   unsigned reaction;
@@ -166,16 +167,16 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::createReactionOrderi
 // Parse the SIGP to create the yield energy map, yield values, xs map, and 
 //   threshold energy map
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::parseSIGP(
-  const Teuchos::ArrayView<const double>& lsigp_block,
-  const Teuchos::ArrayView<const double>& sigp_block,
-  const boost::unordered_map<unsigned,unsigned>& reaction_ordering,
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map,
-  boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> >& xs_based_map,
-  boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
-  boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map )
+  const Utility::ArrayView<const double>& lsigp_block,
+  const Utility::ArrayView<const double>& sigp_block,
+  const std::unordered_map<unsigned,unsigned>& reaction_ordering,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map,
+  std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
+  std::unordered_map<unsigned,unsigned>& threshold_energy_map,
+  std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map )
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -192,16 +193,17 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::parseSIGP(
 	  { 
       cs_array_size = static_cast<unsigned>( sigp_block[cs_index + 2u] );
 
-      Teuchos::ArrayRCP<double>& cross_section = 
+      std::shared_ptr<std::vector<double> >& cross_section = 
 	                                    xs_based_map[reaction->first];
 
-      cross_section.deepCopy( sigp_block( cs_index + 3u, cs_array_size ) );
+      cross_section.reset( new std::vector<double>(
+        sigp_block( cs_index + 3u, cs_array_size ) ) );
       
       threshold_energy_map[reaction->first] = 
                       static_cast<unsigned>( sigp_block[cs_index + 1u] ) ;
                       
       base_reaction_type_map[reaction->first] = 
-	          convertUnsignedToNuclearReactionType( reaction->first/1000u );
+	          convertMTNumberToNuclearReactionType( reaction->first/1000u );
 	  }
 	  else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
 	            static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
@@ -225,7 +227,7 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::parseSIGP(
 	          sigp_block( cs_index + 4u + energy_array_size, energy_array_size );
 	          
 	    base_reaction_type_map[reaction->first] = 
-	          convertUnsignedToNuclearReactionType( reaction->first/1000u );
+	          convertMTNumberToNuclearReactionType( reaction->first/1000u );
 	  }
 	  else
 	  {
@@ -241,17 +243,17 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::parseSIGP(
 
 // Create the base reaction map
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
-  boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map )
+  std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     reaction, end_reaction;
   reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
   
-  Teuchos::RCP<NuclearReaction> base_reaction;
-  
+  std::shared_ptr<NeutronNuclearReaction> base_reaction;
+
   while( reaction != end_reaction )
   {
     this->getReactionFromReactionType( 
@@ -266,10 +268,10 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructBaseReactio
 
 // Construct a map of photon MT numbers to yield distributions
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions(
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map )
+	     const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+	     const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map )
 {
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -278,7 +280,7 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructMTPYieldDis
   {
     unsigned reaction_type = iter_reaction->first;
     
-    std::shared_ptr<Utility::OneDDistribution> tabular_yield_pointer( 
+    std::shared_ptr<Utility::UnivariateDistribution> tabular_yield_pointer( 
         new Utility::TabularDistribution<Utility::LinLin>( 
                               yield_energy_map.find(reaction_type)->second,
                               yield_values_map.find(reaction_type)->second ) );
@@ -291,10 +293,10 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructMTPYieldDis
 
 // Construct a map of base reaction types to yield distribution arrays
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
-       const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-       const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map )
+       const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+       const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -315,29 +317,33 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::constructMTYieldArra
 
 // Initialize the yield based photon production reactions
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProductionReactions( 
-       const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+       const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
 	     const double temperature,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
+	     const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+	     const std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )	
 {
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
   
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> > 
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,PhotonState> > 
     photon_production_distribution;
   
+  MonteCarlo::SimulationProperties properties;
+
+
   while( iter_reaction != end_reaction )
   {
     unsigned reaction_type = iter_reaction->first;
    
-    Teuchos::RCP<DecoupledPhotonProductionReaction>& reaction = 
+    std::shared_ptr<DecoupledPhotonProductionReaction>& reaction = 
                     d_photon_production_reactions[reaction_type];
     
     photon_production_dist_factory.createScatteringDistribution(
 						     reaction_type,
+                 properties,
 						     photon_production_distribution );
     
     reaction.reset( new DecoupledYieldBasedPhotonProductionReaction(
@@ -357,30 +363,33 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::initializeYieldBased
 
 // Initialize the yield based photon production reactions
 void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPhotonProductionReactions( 
-  const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+  const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
   const double temperature,
-  const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
-  const boost::unordered_map<unsigned,Teuchos::ArrayRCP<double> >& xs_based_map,
-  const Teuchos::ArrayRCP<const double>& energy_grid,
+  const std::unordered_map<unsigned,unsigned>& threshold_energy_map,
+  const std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
+  const std::shared_ptr<const std::vector<double> >& energy_grid,
   PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )			
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = threshold_energy_map.begin();
   end_reaction = threshold_energy_map.end();
   
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,PhotonState> >
     photon_production_distribution;
   
+  MonteCarlo::SimulationProperties properties;
+
   while( iter_reaction != end_reaction )
   {
     unsigned reaction_type = iter_reaction->first;
     
-    Teuchos::RCP<DecoupledPhotonProductionReaction>& reaction = 
+    std::shared_ptr<DecoupledPhotonProductionReaction>& reaction = 
                     d_photon_production_reactions[reaction_type];
     
     photon_production_dist_factory.createScatteringDistribution(
 						     reaction_type,
+                 properties,
 						     photon_production_distribution );		     
 						     
     reaction.reset( new DecoupledCrossSectionBasedPhotonProductionReaction(
@@ -392,7 +401,7 @@ void SAlphaBetaDecoupledPhotonProductionReactionACEFactory::initializeCrossSecti
 		  xs_based_map.find(reaction_type)->second,
 		  photon_production_distribution,
 		  d_total_reaction,
-		  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >() ) ); 
+		  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >() ) ); 
 		  
 	  ++iter_reaction;  
   }

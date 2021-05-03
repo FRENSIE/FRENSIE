@@ -54,8 +54,8 @@ void FreeGasElasticCrossSectionGenerator::setBaseCrossSection()
   std::vector<double> energy_vector = {1e-11, 1.154357e-11, 20};
   std::vector<double> xs_vector = {4.790229528, 4.790246677, 0.1};
   
-  const Teuchos::Array<double> energy_array( energy_vector );
-  const Teuchos::Array<double> xs_array( xs_vector );
+  const std::vector<double> energy_array( energy_vector );
+  const std::vector<double> xs_array( xs_vector );
   d_cross_section.reset( new Utility::TabularDistribution<Utility::LinLin>( energy_array, xs_array ) );
 }
 
@@ -63,7 +63,7 @@ void FreeGasElasticCrossSectionGenerator::setBaseCrossSection()
 void FreeGasElasticCrossSectionGenerator::setBaseAngularDistribution()
 {
   // Initialize the scattering probability distribution
-  Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
+  std::shared_ptr<Utility::TabularUnivariateDistribution> isotropic_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
@@ -117,7 +117,7 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
         double E,
         DoubleDifferentialCrossSection& double_differential_sigma )
 {
-  double beta_min = Utility::calculateBetaMin( E, d_kT );
+  double beta_min = MonteCarlo::calculateBetaMin( E, d_kT );
   double beta_max = d_beta_max_multiplier*beta_min;
   double beta_spread = (beta_max - beta_min)/(d_beta_num - 1.0);
 
@@ -140,12 +140,12 @@ void FreeGasElasticCrossSectionGenerator::doubleDifferentialCrossSectionValue(
       beta = beta_min - beta_min*1e-3;
     }
 
-    double alpha_min = Utility::calculateAlphaMin( E, 
+    double alpha_min = MonteCarlo::calculateAlphaMin( E, 
                                                    beta, 
                                                    d_A, 
                                                    d_kT);
 
-    double alpha_max = Utility::calculateAlphaMax( E, 
+    double alpha_max = MonteCarlo::calculateAlphaMax( E, 
                                                    beta, 
                                                    d_A, 
                                                    d_kT);
@@ -197,7 +197,7 @@ void FreeGasElasticCrossSectionGenerator::energyCrossSectionValue(
 						    d_kT,
 						    E ) );
 
-  double beta_min = Utility::calculateBetaMin( E, d_kT );
+  double beta_min = MonteCarlo::calculateBetaMin( E, d_kT );
   double beta_max = d_beta_max_multiplier*beta_min;
   double beta_spacing = (beta_max - beta_min)/(d_beta_num - 1.0);
 
@@ -235,7 +235,7 @@ void FreeGasElasticCrossSectionGenerator::energyCrossSectionValue(
 
 // Get total cross section
 void FreeGasElasticCrossSectionGenerator::getTotalCrossSection( 
-    boost::unordered_map< double, double >& total_cross_section )
+    std::unordered_map< double, double >& total_cross_section )
 {
   for (int i = 0; i < d_E.size(); ++i)
   {

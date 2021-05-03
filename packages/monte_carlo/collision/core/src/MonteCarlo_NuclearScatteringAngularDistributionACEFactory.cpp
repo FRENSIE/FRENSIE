@@ -145,9 +145,9 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 
 // Create the angular distribution
 void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistribution(
-	    const Teuchos::ArrayView<const double>& energy_grid,
-	    const Teuchos::ArrayView<const double>& itca_block,
-	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+	    const Utility::ArrayView<const double>& energy_grid,
+	    const Utility::ArrayView<const double>& itca_block,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution )
 {
   // Get the number of incoming energies
   int num_tabulated_energies = energy_grid.size();
@@ -157,11 +157,11 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistributio
     angular_distribution( num_tabulated_energies );
 
   // Construct equiprobable distribution
-  Teuchos::Array<double> equiprobable_pdf;
-  for( int eq = 0; eq < 20; ++eq )
-  {
-    equiprobable_pdf.push_back( 1.0 );
+  std::vector<double> eq_pdf_vec;
+  for (int eq = 0; eq < num_tabulated_energies; ++eq) {
+    eq_pdf_vec.push_back( 1.0 );
   }
+  Utility::ArrayView<double> equiprobable_pdf = Utility::ArrayView<double>(eq_pdf_vec);
   
   // Keep track of where we are in the data
   int location = 0;
@@ -171,7 +171,7 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistributio
     angular_distribution[i].first = energy_grid[i];
 
     // Twenty equiprobable cosine distribution
-    Teuchos::ArrayView<const double> cosines = 
+    Utility::ArrayView<const double> cosines = 
 	      itca_block( location, 20 );
 	      
     location += 20;
@@ -187,8 +187,8 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistributio
 
 // Create the angular distribution
 void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaIsotropicDistribution(
-	    const Teuchos::ArrayView<const double>& energy_grid,
-	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+	    const Utility::ArrayView<const double>& energy_grid,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution )
 {
   // Get the number of incoming energies
   int num_tabulated_energies = energy_grid.size();
@@ -198,12 +198,12 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaIsotropicDi
     angular_distribution( num_tabulated_energies );
 
   // Construct equiprobable distribution
-  Teuchos::Array<double> equiprobable_pdf;
-  for( int eq = 0; eq < num_tabulated_energies; ++eq )
-  {
-    equiprobable_pdf.push_back( 1.0 );
+  std::vector<double> eq_pdf_vec;
+  for (int eq = 0; eq < num_tabulated_energies; ++eq) {
+    eq_pdf_vec.push_back( 1.0 );
   }
-  
+  Utility::ArrayView<double> equiprobable_pdf = Utility::ArrayView<double>(eq_pdf_vec);
+
   // Keep track of where we are in the data
   int distribution_index = 0;
 

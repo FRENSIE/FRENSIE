@@ -76,6 +76,12 @@ unsigned NeutronScatteringReaction::getNumberOfEmittedParticles(
   return d_multiplicity;
 }
 
+// Set the S(alpha,beta) cutoff energy
+void NeutronScatteringReaction::setSABCutoffEnergy( double sab_cutoff_energy )
+{
+  d_sab_cutoff_energy = sab_cutoff_energy;
+}
+
 // Simulate the reaction
 void NeutronScatteringReaction::react( NeutronState& neutron,
 				       ParticleBank& bank ) const
@@ -102,6 +108,19 @@ void NeutronScatteringReaction::react( NeutronState& neutron,
   // Scatter the "original" neutron
   d_scattering_distribution->scatterParticle( neutron,
 					      this->getTemperature() );
+}
+
+// Return the cross section value at a given energy
+double NeutronScatteringReaction::getCrossSection( const double energy ) const
+{
+  if( energy <= d_sab_cutoff_energy )
+  {
+    return 0.0;
+  }
+  else
+  {
+    return StandardNeutronNuclearReaction::getCrossSection( energy);
+  }
 }
 
 } // end MonteCarlo namespace

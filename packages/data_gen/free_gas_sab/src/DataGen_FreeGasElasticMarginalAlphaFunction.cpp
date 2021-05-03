@@ -37,8 +37,8 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
     d_E( E ),
     d_alpha_min( 0.0 ),
     d_alpha_max( 0.0 ),
-    d_norm_constant( 1.0 ),
-    d_cached_cdf_values()
+    d_norm_constant( 1.0 )//,
+    //d_cached_cdf_values()
 {
   // Make sure the values are valid
   testPrecondition( A > 0.0 );

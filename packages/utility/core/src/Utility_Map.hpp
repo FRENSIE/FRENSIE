@@ -157,7 +157,22 @@ struct ComparisonTraits<std::map<Key,T> > : public Details::ComparisonTraitsAsso
 template<typename Key, typename T>
 struct ComparisonTraits<std::unordered_map<Key,T> > : public Details::ComparisonTraitsAssociativeContainerHelper<std::unordered_map<Key,T> >
 { /* ... */ };
-  
+
+
+
+// A hash function used to hash a pair of any kind
+struct custom_hash_pair {
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const
+    {
+        auto hash1 = std::hash<T1>{}(p.first);
+        auto hash2 = std::hash<T2>{}(p.second);
+        return hash1 ^ hash2;
+    }
+};
+
+
+
 } // end Utility namespace
 
 namespace std{

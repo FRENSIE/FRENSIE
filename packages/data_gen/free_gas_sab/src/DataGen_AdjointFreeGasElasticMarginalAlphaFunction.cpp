@@ -13,17 +13,17 @@
 // FRENSIE Includes
 #include "DataGen_AdjointFreeGasElasticMarginalAlphaFunction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_KinematicHelpers.hpp"
-#include "Utility_ContractException.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
+#include "Utility_DesignByContract.hpp"
 #include "Utility_UniformDistribution.hpp"
 
 namespace DataGen{
 
 // Constructor
 AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const std::shared_ptr<Utility::UnivariateDistribution>& 
 	  zero_temp_elastic_cross_section,
-          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT,
@@ -38,14 +38,14 @@ AdjointFreeGasElasticMarginalAlphaFunction::AdjointFreeGasElasticMarginalAlphaFu
     d_E( E ),
     d_alpha_min( 0.0 ),
     d_alpha_max( 0.0 ),
-    d_norm_constant( 1.0 ),
-    d_cached_cdf_values()
+    d_norm_constant( 1.0 )//,
+    //d_cached_cdf_values()
 {
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= MonteCarlo::calculateBetaMin( E, kT ) );
   
   updateCachedValues();
 }
@@ -57,7 +57,7 @@ void AdjointFreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 {
   // Make sure beta is valid
   remember( double kT = d_sab_function.getTemperature() );
-  testPrecondition( beta >= Utility::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= MonteCarlo::calculateBetaMin( E, kT ) );
 
   d_beta = beta;
   d_E = E;
@@ -101,7 +101,7 @@ double AdjointFreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alp
   testPrecondition( alpha <= d_alpha_max );
   
   // Find nearest cached evaluation of cdf
-  std::list<Utility::Pair<double,double> >::iterator lower_cdf_point = 
+  std::list<std::pair<double,double> >::iterator lower_cdf_point = 
     d_cached_cdf_values.begin();
 
   lower_cdf_point = Utility::Search::binaryLowerBound<Utility::FIRST>(
@@ -121,7 +121,7 @@ double AdjointFreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alp
   cdf_value += lower_cdf_point->second;
 
   // Cache the new cdf value
-  Utility::Pair<double,double> new_cdf_point(alpha, cdf_value );
+  std::pair<double,double> new_cdf_point(alpha, cdf_value );
 
   d_cached_cdf_values.insert( ++lower_cdf_point, new_cdf_point );
 
@@ -136,9 +136,9 @@ void AdjointFreeGasElasticMarginalAlphaFunction::updateCachedValues()
   double A = d_sab_function.getAtomicWeightRatio();
   double kT = d_sab_function.getTemperature();
 
-  d_alpha_min = Utility::calculateAlphaMin( d_E, d_beta, A, kT );
+  d_alpha_min = MonteCarlo::calculateAlphaMin( d_E, d_beta, A, kT );
 
-  d_alpha_max = Utility::calculateAlphaMax( d_E, d_beta, A, kT );
+  d_alpha_max = MonteCarlo::calculateAlphaMax( d_E, d_beta, A, kT );
 
   // Calculate the norm constant
   double norm_constant_error;
@@ -155,10 +155,10 @@ void AdjointFreeGasElasticMarginalAlphaFunction::updateCachedValues()
   // Reset the cached cdf values
   d_cached_cdf_values.clear();
 
-  Utility::Pair<double,double> cdf_point( d_alpha_min, 0.0 );
+  std::pair<double,double> cdf_point= std::make_pair( d_alpha_min, 0.0 );
   d_cached_cdf_values.push_back( cdf_point );
 
-  cdf_point( d_alpha_max, 1.0 );
+  cdf_point = std::make_pair( d_alpha_max, 1.0 );
 
   d_cached_cdf_values.push_back( cdf_point );
 }
