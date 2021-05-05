@@ -1,27 +1,5 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(data_ace)
 
-ADD_EXECUTABLE(tstXSSSabDataExtractor_Continuous
-  tstXSSSabDataExtractor_Continuous.cpp)
-TARGET_LINK_LIBRARIES(tstXSSSabDataExtractor_Continuous data_ace)
-ADD_TEST(XSSSabDataExtractor_Continuous_test tstXSSSabDataExtractor_Continuous 
---test_inelastic_only_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2o_sab_ace_file.txt" 
---test_inelastic_only_sab_ace_table="lwtr.20t" 
---test_no_elastic_dist_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_grph_sab_ace_file.txt" 
---test_no_elastic_dist_sab_ace_table="grph.20t" 
---test_full_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_poly_sab_ace_file.txt" 
---test_full_sab_ace_table="poly.20t")
-
-ADD_EXECUTABLE(tstXSSSabDataExtractor_Discrete
-  tstXSSSabDataExtractor_Discrete.cpp)
-TARGET_LINK_LIBRARIES(tstXSSSabDataExtractor_Discrete data_ace)
-ADD_TEST(XSSSabDataExtractor_Discrete_test tstXSSSabDataExtractor_Discrete 
---test_inelastic_only_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/lwtr.60t" 
---test_inelastic_only_sab_ace_table="lwtr.60t" 
---test_no_elastic_dist_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/grph.60t" 
---test_no_elastic_dist_sab_ace_table="grph.60t" 
---test_full_sab_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/poly.60t" 
---test_full_sab_ace_table="poly.60t")
-
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 FRENSIE_ADD_TEST_EXECUTABLE(ACEFileHandlerNeutron DEPENDS tstACEFileHandlerNeutron.cpp)
@@ -134,6 +112,28 @@ FRENSIE_ADD_TEST(XSSEPRDataExtractorPbv14
   --pb_ace14_table=82000.14p
   --pb_ace14_file=82000.14p:filepath
   --pb_ace14_file_start_line=82000.14p:filestartline)
+
+FRENSIE_ADD_TEST_EXECUTABLE(XSSSabDataExtractor_Continuous DEPENDS tstXSSSabDataExtractor_Continuous.cpp)
+FRENSIE_ADD_TEST(XSSSabDataExtractor_Continuous 
+ACE_LIB_DEPENDS lwtr.20t grph.20t poly.20t
+EXTRA_ARGS
+--test_inelastic_only_sab_ace_file="test_h2o_sab_ace_file.txt" 
+--test_inelastic_only_sab_ace_table="lwtr.20t" 
+--test_no_elastic_dist_sab_ace_file="test_grph_sab_ace_file.txt" 
+--test_no_elastic_dist_sab_ace_table="grph.20t" 
+--test_full_sab_ace_file="test_poly_sab_ace_file.txt" 
+--test_full_sab_ace_table="poly.20t")
+
+FRENSIE_ADD_TEST_EXECUTABLE(XSSSabDataExtractor_Discrete DEPENDS tstXSSSabDataExtractor_Discrete.cpp)
+FRENSIE_ADD_TEST(XSSSabDataExtractor_Discrete 
+ACE_LIB_DEPENDS lwtr.60t grph.60t poly.60t
+EXTRA_ARGS
+--test_inelastic_only_sab_ace_file="lwtr.60t" 
+--test_inelastic_only_sab_ace_table="lwtr.60t" 
+--test_no_elastic_dist_sab_ace_file="grph.60t" 
+--test_no_elastic_dist_sab_ace_table="grph.60t" 
+--test_full_sab_ace_file="poly.60t" 
+--test_full_sab_ace_table="poly.60t")
 
 FRENSIE_ADD_TEST_EXECUTABLE(ACETableName DEPENDS tstACETableName.cpp)
 FRENSIE_ADD_TEST(ACETableName)

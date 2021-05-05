@@ -41,7 +41,7 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
           cm_scattering_distribution,
           const double A,
           const double kT )
-  : d_gkq_set( 1e-6 ),
+  : d_gkq_set( 1e-3 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),

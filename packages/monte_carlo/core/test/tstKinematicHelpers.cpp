@@ -92,7 +92,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateBetaMin )
 
   double beta_min = MonteCarlo::calculateBetaMin( E, kT );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( beta_min, -E/kT, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( beta_min, (1.0e-11-E)/kT, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
