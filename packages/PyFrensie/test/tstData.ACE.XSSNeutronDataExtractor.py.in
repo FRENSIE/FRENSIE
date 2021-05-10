@@ -150,7 +150,7 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
         sig_block = self.xss_extractor.extractSIGBlock()
         self.assertEqual(len(sig_block), 1389)
         self.assertEqual(sig_block[0], 1)
-        self.assertEqual(sig_block[len(sig_block)-1], 3.067696e-4 )
+        self.assertEqual(sig_block[len(sig_block)-1], 3.067696e-4  )
 
     def testExtractLANDBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
@@ -369,9 +369,9 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
     def testExtractSIGBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractSIGBlock method"
         sig_block = self.xss_extractor.extractSIGBlock()
-        self.assertEqual(len(sig_block), 481823)
+        self.assertEqual(len(sig_block), 191)
         self.assertEqual(sig_block[0], 157648)
-        self.assertEqual(sig_block[len(sig_block)-1], 3.216104e-1)
+        self.assertEqual(sig_block[len(sig_block)-1], 1.716853e-01)
 
     def testExtractLANDBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
@@ -404,9 +404,9 @@ class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
     def testExtractDLWBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractDLWBlock method"
         dlw_block = self.xss_extractor.extractDLWBlock()
-        self.assertEqual(len(dlw_block), 112255)
+        self.assertEqual(len(dlw_block), 100244)
         self.assertEqual(dlw_block[0], 0)
-        self.assertEqual(dlw_block[len(dlw_block)-1], 9.99999999e-1)
+        self.assertEqual(dlw_block[len(dlw_block)-1], 1.910696)
 
     def testExtractDLWPBlock(self):
         "*Test Data.ACE.XSSNeutronDataExtractor extractDLWPBlock method"
