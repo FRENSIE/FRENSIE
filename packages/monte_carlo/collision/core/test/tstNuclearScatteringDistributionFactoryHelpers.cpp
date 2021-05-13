@@ -143,7 +143,7 @@ FRENSIE_UNIT_TEST( NuclearScatteringDistributionFactoryHelpers,
   FRENSIE_CHECK_EQUAL( dist_array_sizes[41], 11 );
   FRENSIE_CHECK_EQUAL( dist_array_sizes[42], 11 );
   FRENSIE_CHECK_EQUAL( dist_array_sizes[43], 11 );
-  FRENSIE_CHECK_EQUAL( dist_array_sizes[44], 41302 );
+  FRENSIE_CHECK_EQUAL( dist_array_sizes[44], 29291 );
 }
 
 //---------------------------------------------------------------------------//
