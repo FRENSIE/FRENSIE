@@ -76,8 +76,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS(){
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT() {
   double beta_num = 11;
   double alpha_num = 101;
   double beta_max_multiplier = -1;
@@ -90,9 +89,7 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS(){
                                   beta_num,
                                   alpha_num,
                                   beta_max_multiplier,
-                                  zero_tolerance ) );
-
-
+                                  zero_tolerance ) ); // in MeV
 }
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 

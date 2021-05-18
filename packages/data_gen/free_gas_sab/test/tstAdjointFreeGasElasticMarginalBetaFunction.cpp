@@ -25,6 +25,8 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+std::string test_data_path;
+
 std::shared_ptr<DataGen::AdjointFreeGasElasticMarginalBetaFunction> beta_function;
 
 double A = 0.999167;
@@ -42,6 +44,9 @@ MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
   distribution( 2 );
 
 std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution> scattering_distribution;
+
+std::vector<std::string> filenames{"H_293K.c", "H_600K.c", "H_900K.c", "H_1200K.c", "H_2500K.c"};
+
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -149,11 +154,6 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
 // Check that the PDF can be evaluated
 FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 {
-  std::vector<std::string> filenames{ "/home/ecmoll/software/frensie/test_data/adjoint_cdf/H_293K.c",
-                                      "/home/ecmoll/software/frensie/test_data/adjoint_cdf/H_600K.c",
-                                      "/home/ecmoll/software/frensie/test_data/adjoint_cdf/H_900K.c",
-                                      "/home/ecmoll/software/frensie/test_data/adjoint_cdf/H_1200K.c",
-                                      "/home/ecmoll/software/frensie/test_data/adjoint_cdf/H_2500K.c"};
 
   std::vector<double> kT_vector{ 2.5301e-8, 5.1705e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};                            
   std::vector<double> energies{1e-11,2e-11,5e-11,1e-10,2e-10,5e-10,1e-9,2e-9,5e-9,1e-8,2e-8,5e-8,1e-7,2e-7,5e-7,1e-6,1.5e-6,2e-6,2.5e-6,3e-6,3.5e-6,4e-6,4.1e-6,4.2e-6,4.3e-6,4.4e-6,4.5e-6,4.6e-6,4.7e-6,4.8e-6,4.9e-6}; // 1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6,
@@ -162,6 +162,8 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 
   for( int e = 0; e < filenames.size(); ++e )
   {
+    std::string filename = test_data_path + "/adjoint_cdf/" + filenames[e];
+
     double kT = kT_vector[e];
 
     std::map< double, std::vector<double> > data_map;
@@ -185,7 +187,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
     }
 
     std::ofstream output_file;
-    output_file.open( filenames[e] );
+    output_file.open( filename );
 
     for( int i = 0; i < energy_vector.size(); ++i )
     {
@@ -207,6 +209,14 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_data_path",
+                                       test_data_path, "",
+                                       "Path to the data test folder" );
+
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
  
   distribution[0].first = 0.0;

@@ -11,7 +11,9 @@
 
 // Std Lib Includes
 #include <set>
-#include <map>
+
+// Boost Includes
+#include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -115,10 +117,10 @@ private:
   static Teuchos::RCP<NativeGeometryHandler> instance;
 
   // Surface id map
-  std::unordered_map<surfaceOrdinalType,scalarType> d_surface_map;
+  boost::unordered_map<surfaceOrdinalType,scalarType> d_surface_map;
 
   // Cell id map
-  std::unordered_map<cellOrdinalType,scalarType> d_cell_map;
+  boost::unordered_map<cellOrdinalType,scalarType> d_cell_map;
 
   // Cells that have been previously found to contain points. This list is
   // appended every time the getCellContainingPoint function is called and a

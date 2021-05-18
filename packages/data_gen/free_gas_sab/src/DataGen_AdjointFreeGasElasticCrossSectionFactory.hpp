@@ -82,7 +82,7 @@ public:
 
   void generateFreeGasPDFDistributions( double kT );
 
-  void serializeMapOut( double kT );
+  void serializeMapOut( double kT, std::string path="./" );
 
   void serializeMapIn( std::string filename );
 

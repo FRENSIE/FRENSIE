@@ -44,10 +44,15 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt"; // this will not work....
-std::string table_name = "1001.70c";
+std::string test_neutron_ace_file_name;
+std::string table_name;
 std::shared_ptr<DataGen::AdjointFreeGasElasticCrossSectionFactory> free_gas_factory;
-std::vector<double> kT_vector{ 2.5301e-8, 5.1704e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};
+
+std::string test_data_path;
+std::string in_file_suffix = ".transport";
+
+std::vector<double> kT; //in MeV
+std::vector<double> T{293, 600, 900, 1200, 2500}; //in K
 int num_particles = 100;
 int num_scatters  = 1;
 
@@ -65,15 +70,14 @@ std::vector<double> source_2500K{0,3,6,7,8,11,12,15,18,22,26,31,38,46,54,70,85,1
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
-  double kT            = kT_vector[0];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_293K.transport";
+  std::cout << "test_neutron_ace_file_name " << test_neutron_ace_file_name << std::endl;
+  std::cout << "table_name " << table_name << std::endl;
+  free_gas_factory.reset(new DataGen::AdjointFreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/adjoint_transport_H_293K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
 
-  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -445,21 +449,27 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_data_path",
+                                       test_data_path, "",
+                                       "Path to the data test folder" );
 
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
- ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_neutron_ace_file",
-                                       test_neutron_ace_file_name,
-                                       "",
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_neutron_ace_file",
+                                       test_neutron_ace_file_name, "",
                                        "Test neutron ACE file name" );
+}
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
+    // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+  table_name = "1001.70c";
 
-  std::string table_name( "1001.70c" );
+  free_gas_factory.reset(new DataGen::AdjointFreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
 
-  free_gas_factory.reset( new DataGen::AdjointFreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-						    table_name,
-						    1u ) );
+  double kb = 8.6173333e-11;  // MeV/K  -- Boltzman constant
+  for (int i = 0; i < T.size(); i++) {
+    kT.push_back(kb * T[i]);
+  }
 }
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 

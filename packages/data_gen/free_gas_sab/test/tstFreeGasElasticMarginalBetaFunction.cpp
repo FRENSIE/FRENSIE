@@ -23,6 +23,9 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+std::string test_data_path;
+
+
 std::shared_ptr<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
 double A = 0.999167;
 
@@ -39,6 +42,8 @@ MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
   distribution( 2 );
 
 std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution> scattering_distribution;
+
+std::vector<std::string> filenames{"H_293K.c", "H_600K.c", "H_900K.c", "H_1200K.c", "H_2500K.c"};
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -101,11 +106,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, evaluatePDF )
 // Check that the PDF can be evaluated
 FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
 {
-  std::vector<std::string> filenames{ "/home/ecmoll/software/frensie/test_data/forward_pdf/H_293K.p",
-                                      "/home/ecmoll/software/frensie/test_data/forward_pdf/H_600K.p",
-                                      "/home/ecmoll/software/frensie/test_data/forward_pdf/H_900K.p",
-                                      "/home/ecmoll/software/frensie/test_data/forward_pdf/H_1200K.p",
-                                      "/home/ecmoll/software/frensie/test_data/forward_pdf/H_2500K.p"};
+
 
   std::vector<double> kT_vector{ 2.5301e-8, 5.1705e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};                            
   std::vector<double> energies{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6};
@@ -114,6 +115,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
 
   for( int e = 0; e < filenames.size(); ++e )
   {
+    std::string filename = test_data_path + "/forward_pdf/" + filenames[e];
     double kT = kT_vector[e];
 
     std::map< double, std::vector<double> > data_map;
@@ -137,7 +139,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
     }
 
     std::ofstream output_file;
-    output_file.open( filenames[e] );
+    output_file.open( filename );
 
     for( int i = 0; i < energy_vector.size(); ++i )
     {
@@ -157,11 +159,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputPDF )
 // Check that the PDF can be evaluated
 FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 {
-  std::vector<std::string> filenames{ "/home/ecmoll/software/frensie/test_data/forward_cdf/H_293K.c",
-                                      "/home/ecmoll/software/frensie/test_data/forward_cdf/H_600K.c",
-                                      "/home/ecmoll/software/frensie/test_data/forward_cdf/H_900K.c",
-                                      "/home/ecmoll/software/frensie/test_data/forward_cdf/H_1200K.c",
-                                      "/home/ecmoll/software/frensie/test_data/forward_cdf/H_2500K.c"};
+
 
   std::vector<double> kT_vector{ 2.5301e-8, 5.1705e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};                            
   std::vector<double> energies{1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6};
@@ -170,6 +168,8 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 
   for( int e = 0; e < filenames.size(); ++e )
   {
+    std::string filename = test_data_path + "/forward_cdf/" + filenames[e];
+
     double kT = kT_vector[e];
 
     std::map< double, std::vector<double> > data_map;
@@ -193,7 +193,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
     }
 
     std::ofstream output_file;
-    output_file.open( filenames[e] );
+    output_file.open( filename );
 
     for( int i = 0; i < energy_vector.size(); ++i )
     {
@@ -213,6 +213,15 @@ FRENSIE_UNIT_TEST( FreeGasElasticMarginalBetaFunction, outputCDF )
 // Custom setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_data_path",
+                                       test_data_path, "",
+                                       "Path to the data test folder" );
+
+}
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {

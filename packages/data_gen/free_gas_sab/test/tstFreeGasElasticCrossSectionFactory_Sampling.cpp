@@ -43,10 +43,16 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::string test_neutron_ace_file_name = "/home/ecmoll/software/frensie/FRENSIE/packages/test_files/ace/test_h1_ace_file.txt";
-std::string table_name = "1001.70c";
+std::string test_neutron_ace_file_name;
+std::string table_name;
 std::shared_ptr<DataGen::FreeGasElasticCrossSectionFactory> free_gas_factory;
-std::vector<double> kT_vector{ 2.5301e-8, 5.1704e-8, 7.556e-8, 1.03408e-7, 2.15433e-7};
+
+std::string test_data_path;
+std::string in_file_suffix = ".transport";
+std::string out_file_suffix = ".ouput";
+
+std::vector<double> kT; //in MeV
+std::vector<double> T{293, 600, 900, 1200, 2500}; //in K
 int num_particles = 1e6;
 int num_scatters  = 20;
 
@@ -55,15 +61,13 @@ int num_scatters  = 20;
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling293K )
 {
-  double kT            = kT_vector[0];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.transport";
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/forward_transport_H_293K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
+  std::string filename_out = test_data_path + base_name + out_file_suffix;
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -93,25 +97,9 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
     population[ i ] = collision_bin;
   }
   
-  /*
-  std::string oname = "/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.transport.txt";
-  std::ofstream output_file;
-  output_file.open( oname );
-
-  for( int i = 0; i < num_particles; ++i )
-  {
-    for( int j = 0; j <= num_scatters; ++j )
-    {
-      output_file << population[j][i] << " ";
-    }
-    output_file << "\n";
-  }
-  output_file.close();
-  */
-
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_293K.output", std::ios::out | std::ios::binary );
+  std::ofstream file_out(filename_out, std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -130,15 +118,13 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling600K )
 {
-  double kT            = kT_vector[1];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_600K.transport";
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/forward_transport_H_600K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
+  std::string filename_out = test_data_path + base_name + out_file_suffix;
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -170,7 +156,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_600K.output", std::ios::out | std::ios::binary );
+  std::ofstream file_out(filename_out, std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -189,15 +175,13 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling900K )
 {
-  double kT            = kT_vector[2];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_900K.transport";
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/forward_transport_H_900K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
+  std::string filename_out = test_data_path + base_name + out_file_suffix;
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -229,7 +213,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_900K.output", std::ios::out | std::ios::binary );
+  std::ofstream file_out(filename_out, std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -248,15 +232,13 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling1200K )
 {
-  double kT            = kT_vector[3];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_1200K.transport";
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/forward_transport_H_1200K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
+  std::string filename_out = test_data_path + base_name + out_file_suffix;
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -288,7 +270,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_1200K.output", std::ios::out | std::ios::binary );
+  std::ofstream file_out(filename_out, std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -307,15 +289,13 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 		   tstSampling2500K )
 {
-  double kT            = kT_vector[4];
-  std::string filename = "/home/ecmoll/software/frensie/test_data/forward_transport/H_2500K.transport";
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  std::string base_name = "/forward_transport_H_2500K";
+  std::string filename_in = test_data_path + base_name + in_file_suffix;
+  std::string filename_out = test_data_path + base_name + out_file_suffix;
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-                            table_name,
-                            1u ) );
-
-  free_gas_factory->serializeMapIn( filename );
+  free_gas_factory->serializeMapIn( filename_in );
 
   std::shared_ptr<MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution> distribution;
 
@@ -347,7 +327,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticCrossSectionFactory,
 
   std::array<int, 2> preamble = {num_scatters + 1, num_particles};
 
-  std::ofstream file_out("/home/ecmoll/software/frensie/test_data/forward_transport/H_2500K.output", std::ios::out | std::ios::binary );
+  std::ofstream file_out(filename_out, std::ios::out | std::ios::binary );
   file_out.write((char*)&num_scatters,  sizeof( uint32_t ));
   file_out.write((char*)&num_particles, sizeof( uint32_t ));
 
@@ -368,24 +348,29 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_data_path",
+                                       test_data_path, "",
+                                       "Path to the data test folder" );
 
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
- ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_neutron_ace_file",
-                                       test_neutron_ace_file_name,
-                                       "",
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_neutron_ace_file",
+                                       test_neutron_ace_file_name, "",
                                        "Test neutron ACE file name" );
 
-  std::string table_name( "1001.70c" );
+}
 
-  free_gas_factory.reset( new DataGen::FreeGasElasticCrossSectionFactory(
-                            test_neutron_ace_file_name,
-						    table_name,
-						    1u ) );
+FRENSIE_CUSTOM_UNIT_TEST_INIT() {
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+  table_name = "1001.70c";
+
+  free_gas_factory.reset(new DataGen::FreeGasElasticCrossSectionFactory(
+      test_neutron_ace_file_name, table_name, 1u));
+  double kb = 8.6173333e-11;  // MeV/K  -- Boltzman constant
+  for (int i = 0; i < T.size(); i++) {
+    kT.push_back(kb * T[i]);
+  }
 }
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
-
 
 //---------------------------------------------------------------------------//
 // end tstFreeGasElasticCrossSectionGenerator.cpp

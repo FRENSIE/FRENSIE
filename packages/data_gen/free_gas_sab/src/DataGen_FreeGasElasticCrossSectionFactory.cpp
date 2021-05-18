@@ -88,6 +88,9 @@ void FreeGasElasticCrossSectionFactory::getUnmodifiedElasticCrossSection(
 // Extract the cross section from the specified 
 void FreeGasElasticCrossSectionFactory::extractCrossSectionFromACE()
 {
+  std::cout << "d_file_name " << d_file_name << std::endl;
+  std::cout << "d_table_name " << d_table_name << std::endl;
+
   // Construct the ACE file handler
   std::shared_ptr<Data::ACEFileHandler> ace_file_handler( 
 			  new Data::ACEFileHandler( d_file_name,
@@ -277,14 +280,14 @@ void FreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( double 
       new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
 
-void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
+void FreeGasElasticCrossSectionFactory::serializeMapOut( double T , std::string path)
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/forward_transport/H_" );
-  std::string filetype( ".transport" );
+  std::string preamble( path + "/forward_transport_H_" );
+  std::string filetype( "K.transport" );
 
   std::stringstream ss;
-  ss << preamble << kT << filetype;
-  std::string filename = ss.str();  
+  ss << preamble << T << filetype;
+  std::string filename = ss.str();
 
   std::ofstream ofs(filename);
 
@@ -296,6 +299,8 @@ void FreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
 
 void FreeGasElasticCrossSectionFactory::serializeMapIn( std::string filename )
 {
+  std::cout << "filename " << filename << std::endl;
+
   std::ifstream ifs( filename );
 
   std::map< double, std::vector< std::pair < double, double > > > new_map;

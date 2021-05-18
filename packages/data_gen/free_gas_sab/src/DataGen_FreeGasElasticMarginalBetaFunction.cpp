@@ -244,7 +244,8 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   // Make sure beta is valid
   testPrecondition( beta >= d_beta_min );
 
-  double alpha_min = MonteCarlo::calculateAlphaMin( d_E, beta, d_A, d_kT );
+
+  double alpha_min = MonteCarlo::calculateAlphaMin(d_E, beta, d_A, d_kT);
   double alpha_max = MonteCarlo::calculateAlphaMax( d_E, beta, d_A, d_kT );
 
   double function_value, function_value_error;
@@ -252,33 +253,12 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   boost::function<double (double alpha)> sab_function_wrapper =
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
 
-  // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-  // 					  alpha_min,
-  // 					  alpha_max,
-  // 					  function_value,
-  // 					  function_value_error );
-
-  if( beta < 0.0 && beta > d_beta_min )
-  {
-    std::array<double,3> array({alpha_min, -beta, alpha_max});
-    Utility::ArrayView<double> points_of_interest( array );
-
-    d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
-						  points_of_interest,
-						  function_value,
-						  function_value_error );
-  }
-  else
-  {
-    d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-					    alpha_min,
-					    alpha_max,
-					    function_value,
-					    function_value_error );
-  }
-
-  std::cout << beta << " " << function_value << std::endl;
-
+  d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
+                                           alpha_min,
+                                           alpha_max,
+                                           function_value,
+                                           function_value_error );
+  
   // Make sure the return value is valid
   testPostcondition(!Utility::QuantityTraits<double>::isnaninf(function_value));
 

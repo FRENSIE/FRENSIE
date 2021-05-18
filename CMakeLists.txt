@@ -199,8 +199,6 @@ IF(FRENSIE_ENABLE_ROOT)
   ENABLE_ROOT_SUPPORT()
 ENDIF()
 
-# SET(DART_TESTING_TIMEOUT "1000000" STRING)
-
 ##---------------------------------------------------------------------------##
 ## Parse the FRENSIE config file
 ##---------------------------------------------------------------------------##

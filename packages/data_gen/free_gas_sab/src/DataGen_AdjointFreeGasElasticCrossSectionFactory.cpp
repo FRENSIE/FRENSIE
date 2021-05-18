@@ -282,15 +282,15 @@ void AdjointFreeGasElasticCrossSectionFactory::generateFreeGasPDFDistributions( 
       new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
 
-void AdjointFreeGasElasticCrossSectionFactory::serializeMapOut( double kT )
+void AdjointFreeGasElasticCrossSectionFactory::serializeMapOut( double kT , std::string path)
 {
-  std::string preamble( "/home/ecmoll/software/frensie/test_data/adjoint_transport/H_" );
-  std::string filetype( ".transport" );
+  std::string preamble( path + "/adjoint_transport_H_" );
+  std::string filetype( "K.transport" );
 
   std::stringstream ss;
   ss << preamble << kT << filetype;
   std::string filename = ss.str();
-
+  std::cout << "filename " << filename << std::endl;
   std::ofstream ofs(filename);
 
   // std::stringstream ss;
