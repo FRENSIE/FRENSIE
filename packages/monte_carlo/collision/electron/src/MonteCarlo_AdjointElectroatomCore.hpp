@@ -33,10 +33,10 @@ namespace MonteCarlo{
  * share the adjoint electroatomic data without copying that data (even if each
  * electro-nuclide has its own copy of the adjoint electroatom core object).
  */
-class AdjointElectroatomCore : public AdjointAtomCore<AdjointElectroatomicReactionType,ElectroatomicReaction,AdjointElectroatomicReaction,AdjointElectronState,std::unordered_map,std::unordered_set>
+class AdjointElectroatomCore : public AdjointAtomCore<AdjointElectroatomicReactionType,ElectroatomicReaction,AdjointElectroatomicReaction,AdjointElectronState,boost::unordered_map,std::unordered_set>
 {
   // Typedef for the base type
-  typedef AdjointAtomCore<AdjointElectroatomicReactionType,ElectroatomicReaction,AdjointElectroatomicReaction,AdjointElectronState,std::unordered_map,std::unordered_set> BaseType;
+  typedef AdjointAtomCore<AdjointElectroatomicReactionType,ElectroatomicReaction,AdjointElectroatomicReaction,AdjointElectronState,boost::unordered_map,std::unordered_set> BaseType;
 
 public:
 
