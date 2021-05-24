@@ -29,11 +29,11 @@ void initializeScatteringDistribution(
   const double atomic_weight_ratio,
   Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>& scattering_dist )
 {
-  std::shared_ptr<Utility::UnivariateDistribution> uniform_dist(
+  Teuchos::RCP<Utility::OneDDistribution> uniform_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<const Utility::UnivariateDistribution> > >
+			       Teuchos::RCP<const Utility::OneDDistribution> > >
     raw_scattering_distribution( 5 );
 
   raw_scattering_distribution[0].first = 1e-11;

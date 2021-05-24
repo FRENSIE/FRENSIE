@@ -37,7 +37,7 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.686600043417490087e+05, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 9.12175e-2, 4.275e-4 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.679406472887769297e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.678581995788152526e+01, 1e-12 );
 
   pdf = unit_correlated_ionization_dist->evaluate( 1e-1, 1e-2 );
   FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.961132179316875043e-02, 1e-12 );

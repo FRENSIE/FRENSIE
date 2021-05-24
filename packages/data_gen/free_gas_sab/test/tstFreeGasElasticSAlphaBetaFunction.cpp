@@ -200,7 +200,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
                                               1.0 );
 
   // Test against the analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
   // Calculate the integral value at energy 10.0 MeV
   sab_value = (*sab_function)( 39.5, 1.0, 10.0 );
@@ -327,7 +327,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                                               1.0e-06 );
 
   // Test against analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-8 );
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, -15.0, 1e-6 );
@@ -384,7 +384,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                                               1.0e-06 );
 
   // Test against analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-12, 0.0, 1e-6 );

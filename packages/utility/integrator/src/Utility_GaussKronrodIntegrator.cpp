@@ -14,7 +14,6 @@ namespace Utility{
 EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<double> );
 EXPLICIT_TEMPLATE_CLASS_INST( GaussKronrodIntegrator<long double> );
   
-
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
