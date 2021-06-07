@@ -560,7 +560,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractYPBlock() const
   if( it!=block_to_start_length_pair.end() && d_nxs[ntrp] != 0 ) {
     // this block has a length defined by the MCNP manual
     int start = it->second.first;  
-    int length = (int)d_xss_view[d_jxs[19]] + 1;
+    int length = (int)d_xss_view[d_jxs[yp]] + 1;
     return d_xss_view( start , length );
   } else {
     return Utility::ArrayView<const double>();
@@ -698,4 +698,3 @@ std::vector<double> XSSNeutronDataExtractor::extractAceLaws() const
 //---------------------------------------------------------------------------//
 // end Data_XSSNeutronDataExtractor.cpp
 //---------------------------------------------------------------------------//
-
