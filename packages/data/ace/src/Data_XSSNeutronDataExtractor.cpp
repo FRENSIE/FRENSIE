@@ -575,7 +575,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractFISBlock() cons
   if( it!=block_to_start_length_pair.end() && d_jxs[fis] >= 0 ) { 
     // this block has a length defined by the MCNP manual
     int start = it->second.first;
-    int length = (int)d_xss_view[d_jxs[20]+1] + 2;
+    int length = (int)d_xss_view[d_jxs[fis]+1] + 2;
     return d_xss_view( start , length );
   } else {
     return Utility::ArrayView<const double>();
