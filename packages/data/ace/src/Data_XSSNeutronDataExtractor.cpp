@@ -698,3 +698,4 @@ std::vector<double> XSSNeutronDataExtractor::extractAceLaws() const
 //---------------------------------------------------------------------------//
 // end Data_XSSNeutronDataExtractor.cpp
 //---------------------------------------------------------------------------//
+
