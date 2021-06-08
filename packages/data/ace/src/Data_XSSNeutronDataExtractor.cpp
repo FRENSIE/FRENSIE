@@ -126,32 +126,32 @@ int XSSNeutronDataExtractor::queryBlockSize(int block_index) const
 {
   // need a const iterator since this function is declared const
   std::map<int,std::pair<int,int> >::const_iterator it = block_to_start_length_pair.find(block_index);
+  int block_size = 0;
   if ( it!=block_to_start_length_pair.end() ) {
     // if block exists, return the length 
-    return it->second.second;
-  } else {
-    // block does not exist, return 0
-    return 0;
-    } 
+    block_size = it->second.second;
+  }
+  return block_size;
 }
 
 int XSSNeutronDataExtractor::queryNXS(int nxs_index) const
 {
+  int nxs_value = 0;
   if(nxs_index < last_nxs) {
-    return d_nxs[nxs_index];
-  } else {
-    return 0;
+    nxs_value = d_nxs[nxs_index];
   }
+  return nxs_value;
 }
 
 // TODO, should we return the negative 1 or just a 0 in that case?
 int XSSNeutronDataExtractor::queryJXS(int jxs_index) const 
 {
+  int jxs_value = 0;
   if(jxs_index < last_jxs) {
-    return d_jxs[jxs_index];
-  } else {
-    return 0;
+    jxs_value = d_jxs[jxs_index];
   }
+  return jxs_value;
+
 }
 
 // Extract the ESZ block from the XSS array
