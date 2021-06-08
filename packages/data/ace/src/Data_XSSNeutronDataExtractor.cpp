@@ -388,8 +388,8 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractLANDBlock() con
     return d_xss_view( start , length);
   } else {
     // this else statement should never be entered
-    // because there should always be an key 
-    // corresponding to the and block in the map
+    // because there should always be a key 
+    // corresponding to the land block in the map
     THROW_EXCEPTION(std::logic_error, "Entered a forbidden else statement: expected land block to be found in jxs block map ")
   }
 }
@@ -406,7 +406,7 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractANDBlock() cons
     return d_xss_view( start, length );
   } else {
     // this else statement should never be entered
-    // because there should always be an key 
+    // because there should always be a key 
     // corresponding to the and block in the map
     THROW_EXCEPTION(std::logic_error, "Entered a forbidden else statement: expected and block to be found in jxs block map ")
   }
