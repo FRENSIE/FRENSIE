@@ -317,7 +317,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_u238 )
 
   FRENSIE_CHECK_EQUAL( dlw_block.size(), 100244 ); 
   FRENSIE_CHECK_EQUAL( dlw_block.front(), 0 );
-  FRENSIE_CHECK_EQUAL( dlw_block.back(), 1.910696 ); // TODO Value in line 3047069 first column should be 18, but map thinks 1.91069
+  FRENSIE_CHECK_EQUAL( dlw_block.back(), 1.910696 );
 }
 
 //---------------------------------------------------------------------------//
