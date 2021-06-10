@@ -74,11 +74,15 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
     if(d_jxs[block]>=0) {
       available_blocks.push_back(std::make_pair(d_jxs[block],block));
     }
+    // initialize the map to contain all blocks that map to a pair of 0,0, so 
+    // blocks that not available can be returned with a start,length pair of (0,0)
+    block_to_start_length_pair.insert(std::make_pair(block,std::make_pair(0,0)));
   }
 
   // sort pairs by first (jxs locations) to get monotone order
   std::sort(available_blocks.begin(),available_blocks.end());
 
+  // compute the correct lengths for blocks in available_blocks
   // first parameter is the block's start, second parameter is the length of that block
   for(std::vector<std::pair<int,int> >::iterator soi=available_blocks.begin() ; soi<available_blocks.end() -1 ; soi++ ) {
       // soi stands for sorted order iterator 
@@ -86,7 +90,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
       int start = soi->first;       // grab the jxs position corresponding to the current block
       int next_start = (soi+1)->first;   // grab the jxs position corresponding to the current block
       int length = next_start - start ;    // the difference next - curr is the length of the block curr
-      block_to_start_length_pair.insert(std::make_pair(block_id,std::make_pair(start,length)));
+      block_to_start_length_pair[block_id] = std::make_pair(start,length);
   }
 }
 
