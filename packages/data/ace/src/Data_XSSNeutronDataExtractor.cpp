@@ -13,6 +13,7 @@
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_DesignByContract.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Data_ACEBlocks.hpp"
 
 typedef std::map<int,std::pair<int,int> >::const_iterator block_iterator;
 
