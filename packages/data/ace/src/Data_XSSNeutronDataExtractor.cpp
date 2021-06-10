@@ -95,37 +95,33 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   }
 }
 
+// checks if a provided block has data or not
+bool XSSNeutronDataExtractor::hasData(int block_id) const {
+  bool hasData = false;
+  if(block_id < dned) {
+    if(block_to_start_length_pair.at(block_id).first>0){
+      hasData = true;
+    }
+  }
+  return hasData;
+}
+
 // Check if the nuclide is fissionable
 bool XSSNeutronDataExtractor::hasFissionData() const
 {
-  // need a const iterator since this function is declared const
-  block_iterator it = block_to_start_length_pair.find(nu);
-  if(it!=block_to_start_length_pair.end() && it->second.first >= 0 ) // check that d_jxs[nu]>=0
-    return true;
-  else
-    return false;
+  return hasData(nu);
 }
 
 // check if the nuclide has delayed neutron data
 bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
 {
-  // need a const iterator since this function is declared const
-  block_iterator it = block_to_start_length_pair.find(dnu);
-  if(it!=block_to_start_length_pair.end() && it->second.first >= 0)  // check that d_jxs[dnu]>=0
-    return true;
-  else
-    return false;
+  return hasData(dnu);
 }
 
 // Check if the nuclide has unresolved resonances
 bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
 {
-  // need a const iterator since this function is declared const
-  block_iterator it = block_to_start_length_pair.find(lunr);
-  if( it!=block_to_start_length_pair.end() && it->second.first >= 0) // check that d_jxs[lunr]>=0
-    return true;
-  else
-    return false;
+  return hasData(lunr);
 }
 
 // given a block index, return the size in the map

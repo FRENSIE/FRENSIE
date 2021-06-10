@@ -22,8 +22,6 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "Data_ACEBlocks.hpp"
 
-using namespace Data::nxsID;
-using namespace Data::blockID;
 //---------------------------------------------------------------------------//
 // Test Scope Variables
 //---------------------------------------------------------------------------//
@@ -42,7 +40,7 @@ std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor_isotope;
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock )
 {
   Utility::ArrayView<const double> esz_block = xss_data_extractor_isotope->extractESZBlock();
-    FRENSIE_CHECK_EQUAL( esz_block.size(), xss_data_extractor_isotope->queryBlockSize(esz) );
+    FRENSIE_CHECK_EQUAL( esz_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::esz) );
 }
 
 //---------------------------------------------------------------------------//
@@ -54,7 +52,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 {
   Utility::ArrayView<const double> mtr_block = xss_data_extractor_isotope->extractMTRBlock();
-    FRENSIE_CHECK_EQUAL( mtr_block.size(), xss_data_extractor_isotope->queryBlockSize(mtr) );
+    FRENSIE_CHECK_EQUAL( mtr_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::mtr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -66,7 +64,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock )
 {
   Utility::ArrayView<const double> mtrp_block = xss_data_extractor_isotope->extractMTRPBlock();
-  FRENSIE_CHECK_EQUAL( mtrp_block.size(), xss_data_extractor_isotope->queryBlockSize(mtrp) );
+  FRENSIE_CHECK_EQUAL( mtrp_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::mtrp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -78,7 +76,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock )
 {
   Utility::ArrayView<const double> lqr_block = xss_data_extractor_isotope->extractLQRBlock();
-  FRENSIE_CHECK_EQUAL( lqr_block.size(), xss_data_extractor_isotope->queryBlockSize(lqr) );
+  FRENSIE_CHECK_EQUAL( lqr_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::lqr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,7 +87,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock )
 {
   Utility::ArrayView<const double> tyr_block = xss_data_extractor_isotope->extractTYRBlock();
-  FRENSIE_CHECK_EQUAL( tyr_block.size(), xss_data_extractor_isotope->queryBlockSize(tyr) );
+  FRENSIE_CHECK_EQUAL( tyr_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::tyr) );
 }
 
 //---------------------------------------------------------------------------//
@@ -100,7 +98,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock )
 {
   Utility::ArrayView<const double> lsig_block = xss_data_extractor_isotope->extractLSIGBlock();
-  FRENSIE_CHECK_EQUAL( lsig_block.size(), xss_data_extractor_isotope->queryBlockSize(lsig) );
+  FRENSIE_CHECK_EQUAL( lsig_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::lsig) );
 }
 
 //---------------------------------------------------------------------------//
@@ -111,7 +109,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock )
 {
   Utility::ArrayView<const double> lsigp_block = xss_data_extractor_isotope->extractLSIGPBlock();
-  FRENSIE_CHECK_EQUAL( lsigp_block.size(), xss_data_extractor_isotope->queryBlockSize(lsigp) );
+  FRENSIE_CHECK_EQUAL( lsigp_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::lsigp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -122,7 +120,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock )
 {
   Utility::ArrayView<const double> land_block = xss_data_extractor_isotope->extractLANDBlock();
-  FRENSIE_CHECK_EQUAL( land_block.size(), xss_data_extractor_isotope->queryBlockSize(landb) );
+  FRENSIE_CHECK_EQUAL( land_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::landb) );
 }
 
 //---------------------------------------------------------------------------//
@@ -133,7 +131,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock )
 {
   Utility::ArrayView<const double> ldlw_block = xss_data_extractor_isotope->extractLDLWBlock();
-    FRENSIE_CHECK_EQUAL( ldlw_block.size(), xss_data_extractor_isotope->queryBlockSize(dlw) );
+    FRENSIE_CHECK_EQUAL( ldlw_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::dlw) );
 }
 
 //---------------------------------------------------------------------------//
@@ -144,7 +142,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock )
 {
   Utility::ArrayView<const double> ldlwp_block = xss_data_extractor_isotope->extractLDLWPBlock();
-  FRENSIE_CHECK_EQUAL( ldlwp_block.size(), xss_data_extractor_isotope->queryBlockSize(dlwp) );
+  FRENSIE_CHECK_EQUAL( ldlwp_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::dlwp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -155,7 +153,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock )
 {
   Utility::ArrayView<const double> dnedl_block = xss_data_extractor_isotope->extractDNEDLBlock();
-  FRENSIE_CHECK_EQUAL( dnedl_block.size(), xss_data_extractor_isotope->queryBlockSize(dlwp) );
+  FRENSIE_CHECK_EQUAL( dnedl_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::dlwp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -174,7 +172,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock )
 {
   Utility::ArrayView<const double> landp_block = xss_data_extractor_isotope->extractLANDPBlock();
-  FRENSIE_CHECK_EQUAL( landp_block.size(), xss_data_extractor_isotope->queryBlockSize(landp) );
+  FRENSIE_CHECK_EQUAL( landp_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::landp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -185,7 +183,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock )
 {
   Utility::ArrayView<const double> yp_block = xss_data_extractor_isotope->extractYPBlock();
-  FRENSIE_CHECK_EQUAL( yp_block.size(), xss_data_extractor_isotope->queryBlockSize(yp) );
+  FRENSIE_CHECK_EQUAL( yp_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::yp) );
 }
 
 //---------------------------------------------------------------------------//
@@ -196,7 +194,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock )
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
 {
   Utility::ArrayView<const double> fis_block = xss_data_extractor_isotope->extractFISBlock();
-  FRENSIE_CHECK_EQUAL( fis_block.size(), xss_data_extractor_isotope->queryBlockSize(fis) );
+  FRENSIE_CHECK_EQUAL( fis_block.size(), xss_data_extractor_isotope->queryBlockSize(Data::fis) );
 }
 
 //---------------------------------------------------------------------------//
@@ -212,9 +210,9 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock )
 // check that xss(jxs[15] + j) for  j=1,nxs[5] (nxs[5] is number of photon reactions )
   FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, confirmLANDP )
   {
-    if(xss_data_extractor_isotope->queryBlockSize(landp)==0){
+    if(xss_data_extractor_isotope->queryBlockSize(Data::landp)==0){
       Utility::ArrayView<const double> andp_block = xss_data_extractor_isotope->extractANDPBlock();
-      for(size_t j = 1; j < xss_data_extractor_isotope->queryNXS(ntrp) ; j++)
+      for(size_t j = 1; j < xss_data_extractor_isotope->queryNXS(Data::ntrp) ; j++)
         FRENSIE_CHECK_EQUAL( andp_block[j], 0);
       // first entry is for elastic, all others would be for the other MTs
       // if the map determines that the landp has size zero, it puts placeholder

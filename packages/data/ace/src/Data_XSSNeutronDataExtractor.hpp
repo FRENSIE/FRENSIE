@@ -63,6 +63,9 @@ public:
   ~XSSNeutronDataExtractor()
   { /* ... */ }
 
+  //! checks if a provided block has data or not
+  bool hasData(int block_id) const;
+
   //! Check if the nuclide is fissionable
   bool hasFissionData() const;
 
