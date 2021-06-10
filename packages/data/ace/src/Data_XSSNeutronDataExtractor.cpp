@@ -70,10 +70,10 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   // this should be changed from dned to the index of the last block in the array
   int last_block = dned;
   std::vector<std::pair<int,int> > available_blocks;
-    for(int block = 0 ; block <= last_block ; block++) {
-      if(d_jxs[block]>=0) {
-        available_blocks.push_back(std::make_pair(d_jxs[block],block));
-      }
+  for(int block = 0 ; block <= last_block ; block++) {
+    if(d_jxs[block]>=0) {
+      available_blocks.push_back(std::make_pair(d_jxs[block],block));
+    }
   }
 
   // sort pairs by first (jxs locations) to get monotone order
