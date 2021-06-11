@@ -66,6 +66,9 @@ public:
   //! checks if a provided block has data or not
   bool hasData(int block_id) const;
 
+  //! extracts the data for a queried block
+  Utility::ArrayView<const double> extractBlock(int block_id) const;
+
   //! Check if the nuclide is fissionable
   bool hasFissionData() const;
 
