@@ -10,14 +10,10 @@
 #include <iostream>
 #include <string>
 #include <type_traits>
-#include <cfloat>
-#include <typeinfo>
-#include <cmath>
 
 // Boost Includes
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
-#include <boost/test/floating_point_comparison.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/mpl/insert_range.hpp>
 #include <boost/units/systems/cgs/energy.hpp>
@@ -1586,12 +1582,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( epsilon,
                      ComplexQuantityType::from_value( ComplexRawType( std::numeric_limits<RawType>::epsilon(), 0 ) ) );
 }
 
-// ---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 // Check that the comparison tolerance (10^-15) can be returned
-
-BOOST_AUTO_TEST_CASE_TEMPLATE(  comparison_tolerance_basic,
-                                QuantityType,
-                                TestFloatingPointTypes )
+BOOST_AUTO_TEST_CASE_TEMPLATE( comparison_tolerance_basic, T, TestFloatingPointTypes )
 {
   BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::comparisonTolerance(),
                      10*std::numeric_limits<T>::epsilon() );
