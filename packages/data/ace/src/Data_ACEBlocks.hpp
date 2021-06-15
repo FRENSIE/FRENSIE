@@ -13,7 +13,7 @@ namespace Data{
 
 // enum to give nxs array parameters appropriate indexing value 
 enum nxsId {    xss_length, // 0, last value position in xss arrary
-                ZAID, // 1, 1000*Z+A
+                ZAID_idx, // 1, 1000*Z+A
                 nes, // 2, number of energies in grid
                 ntr, // 3, number of reactions, excluding elastic
                 nr, // 4,  number of reactions having secondery neutrons, excluding elastic

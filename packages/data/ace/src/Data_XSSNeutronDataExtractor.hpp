@@ -20,7 +20,7 @@
 #include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_BarnUnit.hpp"
 #include "Utility_QuantityTraits.hpp"
-
+#include "Data_ACEBlocks.hpp"
 
 /*! \defgroup continuous_energy_neutron_table Continuous Energy Neutron Table
  * \ingroup ace_table
@@ -70,13 +70,22 @@ public:
   Utility::ArrayView<const double> extractBlock(int block_id) const;
 
   //! Check if the nuclide is fissionable
-  bool hasFissionData() const;
+  inline bool hasFissionData() const
+  {
+    return hasData(nu);
+  }
 
   //! Check if the nuclide has delayed neutron data
-  bool hasDelayedNeutronData() const;
+  inline bool hasDelayedNeutronData() const
+  {
+    return hasData(dnu);
+  }
 
   //! Check if the nuclide has unresolved resonances
-  bool hasUnresolvedResonanceData() const;
+  inline bool hasUnresolvedResonanceData() const
+  {
+    return hasData(lunr);
+  }
 
   // Query block size in the map given a blockId 
   int queryBlockSize(int block_index) const;
@@ -121,79 +130,190 @@ public:
   Utility::ArrayView<const Energy> extractAverageHeatingNumbersInMeV() const;
 
   //! Extract the NU block form the XSS array
-  Utility::ArrayView<const double> extractNUBlock() const;
+  inline Utility::ArrayView<const double> extractNUBlock() const
+  {
+    return extractBlock(nu);
+  }
 
   //! Extract the MTR block from the XSS array
-  Utility::ArrayView<const double> extractMTRBlock() const;
+  inline Utility::ArrayView<const double> extractMTRBlock() const
+  {
+    return extractBlock(mtr);
+  }
 
   //! Extract the MTRP block from the XSS array
-  Utility::ArrayView<const double> extractMTRPBlock() const;
+  inline Utility::ArrayView<const double> extractMTRPBlock() const
+  {
+    return extractBlock(mtrp);
+  }
 
   //! Extract the LQR block from the XSS array
-  Utility::ArrayView<const double> extractLQRBlock() const;
+  inline Utility::ArrayView<const double> extractLQRBlock() const
+  {
+    return extractBlock(lqr);
+  }
 
   //! Extract the TYR block from the XSS array
-  Utility::ArrayView<const double> extractTYRBlock() const;
+  inline Utility::ArrayView<const double> extractTYRBlock() const
+  {
+    return extractBlock(tyr);
+  }
 
   //! Extract the LSIG block from the XSS array
-  Utility::ArrayView<const double> extractLSIGBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLSIGBlock() const
+  {
+    return extractBlock(lsig);
+  }
 
   //! Extract the LSIGP block from the XSS array
-  Utility::ArrayView<const double> extractLSIGPBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLSIGPBlock() const
+  {
+    return extractBlock(lsigp);
+  }
 
   //! Extract the SIG block from the XSS array
-  Utility::ArrayView<const double> extractSIGBlock() const;
+  inline Utility::ArrayView<const double> extractSIGBlock() const
+  {
+    return extractBlock(sig);
+  }
 
   //! Extract the LAND block from the XSS array
-  Utility::ArrayView<const double> extractLANDBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLANDBlock() const
+  {
+    if(!hasData(landb)) {
+      THROW_EXCEPTION(std::logic_error, "Expected land block to exist")
+    }
+    return extractBlock(landb);
+  }
 
   //! Extract the AND block from the XSS array
-  Utility::ArrayView<const double> extractANDBlock() const;
+  inline Utility::ArrayView<const double> extractANDBlock() const
+  {
+    if(!hasData(andb)) {
+      THROW_EXCEPTION(std::logic_error, "Expected and block to exist")
+    }
+    return extractBlock(andb);
+  }
 
   //! Extract the LDLW block from the XSS array
-  Utility::ArrayView<const double> extractLDLWBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLDLWBlock() const
+  {
+    return extractBlock(ldlw);
+  }
 
   //! Extract the LDLWP block from the XSS array
-  Utility::ArrayView<const double> extractLDLWPBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLDLWPBlock() const
+  {
+    return extractBlock(ldlwp);
+  }
 
   //! Extract the DLW block from the XSS array
-  Utility::ArrayView<const double> extractDLWBlock() const;
+  inline Utility::ArrayView<const double> extractDLWBlock() const
+  {
+    return extractBlock(dlw);
+  }
 
   //! Extract the DLWP block from the XSS array
-  Utility::ArrayView<const double> extractDLWPBlock() const;
+  inline Utility::ArrayView<const double>  extractDLWPBlock() const
+  {
+      return extractBlock(dlwp);
+  }
 
   //! Extract the GPD block from the XSS array
-  Utility::ArrayView<const double> extractGPDBlock() const;
+  /*! \details For newer evaluations the GPD block only contains the total
+  * photon production cross section (size=nxs[2]). For older evaluations, the
+  * block also contains the 30*20 matrix of secondary photon energies.
+  */
+  inline Utility::ArrayView<const double> extractGPDBlock() const
+  {
+      return extractBlock(gpd);
+  }
 
   //! Extract the SIGP block from the XSS array
-  Utility::ArrayView<const double> extractSIGPBlock() const;
+  inline Utility::ArrayView<const double> extractSIGPBlock() const
+  {
+    return extractBlock(sigp);
+  }
 
   //! Extract the LANDP block from the XSS array
-  Utility::ArrayView<const double> extractLANDPBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractLANDPBlock() const
+  {
+    return extractBlock(landp);
+  }
 
   //! Extract the ANDP block from the XSS array
-  Utility::ArrayView<const double> extractANDPBlock() const;
+  /*! \details Even if photon production interactions are present (nxs[5] != 0 ),
+  * it is possible that there will be no ANDP block. This can occur if every
+  * entry in the LANDP block is 0 (indicating that the outgoing photon angle is
+  * isotropic in the lab frame).
+  */
+  inline Utility::ArrayView<const double> extractANDPBlock() const
+  {
+    return extractBlock(andp);
+  }
 
   //! Extract the YP block from the XSS array
-  Utility::ArrayView<const double> extractYPBlock() const;
+  inline Utility::ArrayView<const double> extractYPBlock() const
+  {
+    return extractBlock(yp);
+  }
 
   //! Extract the FIS block from the XSS array
-  Utility::ArrayView<const double> extractFISBlock() const;
+  inline Utility::ArrayView<const double> extractFISBlock() const
+  {
+    return extractBlock(fis);
+  }
 
   //! Extract the UNR block from the XSS array
-  Utility::ArrayView<const double> extractUNRBlock() const;
+  inline Utility::ArrayView<const double> extractUNRBlock() const
+  {
+    return extractBlock(lunr);
+  }
 
   //! Extract the DNU (delayed NU) block form the XSS array
-  Utility::ArrayView<const double> extractDNUBlock() const;
+  inline Utility::ArrayView<const double> extractDNUBlock() const
+  {
+    return extractBlock(dnu);
+  }
 
   //! Extract the BDD (basic delayed data) block from the XSS array
-  Utility::ArrayView<const double> extractBDDBlock() const;
+  inline Utility::ArrayView<const double> extractBDDBlock() const
+  {
+    return extractBlock(bdd);
+  }
 
   //! Extract the DNEDL (delayed neutron LDLW) block from the XSS array
-  Utility::ArrayView<const double> extractDNEDLBlock() const;
+  /*! \details All indices in this array are for Fortran arrays.
+  * Subtract by one to get the corresponding C array indices.
+  */
+  inline Utility::ArrayView<const double> extractDNEDLBlock() const
+  {
+    return extractBlock(dnedl);
+  }
 
   //! Extract the DNED (delayed neutron DLW) block from the XSS array
-  Utility::ArrayView<const double> extractDNEDBlock() const;
+  inline Utility::ArrayView<const double> extractDNEDBlock() const
+  {
+    return extractBlock(dned);
+  }
 
   //! Extract the Ace Laws used for each MT Number from the XSS array
   std::vector<double> extractAceLaws() const;
