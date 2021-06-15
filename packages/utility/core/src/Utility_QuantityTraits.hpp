@@ -710,7 +710,7 @@ protected:
 
     //! Get comparison tolerance
   static inline T rawComparisonTolerance() noexcept
-  { return (T)1.e-15; }
+  { return 10*rawEpsilon(); }
 
   //! Get the maximum rounding error
   static inline T rawRoundError() noexcept
