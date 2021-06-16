@@ -124,7 +124,7 @@ public:
   inline Utility::ArrayView<const double> extractNUBlock() const { return extractBlock(nu); }
 
   //! Extract the MTR block from the XSS array
-  inline Utility::ArrayView<const double> extractMTRBlock() const { return extractBlock(mtr);}
+  inline Utility::ArrayView<const double> extractMTRBlock() const { return extractBlock(mtr); }
 
   //! Extract the MTRP block from the XSS array
   inline Utility::ArrayView<const double> extractMTRPBlock() const { return extractBlock(mtrp); }
@@ -145,7 +145,7 @@ public:
   /*! \details All indices in this array are for Fortran arrays.
   * Subtract by one to get the corresponding C array indices.
   */
-  inline Utility::ArrayView<const double> extractLSIGPBlock() const { return extractBlock(lsigp);}
+  inline Utility::ArrayView<const double> extractLSIGPBlock() const { return extractBlock(lsigp); }
 
   //! Extract the SIG block from the XSS array
   inline Utility::ArrayView<const double> extractSIGBlock() const { return extractBlock(sig); }
