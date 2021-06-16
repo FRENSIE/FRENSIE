@@ -70,22 +70,13 @@ public:
   Utility::ArrayView<const double> extractBlock(int block_id) const;
 
   //! Check if the nuclide is fissionable
-  inline bool hasFissionData() const
-  {
-    return hasData(nu);
-  }
+  inline bool hasFissionData() const { return hasData(nu); }
 
   //! Check if the nuclide has delayed neutron data
-  inline bool hasDelayedNeutronData() const
-  {
-    return hasData(dnu);
-  }
+  inline bool hasDelayedNeutronData() const { return hasData(dnu); }
 
   //! Check if the nuclide has unresolved resonances
-  inline bool hasUnresolvedResonanceData() const
-  {
-    return hasData(lunr);
-  }
+  inline bool hasUnresolvedResonanceData() const { return hasData(lunr); }
 
   // Query block size in the map given a blockId 
   int queryBlockSize(int block_index) const;
