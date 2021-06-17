@@ -2,6 +2,10 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(data_ace)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
+FRENSIE_ADD_TEST_EXECUTABLE(XSSNeutronDataExtractorSort DEPENDS tstXSSNeutronDataExtractorSort.cpp)
+# possibly add the isotope that initially broke everything (18040.710nc)
+# find where this executable is stored
+
 FRENSIE_ADD_TEST_EXECUTABLE(ACEFileHandlerNeutron DEPENDS tstACEFileHandlerNeutron.cpp)
 FRENSIE_ADD_TEST(ACEFileHandlerNeutron
   ACE_LIB_DEPENDS 1001.70c
