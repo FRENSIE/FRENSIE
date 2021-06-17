@@ -182,6 +182,14 @@ Utility::ArrayView<const double> XSSNeutronDataExtractor::extractBlock(int block
   return extracted_block;
 }
 
+// return an ArrayView of the block corresponding to block_id after ensuring it exists
+  Utility::ArrayView<const double> XSSNeutronDataExtractor::extractBlockRequired(int block_id, std::string block_name) const {
+  if(!hasData(block_id)) {
+    THROW_EXCEPTION(std::logic_error, "Expected " <<  block_name << " block to exist, but it was not found");
+  }
+  return extractBlock(block_id);
+}
+
 // given a block index, return the size in the map
 int XSSNeutronDataExtractor::queryBlockSize(int block_id) const
 {

@@ -66,8 +66,11 @@ public:
   //! checks if a provided block has data or not
   bool hasData(int block_id) const;
 
-  //! extracts the data for a queried block
+  //! Extracts the data for a queried block
   Utility::ArrayView<const double> extractBlock(int block_id) const;
+
+  //! Use this method to extract a block that should always exist
+  Utility::ArrayView<const double> extractBlockRequired(int block_id, std::string block_name) const;
 
   //! Check if the nuclide is fissionable
   inline bool hasFissionData() const { return hasData(nu); }
@@ -154,22 +157,9 @@ public:
   /*! \details All indices in this array are for Fortran arrays.
   * Subtract by one to get the corresponding C array indices.
   */
-  inline Utility::ArrayView<const double> extractLANDBlock() const
-  {
-    if(!hasData(landb)) {
-      THROW_EXCEPTION(std::logic_error, "Expected land block to exist")
-    }
-    return extractBlock(landb);
-  }
+  inline Utility::ArrayView<const double> extractLANDBlock() const {return extractBlockRequired(landb,"landb"); }
 
-  //! Extract the AND block from the XSS array
-  inline Utility::ArrayView<const double> extractANDBlock() const
-  {
-    if(!hasData(andb)) {
-      THROW_EXCEPTION(std::logic_error, "Expected and block to exist")
-    }
-    return extractBlock(andb);
-  }
+  inline Utility::ArrayView<const double> extractANDBlock() const { return extractBlockRequired(andb,"and"); }
 
   //! Extract the LDLW block from the XSS array
   /*! \details All indices in this array are for Fortran arrays.
