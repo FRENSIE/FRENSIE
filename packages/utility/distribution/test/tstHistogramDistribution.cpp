@@ -68,11 +68,13 @@ typedef std::tuple<
 std::shared_ptr<Utility::UnivariateDistribution> pdf_distribution;
 std::shared_ptr<Utility::TabularUnivariateDistribution> tab_pdf_distribution;
 
+std::shared_ptr<Utility::HistogramDistribution> non_virtual_tab_PDF_distribution;
+std::shared_ptr<Utility::HistogramDistribution> non_virtual_tab_CDF_distribution;
+
 std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_pdf_distribution;
 std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_pdf_distribution;
-
 
 std::shared_ptr<Utility::UnivariateDistribution> cdf_distribution;
 std::shared_ptr<Utility::TabularUnivariateDistribution> tab_cdf_distribution;
@@ -1081,8 +1083,8 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, sampleWithRandomNumber )
 }
 
 //---------------------------------------------------------------------------//
-//Check that the distribution can be sampled from a subrange
-FRENSIE_UNIT_TEST( HistogramDistribution, sampleInSubrange )
+//Check that the distribution can be sampled from a subrange (no min value)
+FRENSIE_UNIT_TEST( HistogramDistribution, sampleInSubrange_no_min )
 {
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.0;
@@ -1137,6 +1139,48 @@ FRENSIE_UNIT_TEST( HistogramDistribution, sampleInSubrange )
 
   sample = tab_cdf_distribution->sampleInSubrange( 1.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+//Check that the distribution can be sampled from a subrange (no min value)
+FRENSIE_UNIT_TEST( HistogramDistribution, sampleInSubrange_min )
+{
+  //Need to make these separately since this method is not virtual for the base class
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15 ;
+
+  std::vector<std::pair<double, double>> sample_bounds( 3 );
+  sample_bounds[0] = std::make_pair<double, double>(-2, -1);
+  sample_bounds[1] = std::make_pair<double, double>(-1.4, 1.6);
+  sample_bounds[2] = std::make_pair<double, double>(1.5, 2);
+
+  std::vector<double> correct_sample_answers(3);
+  correct_sample_answers[0] = -2.0;
+  correct_sample_answers[1] = 0.2;
+  correct_sample_answers[2] = (2-1.5)*(1.0 - 1e-15)+1.5;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double sample;
+
+  for(size_t sample_i = 0; sample_i < correct_sample_answers.size(); ++sample_i)
+  {
+    sample = non_virtual_tab_PDF_distribution->sampleInSubrange( sample_bounds[sample_i].first, sample_bounds[sample_i].second);
+    FRENSIE_CHECK_FLOATING_EQUALITY(sample, correct_sample_answers[sample_i], 1e-14);
+  }
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // CDF Histogram: test max independent value 2nd bin
+  for(size_t sample_i = 0; sample_i < correct_sample_answers.size(); ++sample_i)
+  {
+    sample = non_virtual_tab_CDF_distribution->sampleInSubrange( sample_bounds[sample_i].first, sample_bounds[sample_i].second);
+    FRENSIE_CHECK_FLOATING_EQUALITY(sample, correct_sample_answers[sample_i], 1e-14);
+  }
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -1865,6 +1909,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 			   new Utility::HistogramDistribution( bin_boundaries,
 							       bin_values) );
 
+    non_virtual_tab_PDF_distribution.reset( new Utility::HistogramDistribution( bin_boundaries, bin_values));
+
     pdf_distribution = tab_pdf_distribution;
   }
 
@@ -1885,6 +1931,8 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 			  new Utility::HistogramDistribution( bin_boundaries,
 							      cdf_values,
                                                               true ) );
+
+    non_virtual_tab_CDF_distribution.reset(new Utility::HistogramDistribution( bin_boundaries, cdf_values, true ));
 
     cdf_distribution = tab_cdf_distribution;
   }
