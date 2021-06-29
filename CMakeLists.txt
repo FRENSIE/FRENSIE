@@ -41,6 +41,9 @@ SET(BUILD_SHARED_LIBS ON)
 # installed targets from reporting undefined .so files (check with ldd tool)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
+# Set the PyFrensie Install directory
+SET(PyFrensie_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python2.7/site-packages/PyFrensie")
+
 ##---------------------------------------------------------------------------##
 ## Command Line Options
 ##---------------------------------------------------------------------------##

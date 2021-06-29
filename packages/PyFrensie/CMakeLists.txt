@@ -1,9 +1,6 @@
 # Set the PyFrensie Version
 SET(PyFrensie_VERSION ${FRENSIE_VERSION})
 
-# Set the PyFrensie Install directory
-SET(PyFrensie_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python2.7/site-packages/PyFrensie")
-
 # Use the Trilinos UseSWIG.cmake file
 INCLUDE(${CMAKE_SOURCE_DIR}/cmake/UseSWIG.cmake)
 
