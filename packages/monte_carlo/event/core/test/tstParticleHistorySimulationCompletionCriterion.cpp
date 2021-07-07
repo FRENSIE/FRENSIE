@@ -41,7 +41,7 @@ FRENSIE_UNIT_TEST( HistoryCountParticleHistorySimulationCompletionCriterion,
 FRENSIE_UNIT_TEST( HistoryCountParticleHistorySimulationCompletionCriterion,
                    collect_data )
 {
-
+  // Set history wall to be > 2^32 so that the history wall is guaranteed to be checked against a 64 bit variable that represents the number of completed histories
   uint64_t history_wall = 5000000000;
 
   std::shared_ptr<MonteCarlo::ParticleHistorySimulationCompletionCriterion>
