@@ -20,7 +20,6 @@
 #include "Utility_Array.hpp"
 #include "Utility_ExplicitSerializationTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
-#include "Utility_3DCartesianVectorHelpers.hpp"
 
 namespace Utility{
 
@@ -39,37 +38,15 @@ struct SphericalTriangle
   //! Area of the triangle
   double area;
 
-  void computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector)
-  {
-    // Put methods in struct to simplify this part.
-    
-    // calculate cosine of length of side of spherical triangle opposite from respective vertex (for use later, not kept as member data)
-    std::vector<double> opposite_cos_vector {calculateCosineOfAngleBetweenUnitVectors(vertex_vector[1].data(), vertex_vector[2].data()),
-                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[2].data()),
-                                              calculateCosineOfAngleBetweenUnitVectors(vertex_vector[0].data(), vertex_vector[1].data())};
-
-    // calculate length of side of spherical triangle opposite from respective vertex (in radians b/c unit sphere)
-    std::vector<double> opposite_side_length_vector{acos(opposite_cos_vector[0]), acos(opposite_cos_vector[1]), acos(opposite_cos_vector[2])};
-
-    std::vector<double> angle_vector{acos((opposite_cos_vector[0] - opposite_cos_vector[1]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[1])*sin(opposite_side_length_vector[2]))),
-                                    acos((opposite_cos_vector[1] - opposite_cos_vector[0]*opposite_cos_vector[2])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[2]))),
-                                    acos((opposite_cos_vector[2] - opposite_cos_vector[0]*opposite_cos_vector[1])/(sin(opposite_side_length_vector[0])*sin(opposite_side_length_vector[1])))};
-
-    for(size_t vert = 0; vert < 3; ++vert)
-    {
-      triangle_parameter_vector.push_back( std::make_tuple(vertex_vector[vert], opposite_side_length_vector[vert], angle_vector[vert]));
-    }
-
-    // Store triangle area
-    area = angle_vector[0]+angle_vector[1]+angle_vector[2]-M_PI;
-  }
+    //! Processes spherical triangle information
+  void computeAndStoreTriangleParameters(std::vector<std::array<double, 3>>& vertex_vector);
 
   // Serialize the data
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
+  void serialize(Archive& ar, const unsigned version)
   { 
-    ar & BOOST_SERIALIZATION_NVP( triangle_parameter_vector );
-    ar & BOOST_SERIALIZATION_NVP( area );
+    ar & BOOST_SERIALIZATION_NVP(triangle_parameter_vector);
+    ar & BOOST_SERIALIZATION_NVP(area);
   }
 };
 
@@ -86,10 +63,10 @@ class PQLAQuadrature
   { /* ... */ }
 
   //! Find which triangle bin a direction vector is in
-  size_t findTriangleBin( const std::array<double, 3>& direction) const;
+  size_t findTriangleBin(const std::array<double, 3>& direction) const;
 
   //! Find which triangle bin a direction vector is in
-  size_t findTriangleBin( const double x_direction, const double y_direction, const double z_direction) const;
+  size_t findTriangleBin(const double x_direction, const double y_direction, const double z_direction) const;
 
   //! Return the order of the quadrature
   unsigned getQuadratureOrder() const;
@@ -120,11 +97,11 @@ class PQLAQuadrature
                                         std::array<double, 3>& result_vector) const;
 
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm( const std::array<double, 3>& direction_2_norm,
+  void normalizeVectorToOneNorm(const std::array<double, 3>& direction_2_norm,
                                  std::array<double, 3>& direction_1_norm) const;
   
   //! Converts direction vector to 1-norm normalized vector
-  void normalizeVectorToOneNorm(  const double x_direction, 
+  void normalizeVectorToOneNorm(const double x_direction, 
                                   const double y_direction, 
                                   const double z_direction,
                                   std::array<double, 3>& direction_1_norm) const;
@@ -135,10 +112,6 @@ class PQLAQuadrature
   //! Take direction signs to calculate secondary index
   size_t findSecondaryIndex(const bool x_sign, const bool y_sign, const bool z_sign) const;
 
-  //! Get a specific reference to a spherical triangle
-  void getSphericalTriangle(const size_t triangle_index,
-                            SphericalTriangle& triangle) const ;
-
   //! Quadrature order
   unsigned d_quadrature_order;
 
@@ -147,7 +120,7 @@ class PQLAQuadrature
 
   //! Serialize the data
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version );
+  void serialize(Archive& ar, const unsigned version);
 
   //! Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
@@ -156,18 +129,18 @@ class PQLAQuadrature
 
 // Serialize the data
 template<typename Archive>
-void PQLAQuadrature::serialize( Archive& ar, const unsigned version )
+void PQLAQuadrature::serialize(Archive& ar, const unsigned version)
 {
   // Serialize the member data
-  ar & BOOST_SERIALIZATION_NVP( d_quadrature_order );
-  ar & BOOST_SERIALIZATION_NVP( d_spherical_triangle_vector );
+  ar & BOOST_SERIALIZATION_NVP(d_quadrature_order);
+  ar & BOOST_SERIALIZATION_NVP(d_spherical_triangle_vector);
 }
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_CLASS_VERSION( PQLAQuadrature, Utility, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PQLAQuadrature, Utility );
-EXTERN_EXPLICIT_CLASS_SERIALIZE_INST( Utility, PQLAQuadrature );
+BOOST_SERIALIZATION_CLASS_VERSION(PQLAQuadrature, Utility, 0);
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY(PQLAQuadrature, Utility);
+EXTERN_EXPLICIT_CLASS_SERIALIZE_INST(Utility, PQLAQuadrature);
 
 #endif // end UTILITY_PQLA_QUADRATURE
 

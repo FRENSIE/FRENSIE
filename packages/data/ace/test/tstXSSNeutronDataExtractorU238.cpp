@@ -255,9 +255,9 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractSIGBlock_u238 )
   Utility::ArrayView<const double> sig_block =
     xss_data_extractor_u238->extractSIGBlock();
 
-  FRENSIE_CHECK_EQUAL( sig_block.size(), 481823 );
+  FRENSIE_CHECK_EQUAL( sig_block.size(), 191 );
   FRENSIE_CHECK_EQUAL( sig_block.front(), 157648 );
-  FRENSIE_CHECK_EQUAL( sig_block.back(), 3.216104e-1 );
+  FRENSIE_CHECK_EQUAL( sig_block.back(), 1.716853e-01); // Value in line 2878303 last column (191 entries after start)
 }
 
 //---------------------------------------------------------------------------//
@@ -315,9 +315,9 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_u238 )
   Utility::ArrayView<const double> dlw_block =
     xss_data_extractor_u238->extractDLWBlock();
 
-  FRENSIE_CHECK_EQUAL( dlw_block.size(), 112255 );
+  FRENSIE_CHECK_EQUAL( dlw_block.size(), 100244 ); 
   FRENSIE_CHECK_EQUAL( dlw_block.front(), 0 );
-  FRENSIE_CHECK_EQUAL( dlw_block.back(), 9.99999999e-1 );
+  FRENSIE_CHECK_EQUAL( dlw_block.back(), 1.910696 );
 }
 
 //---------------------------------------------------------------------------//

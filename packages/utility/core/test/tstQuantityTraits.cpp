@@ -1583,6 +1583,35 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( epsilon,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the comparison tolerance (10^-15) can be returned
+BOOST_AUTO_TEST_CASE_TEMPLATE( comparison_tolerance_basic, T, TestFloatingPointTypes )
+{
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<T>::comparisonTolerance(),
+                     10*std::numeric_limits<T>::epsilon() );
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<std::complex<T> >::comparisonTolerance(),
+                     std::complex<T>( 10*std::numeric_limits<T>::epsilon(), 0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the comparison tolerance (10^-15) can be returned
+BOOST_AUTO_TEST_CASE_TEMPLATE( comparison_tolerance,
+                               QuantityType,
+                               TestBasicFloatingPointQuantityTypes )
+{
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<QuantityType>::comparisonTolerance(),
+                     QuantityType::from_value( 10*std::numeric_limits<RawType>::epsilon() ) );
+
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
+
+  BOOST_CHECK_EQUAL( Utility::QuantityTraits<ComplexQuantityType>::comparisonTolerance(),
+                     ComplexQuantityType::from_value( ComplexRawType( 10*std::numeric_limits<RawType>::epsilon() , 0 ) ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the max rounding error can be returned
 BOOST_AUTO_TEST_CASE_TEMPLATE( roundError_basic, T, TestFloatingPointTypes )
 {
