@@ -41,21 +41,25 @@ FRENSIE_UNIT_TEST( HistoryCountParticleHistorySimulationCompletionCriterion,
 FRENSIE_UNIT_TEST( HistoryCountParticleHistorySimulationCompletionCriterion,
                    collect_data )
 {
+
+  uint64_t history_wall = 5000000000;
+
   std::shared_ptr<MonteCarlo::ParticleHistorySimulationCompletionCriterion>
-    criterion = MonteCarlo::ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( 10 );
+    criterion = MonteCarlo::ParticleHistorySimulationCompletionCriterion::createHistoryCountCriterion( history_wall );
+
 
   FRENSIE_CHECK( !criterion->isSimulationComplete() );
   FRENSIE_CHECK( criterion->hasUncommittedHistoryContribution() );
 
   // If the criterion hasn't been started all data accumulation will be ignored
-  for( size_t i = 0; i <= 10; ++i )
+  for( size_t i = 0; i <= history_wall; ++i )
     criterion->commitHistoryContribution();
 
   FRENSIE_CHECK( !criterion->isSimulationComplete() );
   
   criterion->start();
 
-  for( size_t i = 0; i <= 10; ++i )
+  for( size_t i = 0; i <= history_wall; ++i )
     criterion->commitHistoryContribution();
 
   FRENSIE_CHECK( criterion->isSimulationComplete() );
@@ -67,7 +71,7 @@ FRENSIE_UNIT_TEST( HistoryCountParticleHistorySimulationCompletionCriterion,
   // If the criterion has been stopped all data accumulation will be ignored
   criterion->stop();
 
-  for( size_t i = 0; i <= 10; ++i )
+  for( size_t i = 0; i <= history_wall; ++i )
     criterion->commitHistoryContribution();
 
   FRENSIE_CHECK( !criterion->isSimulationComplete() );
