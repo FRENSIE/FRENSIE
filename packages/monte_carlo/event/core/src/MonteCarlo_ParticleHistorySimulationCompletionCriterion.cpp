@@ -46,11 +46,9 @@ public:
     // Make sure only the root thread calls this
     testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
     
-    uint64_t init = 0;
-
     return std::accumulate( d_num_completed_histories.begin(),
                             d_num_completed_histories.end(),
-                            init );
+                            0ull );
   }
 
   //! Check if the simulation is complete

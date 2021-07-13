@@ -708,9 +708,15 @@ FRENSIE_UNIT_TEST( EventHandler, getNumberOfCommittedHistories )
 
   FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 0 );
 
-  event_handler.commitObserverHistoryContributions();
-
-  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 1 );
+  // Test for ability to use 64 bit variables
+  uint64_t completed_histories = 5000000000;
+  
+  for(uint64_t history = 0; history < completed_histories; history++)
+  {
+    event_handler.commitObserverHistoryContributions();
+  }
+  
+  FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), completed_histories );
 }
 
 //---------------------------------------------------------------------------//

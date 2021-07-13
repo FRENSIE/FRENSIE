@@ -720,7 +720,7 @@ uint64_t EventHandler::getNumberOfCommittedHistories() const
 {
   return std::accumulate( d_number_of_committed_histories.begin(),
                           d_number_of_committed_histories.end(),
-                          0 );
+                          0ull );
 }
 
 // Get the number of particle histories committed since the last snapshot
@@ -728,7 +728,7 @@ uint64_t EventHandler::getNumberOfCommittedHistoriesSinceLastSnapshot() const
 {
   return std::accumulate( d_number_of_committed_histories_from_last_snapshot.begin(),
                           d_number_of_committed_histories_from_last_snapshot.end(),
-                          0 );
+                          0ull );
 }
 
 // Reset the number of committed histories since the last snapshot
