@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
+#include <cmath>
 
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
@@ -709,7 +710,7 @@ FRENSIE_UNIT_TEST( EventHandler, getNumberOfCommittedHistories )
   FRENSIE_CHECK_EQUAL( event_handler.getNumberOfCommittedHistories(), 0 );
 
   // Test for ability to use 64 bit variables
-  uint64_t completed_histories = 5000000000;
+  uint64_t completed_histories = (uint64_t)std::pow(2.0, 33.0);
   
   for(uint64_t history = 0; history < completed_histories; history++)
   {
