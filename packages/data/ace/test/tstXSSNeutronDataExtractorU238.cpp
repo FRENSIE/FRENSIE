@@ -257,7 +257,7 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractSIGBlock_u238 )
 
   FRENSIE_CHECK_EQUAL( sig_block.size(), 481823 );
   FRENSIE_CHECK_EQUAL( sig_block.front(), 157648 );
-  FRENSIE_CHECK_EQUAL( sig_block.back(), 3.21604e-01); 
+  FRENSIE_CHECK_EQUAL( sig_block.back(), 3.216104000000000185e-01); 
 }
 
 //---------------------------------------------------------------------------//
