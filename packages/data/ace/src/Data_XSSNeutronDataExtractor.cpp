@@ -58,6 +58,11 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   for( size_t i = 0; i < d_jxs.size(); ++i )
     d_jxs[i] -= 1;
 
+  // the jxs[end] is the position of the end of the last block
+  // add one to adjust it so that it can be used semantically as a block
+  // in the algorithm that computes a given key's block start, length pair
+  d_jxs[end]+=1;
+
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
@@ -68,18 +73,24 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
   // perhaps turn below into a class method and call from the constructor
 
   // first, add available blocks 
-  // this is the index of the last block that FRENSIE knows how to process
+  // last block is the index of the last block that FRENSIE knows how to process
   // if FRENSIE gains particle production blocks or new blocks from MCNP, 
   // this should be changed from dned to the index of the last block in the array
   int last_block = dned;
   std::vector<std::pair<int,int> > available_blocks;
   for(int block = 0 ; block <= last_block ; block++) {
-    if(d_jxs[block]>=0) {
-      available_blocks.push_back(std::make_pair(d_jxs[block],block));
-    }
-    // initialize the map to contain all blocks that map to a pair of 0,0, so 
-    // blocks that not available can be returned with a start,length pair of (0,0)
-    block_to_start_length_pair.insert(std::make_pair(block,std::make_pair(0,0)));
+    // since the fis block is a subset of the sig block, we will
+    // leave it out of the subtraciton method when computing sizes
+    // thus the size of the sig block can be found via the subtraciton
+    // method and we can add the fis block size back in as a special case
+    if(block != fis ) {
+      if(d_jxs[block]>=0) {
+        available_blocks.push_back(std::make_pair(d_jxs[block],block));
+      }
+      // initialize the map to contain all blocks that map to a pair of 0,0, so 
+      // blocks that not available can be returned with a start,length pair of (0,0)
+      block_to_start_length_pair.insert(std::make_pair(block,std::make_pair(0,0)));
+      }
   }
 
   // sort pairs by first (jxs locations) to get monotone order
@@ -91,7 +102,7 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
       // soi stands for sorted order iterator 
       int block_id = soi->second;    // grab the block corresponding to the first value in the pair
       int start = soi->first;       // grab the jxs position corresponding to the current block
-      int next_start = (soi+1)->first;   // grab the jxs position corresponding to the current block
+      int next_start = (soi+1)->first;   // grab the jxs position corresponding to the next block
       int length = next_start - start ;    // the difference next - curr is the length of the block curr
       int mcnp_length = length ;    // placeholder for mcnp length if it exists
       std::string block_name = "";
@@ -146,17 +157,26 @@ XSSNeutronDataExtractor::XSSNeutronDataExtractor(
           break;
         case yp:
           block_name = "yp";
-          mcnp_length = (int) d_xss_view[d_jxs[yp]] + 1;
+          mcnp_length = (int) d_xss_view[d_jxs[yp]] + 1; // formula from table F19 of MCNP User Manual Version 5 Volume 3
           break;
         case fis:
-          block_name = "fis";
-          mcnp_length = (int) d_xss_view[d_jxs[fis]+1] + 2;
-          break;
+          FRENSIE_LOG_WARNING("The fis block was added to the subtraction method computation and should be done separately as as a special case");
       }
       if(length!=mcnp_length) {
         FRENSIE_LOG_WARNING("Check ACE Data, size of " << block_name << " BLOCK does not match MCNP Manual");
       }
       block_to_start_length_pair[block_id] = std::make_pair(start,mcnp_length);
+  }
+
+  // the fis block is one of the subsets of the sig block, which contains all the non-elastic scattering reactions
+  // treat it as a speical case and compute the size using the formula from the mcnp manual
+  if(d_jxs[fis]>=0) {
+    int fis_start = d_jxs[fis];
+    int fis_length = (int) d_xss_view[d_jxs[fis]+1] + 2;  // sformula from table F20 of MCNP User Manual Version 5 Volume 3
+    block_to_start_length_pair[fis] = std::make_pair(fis_start,fis_length);
+  } else {
+    // if no fis block, add to map with (0,0) convention used for other block not found
+    block_to_start_length_pair[fis] = std::make_pair(0,0);
   }
 }
 
@@ -347,7 +367,6 @@ std::vector<double> XSSNeutronDataExtractor::extractAceLaws() const
   
   return ace_laws;
 }
-
 } // end Data namespace
 
 //---------------------------------------------------------------------------//

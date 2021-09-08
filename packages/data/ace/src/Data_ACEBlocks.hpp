@@ -44,10 +44,10 @@ enum blockId  {  esz, // 0, location of energy table
                 ldlwp, // 17, location of table of photon production energy distribution locators
                 dlwp, // 18, location of photon production energy distributions
                 yp, // 19, location of table of yield multipliers
-                fis, // 20, location of totalf ission cross section
-                end, // 21, locaiton of end of last non particle production block ( this is different from nxs[xss_length] sometimes )
+                fis, // 20, location of total fission cross section
+                end, // 21, location of the last value in the table of last non particle production block ( this is different from nxs[xss_length] sometimes )
                 lunr, // 22, location of probability tables
-                dnu, // 23, locaiton of delayed nubar data
+                dnu, // 23, location of delayed nubar data
                 bdd, //24, location of basic delayed data (decay rates and probabilities)
                 dnedl, // 25,  location of table of energy distirbution locators 
                 dned, // 26, location or energy distributions
