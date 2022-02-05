@@ -1,0 +1,226 @@
+FROM ubuntu:18.04
+
+RUN apt-get update; \
+    apt-get install -y \
+        cmake \
+         autogen autoconf libtool \
+        vim \
+        git \
+        wget \
+        doxygen \
+        libpcre3 libpcre3-dev \
+        gfortran \
+        libssl-dev \
+        python-pip \
+        python-dev \
+        # libboost-all-dev \
+        # swig \
+        libeigen3-dev \
+        hdf5-tools libhdf5-dev \
+        autoconf\
+        bison byacc \
+        libx11-dev libxpm-dev libxft-dev libxext-dev; \
+#        openmpi-bin libopenmpi-dev; \
+    pip install numpy cython
+
+RUN apt-get update && \
+    apt-get -y install sudo
+
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+USER docker
+CMD /bin/bash
+
+RUN cd; pwd;
+RUN mkdir /home/docker/temp /home/docker/opt
+
+
+# RUN cd ~/temp;\
+#     mkdir mpi;\
+#     cd mpi; \
+#     mkdir build; \
+#     wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-2.1.1.tar.gz; \
+#     tar -xvf openmpi-2.1.1.tar.gz; \
+#     cd build; \
+#     ../openmpi-2.1.1/configure --prefix=/home/docker/opt/mpi; \
+#     make -j 8; \
+#     make install
+# ENV LD_LIBRARY_PATH "/home/docker/opt/mpi/lib/:$LD_LIBRARY_PATH"
+# ENV PATH "/home/docker/opt/mpi//bin:$PATH"
+
+# RUN cd ~/temp;\
+#     mkdir hdf5;\
+#     cd hdf5; \
+#     mkdir build; \
+#     wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz; \
+#     tar -xvf hdf5-1.8.13.tar.gz; \
+#     cd build; \
+#     ../hdf5-1.8.13/configure  --prefix="/home/docker/opt/hdf5" --enable-optimized --enable-shared --enable-cxx --enable-hl --disable-debug;\
+#     make -j 8; \
+#     make install
+# ENV LD_LIBRARY_PATH "/home/docker/opt/hdf5/lib/:$LD_LIBRARY_PATH"
+# ENV PATH "/home/docker/opt/hdf5/bin:$PATH"
+
+
+RUN cd ~/temp;\
+    mkdir swig;\
+    cd swig; \
+    mkdir build; \
+    git clone https://github.com/swig/swig.git; \
+    cd swig; \
+    git fetch -t;\
+    git checkout -b v4.0.0 v4.0.0; \
+    ./autogen.sh; \
+    cd ../build; \
+    ../swig/configure --prefix=/home/docker/opt/swig; \
+    make -j 8; \
+    make install
+ENV PATH "/home/docker/opt/swig/bin:$PATH"
+
+
+RUN cd ~/temp; \
+    mkdir boost;\
+    cd boost; \
+    wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz;\
+    tar -xvf boost_1_72_0.tar.gz; \
+    cd boost_1_72_0;\
+    ./bootstrap.sh  --prefix=/home/docker/opt/boost;\
+#    sed -i "$ a using mpi ;" project-config.jam; \
+    ./b2 -j8 --prefix=/home/docker/opt/boost -s NO_BZIP2=1 link=shared runtime-link=shared install
+ENV LD_LIBRARY_PATH "/home/docker/opt/boost/lib/:$LD_LIBRARY_PATH"
+
+RUN cd ~/temp; \
+    mkdir moab; \
+    cd moab; \
+    mkdir build; \
+    git clone --single-branch -b Version5.1.0 https://bitbucket.org/fathomteam/moab; \
+    cd moab; \
+    autoreconf -fi; \
+    cd ../build; \
+    ls ../moab;\
+    # ../moab/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=/home/docker/opt/hdf5 --disable-blaslapack --with-eigen3=/usr/include/eigen3 --prefix=/home/docker/opt/moab/; \
+    ../moab/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=/usr/lib/x86_64-linux-gnu/hdf5/serial --disable-blaslapack --with-eigen3=/usr/include/eigen3 --prefix=/home/docker/opt/moab/; \
+    # build/install shared lib
+    # && cmake .. \
+    #         ${PYMOAB_FLAG} \
+    #         -DCMAKE_INSTALL_PREFIX=/home/docker/opt/moab/ \
+    #         -DENABLE_HDF5=ON \
+    #         -DENABLE_PYMOAB=ON \
+    #         -DBUILD_SHARED_LIBS=ON \
+    #         -DENABLE_BLASLAPACK=OFF \
+    #         -DENABLE_FORTRAN=OFF \
+    make -j 8;  \
+    make install
+# put MOAB on the path
+ENV LD_LIBRARY_PATH /home/docker/opt/moab/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /home/docker/opt/moab/lib:$LIBRARY_PATH
+ENV PYTHONPATH /home/docker/opt/moab/lib/python2.7/site-packages/
+
+
+RUN cd /home/docker/temp; \
+    mkdir dagmc; \
+    git clone -b develop --single-branch https://github.com/svalinn/DAGMC.git; \
+    mkdir build; \
+    cd build; \
+    cmake ../DAGMC -DMOAB_DIR=/home/docker/opt/moab \
+    -DCMAKE_INSTALL_PREFIX=/home/docker/opt/dagmc \
+    -DBUILD_UWUW=OFF \
+             -DBUILD_MAKE_WATERTIGHT=OFF \
+             -DBUILD_OVERLAP_CHECK=OFF \
+             -DBUILD_TESTS=OFF;\
+    make -j 8;\
+    make install
+ENV LD_LIBRARY_PATH /home/docker/opt/dagmc/lib:$LD_LIBRARY_PATH
+ENV LIBRARY_PATH /home/docker/opt/dagmc/lib:$LIBRARY_PATH
+ENV PYTHONPATH=/home/docker/opt/dagmc/lib/python2.7/site-packages/
+
+# RUN cd ~/temp; \
+#     mkdir docker;\
+#     cd docker;\
+#     mkdir build;\
+#     wget https://root.cern.ch/download/root_v6.04.16.source.tar.gz;\
+#     tar -xvf root_v6.04.16.source.tar.gz; \
+#     cd build; \
+#     cmake \
+#     -D CMAKE_INSTALL_PREFIX:PATH=/home/docker/opt/root \
+#     -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+#     -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+#     -D alien:BOOL=OFF \
+#     -D asimage:BOOL=OFF \
+#     -D astiff:BOOL=OFF \
+#     -D bonjour:BOOL=OFF \
+#     -D builtin_afterimage:BOOL=OFF \
+#     -D buildin_fftw3:BOOL=OFF \
+#     -D builtin_glew:BOOL=OFF \
+#     -D buildin_llvm:BOOL=OFF \
+#     -D cxx14:BOOL=ON \
+#     -D castor:BOOL=OFF \
+#     -D chirp:BOOL=OFF \
+#     -D dcache:BOOL=OFF \
+#     -D fftw3:BOOL=OFF \
+#     -D fitsio:BOOL=OFF \
+#     -D genvector:BOOL=OFF \
+#     -D gfal:BOOL=OFF \
+#     -D glite:BOOL=OFF \
+#     -D gviz:BOOL=OFF \
+#     -D krb5:BOOL=OFF \
+#     -D ldap:BOOL=OFF \
+#     -D mathmore:BOOL=OFF \
+#     -D monalisa:BOOL=OFF \
+#     -D mysql:BOOL=OFF \
+#     -D odbc:BOOL=OFF \
+#     -D opengl:BOOL=OFF \
+#     -D oracle:BOOL=OFF \
+#     -D pgsql:BOOL=OFF \
+#     -D pythia6:BOOL=OFF \
+#     -D pythia8:BOOL=OFF \
+#     -D rfio:BOOL=OFF \
+#     -D sapdb:BOOL=OFF \
+#     -D sadowpw:BOOL=OFF \
+#     -D sqlite:BOOL=OFF \
+#     -D srp:BOOL=OFF \
+#     -D ssl:BOOL=OFF \
+#     -D tmva:BOOL=OFF \
+#     -D vdt:BOOL=OFF \
+#     -D xft:BOOL=OFF \
+#     -D xdockerd:BOOL=OFF \
+#     ../root-6.04.16;\ 
+#     make -j 8;\
+#     make install
+# ENV LD_LIBRARY_PATH "/home/docker/opt/root/lib/:$LD_LIBRARY_PATH"
+# ENV PATH "/home/docker/opt/root/bin:$PATH"
+
+# # get frensie
+WORKDIR /home/docker
+# COPY ./ /home/docker/FRENSIE/
+RUN mkdir FRENSIE_bld
+WORKDIR /home/docker/FRENSIE_bld
+# RUN cmake \
+#     -D CMAKE_INSTALL_PREFIX:PATH=/home/docker/opt/FRENSIE \
+#     -D CMAKE_BUILD_TYPE:STRING=DEBUG \
+#     -D CMAKE_VERBOSE_CONFIGURE:BOOL=OFF \
+#     -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+#     -D FRENSIE_ENABLE_DBC:BOOL=ON \
+#     -D FRENSIE_ENABLE_COLOR_OUTPUT:BOOL=ON \
+#     -D FRENSIE_ENABLE_OPENMP:BOOL=ON \
+#     -D FRENSIE_ENABLE_MPI:BOOL=ON \
+#     -D FRENSIE_ENABLE_MOAB:BOOL=ON \
+#     -D FRENSIE_ENABLE_DAGMC:BOOL=ON \
+#     -D FRENSIE_ENABLE_docker:BOOL=ON \
+#     -D FRENSIE_ENABLE_PROFILING:BOOL=OFF \
+#     -D FRENSIE_ENABLE_COVERAGE:BOOL=OFF \
+#     -D FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST:BOOL=ON \
+#     -D docker_PREFIX:PATH=/home/docker/opt/docker \
+#     -D MOAB_PREFIX:PATH=/home/docker/opt/moab \
+#     -D DAGMC_PREFIX:PATH=/home/docker/opt/dagmc \
+#     -D HDF5_PREFIX:PATH=/home/docker/opt/hdf5 \
+#     -D BOOST_PREFIX:PATH=/home/docker/opt/boost \
+#     -D MPI_PREFIX:PATH=/home/docker/opt/mpi \
+#     -D SWIG_PREFIX:PATH=/home/docker/opt/swig \
+#     -D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON \
+#     -D XSDIR:PATH=$XSDIR_PATH \
+#     -D BUILDNAME_PREFIX:STRING=Ubuntu-18.04 \
+#     $EXTRA_ARGS \
+#     ../FRENSIE
+# RUN make -j 8
+# RUN make install

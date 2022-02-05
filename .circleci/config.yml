@@ -1,0 +1,132 @@
+version: 2.1
+
+jobs:
+  checkout_cmake:
+    docker:
+      - image: frensie/frensie-deps_lite
+    working_directory: ~/frensie
+    steps:
+      - checkout
+      - run: mkdir bld
+      - run: 
+          name: Configure CMake
+          command: cd bld; cmake 
+                                -D CMAKE_INSTALL_PREFIX:PATH="/home/docker/.local"
+                                -D CMAKE_BUILD_TYPE:STRING=DEBUG
+                                -D CMAKE_VERBOSE_CONFIGURE:BOOL=OFF
+                                -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
+                                -D FRENSIE_ENABLE_DBC:BOOL=ON
+                                -D FRENSIE_ENABLE_COLOR_OUTPUT:BOOL=ON
+                                -D FRENSIE_ENABLE_OPENMP:BOOL=ON
+                                -D FRENSIE_ENABLE_MOAB:BOOL=ON
+                                -D FRENSIE_ENABLE_DAGMC:BOOL=ON
+                                -D FRENSIE_ENABLE_PROFILING:BOOL=OFF
+                                -D FRENSIE_ENABLE_COVERAGE:BOOL=OFF
+                                -D FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INST:BOOL=ON
+                                -D SWIG_PREFIX:PATH="/home/docker/opt/swig"
+                                -D MOAB_PREFIX:PATH="/home/docker/opt/moab"
+                                -D DAGMC_PREFIX:PATH="/home/docker/opt/dagmc"
+                                -D HDF5_PREFIX:PATH="/usr/lib/x86_64-linux-gnu/hdf5/serial"
+                                -D BOOST_ROOT:PATH="/home/docker/opt/boost"
+                                -D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON
+                                -D BUILDNAME_PREFIX:STRING="Ubuntu-18.04"
+                                ../
+#                                -D FRENSIE_ENABLE_MPI:BOOL=ON
+
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+    
+  build:
+    parameters:
+      package:
+        type: string
+    docker:
+      - image: frensie/frensie-deps_lite
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-cmake-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build
+          command: cd bld; make << parameters.package >>
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+
+  build_tests:
+    parameters:
+      package:
+        type: string
+    docker:
+      - image: frensie/frensie-deps_lite
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-<< parameters.package >>-{{ checksum ".circle-sha" }}
+      - run:
+          name: Build Test
+          command: cd bld; make << parameters.package >>_tests
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-frensie-test-<< parameters.package >>-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/frensie
+
+  tests:
+    parameters:
+      package:
+        type: string
+    docker:
+      - image: frensie/frensie-deps_lite
+    working_directory: ~/frensie
+    steps:
+      - run: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+          key: v1-frensie-test-<< parameters.package >>-{{ checksum ".circle-sha" }}
+      - run:
+          name: Run Test
+          command: cd bld; make test-<< parameters.package >>
+  
+
+workflows:
+  version: 2
+  build_and_tests:
+    jobs:
+      - checkout_cmake:
+          filters:
+            branches:
+              ignore: master
+            tags:
+              ignore: /.*/
+      - build:
+          requires:
+            - checkout_cmake
+          matrix:
+            parameters:
+              package: [ "utility_core", "utility_archive", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collision_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
+      - build_tests:
+          matrix:
+            parameters:
+              package: [ "utility_core", "utility_archive", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collision_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
+          requires:
+            - build-<< matrix.package >>
+      - tests:
+          matrix:
+            parameters:
+              package: [ "utility_core", "utility_archive", "utility_prng", "utility_interpolation", "utility_grid", "utility_stats", "utility_integrator", "utility_mesh", "geometry_core", "geometry_dagmc", "data_core", "data_ace", "data_endf", "data_endl", "data_native", "data_database", "data_xsdir", "monte_carlo_core", "monte_carlo_collision_core", "monte_carlo_collision_photon", "monte_carlo_collision_electron", "monte_carlo_collision_neutron", "monte_carlo_collision_kernel", "monte_carlo_active_region_core", "monte_carlo_active_region_response", "monte_carlo_active_region_source", "monte_carlo_event_core", "monte_carlo_event_estimator", "monte_carlo_event_particle_tracker", "monte_carlo_event_forced_collisions", "monte_carlo_event_dispatcher", "monte_carlo_manager", "data_gen_endl", "data_gen_electron_photon", "data_gen_free_gas_sab", "pyfrensie"]
+              # "utility_system", "utility_mpi"
+          requires:
+            - build_tests-<< matrix.package >>
+
