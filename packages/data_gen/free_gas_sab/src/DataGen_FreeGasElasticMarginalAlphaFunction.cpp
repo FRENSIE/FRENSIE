@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalAlphaFunction.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Free gas elastic marginal alpha function definition.
 //!
 //---------------------------------------------------------------------------//
@@ -37,14 +37,14 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
     d_E( E ),
     d_alpha_min( 0.0 ),
     d_alpha_max( 0.0 ),
-    d_norm_constant( 1.0 ),
-    d_cached_cdf_values()
+    d_norm_constant( 1.0 )//,
+    //d_cached_cdf_values()
 {
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta > MonteCarlo::calculateBetaMin( E, kT ) );
+  testPrecondition( beta >= MonteCarlo::calculateBetaMin( E, kT ) );
 
   updateCachedValues();
 }
@@ -56,7 +56,7 @@ void FreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 {
   // Make sure beta is valid
   remember( double kT = d_sab_function.getTemperature() );
-  testPrecondition( beta > MonteCarlo::calculateBetaMin( E, kT ) );
+  testPrecondition(beta >= MonteCarlo::calculateBetaMin(E, kT));
 
   d_beta = beta;
   d_E = E;

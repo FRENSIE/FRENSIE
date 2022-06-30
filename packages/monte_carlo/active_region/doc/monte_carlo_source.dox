@@ -51,8 +51,8 @@
  * The MonteCarlo::StandardParticleSource requires a user to specify
  * a Utility::SpatialDistribution for sampling the particle position,
  * a Utility::DirectionalDistribution for sampling the particle direction,
- * a Utility::OneDDistribution for sampling the energy distribution,
- * a Utility::OneDDistribution for sampling the time distribution, and
+ * a Utility::UnivariateDistribution for sampling the energy distribution,
+ * a Utility::UnivariateDistribution for sampling the time distribution, and
  * the particle type that will be generated (MonteCarlo::ParticleType). For
  * more complicated sources there are also a series of optional settings
  * that can be used, which will be discussed in the rest of this subsection.

@@ -38,7 +38,7 @@ public:
                     const double atomic_weight_ratio = 0.0 );
 
   //! Create the Ace law 44 coupled energy-angle distribution
-  template<typename ScatteringDistributionBaseType>
+  template<typename ScatteringDistribution>
   static void createAceLaw44Distribution(
                        const double atomic_weight_ratio,
                        const Utility::ArrayView<const double>& dlw_block_array,
@@ -46,11 +46,11 @@ public:
                        const std::string& table_name,
                        const unsigned reaction,
                        const bool is_cm_distribution,
-                       std::shared_ptr<const ScatteringDistributionBaseType>&
+                       std::shared_ptr<const ScatteringDistribution>&
                        distribution );
 
   //! Create the Ace law 61 coupled energy-angle distribution
-  template<typename ScatteringDistributionBaseType>
+  template<typename ScatteringDistribution>
   static void createAceLaw61Distribution(
                        const double atomic_weight_ratio,
                        const Utility::ArrayView<const double>& dlw_block_array,
@@ -58,9 +58,23 @@ public:
                        const std::string& table_name,
                        const unsigned reaction,
                        const bool is_cm_distribution,
-                       std::shared_ptr<const ScatteringDistributionBaseType>&
+                       std::shared_ptr<const ScatteringDistribution>&
                        distribution );
-                  
+
+  //! Create the SAlphaBeta Inelastic distribution
+  template <typename ScatteringDistribution>
+  static void createSAlphaBetaInelasticDistribution(
+      const double atomic_weight_ratio,
+      const Utility::ArrayView<const double>& incoming_energies,
+      const Utility::ArrayView<const double>& inelastic_locations,
+      const Utility::ArrayView<const double>& outgoing_energies,
+      const Utility::ArrayView<const double>& itxe_block_array,
+      const bool is_continuous_energy,
+      const std::string& table_name,
+      const unsigned reaction,
+      const bool is_cm_distribution,
+      std::shared_ptr<ScatteringDistribution>& distribution);
+      
   //! Determine the coupled energy-angle distribution
   static unsigned determineCoupledDistribution(
     const double atomic_weight_ratio,

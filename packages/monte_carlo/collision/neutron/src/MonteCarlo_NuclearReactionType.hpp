@@ -434,7 +434,11 @@ enum NuclearReactionType{
   N__2N_EXCITED_STATE_13_REACTION = 888,
   N__2N_EXCITED_STATE_14_REACTION = 889,
   N__2N_EXCITED_STATE_15_REACTION = 890,
-  N__2N_CONTINUUM_REACTION = 891
+  N__2N_CONTINUUM_REACTION = 891,
+  
+  // Added non-ENDF numbering for S(a,b) reactions
+  SALPHABETA_N__N_ELASTIC_REACTION = 1002,
+  SALPHABETA_N__N_INELASTIC_REACTION = 1004
 };
 
 //! Convert a raw MT number to a NuclearReactionType

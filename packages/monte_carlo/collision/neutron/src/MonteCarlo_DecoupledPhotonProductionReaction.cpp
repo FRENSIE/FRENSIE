@@ -24,7 +24,7 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
     const double temperature,
     const std::shared_ptr<const ScatteringDistribution>&
     photon_production_distribution,
-    const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+    const std::shared_ptr<NeutronNuclearReaction>& total_reaction,
     const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
     total_mt_yield_array )
   : d_base_reaction_type( base_reaction_type ),
@@ -49,7 +49,7 @@ void DecoupledPhotonProductionReaction::initialize(
     const double temperature,
     const std::shared_ptr<const ScatteringDistribution>&
     photon_production_distribution,
-    const std::shared_ptr<const NeutronNuclearReaction>&
+    const std::shared_ptr<NeutronNuclearReaction>&
     total_reaction,
     const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
     total_mt_yield_array )

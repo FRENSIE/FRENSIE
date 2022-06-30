@@ -19,7 +19,7 @@
 #include "Utility_BilinearGridGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
-#include "Utility_KinematicHelpers.hpp"
+#include "MonteCarlo_KinematicHelpers.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 
@@ -69,11 +69,11 @@ int main( int argc, char** argv )
 
   // Create the S(alpha,beta,E) function
   // Initialize the zero temperature cross section
-  Teuchos::RCP<Utility::OneDDistribution> cross_section(
+  std::shared_ptr<Utility::UnivariateDistribution> cross_section(
 			  new Utility::UniformDistribution( 0.0, 20.0, 1.0 ) );
 
   // Initialize the scattering probability distribution
-  Teuchos::RCP<Utility::OneDDistribution> isotropic_distribution(
+  std::shared_ptr<Utility::UnivariateDistribution> isotropic_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
@@ -103,14 +103,14 @@ int main( int argc, char** argv )
     boost::bind<double>( boost::ref(sab_function), _2, _1, energy );
 
   boost::function<double (double beta)> alpha_min_wrapper =
-    boost::bind<double>( Utility::calculateAlphaMin,
+    boost::bind<double>( MonteCarlo::calculateAlphaMin,
 			 energy,
 			 _1,
 			 atomic_weight_ratio,
 			 temperature );
 
   boost::function<double (double beta)> alpha_max_wrapper =
-    boost::bind<double>( Utility::calculateAlphaMax,
+    boost::bind<double>( MonteCarlo::calculateAlphaMax,
 			 energy,
 			 _1,
 			 atomic_weight_ratio,
@@ -121,7 +121,7 @@ int main( int argc, char** argv )
 						     alpha_min_wrapper,
 						     alpha_max_wrapper );
 
-  double beta_min = Utility::calculateBetaMin( energy, temperature );
+  double beta_min = MonteCarlo::calculateBetaMin( energy, temperature );
 
   Teuchos::Array<double> initial_beta_grid( 2 );
   initial_beta_grid[0] = beta_min;

@@ -55,18 +55,20 @@ public:
 
   //! Create the scattering reactions
   void createScatteringReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       scattering_reactions ) const;
 
   //! Create the absorption reactions
   void createAbsorptionReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       absorption_reactions ) const;
 
   //! Create the fission reactions
   virtual void createFissionReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       fission_reactions ) const;
+
+
 
 protected:
 
@@ -87,8 +89,7 @@ protected:
    const Utility::ArrayView<const double>& tyr_block,
    const Utility::ArrayView<const double>& dlw_block,
    const std::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   std::unordered_map<NuclearReactionType,unsigned>&
-   reaction_multiplicity,
+   std::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity,
    std::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >&
    reaction_energy_dependent_multiplicity );
 
@@ -112,7 +113,21 @@ protected:
   //! Get the reaction associated with an Reaction Type
   void getReactionFromReactionType(
           NuclearReactionType reaction_type,
-          std::shared_ptr<const NeutronNuclearReaction>& base_reaction );
+          std::shared_ptr< NeutronNuclearReaction>& base_reaction );
+
+
+  // A map of the scattering reactions
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >
+  d_scattering_reactions;
+
+  // A map of the absorption reactions
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >
+  d_absorption_reactions;
+
+  // A map of the fission reactions
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >
+  d_fission_reactions;
+
 
 private:
 
@@ -170,17 +185,6 @@ private:
     const std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >&
     delayed_neutron_emission_distribution );
 
-  // A map of the scattering reactions
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
-  d_scattering_reactions;
-
-  // A map of the absorption reactions
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
-  d_absorption_reactions;
-
-  // A map of the fission reactions
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
-  d_fission_reactions;
 };
 
 } // end MonteCarlo namespace

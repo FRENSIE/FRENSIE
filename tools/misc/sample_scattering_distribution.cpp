@@ -109,7 +109,7 @@ int main( int argc, char** argv )
 
   // Convert the mt number to a reaction type
   MonteCarlo::NuclearReactionType reaction =
-    MonteCarlo::convertUnsignedToNuclearReactionType( mt_number );
+    MonteCarlo::convertMTNumberToNuclearReactionType( mt_number );
 
   ace_file_handler.reset( new Data::ACEFileHandler(
 			      table_info.get<std::string>( "file_path" ),
@@ -142,7 +142,7 @@ int main( int argc, char** argv )
 							     reaction,
 							     scattering_dist );
 
-  boost::unordered_map<MonteCarlo::NuclearReactionType,Teuchos::RCP<MonteCarlo::NuclearReaction> >
+  std::unordered_map<MonteCarlo::NuclearReactionType,Teuchos::RCP<MonteCarlo::NuclearReaction> >
     scattering_reactions;
 
   reaction_factory->createScatteringReactions( scattering_reactions );

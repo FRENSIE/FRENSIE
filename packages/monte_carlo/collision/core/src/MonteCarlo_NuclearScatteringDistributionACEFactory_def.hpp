@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_NuclearScatteringDistributionACEFactory_def.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Nuclear scattering distribution factor base class template defs.
 //!
 //---------------------------------------------------------------------------//
@@ -185,10 +185,10 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 		  std::shared_ptr<const DistributionType>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
-  testPrecondition( this->doesReactionHaveScatteringDistribution(
-							     reaction_type ) );
+  testPrecondition( this->doesReactionHaveScatteringDistribution( 
+					         reaction_type ) );
 
-  // Create an angular distribution if scattering law 44 is not used
+  // Create an angular distribution if scattering laws 44/61/67 are not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
     std::shared_ptr<const NuclearScatteringAngularDistribution>
@@ -207,16 +207,16 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     else
     {
       NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
-							angular_distribution );
+					    angular_distribution );
     }
 
     // Special Case: elastic scattering will have no energy distribution
     if( this->isElasticScatteringImplicit() && reaction_type == 2 )
     {
       this->createElasticScatteringDistribution(
-		        distribution,
+		                    distribution,
                         d_table_name,
-		        d_reaction_cm_scattering.find( reaction_type )->second,
+		                    d_reaction_cm_scattering.find( reaction_type )->second,
                         d_atomic_weight_ratio,
                         properties.getFreeGasThreshold(),
                         angular_distribution );

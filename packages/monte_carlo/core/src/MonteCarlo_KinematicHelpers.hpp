@@ -54,9 +54,14 @@ double calculateDimensionlessRelativisticMomentumSquared(
 double calculateRelativisticMomentum( const double rest_mass_energy,
                                       const double kinetic_energy );
 
+// ----------------------- Forward S(alpha,beta) --------------------------- //
+
 //! Calculate the beta min value
 double calculateBetaMin( const double kinetic_energy,
                          const double kT );
+
+//! Calculate the beta max value
+double calculateBetaMax( const double A );
 
 //! Calculate the dimensionless alpha min value
 double calculateAlphaMin( const double kinetic_energy,
@@ -70,6 +75,28 @@ double calculateAlphaMax( const double kinetic_energy,
 			  const double A,
 			  const double kT );
 
+// ----------------------- Adjoint S(alpha,beta) --------------------------- //
+
+//! Calculate the adjoint beta min value
+double calculateAdjointBetaMin( const double A );
+
+//! Calculate the adjoint beta max value
+double calculateAdjointBetaMax( const double kinetic_energy, 
+                                const double kT );
+
+//! Calculate the dimensionless adjoint alpha min value
+double calculateAdjointAlphaMin( const double kinetic_energy,
+			  const double adjoint_beta,
+			  const double A,
+			  const double kT );
+
+//! Calculate the dimensionless adjoint alpha max value 
+double calculateAdjointAlphaMax( const double kinetic_energy,
+			  const double adjoint_beta,
+			  const double A,
+			  const double kT );
+
+// ------------------------------------------------------------------------- //
 
 // Calculate the kinetic energy of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,

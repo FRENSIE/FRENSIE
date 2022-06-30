@@ -51,6 +51,13 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
+  // Make sure there is at lease one bin
+
+  testPrecondition( independent_values.size() > 1 );
+  testPrecondition( dependent_values.size() == independent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
   // Verify that the values are valid
   this->verifyValidValues( independent_values, dependent_values );
 

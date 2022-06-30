@@ -25,7 +25,7 @@ void NuclideACEFactory::createNuclide(
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
-                         const SimulationProperties& properties,
+       const SimulationProperties& properties,
 			 std::shared_ptr<const Nuclide>& nuclide )
 {
   // Extract the common energy grid used for this nuclide
@@ -125,7 +125,7 @@ void NuclideACEFactory::createNuclide(
 
 // Create the scattering reactions
 void NuclideACEFactory::createScatteringReactions(
-                      const NeutronNuclearReactionACEFactory& reaction_factory,
+                      NeutronNuclearReactionACEFactory& reaction_factory,
                       Nuclide::ConstReactionMap& scattering_reactions,
                       Nuclide::ConstReactionMap& absorption_reactions )
 {

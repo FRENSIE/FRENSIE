@@ -42,6 +42,8 @@ public:
   //! Return the scattering law
   unsigned getLaw() const;
 
+  virtual void getDistribution();
+
 private:
 
   // The endf law that this distribution represents

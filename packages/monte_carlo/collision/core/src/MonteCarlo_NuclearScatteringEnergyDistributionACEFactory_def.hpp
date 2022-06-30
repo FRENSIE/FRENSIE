@@ -20,8 +20,11 @@
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_DesignByContract.hpp"
+
 
 namespace MonteCarlo{
 
@@ -411,6 +414,242 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
 						       energy_out_distribution,
 						       angle_distribution ) );
   }
+}
+
+//! Create the S(alpha,beta) coupled energy-angle inelastic distribution
+template<typename ScatteringDistributionBaseType>
+void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDistribution(
+    const double atomic_weight_ratio,
+    const Utility::ArrayView<const double>& incoming_energies,
+    const Utility::ArrayView<const double>& inelastic_locations,
+    const Utility::ArrayView<const double>& outgoing_energies,
+		const Utility::ArrayView<const double>& itxe_block_array,
+    const bool is_continuous_energy,
+		const std::string& table_name,
+		const unsigned reaction,
+		const bool is_cm_distribution,
+    std::shared_ptr<ScatteringDistributionBaseType>& distribution )
+{
+  typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::OutgoingParticleState,
+						LabSystemConversionPolicy> 
+    AceLaw61NuclearScatteringDistributionLab;
+
+  typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::OutgoingParticleState,
+						CMSystemConversionPolicy> 
+    AceLaw61NuclearScatteringDistributionCM;  
+    
+  // Grab the number of incoming energies
+  int num_incoming_energies = incoming_energies.size();
+  
+  // Initialize the energy distribution array
+  AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+    energy_distribution( num_incoming_energies ); 
+    
+  if( is_continuous_energy )
+  {
+    // Construct equiprobable distribution
+    std::vector<double> eq_pdf_vec;
+    for( int eq = 0; eq < 20; ++eq )
+    {
+      eq_pdf_vec.push_back( 1.0 );
+    }
+
+    // Initialize the Angle distribution array
+    typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
+      angle_distribution( num_incoming_energies );
+      
+    for( int i = 0; i < num_incoming_energies; ++i )
+    {
+      energy_distribution[i].first = incoming_energies[i];
+    
+      int location = inelastic_locations[i] - inelastic_locations[0];
+      int num_energies = outgoing_energies[i];
+      
+      std::vector<double> energy_grid_vec;
+      std::vector<double> energy_pdf_vec;
+      
+      // Array of angular distributions
+      std::vector< std::shared_ptr<const Utility::UnivariateDistribution> > 
+        cosine_arrays( num_energies );
+      
+      for( int j = 0; j < num_energies; ++j )
+      {
+        // Grab the outgoing energy point and associated pdf point
+        energy_grid_vec.push_back( itxe_block_array[location] );
+        energy_pdf_vec.push_back( itxe_block_array[location + 1] );
+
+        // Found situation in lwtr.20t -> line 131677 where there are nonphysical
+        //  cosines (i.e. cosines > 1 and out of order...). How is this possible?
+        //  Reaching out to J. Conlin to attempt to find more information...
+        
+        
+        //  what we are doing is: 
+        //        Utility::ArrayView<double> cosines = itxe_block_array( location + 3, 20 );
+        // but gcc is not happy with the ArrayView<const double> to ArrayView<double> conversion...
+        Utility::ArrayView<double> cosines;
+        for (int i = 0; i < 20; i++) {
+          int extract_tart_position = location + 3;
+          cosines[i] = itxe_block_array[extract_tart_position+i];
+        }
+        // done with the itxe_block_array extraction
+
+        if( itxe_block_array[location + 1] <= 1e-12 )
+        {
+          // Construct a false outgoing bin for incredibly unlikely result...
+          for( int c = 0; c < 20; ++c )
+          {
+            cosines[c] = c*(2.0/19.0) - 1;
+          }
+        }
+        
+        if( cosines[19] > 1.0 )
+        {
+          cosines[19] = 1.0;
+        }
+        
+        if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
+        {
+          std::sort( cosines.begin(), cosines.end() );
+        }
+
+        location += 23;
+
+        // Construct the equiprobable angular distribution
+        cosine_arrays[j].reset( 
+          new Utility::DiscreteDistribution( cosines, eq_pdf_vec, false, false ) );
+      }
+
+    energy_distribution[i].second.reset( 
+      new Utility::TabularDistribution<Utility::LinLin>( 
+                                                    energy_grid_vec,
+                                                    energy_pdf_vec ) );
+
+    angle_distribution[i].reset( 
+      new StandardAceLaw61AngleDistribution<AceLaw61LinLinInterpolationPolicy>(
+                                                      Utility::ArrayView<const double>(energy_grid_vec),
+                                                      cosine_arrays ) );
+
+    }
+
+    std::shared_ptr<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+
+    energy_out_distribution.reset( 
+        new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+
+    if( is_cm_distribution )
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionCM(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    }
+    else
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionLab(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    } 
+
+  }
+  else
+  {
+
+    // Construct equiprobable distribution
+    std::vector<double> eq_pdf_nrg_vec;
+    for( int eq = 0; eq < 64; ++eq )
+    {
+      eq_pdf_nrg_vec.push_back( 1.0 );
+    }
+
+    std::vector<double> eq_pdf_nrg_ang_vec;
+    for( int eq = 0; eq < 16; ++eq )
+    {
+      eq_pdf_nrg_ang_vec.push_back( 1.0 );
+    }
+
+    // Initialize the Angle distribution array
+    typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
+      angle_distribution( num_incoming_energies );
+      
+    int location = 0;
+    int num_energies = 64;
+
+    for( int i = 0; i < num_incoming_energies; ++i )
+    {
+      energy_distribution[i].first = incoming_energies[i];
+    
+      std::vector<double> energy_grid_vec;
+    
+      // Array of angular distributions
+      std::vector< std::shared_ptr<const Utility::UnivariateDistribution> > 
+        cosine_arrays( num_energies );
+      
+      for( int j = 0; j < num_energies; ++j )
+      {
+        // Grab the outgoing energy point and associated pdf point
+        energy_grid_vec.push_back( itxe_block_array[location] );
+
+       //  what we are doing is: 
+        //        Utility::ArrayView<double> cosines = itxe_block_array( location + 1, 16  );
+        // but gcc is not happy with the ArrayView<const double> to ArrayView<double> conversion...
+        Utility::ArrayView<double> cosines;
+        for (int i = 0; i < 16; i++) {
+          int extract_tart_position = location + 1;
+          cosines[i] = itxe_block_array[extract_tart_position+i];
+        }
+        // done with the itxe_block_array extraction
+
+
+
+        if( !Utility::Sort::isSortedAscending( cosines.begin(), cosines.end() ) )
+        {
+          std::sort( cosines.begin(), cosines.end() );
+        }
+
+        location += 17;
+
+        // Construct the equiprobable angular distribution
+        cosine_arrays[j].reset( 
+          new Utility::DiscreteDistribution( cosines, eq_pdf_nrg_ang_vec, false, false) );
+      }
+
+    energy_distribution[i].second.reset( 
+      new Utility::DiscreteDistribution( energy_grid_vec,
+                                         eq_pdf_nrg_vec, false, false ) );
+
+    angle_distribution[i].reset( 
+      new StandardAceLaw61AngleDistribution<AceLaw61DiscreteInterpolationPolicy>(
+                                                      Utility::ArrayView<const double>(energy_grid_vec),
+                                                      cosine_arrays ) );
+    }
+
+    std::shared_ptr<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+
+    energy_out_distribution.reset( 
+        new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+
+    if( is_cm_distribution )
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionCM(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    }
+    else
+    {
+      distribution.reset( 
+      new AceLaw61NuclearScatteringDistributionLab(
+                    atomic_weight_ratio,
+                    energy_out_distribution,
+                    angle_distribution ) );
+    } 
+  }  
 }
 
 } // end MonteCarlo namespace

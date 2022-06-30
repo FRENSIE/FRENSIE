@@ -1,10 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic marginal beta function definition
 //!
 //---------------------------------------------------------------------------//
+
+// Std Includes
+#include <algorithm>
 
 // Boost Includes
 #include <boost/bind.hpp>
@@ -39,8 +42,8 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
     d_A( A ),
     d_kT( kT ),
     d_beta_min( 0.0 ),
-    d_norm_constant( 1.0 ),
-    d_cached_cdf_values()
+    d_norm_constant( 1.0 )//,
+    //d_cached_cdf_values()
 {
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
@@ -67,9 +70,14 @@ double FreeGasElasticMarginalBetaFunction::getBetaMin() const
 {
   return d_beta_min;
 }
+  
+double FreeGasElasticMarginalBetaFunction::getBetaMax() 
+{
+  return MonteCarlo::calculateBetaMax( d_A );
+}
 
 // Get the normalization constant
-double FreeGasElasticMarginalBetaFunction::getNormalizationConstant() const
+double FreeGasElasticMarginalBetaFunction::getNormalizationConstant()
 {
   return d_norm_constant;
 }
@@ -80,7 +88,57 @@ double FreeGasElasticMarginalBetaFunction::operator()( const double beta )
   // Make sure the beta value is valid
   testPrecondition( beta >= d_beta_min );
 
-  return integratedSAlphaBetaFunction( beta )/d_norm_constant;
+  if (beta <= d_beta_min)
+  {
+    return 0.0;
+  }
+  else if ( beta >= MonteCarlo::calculateBetaMax( d_A ) )
+  {
+    return 0.0;
+  }
+  else
+  {
+    return integratedSAlphaBetaFunction( beta )/d_norm_constant;
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::populatePDF( 
+    std::vector<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    if( beta <= MonteCarlo::calculateBetaMax( d_A ) )
+    {
+      d_pdf_array.push_back( (*this)( beta ) );
+    }
+    else
+    {
+      d_pdf_array.push_back( 0.0 );
+    }
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::getPDF( 
+    std::vector<double>& pdf_array )
+{
+  pdf_array = d_pdf_array;
+}
+
+void FreeGasElasticMarginalBetaFunction::populateCDF( 
+    std::vector<double>& energy_array )
+{
+  for( int i = 0; i < energy_array.size(); ++i )
+  {
+    double beta = (energy_array[i] - d_E)/d_kT;
+    d_cdf_array.push_back( this->evaluateCDF( beta ) );
+  }
+}
+
+void FreeGasElasticMarginalBetaFunction::getCDF( 
+    std::vector<double>& cdf_array )
+{
+  cdf_array = d_cdf_array;
 }
 
 // Evaluate the marginal CDF
@@ -122,22 +180,45 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
 void FreeGasElasticMarginalBetaFunction::updateCachedValues()
 {
   d_beta_min = MonteCarlo::calculateBetaMin( d_E, d_kT );
-
+  double beta_max = MonteCarlo::calculateBetaMax( d_A );
+  
   // Calculate the norm constant
   double norm_constant_error;
 
   boost::function<double (double beta)> d_integrated_sab_function =
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
 
-  d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
-  					 400.0,
-  					 540.0,
-  					 d_norm_constant,
+  std::vector<double> energy_setpoints{1e-11, 2e-11, 5e-11, 1e-10, 2e-10, 5e-10, 1e-9, 2e-9, 5e-9, 1e-8, 2e-8, 5e-8, 1e-7, 2e-7, 5e-7, 1e-6, 2e-6, 4.625e-6, 5e-6};
+  std::vector<double> beta_setpoints;
+
+  for( int i = 0; i < energy_setpoints.size(); ++i )
+  {
+    beta_setpoints.push_back( (energy_setpoints[i] - d_E)/d_kT );
+  }
+
+  double norm_constant = 0;
+  d_norm_constant      = 0;
+
+  for( int i = 0; i < beta_setpoints.size() - 1; ++i )
+  {
+    d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
+  					 beta_setpoints[i],
+  					 beta_setpoints[i+1],
+  					 norm_constant,
   					 norm_constant_error );
 
-  // Utility::ArrayView<double> points_of_interest =
-  //   {d_beta_min, 515.0, -d_beta_min};
+    d_norm_constant = d_norm_constant + norm_constant;
+  }
 
+  //d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
+  //					 d_beta_min,
+  //					 beta_max,
+  //					 d_norm_constant,
+  //					 norm_constant_error );
+  
+  // Teuchos::Tuple<double,3> points_of_interest = 
+  //   Teuchos::tuple( d_beta_min, 515.0, -d_beta_min );
+  
   // d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( d_integrated_sab_function,
   // 						points_of_interest(),
   // 						d_norm_constant,
@@ -163,7 +244,8 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   // Make sure beta is valid
   testPrecondition( beta >= d_beta_min );
 
-  double alpha_min = MonteCarlo::calculateAlphaMin( d_E, beta, d_A, d_kT );
+
+  double alpha_min = MonteCarlo::calculateAlphaMin(d_E, beta, d_A, d_kT);
   double alpha_max = MonteCarlo::calculateAlphaMax( d_E, beta, d_A, d_kT );
 
   double function_value, function_value_error;
@@ -171,33 +253,12 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   boost::function<double (double alpha)> sab_function_wrapper =
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
 
-  // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-  // 					  alpha_min,
-  // 					  alpha_max,
-  // 					  function_value,
-  // 					  function_value_error );
-
-  if( beta < 0.0 && beta > d_beta_min )
-  {
-    std::array<double,3> array({alpha_min, -beta, alpha_max});
-    Utility::ArrayView<double> points_of_interest( array );
-
-    d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
-						  points_of_interest,
-						  function_value,
-						  function_value_error );
-  }
-  else
-  {
-    d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
-					    alpha_min,
-					    alpha_max,
-					    function_value,
-					    function_value_error );
-  }
-
-  std::cout << beta << " " << function_value << std::endl;
-
+  d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
+                                           alpha_min,
+                                           alpha_max,
+                                           function_value,
+                                           function_value_error );
+  
   // Make sure the return value is valid
   testPostcondition(!Utility::QuantityTraits<double>::isnaninf(function_value));
 

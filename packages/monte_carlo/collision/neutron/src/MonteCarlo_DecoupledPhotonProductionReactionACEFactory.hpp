@@ -88,7 +88,7 @@ protected:
   //! Construct the base reaction map
   void constructBaseReactionMap(
   std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+  std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
   std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map  );
 
   // Construct a map of photon MT numbers to yield distributions
@@ -108,7 +108,7 @@ private:
        const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
        const double temperature,
        const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-       const std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+       const std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >& base_reaction_map,
        const SimulationProperties& properties,
        PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory );
 
@@ -138,7 +138,7 @@ private:
   d_mtp_yield_distributions_map;
 
   // Total reaction
-  std::shared_ptr<const NeutronNuclearReaction> d_total_reaction;
+  std::shared_ptr<NeutronNuclearReaction> d_total_reaction;
 };
 
 } // end MonteCarlo namespace

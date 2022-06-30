@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic marginal beta function declaration.
 //!
 //---------------------------------------------------------------------------//
@@ -44,18 +44,28 @@ public:
 
   //! Set the beta and energy values
   void setIndependentVariables( const double E );
-
+  
   //! Get the lower beta limit
   double getBetaMin() const;
 
+  double getBetaMax();
+  
   //! Get the normalization constant
-  double getNormalizationConstant() const;
+  double getNormalizationConstant();
 
   //! Evaluate the marginal PDF
   double operator()( const double beta );
 
   //! Evaluate the marginal CDF
   double evaluateCDF( const double beta );
+
+  void populatePDF( std::vector<double>& energy_array );
+
+  void getPDF( std::vector<double>& pdf_array );
+
+  void populateCDF( std::vector<double>& energy_array );
+
+  void getCDF( std::vector<double>& cdf_array );
 
 private:
 
@@ -92,6 +102,9 @@ private:
 
   // Cached CDF values (first = beta, second = CDF)
   std::list<std::pair<double,double> > d_cached_cdf_values;
+
+  std::vector<double> d_pdf_array;
+  std::vector<double> d_cdf_array;
 };
 
 } // end DataGen namespace

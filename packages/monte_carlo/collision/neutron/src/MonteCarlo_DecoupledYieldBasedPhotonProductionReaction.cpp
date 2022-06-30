@@ -23,10 +23,10 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
     const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
     total_mt_yield_array,
     const std::shared_ptr<const Utility::UnivariateDistribution>& mtp_yield,
-    const std::shared_ptr<const NeutronNuclearReaction>& base_reaction,
+    const std::shared_ptr<NeutronNuclearReaction>& base_reaction,
     const std::shared_ptr<const ScatteringDistribution>&
     photon_production_distribution,
-    const std::shared_ptr<const NeutronNuclearReaction>& total_reaction )
+    const std::shared_ptr<NeutronNuclearReaction>& total_reaction )
   : DecoupledPhotonProductionReaction( base_reaction_type,
                                        photon_production_id,
                                        temperature,
@@ -39,6 +39,12 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
   // Make sure the base reaction is valid
   testPrecondition( base_reaction.get() != NULL );
   testPrecondition( base_reaction->getReactionType() == base_reaction_type );
+}
+
+// Return the base nuclear reaction type
+NuclearReactionType DecoupledYieldBasedPhotonProductionReaction::getReactionType() const
+{
+  return d_base_reaction->getReactionType();
 }
 
 // Test if two Atomic reactions share the same energy grid
@@ -74,7 +80,7 @@ double DecoupledYieldBasedPhotonProductionReaction::getMaxEnergy() const
 /*! \details The photon production cross section is the base cross section
  * multiplied by the yield.
  */
-double DecoupledYieldBasedPhotonProductionReaction::getBaseReactionCrossSection(
+double DecoupledYieldBasedPhotonProductionReaction::getReactionCrossSection(
 						    const double energy ) const
 {
   return d_base_reaction->getCrossSection( energy );

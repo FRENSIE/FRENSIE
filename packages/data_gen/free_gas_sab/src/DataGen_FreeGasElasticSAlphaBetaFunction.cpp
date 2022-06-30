@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticSAlphaBetaFunction.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson & Eli Moll
 //! \brief  Free gas elastic scattering S(alpha,beta) function definition
 //!
 //---------------------------------------------------------------------------//
@@ -41,12 +41,13 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
           cm_scattering_distribution,
           const double A,
           const double kT )
-  : d_gkq_set( 1e-6 ),
+  : d_gkq_set( 1e-3 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
     d_kT( kT ),
-    d_average_zero_temp_elastic_cross_section( 1.0 )
+    d_average_zero_temp_elastic_cross_section( 1.0 ),
+    d_jacobian_normalization( 1.57071440077166 ) // change that are not reproduced with unit tests
 {
   // Make sure the distributions are valid
   testPrecondition( zero_temp_elastic_cross_section.use_count() > 0 );
@@ -121,13 +122,33 @@ double FreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
              (Utility::PhysicalConstants::neutron_rest_mass_energy*(1-mu_cm)));
 
       double relative_energy = neutron_kinetic_energy_multiplier*
-        relative_velocity*relative_velocity;
+	relative_velocity*relative_velocity;
+      
+
+      // change that are not reproduced with unit tests
+      double xs_multiplier = 0;
+      if ( relative_energy > 1e-11 )
+      {
+        xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( relative_energy );
+        // xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( E );
+      }
+      else
+      {
+        xs_multiplier = d_zero_temp_elastic_cross_section->evaluate( 1e-11 );
+      }
 
       // Calculate the first term of the integrand
+
+      // change that are not reproduced with unit tests
       double term_1 = sqrt(alpha)*
-        d_zero_temp_elastic_cross_section->evaluate( relative_energy )*
-        d_cm_scattering_distribution->evaluatePDF( E, mu_cm )/
-        ((1.0-mu_cm)*(1.0-mu_cm));
+          xs_multiplier*
+          d_cm_scattering_distribution->evaluatePDF( E, mu_cm )/
+          ((1.0-mu_cm)*(1.0-mu_cm));
+      // double term_1 =
+      //     sqrt(alpha) *
+      //     d_zero_temp_elastic_cross_section->evaluate(relative_energy) *
+      //     d_cm_scattering_distribution->evaluatePDF(E, mu_cm) /
+      //     ((1.0 - mu_cm) * (1.0 - mu_cm));
 
       // Compute the exponential argument
       double exp_arg = calculateExpArgConst( alpha, beta, E ) +
@@ -195,7 +216,6 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 
   double alpha_min = MonteCarlo::calculateAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = MonteCarlo::calculateAlphaMax(E,beta,d_A,d_kT);
-
   double value;
 
   // Test for special condition (alpha = 0.0)
@@ -239,16 +259,24 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
           exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
 
         if( value > std::numeric_limits<double>::max() )
+        {
           value = std::numeric_limits<double>::max();
+        }
       }
     }
     else // alpha == 0.0
+    {
       value = std::numeric_limits<double>::infinity();
+    }
   }
   else
+  {
     value = 0.0;
-
+  }
+    
   // Make sure the value is valid
+  // change that are not reproduced with unit tests
+  value = value*d_jacobian_normalization;
   testPostcondition( value == value );
 
   return value;
@@ -304,14 +332,15 @@ void FreeGasElasticSAlphaBetaFunction::findLimits(
 
   double estimated_peak_mu_cm = (arg1 - arg2)/(arg1 + arg2);
 
-
   double estimated_peak_exp_arg = calculateExpArgConst( alpha, beta, E ) +
     calculateExpArgMult( alpha )/(1.0 - estimated_peak_mu_cm) +
     calculateBesselArgMult( alpha, beta, E )*
     sqrt((1.0+estimated_peak_mu_cm)/(1.0-estimated_peak_mu_cm));
 
   // Check if the integrand can be expected to return non-zero values
-  if( estimated_peak_exp_arg > min_exp_arg )
+  // change that are not reproduced with unit tests
+  if( true ) // estimated_peak_exp_arg > min_exp_arg )
+  //if( estimated_peak_exp_arg > min_exp_arg )
   {
     search_grid.push_back( std::max( estimated_peak_mu_cm - 1e-6,
                                      -1.0 ) );

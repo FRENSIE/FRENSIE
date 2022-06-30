@@ -63,10 +63,18 @@ public:
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const override;
 
+  //! Return the cross section at a given energy
+  double getCrossSection( const double energy ) const;
+
+  //! Set the S(a,b) cutoff energy
+  void setSABCutoffEnergy( double sab_cutoff_energy );
+
 private:
 
   // The neutron multiplicity
   unsigned d_multiplicity;
+
+  double d_sab_cutoff_energy;
 
   // The scattering distribution
   std::shared_ptr<const ScatteringDistribution> d_scattering_distribution;

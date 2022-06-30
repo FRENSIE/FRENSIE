@@ -223,7 +223,37 @@ double Nuclide::getTemperature() const
 // Return the total cross section at the desired energy
 double Nuclide::getTotalCrossSection( const double energy ) const
 {
-  return d_total_reaction->getCrossSection( energy );
+  // Currently we are going to try recalculating at every reqest for accuracy
+  //  Eventually this will be tested for the performance impact
+  if( false )
+  {
+    double cross_section = d_total_reaction->getCrossSection( energy );
+  
+    return cross_section;
+  }
+  else
+  {
+    ConstReactionMap::const_iterator reaction_type_pointer, 
+      end_reaction_type_pointer;
+
+    end_reaction_type_pointer = d_scattering_reactions.end();
+
+    double cross_section;
+
+    // Calculate the total cross section
+    cross_section = d_total_absorption_reaction->getCrossSection( energy );
+    
+    reaction_type_pointer = d_scattering_reactions.begin();
+    
+    while( reaction_type_pointer != end_reaction_type_pointer )
+    {
+      cross_section += reaction_type_pointer->second->getCrossSection( energy );
+     
+      ++reaction_type_pointer;
+    }
+    
+    return cross_section;
+  }
 }
 
 // Return the total absorption cross section at the desired energy
@@ -241,7 +271,7 @@ double Nuclide::getSurvivalProbability( const double energy ) const
 
   double survival_prob = 1.0 -
     d_total_absorption_reaction->getCrossSection( energy )/
-    d_total_reaction->getCrossSection( energy );
+    this->getTotalCrossSection( energy );
 
   // Make sure the survival probability is valid
   testPostcondition( survival_prob >= 0.0 );
@@ -258,7 +288,7 @@ double Nuclide::getReactionCrossSection(
   switch( reaction )
   {
   case N__TOTAL_REACTION:
-    return d_total_reaction->getCrossSection( energy );
+    return this->getTotalCrossSection( energy );
   case N__TOTAL_ABSORPTION_REACTION:
     return d_total_absorption_reaction->getCrossSection( energy );
   default:
@@ -485,7 +515,6 @@ void Nuclide::sampleScatteringReaction( const double scaled_random_number,
 					ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-
   ConstReactionMap::const_iterator nuclear_reaction, nuclear_reaction_end;
 
   nuclear_reaction = d_scattering_reactions.begin();
@@ -495,18 +524,30 @@ void Nuclide::sampleScatteringReaction( const double scaled_random_number,
   {
     partial_cross_section +=
       nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
-
+      
     if( scaled_random_number < partial_cross_section )
       break;
 
     ++nuclear_reaction;
   }
+  
+  // We found an issue with the interpolation accuracy for the S(a,b) since it
+  //  is on a coarse energy grid...
+  if( nuclear_reaction == nuclear_reaction_end )
+  {
+    double total_xs = partial_cross_section + d_total_absorption_reaction->getCrossSection( neutron.getEnergy() );
+    double updated_random_number = scaled_random_number*(total_xs/this->getTotalCrossSection( neutron.getEnergy() ));
+    
+    this->sampleScatteringReaction( updated_random_number, neutron, bank );
+  }
+  else
+  {
+    // Make sure a reaction was found
+    testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
-  // Make sure a reaction was found
-  testPostcondition( nuclear_reaction != nuclear_reaction_end );
-
-  // Undergo reaction selected
-  nuclear_reaction->second->react( neutron, bank );
+    // Undergo reaction selected
+    nuclear_reaction->second->react( neutron, bank );
+  }
 }
 
 // Sample an absorption reaction

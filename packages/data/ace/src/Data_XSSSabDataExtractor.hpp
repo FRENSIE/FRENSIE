@@ -72,6 +72,7 @@ public:
 
   //! Return if elastic scattering angular distribution data is present
   bool hasElasticScatteringAngularDistributionData() const;
+  
 
   //! Return the elastic scattering mode
   SabElasticMode getElasticScatteringMode() const;
@@ -90,6 +91,12 @@ public:
 
   //! Extract the inelastic cross section from the XSS array
   Utility::ArrayView<const Area> extractInelasticCrossSectionInBarns() const;
+
+  //! Extract the inelastic distribution locations from the XSS array
+  Utility::ArrayView<const double> extractInelasticDistributionLocations() const;
+  
+  //! Extract the number of outgoing energies list from the XSS array
+  Utility::ArrayView<const double> extractNumberOfOutgoingEnergies() const;
 
   //! Extract the ITCE block from the XSS array
   Utility::ArrayView<const double> extractITCEBlock() const;
@@ -111,6 +118,9 @@ public:
 
   //! Extract the ITCA block from the XSS array
   Utility::ArrayView<const double> extractITCABlock() const;
+  
+  //! Determine if the data is continuous energy or discrete
+  bool isDataContinuousEnergy() const;
 
 private:
 
@@ -119,6 +129,9 @@ private:
 
   // The jxs array (a copy will be stored)
   std::vector<int> d_jxs;
+  
+  // Discrete or Continuous
+  bool d_continuous_energy_data;
 
   // The xss array (data in this array should never be directly modified)
   std::shared_ptr<const std::vector<double> > d_xss;
@@ -128,9 +141,15 @@ private:
 
   // The ITIE block (cached for quick access to data in this block)
   Utility::ArrayView<const double> d_itie_block;
+  
+  // The ITXE block (cached for quick access to data in this block)
+  Utility::ArrayView<const double> d_itxe_block;
 
   // The ITCE block (cached for quick access to data in this block)
   Utility::ArrayView<const double> d_itce_block;
+  
+  // The ITCA block (cached for quick access to data in this block)
+  Utility::ArrayView<const double> d_itca_block;
 };
 
 } // end MonteCarlo namespace

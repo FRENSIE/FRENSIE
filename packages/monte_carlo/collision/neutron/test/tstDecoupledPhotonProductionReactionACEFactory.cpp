@@ -74,7 +74,7 @@ FRENSIE_UNIT_TEST( NuclearReactionACEFactory_hydrogen,
   std::shared_ptr<const MonteCarlo::DecoupledPhotonProductionReaction>& yield_based_reaction_102001 =
     reactions.find( 102001u )->second;
 
-  FRENSIE_CHECK_EQUAL( yield_based_reaction_102001->getBaseReactionType(),
+  FRENSIE_CHECK_EQUAL( yield_based_reaction_102001->getReactionType(),
 		       MonteCarlo::N__GAMMA_REACTION );
   FRENSIE_CHECK_EQUAL( yield_based_reaction_102001->getPhotonProductionReactionId(),
 		       102001u );
@@ -85,7 +85,7 @@ FRENSIE_UNIT_TEST( NuclearReactionACEFactory_hydrogen,
   std::shared_ptr<const MonteCarlo::DecoupledPhotonProductionReaction>& xs_based_reaction_4001 =
     reactions.find( 4001u )->second;
 
-  FRENSIE_CHECK_EQUAL( xs_based_reaction_4001->getBaseReactionType(),
+  FRENSIE_CHECK_EQUAL( xs_based_reaction_4001->getReactionType(),
 		       MonteCarlo::N__N_INELASTIC_REACTION );
   FRENSIE_CHECK_EQUAL( xs_based_reaction_4001->getPhotonProductionReactionId(),
 		       4001u );

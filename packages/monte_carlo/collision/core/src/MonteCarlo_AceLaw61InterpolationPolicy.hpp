@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ACE_LAW_61_INTERPOLATION_POLICY
 #define MONTE_CARLO_ACE_LAW_61_INTERPOLATION_POLICY
 
+// FRENSIE Includes
+#include "Utility_RandomNumberGenerator.hpp"
+
 namespace MonteCarlo {
 
 /*! The histogram interpolation policy
@@ -23,6 +26,27 @@ struct AceLaw61HistogramInterpolationPolicy
   {
     // See MCNP5 Developer's Manual pg 2-47
     return true;
+  }
+};
+
+struct AceLaw61DiscreteInterpolationPolicy
+{
+  //! Return whether to use lower bin or upper bin
+  inline static bool useLowerBin( const double& energy_prime,
+                                  const double& lower_energy_bin,
+                                  const double& upper_energy_bin )
+  { 
+    double random_num = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    double interpolation_fraction = 1 - (upper_energy_bin - energy_prime)/(upper_energy_bin - lower_energy_bin);
+
+    if( random_num > interpolation_fraction )
+    {
+      return true;
+    }
+    
+    return false;
   }
 };
 

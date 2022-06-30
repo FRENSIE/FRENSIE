@@ -188,7 +188,7 @@ NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
 
 // Create the scattering reactions
 void NeutronNuclearReactionACEFactory::createScatteringReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       scattering_reactions ) const
 {
   scattering_reactions.insert( d_scattering_reactions.begin(),
@@ -197,7 +197,7 @@ void NeutronNuclearReactionACEFactory::createScatteringReactions(
 
 // Create the absorption reactions
 void NeutronNuclearReactionACEFactory::createAbsorptionReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       absorption_reactions ) const
 {
   absorption_reactions.insert( d_absorption_reactions.begin(),
@@ -206,7 +206,7 @@ void NeutronNuclearReactionACEFactory::createAbsorptionReactions(
 
 // Create the fission reactions
 void NeutronNuclearReactionACEFactory::createFissionReactions(
-      std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
+      std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >&
       fission_reactions ) const
 {
   fission_reactions.insert( d_fission_reactions.begin(),
@@ -409,7 +409,7 @@ void NeutronNuclearReactionACEFactory::createReactionCrossSectionMap(
 // Get the reaction from a reaction type
 void NeutronNuclearReactionACEFactory::getReactionFromReactionType(
            NuclearReactionType reaction_type,
-           std::shared_ptr<const NeutronNuclearReaction>& base_reaction )
+           std::shared_ptr<NeutronNuclearReaction>& base_reaction )
 {
   // Check for the reaction amongst the absorptions, scatters, and fissions
   if ( d_absorption_reactions.find(reaction_type) != d_absorption_reactions.end() )
@@ -477,7 +477,7 @@ void NeutronNuclearReactionACEFactory::initializeScatteringReactions(
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<const NeutronNuclearReaction>& reaction =
+      std::shared_ptr<NeutronNuclearReaction>& reaction =
 	d_scattering_reactions[reaction_type];
 
       scattering_dist_factory.createScatteringDistribution(
@@ -501,7 +501,7 @@ void NeutronNuclearReactionACEFactory::initializeScatteringReactions(
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<const NeutronNuclearReaction>& reaction =
+      std::shared_ptr<NeutronNuclearReaction>& reaction =
 	d_scattering_reactions[reaction_type];
 
       scattering_dist_factory.createScatteringDistribution(
@@ -567,7 +567,7 @@ void NeutronNuclearReactionACEFactory::initializeAbsorptionReactions(
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<const NeutronNuclearReaction>& reaction =
+      std::shared_ptr<NeutronNuclearReaction>& reaction =
 	d_absorption_reactions[reaction_type];
 
       reaction.reset( new NeutronAbsorptionReaction(
@@ -635,7 +635,7 @@ void NeutronNuclearReactionACEFactory::initializeFissionReactions(
                                         properties,
 					prompt_neutron_emission_distribution );
 
-      std::shared_ptr<const NeutronNuclearReaction>& reaction =
+      std::shared_ptr<NeutronNuclearReaction>& reaction =
 	d_fission_reactions[reaction_type];
 
       // Create a basic neutron fission reaction (no delayed info)

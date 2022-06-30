@@ -28,6 +28,11 @@ double StandardAceLaw61AngleDistribution<AceLaw61InterpolationPolicy>::sampleCou
     const unsigned outgoing_index,
     const double energy_prime ) const
 {
+  if( d_outgoing_energy_grid.size() - 1 == outgoing_index )
+  {
+    return d_cosine_distributions[ outgoing_index ]->sample();
+  }
+
   // Determine which cosine distribution should be sampled from and then sample
   if( AceLaw61InterpolationPolicy::useLowerBin(
                                 energy_prime,

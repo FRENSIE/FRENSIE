@@ -175,7 +175,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
 					      const ParticleState& neutron,
 					      const double temperature,
-				              double target_velocity[3] ) const
+				        double target_velocity[3] ) const
 {
   // Check if the energy is above the free gas thermal treatment threshold
   double target_speed, mu_target;

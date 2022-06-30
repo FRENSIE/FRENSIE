@@ -1,4 +1,5 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(data_gen_free_gas_sab)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Add FreeGasElasticSAlphaBetaFunction test
 FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticSAlphaBetaFunction DEPENDS tstFreeGasElasticSAlphaBetaFunction.cpp)
@@ -7,5 +8,65 @@ FRENSIE_ADD_TEST(FreeGasElasticSAlphaBetaFunction)
 # Add FreeGasElasticMarginalAlphaFunction test
 FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticMarginalAlphaFunction DEPENDS tstFreeGasElasticMarginalAlphaFunction.cpp)
 FRENSIE_ADD_TEST(FreeGasElasticMarginalAlphaFunction)
+
+# Add FreeGasElasticMarginalBetaFunction test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticMarginalBetaFunction DEPENDS tstFreeGasElasticMarginalBetaFunction.cpp)
+FRENSIE_ADD_TEST(FreeGasElasticMarginalBetaFunction)
+
+
+# Add FreeGasElasticSAlphaBetaFunctionContinuous test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticSAlphaBetaFunction_Continuous DEPENDS tstFreeGasElasticSAlphaBetaFunction_continuous.cpp)
+FRENSIE_ADD_TEST(FreeGasElasticSAlphaBetaFunction_Continuous)
+
+# Add FreeGasElasticCrossSectionGenerator test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticCrossSectionGenerator DEPENDS tstFreeGasElasticCrossSectionGenerator.cpp)
+FRENSIE_ADD_TEST(FreeGasElasticCrossSectionGenerator)
+
+# Add AdjointFreeGasElasticMarginalBetaFunction test
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointFreeGasElasticMarginalBetaFunction DEPENDS tstAdjointFreeGasElasticMarginalBetaFunction.cpp)
+FRENSIE_ADD_TEST(AdjointFreeGasElasticMarginalBetaFunction)
+
+
+
+
+
+
+# Add AdjointFreeGasElasticCrossSectionFactory_XK test
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointFreeGasElasticCrossSectionFactory_XK DEPENDS tstAdjointFreeGasElasticCrossSectionFactory_XK.cpp)
+FRENSIE_ADD_TEST( AdjointFreeGasElasticCrossSectionFactory_XK
+    EXTRA_ARGS
+        --test_neutron_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
+        --test_data_path=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_data/)
+
+
+# Add FreeGasElasticCrossSectionFactory_XK test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticCrossSectionFactory_XK DEPENDS tstFreeGasElasticCrossSectionFactory_XK.cpp)
+FRENSIE_ADD_TEST( FreeGasElasticCrossSectionFactory_XK
+    EXTRA_ARGS
+        --test_neutron_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
+        --test_data_path=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_data/)
+
+# Add FreeGasElasticCrossSectionFactory_Sampling test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticCrossSectionFactory_Sampling DEPENDS tstFreeGasElasticCrossSectionFactory_Sampling.cpp)
+FRENSIE_ADD_TEST(FreeGasElasticCrossSectionFactory_Sampling
+EXTRA_ARGS
+    --test_neutron_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
+    --test_data_path=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_data/)
+
+
+# Add AdjointFreeGasElasticCrossSectionFactory_Sampling test
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointFreeGasElasticCrossSectionFactory_Sampling DEPENDS tstAdjointFreeGasElasticCrossSectionFactory_Sampling.cpp)
+FRENSIE_ADD_TEST(AdjointFreeGasElasticCrossSectionFactory_Sampling
+EXTRA_ARGS
+    --test_neutron_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
+    --test_data_path=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_data/)
+
+# Add FreeGasElasticCrossSectionFactory_Sampling_Absorption test
+FRENSIE_ADD_TEST_EXECUTABLE(FreeGasElasticCrossSectionFactory_Sampling_Absorption DEPENDS tstFreeGasElasticCrossSectionFactory_Sampling_Absorption.cpp)
+FRENSIE_ADD_TEST(FreeGasElasticCrossSectionFactory_Sampling_Absorption
+EXTRA_ARGS
+    --test_neutron_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
+    --test_data_path=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_data/)
+
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(data_gen_free_gas_sab)

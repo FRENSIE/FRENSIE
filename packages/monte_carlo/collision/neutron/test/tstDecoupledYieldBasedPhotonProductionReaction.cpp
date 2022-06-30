@@ -114,7 +114,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
           new std::vector<double>( xss_data_extractor->extractTotalCrossSection() ) );
 
   // Create the total reaction
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction>
     total_reaction( new MonteCarlo::NeutronAbsorptionReaction(
                            energy_grid,
                            total_cross_section,
@@ -124,7 +124,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                            ace_file_handler->getTableTemperature().value() ) );
 
  // Create the base reaction with fictitious cross section data (total)
-  std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> base_reaction;
+  std::shared_ptr< MonteCarlo::NeutronNuclearReaction> base_reaction;
   base_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
                            energy_grid,
                            total_cross_section,

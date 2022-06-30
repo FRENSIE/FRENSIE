@@ -82,7 +82,7 @@
  * \section utility_dist_sec The Distribution Subpackage
  * The distribution subpackage contains a collection of distributions that
  * can be customized and used for Monte Carlo sampling. All 1D distributions
- * inherit from the Utility::OneDDistribution base class. There is also
+ * inherit from the Utility::UnivariateDistribution base class. There is also
  * a Utility::SpatialDistribution base class for sampling from 3D distributions
  * and a Utility::DirectionalDistribution for sampling of directions. All
  * distribution classes can be written to and read from XML files. For the

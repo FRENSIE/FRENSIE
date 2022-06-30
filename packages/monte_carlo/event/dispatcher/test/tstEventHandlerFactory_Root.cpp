@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------//
 std::shared_ptr<Teuchos::ParameterList> observer_reps;
 
-boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
+std::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
   response_function_id_map;
 
 //---------------------------------------------------------------------------//

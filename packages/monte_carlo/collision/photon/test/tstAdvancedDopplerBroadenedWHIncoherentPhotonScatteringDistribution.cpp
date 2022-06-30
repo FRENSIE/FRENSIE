@@ -33,7 +33,7 @@
 
 Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution> distribution;
 
-Teuchos::RCP<Utility::OneDDistribution> incoherent_cs;
+Teuchos::RCP<Utility::UnivariateDistribution> incoherent_cs;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -354,7 +354,7 @@ int main( int argc, char** argv )
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
 
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
+  std::shared_ptr<Utility::UnivariateDistribution> scattering_function(
 	  new Utility::TabularDistribution<Utility::LinLin>(
 							  recoil_momentum,
 			                                  scat_func_values ) );
@@ -386,7 +386,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  Teuchos::Array<Teuchos::RCP<const Utility::TabularUnivariateDistribution> >
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
 

@@ -41,18 +41,16 @@ public:
    const NuclearReactionType base_reaction_type,
    const unsigned photon_production_id,
    const double temperature,
-   const std::shared_ptr<const ScatteringDistribution>&
-   photon_production_distribution,
-   const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
-   const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
-   total_mt_yield_array );
+   const std::shared_ptr<const ScatteringDistribution>& photon_production_distribution,
+   const std::shared_ptr<NeutronNuclearReaction>& total_reaction,
+   const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >& total_mt_yield_array );
 
   //! Destructor
   virtual ~DecoupledPhotonProductionReaction()
   { /* ... */ }
 
   //! Return the base nuclear reaction type
-  NuclearReactionType getBaseReactionType() const;
+  NuclearReactionType getReactionType() const;
 
   //! Return the photon production id for the base reaction type
   unsigned getPhotonProductionId() const;
@@ -76,7 +74,7 @@ public:
   unsigned getNumberOfEmittedParticles( const double energy ) const final override;
 
   //! Return the base reaction cross section at a given energy
-  virtual double getBaseReactionCrossSection( const double energy ) const = 0;
+  virtual double getReactionCrossSection( const double energy ) const = 0;
 
   //! Simulate the reaction
   virtual void react( const NeutronState& neutron,
@@ -94,7 +92,7 @@ protected:
                    const double temperature,
                    const std::shared_ptr<const ScatteringDistribution>&
                    photon_production_distribution,
-                   const std::shared_ptr<const NeutronNuclearReaction>&
+                   const std::shared_ptr<NeutronNuclearReaction>&
                    total_reaction,
                    const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
                    total_mt_yield_array );
@@ -122,12 +120,12 @@ private:
   d_photon_production_distribution;
 
   // The total reaction class
-  std::shared_ptr<const NeutronNuclearReaction> d_total_neutron_reaction;
+  std::shared_ptr<NeutronNuclearReaction> d_total_neutron_reaction;
 };
 
 // Return the base nuclear reaction type
 inline NuclearReactionType
-DecoupledPhotonProductionReaction::getBaseReactionType() const
+DecoupledPhotonProductionReaction::getReactionType() const
 {
   return d_base_reaction_type;
 }

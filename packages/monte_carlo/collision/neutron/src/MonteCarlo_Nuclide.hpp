@@ -47,7 +47,7 @@ public:
   typedef std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
+  typedef std::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> >
   ConstReactionMap;
 
   //! Set the nuclear reaction types that will be considered as absorption
@@ -187,10 +187,10 @@ private:
   double d_temperature;
 
   // The total reaction
-  std::unique_ptr<const NeutronNuclearReaction> d_total_reaction;
+  std::unique_ptr<NeutronNuclearReaction> d_total_reaction;
 
   // The total absorption reaction
-  std::unique_ptr<const NeutronNuclearReaction> d_total_absorption_reaction;
+  std::unique_ptr<NeutronNuclearReaction> d_total_absorption_reaction;
 
   // The scattering reactions
   ConstReactionMap d_scattering_reactions;

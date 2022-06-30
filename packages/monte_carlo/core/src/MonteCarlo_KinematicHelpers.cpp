@@ -11,6 +11,10 @@
 
 namespace MonteCarlo{
 
+
+// ----------------------- Forward S(alpha,beta) --------------------------- //
+
+
 // Calculate the beta min value
 /*! \details The kinetic energy and the temperature (kT) must be in units of
  * MeV.
@@ -19,6 +23,15 @@ double calculateBetaMin( const double kinetic_energy,
 			 const double kT )
 {
   return -kinetic_energy/kT;
+}
+
+// Calculate the beta max value
+/*! \details The kinetic energy and the temperature (kT) must be in units of 
+ * MeV.
+ */
+double calculateBetaMax( const double A )
+{
+  return 200*A;
 }
 
 // Calculate the dimensionless alpha min value
@@ -66,6 +79,42 @@ double calculateAlphaMax( const double kinetic_energy,
   double numerator = sqrt(kinetic_energy) + sqrt(arg);
 
   return numerator*numerator/(A*kT);
+}
+
+
+// ----------------------- Adjoint S(alpha,beta) --------------------------- //
+
+double calculateAdjointBetaMin( const double A )
+{
+  return -1.0*calculateBetaMax( A );
+}
+
+double calculateAdjointBetaMax( const double kinetic_energy, 
+                                const double kT )
+{
+  return -1.0*calculateBetaMin( kinetic_energy, kT );
+}
+
+double calculateAdjointAlphaMin( const double kinetic_energy,
+			  const double adjoint_beta,
+			  const double A,
+			  const double kT )
+{
+  return calculateAlphaMin( kinetic_energy,
+                            -1.0*adjoint_beta,
+                            A, 
+                            kT );
+}
+
+double calculateAdjointAlphaMax( const double kinetic_energy,
+			  const double adjoint_beta,
+			  const double A,
+			  const double kT )
+{
+  return calculateAlphaMax( kinetic_energy,
+                            -1.0*adjoint_beta,
+                            A, 
+                            kT );
 }
 
 } // end MonteCarlo namespace

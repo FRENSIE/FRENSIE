@@ -127,8 +127,6 @@ protected:
   const std::unordered_map<unsigned,unsigned>&
   getReactionEnergyDistStartIndex() const;
 
-private:
-
   // Initialize the reaction type ordering map
   void initializeReactionOrderingMap(
 			   const Utility::ArrayView<const double>& mtr_block,

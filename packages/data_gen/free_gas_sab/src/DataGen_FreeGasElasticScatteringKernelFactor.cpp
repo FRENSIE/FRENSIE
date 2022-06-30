@@ -42,7 +42,7 @@ FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
 	  const double alpha,
 	  const double beta,
 	  const double E )
-  : d_gkq_set( 1e-6 ),
+  : d_gkq_set(1e-4),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),

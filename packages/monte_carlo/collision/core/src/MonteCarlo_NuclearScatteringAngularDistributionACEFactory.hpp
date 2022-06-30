@@ -38,6 +38,17 @@ public:
   static std::shared_ptr<const Utility::TabularUnivariateDistribution>
   getIsotropicDistribution();
 
+  //! Create the angular distribution
+  static void createSAlphaBetaDistribution( 
+	    const Utility::ArrayView<const double>& energy_grid,
+	    const Utility::ArrayView<const double>& itca_block,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution );
+  
+  //! Create an isotropic angular distribution
+  static void createSAlphaBetaIsotropicDistribution(
+    const Utility::ArrayView<const double>& energy_grid,
+	   std::shared_ptr<NuclearScatteringAngularDistribution>& distribution );
+
 private:
 
   //! Constructor

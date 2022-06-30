@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -69,9 +70,6 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 
       Utility::ArrayView<const double> bin_boundaries =
 	      and_block_array( distribution_index, 33 );
-
-	  //std::cout << distribution_index << std::endl;
-	  //std::cout << bin_boundaries << std::endl;
 
       Utility::get<1>( angular_distribution[i] ).reset(
 	 new Utility::EquiprobableBinDistribution( bin_boundaries ) );
@@ -142,6 +140,82 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 
   // Create the angular distribution
   distribution.reset(
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
+}
+
+// Create the angular distribution
+void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaDistribution(
+	    const Utility::ArrayView<const double>& energy_grid,
+	    const Utility::ArrayView<const double>& itca_block,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution )
+{
+  // Get the number of incoming energies
+  int num_tabulated_energies = energy_grid.size();
+
+  // Initialize the angular distribution array
+  NuclearScatteringAngularDistribution::AngularDistribution
+    angular_distribution( num_tabulated_energies );
+
+  // Construct equiprobable distribution
+  std::vector<double> eq_pdf_vec;
+  for (int eq = 0; eq < num_tabulated_energies; ++eq) {
+    eq_pdf_vec.push_back( 1.0 );
+  }
+  Utility::ArrayView<double> equiprobable_pdf = Utility::ArrayView<double>(eq_pdf_vec);
+  
+  // Keep track of where we are in the data
+  int location = 0;
+
+  for( unsigned i = 0u; i < num_tabulated_energies; ++i )
+  {
+    angular_distribution[i].first = energy_grid[i];
+
+    // Twenty equiprobable cosine distribution
+    Utility::ArrayView<const double> cosines = 
+	      itca_block( location, 20 );
+	      
+    location += 20;
+	      
+    angular_distribution[i].second.reset( 
+	    new Utility::DiscreteDistribution( cosines, equiprobable_pdf ) );
+  }
+
+  // Create the angular distribution
+  distribution.reset( 
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
+}
+
+// Create the angular distribution
+void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaIsotropicDistribution(
+	    const Utility::ArrayView<const double>& energy_grid,
+	    std::shared_ptr<NuclearScatteringAngularDistribution>& distribution )
+{
+  // Get the number of incoming energies
+  int num_tabulated_energies = energy_grid.size();
+
+  // Initialize the angular distribution array
+  NuclearScatteringAngularDistribution::AngularDistribution
+    angular_distribution( num_tabulated_energies );
+
+  // Construct equiprobable distribution
+  std::vector<double> eq_pdf_vec;
+  for (int eq = 0; eq < num_tabulated_energies; ++eq) {
+    eq_pdf_vec.push_back( 1.0 );
+  }
+  Utility::ArrayView<double> equiprobable_pdf = Utility::ArrayView<double>(eq_pdf_vec);
+
+  // Keep track of where we are in the data
+  int distribution_index = 0;
+
+  for( unsigned i = 0u; i < energy_grid.size(); ++i )
+  {
+    angular_distribution[i].first = energy_grid[i];
+
+    angular_distribution[i].second = isotropic_angle_cosine_dist;
+  }
+
+  // Create the angular distribution
+  distribution.reset( 
 	   new NuclearScatteringAngularDistribution( angular_distribution ) );
 }
 

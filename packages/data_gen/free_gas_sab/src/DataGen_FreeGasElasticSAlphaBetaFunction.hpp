@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_FreeGasElasticSAlphaBetaFunction.hpp
-//! \author Alex Robinson
+//! \author Eli Moll
 //! \brief  Free gas elastic scattering S(alpha,beta) function decl.
 //!
 //---------------------------------------------------------------------------//
@@ -132,6 +132,8 @@ private:
 
   // The average zero temperature cross section
   double d_average_zero_temp_elastic_cross_section;
+
+  double d_jacobian_normalization;
 };
 
 } // end DataGen namespace

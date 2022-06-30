@@ -200,7 +200,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
                                               1.0 );
 
   // Test against the analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
   // Calculate the integral value at energy 10.0 MeV
   sab_value = (*sab_function)( 39.5, 1.0, 10.0 );
@@ -246,24 +246,25 @@ FRENSIE_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                    getIntegratedValue_alpha_beta_range )
 {
+
   // Calculate the integral value at energy 1e-6 MeV
-  double beta_min = MonteCarlo::calculateBetaMin( 1e-6,
-                                               sab_function->getTemperature());
-  double alpha_min = MonteCarlo::calculateAlphaMin(
-                                          1e-6,
-                                          beta_min,
-                                          sab_function->getAtomicWeightRatio(),
-                                          sab_function->getTemperature() );
+  double beta_min = MonteCarlo::calculateBetaMin( 1e-6, 
+					       sab_function->getTemperature());
 
-  double alpha_max = MonteCarlo::calculateAlphaMax(
-                                          1e-6,
-                                          beta_min,
-                                          sab_function->getAtomicWeightRatio(),
-                                          sab_function->getTemperature() );
-
+  double alpha_min = MonteCarlo::calculateAlphaMin( 
+					  1e-6,
+					  beta_min,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+  
+  double alpha_max = MonteCarlo::calculateAlphaMax( 
+					  1e-6,
+					  beta_min,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+  
   double sab_value = (*sab_function)( alpha_min, beta_min, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   double value = integratedCrossSectionValue( 0.999167,
                                               2.53010e-8,
                                               alpha_min,
@@ -282,7 +283,6 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, beta_min, 1e-6 );
-  std::cout << sab_value << std::endl;
 
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
@@ -312,8 +312,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                                           sab_function->getTemperature() );
 
   sab_value = (*sab_function)( alpha_min, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        alpha_min,
@@ -328,12 +327,11 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                                               1.0e-06 );
 
   // Test against analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-8 );
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        alpha_max,
@@ -349,8 +347,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 15.0, -15.0, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        15.0,
@@ -369,6 +366,8 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-9, 0.0, 1e-6 );
+  
+
   std::cout << sab_value << std::endl;
 
   value = integratedCrossSectionValue( 0.999167,
@@ -385,12 +384,11 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
                                               1.0e-06 );
 
   // Test against analytic integral
-  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-12, 0.0, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        1e-12,
@@ -409,6 +407,8 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 0.0, 0.0, 1e-6 );
+  
+
   std::cout << sab_value << std::endl;
 
   value = integratedCrossSectionValue( 0.999167,
@@ -429,8 +429,7 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 450, 700, 1e-6 );
-  std::cout << sab_value << std::endl;
-
+  
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        450,
@@ -450,7 +449,6 @@ FRENSIE_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1000, 700, 1e-6 );
 
-  std::cout << value << std::endl;
   value = integratedCrossSectionValue( 0.999167,
                                        2.53010e-8,
                                        1000,

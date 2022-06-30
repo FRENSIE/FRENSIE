@@ -35,14 +35,14 @@ public:
 			 const unsigned isomer_number,
 			 const double atomic_weight_ratio,
 			 const double temperature,
-                         const SimulationProperties& properties,
+       const SimulationProperties& properties,
 			 std::shared_ptr<const Nuclide>& nuclide );
 
-private:
+protected:
 
   // Create the scattering reactions
   static void createScatteringReactions(
-                      const NeutronNuclearReactionACEFactory& reaction_factory,
+                      NeutronNuclearReactionACEFactory& reaction_factory,
                       Nuclide::ConstReactionMap& scattering_reaction_map,
                       Nuclide::ConstReactionMap& absorption_reaction_map );
 
